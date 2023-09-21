@@ -3,29 +3,18 @@
 はじめに
 ############
 
-CMake はソースコードのビルドを制御・管理するツールです。はじめ CMake は ``Makefile`` に似た文法の制御コードを生成するツールとして設計されましたが、現在の CMake は ``Ninja`` といった「現代的なビルドシステム」を生成する他、Visual Studio や Xcode のような IDE で使用するプロジェクトファイルを生成できるようになっています。
+CMake はソースコードのビルドを制御・管理するツールです。はじめ CMake は ``Makefile`` に似た文法の制御コードを生成するツールとして設計されましたが、現在の CMake は ``Ninja`` といった「現代的なビルドシステム」を制御するコードを生成する他、Visual Studio や Xcode のような IDE で使用するプロジェクトファイルを生成できるようになっています。
 
 CMake は C と C++ 言語のビルドで広く利用されていますが、他のプログラミング言語のビルドでも利用できる場合があります。
 
-はじめて CMake を利用しょうとする人たちは、さまざまな目標をお持ちかと思います。たとえばインターネットからダウンロードしたソースコードをビルドする方法を知りたいのであれば、
-:guide:`ユーザ操作ガイド` から始めてみて下さい。これは :manual:`cmake(1)` や :manual:`cmake-gui(1)` というコマンドを使う際に必要な手順、あるいはどのジェネレータを選択すればよいか、そしてソースコードをビルドする方法について詳しく説明しています。
+はじめて CMake を利用しようとする人たちは、さまざまな目的をお持ちかと思います。たとえばインターネットからダウンロードしたソースコードをビルドする方法を知りたいのであれば、:guide:`User Interaction Guide` から始めてみて下さい。これは :manual:`cmake(1)` や :manual:`cmake-gui(1)` というコマンドを使う際に必要な手順、あるいはどのジェネレータを選択すればよいか、そしてソースコードをビルドする方法について詳しく説明しています。
 
-:guide:`依存関係を利用するガイド` ではサードパーティ製のライブラリを使用するような開発者を対象としています。
+:guide:`Using Dependencies Guide` はサードパーティ製のライブラリを使用するような開発者を対象としています。
 
-CMake を使うプロジェクトを始めようとする開発者であれば :guide:`CMake チュートリアル` が出発点として最適です。マニュアルの :manual:`cmake-buildsystem(7)` はビルドシステムis aimed at developers expanding their knowledge of maintaining a buildsystem and becoming familiar with the build targets that can be represented in CMake.
-The :manual:`cmake-packages(7)` manual explains how to create packages which can easily be consumed by third-party CMake-based buildsystems.
+CMake を使うプロジェクトを始めようとする開発者であれば :guide:`CMake Tutorial` が出発点として最適です。マニュアルの :manual:`cmake-buildsystem(7)` はビルドシステムの保守に関する知識を広げ、CMake で表現できるビルド・ターゲットに精通することを目的としています。マニュアルの :manual:`cmake-packages(7)` は CMake を利用したサードパーティ製ビルドシステムに簡単に導入できるパッケージの作成方法について説明しています。
 
-
-For developers starting a project using CMake, the :guide:`CMake Tutorial`
-is a suitable starting point.  The :manual:`cmake-buildsystem(7)`
-manual is aimed at developers expanding their knowledge of maintaining
-a buildsystem and becoming familiar with the build targets that
-can be represented in CMake.  The :manual:`cmake-packages(7)` manual
-explains how to create packages which can easily be consumed by
-third-party CMake-based buildsystems.
-
-Command-Line Tools
-##################
+コマンドライン・ツール
+######################
 
 .. toctree::
    :maxdepth: 1
@@ -34,8 +23,8 @@ Command-Line Tools
    /manual/ctest.1
    /manual/cpack.1
 
-Interactive Dialogs
-###################
+対話式のダイアログ
+##################
 
 .. toctree::
    :maxdepth: 1
@@ -43,8 +32,8 @@ Interactive Dialogs
    /manual/cmake-gui.1
    /manual/ccmake.1
 
-Reference Manuals
-#################
+リファレンス・マニュアル
+########################
 
 .. toctree::
    :maxdepth: 1
@@ -72,8 +61,8 @@ Reference Manuals
 
 .. only:: not man
 
- Guides
- ######
+ガイド
+######
 
  .. toctree::
     :maxdepth: 1
@@ -86,8 +75,8 @@ Reference Manuals
 
 .. only:: html or text
 
- Release Notes
- #############
+リリースノート
+##############
 
  .. toctree::
     :maxdepth: 1
@@ -96,8 +85,8 @@ Reference Manuals
 
 .. only:: html
 
- Index and Search
- ################
+目次と検索
+##########
 
  * :ref:`genindex`
  * :ref:`search`
