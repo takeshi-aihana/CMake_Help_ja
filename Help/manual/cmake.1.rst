@@ -1,68 +1,64 @@
-.. cmake-manual-description: CMake Command-Line Reference
+.. cmake-manual-description: CMake コマンドライン・リファレンス
 
 cmake(1)
 ********
 
-Synopsis
-========
+概要
+====
 
 .. parsed-literal::
 
- `Generate a Project Buildsystem`_
+ `プロジェクトのビルドシステムを生成する`_
   cmake [<options>] -B <path-to-build> [-S <path-to-source>]
   cmake [<options>] <path-to-source | path-to-existing-build>
 
- `Build a Project`_
+ `プロジェクトをビルドする`_
   cmake --build <dir> [<options>] [-- <build-tool-options>]
 
- `Install a Project`_
+ `プロジェクトをインストールする`_
   cmake --install <dir> [<options>]
 
- `Open a Project`_
+ `プロジェクトを開く`_
   cmake --open <dir>
 
- `Run a Script`_
+ `スクリプトを実行する`_
   cmake [-D <var>=<value>]... -P <cmake-script-file>
 
- `Run a Command-Line Tool`_
+ `コマンドライン・ツールを実行する`_
   cmake -E <command> [<options>]
 
- `Run the Find-Package Tool`_
+ `パッケージ検索ツールを実行する`_
   cmake --find-package [<options>]
 
- `Run a Workflow Preset`_
+ `ワークフローのプリセットを実行する`_
   cmake --workflow [<options>]
 
- `View Help`_
+ `ヘルプを表示する`_
   cmake --help[-<topic>]
 
-Description
-===========
+説明
+====
 
-The :program:`cmake` executable is the command-line interface of the cross-platform
-buildsystem generator CMake.  The above `Synopsis`_ lists various actions
-the tool can perform as described in sections below.
+:program:`cmake` はクロスプラットフォームな「ビルドシステム生成 CMake」（*buildsystem generator CMake*） のコマンドライン・インタフェース（CLI）です。上の `概要`_ に一覧にした操作は、以下のセクションで説明するようにして実行することが可能です。
 
-To build a software project with CMake, `Generate a Project Buildsystem`_.
-Optionally use :program:`cmake` to `Build a Project`_, `Install a Project`_ or just
-run the corresponding build tool (e.g. ``make``) directly.  :program:`cmake` can also
-be used to `View Help`_.
+CMake でプロジェクトをビルドする場合は, `プロジェクトのビルドシステムを生成する`_ を参照して下さい。さらに :program:`cmake` を使って `プロジェクトをビルドする`_ 、 `プロジェクトをインストールする`_ ことができる他に、関連する他のビルドツール（ ``make`` など）を直接実行できます。また :program:`cmake` を使って `ヘルプを表示する`_  ことも可能です。
 
-The other actions are meant for use by software developers writing
-scripts in the :manual:`CMake language <cmake-language(7)>` to support
-their builds.
+その他の操作として、スクリプトを作成するソフトウェア開発者が使用することを前提として、彼らのビルドをサポートするために :manual:`CMake language <cmake-language(7)>` があります。
 
-For graphical user interfaces that may be used in place of :program:`cmake`,
-see :manual:`ccmake <ccmake(1)>` and :manual:`cmake-gui <cmake-gui(1)>`.
-For command-line interfaces to the CMake testing and packaging facilities,
-see :manual:`ctest <ctest(1)>` and :manual:`cpack <cpack(1)>`.
+CLI である :program:`cmake` の代わりに利用できる GUI については :manual:`ccmake <ccmake(1)>` と :manual:`cmake-gui <cmake-gui(1)>` を参照して下さい。CMake から実行できる単体テストやパッケージ作成機能に対するコマンドライン・インタフェースについては、それぞれ :manual:`ctest <ctest(1)>` と :manual:`cpack <cpack(1)>` を参照して下さい。
 
-For more information on CMake at large, `see also`_ the links at the end
-of this manual.
+CMake 全体の詳細については、このマニュアルの最後にある  `関連項目`_ のリンクを参照して下さい。
 
 
-Introduction to CMake Buildsystems
-==================================
+CMake のビルドシステムについて
+==============================
+
+*ビルドシステム* とはプロジェクトの実行形式やライブラリをソースコードから生成する方法を *ビルド・ツール* を使い、自動化を含めて具体化するものです。
+たとえば、あるビルドシステムはコマンドラインの ``make`` ツールと ``Makefile`` であったり、あるいは統合開発環境（IDE）で使うプロジェクトファイルであったりします。
+In order to avoid maintaining multiple such buildsystems, a project may specify its buildsystem abstractly using files written in the :manual:`CMake language <cmake-language(7)>`.
+From these files CMake generates a preferred buildsystem locally for each user through a backend called a *generator*.
+
+
 
 A *buildsystem* describes how to build a project's executables and libraries
 from its source code using a *build tool* to automate the process.  For
@@ -108,10 +104,10 @@ Generator
   is already configured in the shell.  When using one of the
   :ref:`IDE Build Tool Generators`, no particular environment is needed.
 
-.. _`Generate a Project Buildsystem`:
+.. _`プロジェクトのビルドシステムを生成する`:
 
-Generate a Project Buildsystem
-==============================
+プロジェクトのビルドシステムを生成する
+======================================
 
 Run CMake with one of the following command signatures to specify the
 source and build trees and generate a buildsystem:
@@ -193,7 +189,7 @@ build tool to build the project.  For example, after using the
     $ make
     $ make install
 
-Alternatively, one may use :program:`cmake` to `Build a Project`_ by
+Alternatively, one may use :program:`cmake` to `プロジェクトをビルドする`_ by
 automatically choosing and invoking the appropriate native build tool.
 
 .. _`CMake Options`:
@@ -566,8 +562,8 @@ Options
 
 .. _`Build Tool Mode`:
 
-Build a Project
-===============
+プロジェクトをビルドする
+========================
 
 .. program:: cmake
 
@@ -672,8 +668,8 @@ following options:
 
 Run :option:`cmake --build` with no options for quick help.
 
-Install a Project
-=================
+プロジェクトをインストールする
+==============================
 
 .. program:: cmake
 
@@ -722,8 +718,8 @@ The options are:
 
 Run :option:`cmake --install` with no options for quick help.
 
-Open a Project
-==============
+プロジェクトを開く
+==================
 
 .. program:: cmake
 
@@ -737,8 +733,8 @@ supported by some generators.
 
 .. _`Script Processing Mode`:
 
-Run a Script
-============
+スクリプトを実行する
+====================
 
 .. program:: cmake
 
@@ -768,8 +764,8 @@ script (including the ``--`` itself).
 
 .. _`Run a Command-Line Tool`:
 
-Run a Command-Line Tool
-=======================
+コマンドライン・ツールを実行する
+================================
 
 .. program:: cmake
 
@@ -1300,8 +1296,8 @@ The following ``cmake -E`` commands are available only on Windows:
   Write Windows registry value.
 
 
-Run the Find-Package Tool
-=========================
+パッケージ検索ツールを実行する
+==============================
 
 .. program:: cmake--find-package
 
@@ -1322,8 +1318,8 @@ autoconf-based projects (via ``share/aclocal/cmake.m4``).
 
 .. _`Workflow Mode`:
 
-Run a Workflow Preset
-=====================
+ワークフローのプリセットを実行する
+==================================
 
 .. program:: cmake
 
@@ -1360,8 +1356,8 @@ The options are:
   This removes any existing ``CMakeCache.txt`` file and associated
   ``CMakeFiles/`` directory, and recreates them from scratch.
 
-View Help
-=========
+ヘルプを表示する
+================
 
 .. program:: cmake
 
@@ -1393,7 +1389,7 @@ If termination is caused by the command :command:`message(FATAL_ERROR)`,
 or another error condition, then a non-zero exit code is returned.
 
 
-See Also
+関連項目
 ========
 
 .. include:: LINKS.txt
