@@ -1,25 +1,20 @@
-.. title:: CMake Reference Documentation
+.. title:: CMake リファレンス・ドキュメント
 
-Introduction
+はじめに
 ############
 
-CMake is a tool to manage building of source code.  Originally, CMake was
-designed as a generator for various dialects of ``Makefile``, today
-CMake generates modern buildsystems such as ``Ninja`` as well as project
-files for IDEs such as Visual Studio and Xcode.
+CMake はソースコードのビルドを制御・管理するツールです。はじめ CMake は ``Makefile`` に似た文法の制御コードを生成するツールとして設計されましたが、現在の CMake は ``Ninja`` といった「現代的なビルドシステム」を生成する他、Visual Studio や Xcode のような IDE で使用するプロジェクトファイルを生成できるようになっています。
 
-CMake is widely used for the C and C++ languages, but it may be used to
-build source code of other languages too.
+CMake は C と C++ 言語のビルドで広く利用されていますが、他のプログラミング言語のビルドでも利用できる場合があります。
 
-People encountering CMake for the first time may have different initial
-goals.  To learn how to build a source code package downloaded from the
-internet, start with the :guide:`User Interaction Guide`.
-This will detail the steps needed to run the :manual:`cmake(1)` or
-:manual:`cmake-gui(1)` executable and how to choose a generator, and
-how to complete the build.
+はじめて CMake を利用しょうとする人たちは、さまざまな目標をお持ちかと思います。たとえばインターネットからダウンロードしたソースコードをビルドする方法を知りたいのであれば、
+:guide:`ユーザ操作ガイド` から始めてみて下さい。これは :manual:`cmake(1)` や :manual:`cmake-gui(1)` というコマンドを使う際に必要な手順、あるいはどのジェネレータを選択すればよいか、そしてソースコードをビルドする方法について詳しく説明しています。
 
-The :guide:`Using Dependencies Guide` is aimed at developers
-wishing to get started using a third-party library.
+:guide:`依存関係を利用するガイド` ではサードパーティ製のライブラリを使用するような開発者を対象としています。
+
+CMake を使うプロジェクトを始めようとする開発者であれば :guide:`CMake チュートリアル` が出発点として最適です。マニュアルの :manual:`cmake-buildsystem(7)` はビルドシステムis aimed at developers expanding their knowledge of maintaining a buildsystem and becoming familiar with the build targets that can be represented in CMake.
+The :manual:`cmake-packages(7)` manual explains how to create packages which can easily be consumed by third-party CMake-based buildsystems.
+
 
 For developers starting a project using CMake, the :guide:`CMake Tutorial`
 is a suitable starting point.  The :manual:`cmake-buildsystem(7)`
