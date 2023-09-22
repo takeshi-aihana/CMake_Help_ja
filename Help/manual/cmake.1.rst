@@ -21,7 +21,7 @@ cmake(1)
  `プロジェクトを開く`_
   cmake --open <dir>
 
- `スクリプトを実行する`_
+ `CMake スクリプトを実行する`_
   cmake [-D <var>=<value>]... -P <cmake-script-file>
 
  `コマンドライン・ツールを実行する`_
@@ -43,7 +43,7 @@ cmake(1)
 
 CMake でプロジェクトをビルドする場合は, `プロジェクトのビルドシステムを生成する`_ を参照して下さい。追加で　:program:`cmake` を使って `プロジェクトをビルドする`_ とか、 `プロジェクトをインストールする`_ ことができる他、関連する他のビルドツール（``make`` など）を直接実行できます。また :program:`cmake` を使って `ヘルプを表示する`_  ことも可能です。
 
-その他の操作として、スクリプトを作成するソフトウェア開発者が使用することを前提として、彼らのビルドを CMake でサポートするために :manual:`CMake language <cmake-language(7)>` があります。
+その他の操作として、CMake スクリプトを作成するソフトウェア開発者が使用することを前提として、彼らのビルドを CMake でサポートするために :manual:`CMake language <cmake-language(7)>` があります。
 
 :program:`cmake` コマンドライン・インタフェースの代わりとして利用できるグラフィカル・ユーザ・インタフェース（GUI）については :manual:`ccmake <ccmake(1)>` と :manual:`cmake-gui <cmake-gui(1)>` を参照して下さい。CMake から実行できる単体テストやパッケージ作成機能に対するコマンドライン・インタフェースについては、それぞれ :manual:`ctest <ctest(1)>` と :manual:`cpack <cpack(1)>` を参照して下さい。
 
@@ -77,8 +77,8 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
   :option:`cmake --help` を実行した場合も、実際に利用可能なジェネレータの一覧が表示されます。
   オプションの :option:`-G <cmake -G>` を使ってジェネレータを指定する、あるいは現在のプラットフォーム向けのデフォルトのジェネレータを CMake に選択させる方法があります。
 
-  :ref:`Command-Line Build Tool Generators` の中から選択すると、CMake はコンパイラなどツールチェインに必要な環境が Shell の中ですでに構築されているものとします。
-  :ref:`IDE Build Tool Generators` の中から選択すると、特定の環境は必要ありません。
+  :ref:`Command-Line Build Tool Generators` の中から選択すると、CMake はコンパイラなどツールチェインに必要な環境がすでに Shell の中で構築されているものとみなします。
+  あるいは :ref:`IDE Build Tool Generators` の中から選択すると特定の環境は必要ありません。
 
 
 .. _`プロジェクトのビルドシステムを生成する`:
@@ -86,30 +86,27 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 プロジェクトのビルドシステムを生成する
 ======================================
 
-Run CMake with one of the following command signatures to specify the
-source and build trees and generate a buildsystem:
+次に示すコマンド・シグネチャのいずれかに、ソースツリーとビルドツリーを指定して CMake を実行すると、ビルドシステムが生成されます：
 
 ``cmake [<options>] -B <path-to-build> [-S <path-to-source>]``
 
   .. versionadded:: 3.13
 
-  Uses ``<path-to-build>`` as the build tree and ``<path-to-source>``
-  as the source tree.  The specified paths may be absolute or relative
-  to the current working directory.  The source tree must contain a
-  ``CMakeLists.txt`` file.  The build tree will be created automatically
-  if it does not already exist.  For example:
+  ``<path-to-build>`` にはビルドツリーのパス名、``<path-to-source>`` にソースツリーのパス名を指定します。
+  ここで指定するパスは現在の作業ディレクトリ（cwd : Current Working directory）からの絶対パスまたは相対パスです。
+  ソースツリーには ``CMakeLists.txt`` ファイルが配置されている必要があります。
+  ビルドツリーは、実行時に存在していなければ自動的に生成されます。
+  実行例は:
 
   .. code-block:: console
 
     $ cmake -S src -B build
 
 ``cmake [<options>] <path-to-source>``
-  Uses the current working directory as the build tree, and
-  ``<path-to-source>`` as the source tree.  The specified path may
-  be absolute or relative to the current working directory.
-  The source tree must contain a ``CMakeLists.txt`` file and must
-  *not* contain a ``CMakeCache.txt`` file because the latter
-  identifies an existing build tree.  For example:
+  ビルドツリーは現在の作業ディレクトリ（cwd）とし、``<path-to-source>`` にソースツリーのパス名を指定します。
+  ここで指定するパスは現在の作業ディレクトリ（cwd）からの絶対パスまたは相対パスです。
+  ソースツリーには ``CMakeLists.txt`` ファイルが配置されている必要がありますが、 ``CMakeCache.txt`` ファイルは *配置しないで下さい* （このファイルでビルドツリーを識別するため）。
+  実行例は:
 
   .. code-block:: console
 
@@ -117,34 +114,31 @@ source and build trees and generate a buildsystem:
     $ cmake ../src
 
 ``cmake [<options>] <path-to-existing-build>``
-  Uses ``<path-to-existing-build>`` as the build tree, and loads the
-  path to the source tree from its ``CMakeCache.txt`` file, which must
-  have already been generated by a previous run of CMake.  The specified
-  path may be absolute or relative to the current working directory.
-  For example:
+  ``<path-to-existing-build>`` にはビルドツリーのパス名を指定し、ソースツリーは、そのパスに配置されている（前の CMake 実行で生成した）既存の ``CMakeCache.txt`` ファイルから取得します。
+  ここで指定するパスは現在の作業ディレクトリ（cwd）からの絶対パスまたは相対パスです。
+  実行例は:
 
   .. code-block:: console
 
     $ cd build
     $ cmake .
 
-In all cases the ``<options>`` may be zero or more of the `Options`_ below.
+すべてのコマンド・シグネチャにおいて、``<options>`` には 0 個以上の `オプション`_ を指定します。
 
-The above styles for specifying the source and build trees may be mixed.
-Paths specified with :option:`-S <cmake -S>` or :option:`-B <cmake -B>`
-are always classified as source or build trees, respectively.  Paths
-specified with plain arguments are classified based on their content
-and the types of paths given earlier.  If only one type of path is given,
-the current working directory (cwd) is used for the other.  For example:
+上で説明したとおり、ソースツリーとビルドツリーを一緒に指定しても問題ありません。
+オプションの :option:`-S <cmake -S>` や :option:`-B <cmake -B>` で指定するパス名は常にソースツリーまたはビルドツリーとして扱われます。
+単純に引数として指定したツリーのパス名は、その場所と前に指定したツリーのパスの種類（ソースツリーまたはビルドツリー）に応じて扱われます。
+ソースツリーまたはビルドツリーのうちパス名を一つしか与えなかった場合、現在の作業ディレクトリ（cwd）がもう一方のツリーのパス名として使用されます。
+整理すると:
 
 ============================== ============ ===========
- Command Line                   Source Dir   Build Dir
+ コマンドライン                ソースツリー ビルドツリー
 ============================== ============ ===========
  ``cmake -B build``             `cwd`        ``build``
  ``cmake -B build src``         ``src``      ``build``
  ``cmake -B build -S src``      ``src``      ``build``
  ``cmake src``                  ``src``      `cwd`
- ``cmake build`` (existing)     `loaded`     ``build``
+ ``cmake build`` (既存)         `loaded`     ``build``
  ``cmake -S src``               ``src``      `cwd`
  ``cmake -S src build``         ``src``      ``build``
  ``cmake -S src -B build``      ``src``      ``build``
@@ -152,27 +146,24 @@ the current working directory (cwd) is used for the other.  For example:
 
 .. versionchanged:: 3.23
 
-  CMake warns when multiple source paths are specified.  This has never
-  been officially documented or supported, but older versions accidentally
-  accepted multiple source paths and used the last path specified.
-  Avoid passing multiple source path arguments.
+  複数のソースツリーを指定した場合、CMake は警告を出します。
+  このような指定はドキュメントで明記していませんし未サポートですが、古いバージョンの CMake は誤って警告を出さず、最後に指定したパス名をそのまま使います。
+  複数のソースツリーを引数として渡さないようにして下さい。
 
-After generating a buildsystem one may use the corresponding native
-build tool to build the project.  For example, after using the
-:generator:`Unix Makefiles` generator one may run ``make`` directly:
+ビルドシステムを生成したら、これに対応するネィティブなビルドツールを使ってプロジェクトをビルドします。
+たとえば、:generator:`Unix Makefiles` のジェネレータを使った場合、ビルドシステムでそのまま ``make`` を実行できます：
 
   .. code-block:: console
 
     $ make
     $ make install
 
-Alternatively, one may use :program:`cmake` to `プロジェクトをビルドする`_ by
-automatically choosing and invoking the appropriate native build tool.
+もしくは、ビルドシステムが :program:`cmake` を使用した場合は、自動的に `プロジェクトをビルドする`_ に従い、適切なビルドツールを呼び出してくれます。
 
 .. _`CMake Options`:
 
-Options
--------
+オプション
+----------
 
 .. program:: cmake
 
@@ -182,9 +173,8 @@ Options
 
  .. versionadded:: 3.24
 
- Perform a fresh configuration of the build tree.
- This removes any existing ``CMakeCache.txt`` file and associated
- ``CMakeFiles/`` directory, and recreates them from scratch.
+ ビルドツリーで、新たな構成を作成する。
+ これにより、既存の ``CMakeCache.txt`` ファイルと関連する ``CMakeFiles/`` ディレクトリが削除され、改めて実行した構成で再作成される。
 
 .. option:: -L[A][H]
 
@@ -710,8 +700,8 @@ supported by some generators.
 
 .. _`Script Processing Mode`:
 
-スクリプトを実行する
-====================
+CMake スクリプトを実行する
+==========================
 
 .. program:: cmake
 

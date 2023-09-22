@@ -1,46 +1,38 @@
 .. option:: -S <path-to-source>
 
- Path to root directory of the CMake project to build.
+ CMake プロジェクトの root ディレクトリ（ソースツリー）を指定する。
 
 .. option:: -B <path-to-build>
 
- Path to directory which CMake will use as the root of build directory.
+ CMake がビルド・ツリーとして使用するディレクトリを指定する。
 
- If the directory doesn't already exist CMake will make it.
+ もしディレクトリがまだ存在していなかったら、CMake が作成する。
 
 .. option:: -C <initial-cache>
 
- Pre-load a script to populate the cache.
+ CMake スクリプトを事前にロードしてキャッシュにまとめる。
 
- When CMake is first run in an empty build tree, it creates a
- ``CMakeCache.txt`` file and populates it with customizable settings for
- the project.  This option may be used to specify a file from which
- to load cache entries before the first pass through the project's
- CMake listfiles.  The loaded entries take priority over the
- project's default values.  The given file should be a CMake script
- containing :command:`set` commands that use the ``CACHE`` option, not a
- cache-format file.
+ 空っぽのビルドツリーで初めて CMake を実行すると、``CMakeCache.txt`` ファイルを生成し、プロジェクトでカスタマイズ可能な設定がそのファイルの中にキャッシュ（``CACHE`` エントリ）として保存される。
+ このオプションで、プロジェクトの ``CMakeLists.txt`` を読む前に、キャッシュとして保存されているエントリを読み込むファイルを指定する。
+ キャッシュから読み込んだエントリは、プロジェクトのデフォルト値よりも優先度が高い。
+ ここで指定するファイルはキャッシュ形式のファイルではなく、``CACHE`` オプションを使う :command:`set` コマンドを含んだ CMake スクリプトにすること。
 
- References to :variable:`CMAKE_SOURCE_DIR` and :variable:`CMAKE_BINARY_DIR`
- within the script evaluate to the top-level source and build tree.
+ CMake スクリプトに含まれる変数 :variable:`CMAKE_SOURCE_DIR` と :variable:`CMAKE_BINARY_DIR` はそれぞれソースツリーとビルドツリーとして扱われる。
 
 .. option:: -D <var>:<type>=<value>, -D <var>=<value>
 
- Create or update a CMake ``CACHE`` entry.
+ CMake の ``CACHE`` エントリを作成、または更新する。
 
- When CMake is first run in an empty build tree, it creates a
- ``CMakeCache.txt`` file and populates it with customizable settings for
- the project.  This option may be used to specify a setting that
- takes priority over the project's default value.  The option may be
- repeated for as many ``CACHE`` entries as desired.
+ 空っぽのビルドツリーで初めて CMake を実行すると、``CMakeCache.txt`` ファイルを生成し、プロジェクトでカスタマイズ可能な設定がそのファイルの中にキャッシュ（``CACHE`` エントリ）として保存される。
+ このオプションで、プロジェクトのデフォルト値よりも優先される設定を指定する。
+ このオプションは、必要な数の ``CACHE`` エントリに対して繰り返し指定することができる。
 
- If the ``:<type>`` portion is given it must be one of the types
- specified by the :command:`set` command documentation for its
- ``CACHE`` signature.
- If the ``:<type>`` portion is omitted the entry will be created
- with no type if it does not exist with a type already.  If a
- command in the project sets the type to ``PATH`` or ``FILEPATH``
- then the ``<value>`` will be converted to an absolute path.
+ ``:<type>`` に指定する型は ``CACHE`` シグネチャに対して :command:`set` コマンドで説明されている型のいずれかにすること。
+ ``:<type>`` を省略した場合、型が存在しない ``CACHE`` エントリは型なしで作成される。
+ プロジェクトで使っているコマンドが型を ``PATH`` または ``FILEPATH`` に設定すると、``<value>`` は自動的に絶対パスに変換される。
+
+ このオプションは、This option may also be given as a single argument:
+ ``-D<var>:<type>=<value>`` or ``-D<var>=<value>``.
 
  This option may also be given as a single argument:
  ``-D<var>:<type>=<value>`` or ``-D<var>=<value>``.
