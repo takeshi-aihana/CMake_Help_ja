@@ -69,6 +69,7 @@ Or, if you plan to develop CMake or otherwise run the test suite, create
 a separate build tree::
 
   $ mkdir build && cd build
+  # using for sphinx-doc
   $ export LC_ALL=C
   $ ../bootstrap --sphinx-html && make
 
