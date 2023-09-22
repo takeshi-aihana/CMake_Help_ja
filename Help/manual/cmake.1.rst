@@ -39,13 +39,13 @@ cmake(1)
 説明
 ====
 
-:program:`cmake` はクロスプラットフォームな「ビルドシステム生成 CMake」（*buildsystem generator CMake*） のコマンドライン・インタフェース（CLI）です。上の `概要`_ に一覧にした操作は、以下のセクションで説明するようにして実行することが可能です。
+:program:`cmake` は、「クロスプラットフォームに対応したビルドシステムのジェネレータ（生成器）」である CMake のコマンドライン・インタフェース（CLI）です。上の `概要`_ に一覧にした操作は、この下の各セクションで説明するように実行することが可能です。
 
-CMake でプロジェクトをビルドする場合は, `プロジェクトのビルドシステムを生成する`_ を参照して下さい。さらに :program:`cmake` を使って `プロジェクトをビルドする`_ 、 `プロジェクトをインストールする`_ ことができる他に、関連する他のビルドツール（ ``make`` など）を直接実行できます。また :program:`cmake` を使って `ヘルプを表示する`_  ことも可能です。
+CMake でプロジェクトをビルドする場合は, `プロジェクトのビルドシステムを生成する`_ を参照して下さい。追加で　:program:`cmake` を使って `プロジェクトをビルドする`_ とか、 `プロジェクトをインストールする`_ ことができる他、関連する他のビルドツール（``make`` など）を直接実行できます。また :program:`cmake` を使って `ヘルプを表示する`_  ことも可能です。
 
-その他の操作として、スクリプトを作成するソフトウェア開発者が使用することを前提として、彼らのビルドをサポートするために :manual:`CMake language <cmake-language(7)>` があります。
+その他の操作として、スクリプトを作成するソフトウェア開発者が使用することを前提として、彼らのビルドを CMake でサポートするために :manual:`CMake language <cmake-language(7)>` があります。
 
-CLI である :program:`cmake` の代わりに利用できる GUI については :manual:`ccmake <ccmake(1)>` と :manual:`cmake-gui <cmake-gui(1)>` を参照して下さい。CMake から実行できる単体テストやパッケージ作成機能に対するコマンドライン・インタフェースについては、それぞれ :manual:`ctest <ctest(1)>` と :manual:`cpack <cpack(1)>` を参照して下さい。
+:program:`cmake` コマンドライン・インタフェースの代わりとして利用できるグラフィカル・ユーザ・インタフェース（GUI）については :manual:`ccmake <ccmake(1)>` と :manual:`cmake-gui <cmake-gui(1)>` を参照して下さい。CMake から実行できる単体テストやパッケージ作成機能に対するコマンドライン・インタフェースについては、それぞれ :manual:`ctest <ctest(1)>` と :manual:`cpack <cpack(1)>` を参照して下さい。
 
 CMake 全体の詳細については、このマニュアルの最後にある  `関連項目`_ のリンクを参照して下さい。
 
@@ -53,56 +53,33 @@ CMake 全体の詳細については、このマニュアルの最後にある  
 CMake のビルドシステムについて
 ==============================
 
-*ビルドシステム* とはプロジェクトの実行形式やライブラリをソースコードから生成する方法を *ビルド・ツール* を使い、自動化を含めて具体化するものです。
-たとえば、あるビルドシステムはコマンドラインの ``make`` ツールと ``Makefile`` であったり、あるいは統合開発環境（IDE）で使うプロジェクトファイルであったりします。
-In order to avoid maintaining multiple such buildsystems, a project may specify its buildsystem abstractly using files written in the :manual:`CMake language <cmake-language(7)>`.
-From these files CMake generates a preferred buildsystem locally for each user through a backend called a *generator*.
+*ビルドシステム* とはプロジェクトの実行形式やライブラリをソースコードから生成する方法を *ビルド・ツール* を使って自動化を含めて具体化するものです。
+それは、たとえば、あるビルドシステムはコマンドラインの ``make`` と ``Makefile`` であったり、あるいは統合開発環境（IDE）で使うプロジェクトファイルであったりします。
+いろいろな種類のビルドシステムを何度も保守することにならないように、あるプロジェクトでは :manual:`CMake language <cmake-language(7)>` で説明しているファイルを使い、ビルドシステムを抽象的に指定している場合があります。
+そのような場合、CMake はこれらのファイルから  *ジェネレータ* と呼ばれるバックエンドを介し、ユーザが好むビルドシステムを生成してくれます。
 
+CMake でビルドシステムを生成する場合、以下を選択する必要があります：
 
+ソースツリー（Source Tree）
+  プロジェクトによって提供されたソースファイルなどが配置されているトップレベルのディレクトリには、マニュアルの :manual:`cmake-language(7)` に記載されている ``CMakeLists.txt`` というファイルを配置し、その中にビルドシステムを指定します。
+  このファイルは複数のサブディレクトリに配置でき、その場合は :manual:`cmake-buildsystem(7)` で説明されているように、ビルド・ターゲットやそのれらの依存関係をそれぞれ指定します。
 
-A *buildsystem* describes how to build a project's executables and libraries
-from its source code using a *build tool* to automate the process.  For
-example, a buildsystem may be a ``Makefile`` for use with a command-line
-``make`` tool or a project file for an Integrated Development Environment
-(IDE).  In order to avoid maintaining multiple such buildsystems, a project
-may specify its buildsystem abstractly using files written in the
-:manual:`CMake language <cmake-language(7)>`.  From these files CMake
-generates a preferred buildsystem locally for each user through a backend
-called a *generator*.
+ビルドツリー（Build Tree）
+  トップレベルのディレクトリには、生成されたビルドシステムのファイルと、それを使ってビルドした結果（たとえば、実行形式やライブラリ）が格納されます。
+  CMake は、このディレクトリをビルドツリーとして認識してビルドシステムで利用する構成情報やビルドオプションを ``CMakeCache.txt`` というファイルに保存します。
 
-To generate a buildsystem with CMake, the following must be selected:
+  ソースツリーの初期状態を維持しておくため、それとは別のビルドツリーを使い、いわゆる「ソースの外（*out-of-source*）」でビルドを実施します。
+  ビルドツリーがソースツリーの中にあるような「ソースの中（*in-source*）」でのビルドもサポートしていますが、これは推奨していません。
 
-Source Tree
-  The top-level directory containing source files provided by the project.
-  The project specifies its buildsystem using files as described in the
-  :manual:`cmake-language(7)` manual, starting with a top-level file named
-  ``CMakeLists.txt``.  These files specify build targets and their
-  dependencies as described in the :manual:`cmake-buildsystem(7)` manual.
+ジェネレータ（Generator）
+  これは CMake で生成するビルドシステムの種類を指定します。
+  サポートしているすべてのジェネレータについては、マニュアルの :manual:`cmake-generators(7)` を参照して下さい。
+  :option:`cmake --help` を実行した場合も、実際に利用可能なジェネレータの一覧が表示されます。
+  オプションの :option:`-G <cmake -G>` を使ってジェネレータを指定する、あるいは現在のプラットフォーム向けのデフォルトのジェネレータを CMake に選択させる方法があります。
 
-Build Tree
-  The top-level directory in which buildsystem files and build output
-  artifacts (e.g. executables and libraries) are to be stored.
-  CMake will write a ``CMakeCache.txt`` file to identify the directory
-  as a build tree and store persistent information such as buildsystem
-  configuration options.
+  :ref:`Command-Line Build Tool Generators` の中から選択すると、CMake はコンパイラなどツールチェインに必要な環境が Shell の中ですでに構築されているものとします。
+  :ref:`IDE Build Tool Generators` の中から選択すると、特定の環境は必要ありません。
 
-  To maintain a pristine source tree, perform an *out-of-source* build
-  by using a separate dedicated build tree.  An *in-source* build in
-  which the build tree is placed in the same directory as the source
-  tree is also supported, but discouraged.
-
-Generator
-  This chooses the kind of buildsystem to generate.  See the
-  :manual:`cmake-generators(7)` manual for documentation of all generators.
-  Run :option:`cmake --help` to see a list of generators available locally.
-  Optionally use the :option:`-G <cmake -G>` option below to specify a
-  generator, or simply accept the default CMake chooses for the current
-  platform.
-
-  When using one of the :ref:`Command-Line Build Tool Generators`
-  CMake expects that the environment needed by the compiler toolchain
-  is already configured in the shell.  When using one of the
-  :ref:`IDE Build Tool Generators`, no particular environment is needed.
 
 .. _`プロジェクトのビルドシステムを生成する`:
 
