@@ -10,11 +10,11 @@
 
 .. option:: -C <initial-cache>
 
- CMake スクリプトを事前にロードしてキャッシュにまとめる。
+ CMake スクリプトを事前に読み込んでキャッシュにまとめる。
 
  空っぽのビルドツリーで初めて CMake を実行すると、``CMakeCache.txt`` ファイルを生成し、プロジェクトでカスタマイズ可能な設定がそのファイルの中にキャッシュ（``CACHE`` エントリ）として保存される。
  このオプションで、プロジェクトの ``CMakeLists.txt`` を読む前に、キャッシュとして保存されているエントリを読み込むファイルを指定する。
- キャッシュから読み込んだエントリは、プロジェクトのデフォルト値よりも優先度が高い。
+ ファイルから読み込んだ ``CACHE`` エントリは、プロジェクトのデフォルト値よりも優先度が高い。
  ここで指定するファイルはキャッシュ形式のファイルではなく、``CACHE`` オプションを使う :command:`set` コマンドを含んだ CMake スクリプトにすること。
 
  CMake スクリプトに含まれる変数 :variable:`CMAKE_SOURCE_DIR` と :variable:`CMAKE_BINARY_DIR` はそれぞれソースツリーとビルドツリーとして扱われる。
@@ -27,34 +27,25 @@
  このオプションで、プロジェクトのデフォルト値よりも優先される設定を指定する。
  このオプションは、必要な数の ``CACHE`` エントリに対して繰り返し指定することができる。
 
- ``:<type>`` に指定する型は ``CACHE`` シグネチャに対して :command:`set` コマンドで説明されている型のいずれかにすること。
+ ``:<type>`` に指定する型は ``CACHE`` エントリに対して :command:`set` コマンドで説明されている型のいずれかにすること。
  ``:<type>`` を省略した場合、型が存在しない ``CACHE`` エントリは型なしで作成される。
  プロジェクトで使っているコマンドが型を ``PATH`` または ``FILEPATH`` に設定すると、``<value>`` は自動的に絶対パスに変換される。
 
- このオプションは、This option may also be given as a single argument:
- ``-D<var>:<type>=<value>`` or ``-D<var>=<value>``.
+ このオプションは、一個の引数として与えることもできる：
+ ``-D<var>:<type>=<value>`` または ``-D<var>=<value>``
 
- This option may also be given as a single argument:
- ``-D<var>:<type>=<value>`` or ``-D<var>=<value>``.
-
- It's important to note that the order of ``-C`` and ``-D`` arguments is
- significant. They will be carried out in the order they are listed, with the
- last argument taking precedence over the previous ones. For example, if you
- specify ``-DCMAKE_BUILD_TYPE=Debug``, followed by a ``-C`` argument with a
- file that calls:
+ オプション ``-C`` と ``-D`` の順番は重要です。
+ これらのオプションは指定した順番で解釈され、後にある引数が前の引数よりも優先されます。
+ たとえば、オプション ``-DCMAKE_BUILD_TYPE=Debug`` の後ろに、オプション ``-C`` で、次の CMake スクリプトを呼び出すファイルを引数として指定すると：
 
  .. code-block:: cmake
 
    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 
- then the ``-C`` argument will take precedence, and ``CMAKE_BUILD_TYPE`` will
- be set to ``Release``. However, if the ``-D`` argument comes after the ``-C``
- argument, it will be set to ``Debug``.
+ オプション ``-C`` が優先され、変数 ``CMAKE_BUILD_TYPE`` には ``Release`` にセットされます。
+ 但し、オプション ``-D`` が ``-C`` の後ろで指定された場合は ``Debug`` がセットされます。
 
- If a ``set(... CACHE ...)`` call in the ``-C`` file does not use ``FORCE``,
- and a ``-D`` argument sets the same variable, the ``-D`` argument will take
- precedence regardless of order because of the nature of non-``FORCE``
- ``set(... CACHE ...)`` calls.
+ もしオプション ``-C`` に渡したファイルの ``set(... CACHE ...)`` コマンドで ``FORCE`` を指定せず、オプション ``-D`` で同じ変数を指定した場合は、``-D`` で指定した設定が順番に関係なく優先される（なぜならば ``FORCE`` ではない ``set(... CACHE ...)`` の呼び出しになるので）
 
 .. option:: -U <globbing_expr>
 
