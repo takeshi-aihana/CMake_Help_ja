@@ -43,112 +43,102 @@
    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 
  オプション ``-C`` が優先され、変数 ``CMAKE_BUILD_TYPE`` には ``Release`` にセットされます。
- 但し、オプション ``-D`` が ``-C`` の後ろで指定された場合は ``Debug`` がセットされます。
+ 一方、オプション ``-D`` が ``-C`` の後ろで指定された場合は ``Debug`` がセットされます。
 
- もしオプション ``-C`` に渡したファイルの ``set(... CACHE ...)`` コマンドで ``FORCE`` を指定せず、オプション ``-D`` で同じ変数を指定した場合は、``-D`` で指定した設定が順番に関係なく優先される（なぜならば ``FORCE`` ではない ``set(... CACHE ...)`` の呼び出しになるので）
+ もしオプション ``-C`` に渡したファイルの中で、``set(... CACHE ...)`` コマンドに ``FORCE`` を指定せず、オプション ``-D`` で同じ変数を指定した場合は、``-D`` で指定した設定が順番に関係なく優先される（なぜならば ``FORCE`` ではない ``set(... CACHE ...)`` の呼び出しになるので）
 
 .. option:: -U <globbing_expr>
 
- Remove matching entries from CMake ``CACHE``.
+ CMake が保持している ``CACHE`` から、指定したエントリを削除する
 
- This option may be used to remove one or more variables from the
- ``CMakeCache.txt`` file, globbing expressions using ``*`` and ``?`` are
- supported.  The option may be repeated for as many ``CACHE`` entries as
- desired.
+ このオプションは ``CMakeCache.txt`` ファイルから一個以上の変数を削除しする際に使用する（エントリの指定は ``*`` と ``?`` を使った式の glob 評価をサポートする）。
+ このオプションは、必要な数の ``CACHE`` エントリに対して繰り返し指定することができる。 
 
- Use with care, you can make your ``CMakeCache.txt`` non-working.
+ お使いの ``CMakeCache.txt`` が役に立たなくなる可能性があるので、使用には注意すること。
 
 .. option:: -G <generator-name>
 
- Specify a build system generator.
+ ビルドシステムのジェネレータを指定する。
 
- CMake may support multiple native build systems on certain
- platforms.  A generator is responsible for generating a particular
- build system.  Possible generator names are specified in the
- :manual:`cmake-generators(7)` manual.
+ CMake は特定のプラットフォームにネイティブなビルドシステムを複数サポートしている。
+ ジェネレータは特定のビルドシステムを生成する役割を持つ。
+ 指定できるジェネレータ名はマニュアルの :manual:`cmake-generators(7)` に記載している。
 
- If not specified, CMake checks the :envvar:`CMAKE_GENERATOR` environment
- variable and otherwise falls back to a builtin default selection.
+ このオプションを指定しない場合、CMake は環境変数 :envvar:`CMAKE_GENERATOR` をチェックし、それ以外は CMake に組み込まれたデフォルトのジェネレータになる。
 
 .. option:: -T <toolset-spec>
 
- Toolset specification for the generator, if supported.
+ ジェネレータのツールセット仕様を指定する（ジェネレータでサポートしている場合）
 
- Some CMake generators support a toolset specification to tell
- the native build system how to choose a compiler.  See the
- :variable:`CMAKE_GENERATOR_TOOLSET` variable for details.
+ 一部のジェネレータはコンパイラなどのツールチェインの選択についてネイティブのビルドシステムに問い合わせる「ツールセット仕様」をサポートしているものがある。
+ 詳細は変数 :variable:`CMAKE_GENERATOR_TOOLSET` の説明を参照のこと。
 
 .. option:: -A <platform-name>
 
- Specify platform name if supported by generator.
+ プラットフォーム名を指定する（ジェネレータでサポートしている場合）
 
- Some CMake generators support a platform name to be given to the
- native build system to choose a compiler or SDK.  See the
- :variable:`CMAKE_GENERATOR_PLATFORM` variable for details.
+ 一部のジェネレータはコンパイラや SDK を選択するためにネイティブのビルドシステムにプラットフォーム名を渡す機能をサポートしているものがある。
+ 詳細は変数 :variable:`CMAKE_GENERATOR_PLATFORM` の説明を参照のこと。
 
 .. option:: --toolchain <path-to-file>
 
- Specify the cross compiling toolchain file, equivalent to setting
- :variable:`CMAKE_TOOLCHAIN_FILE` variable.
+ クロス・コンパイル用のツールチェイン・ファイルを指定する（これは変数 :variable:`CMAKE_TOOLCHAIN_FILE` を使うことと等価である）。
 
 .. option:: --install-prefix <directory>
 
- Specify the installation directory, used by the
- :variable:`CMAKE_INSTALL_PREFIX` variable. Must be an absolute path.
+ 変数 :variable:`CMAKE_INSTALL_PREFIX` で使用するインストール・ディレクトリを指定する。
+ 絶対パス名にすること。
 
 .. option:: -Wno-dev
 
- Suppress developer warnings.
+ 開発者向けの警告（*Warning*）を抑制する。
 
- Suppress warnings that are meant for the author of the
- ``CMakeLists.txt`` files. By default this will also turn off
- deprecation warnings.
+ これは ``CMakeLists.txt`` ファイルの作者向けの警告表示を抑制することを意味する。
+ このオプションを指定すると、開発者向けの警告の他に非推奨（*deprecated*）の警告も抑制される（デフォルト）。
 
 .. option:: -Wdev
 
- Enable developer warnings.
+ 開発者向けの警告（*Warning*）を抑制しない。
 
- Enable warnings that are meant for the author of the ``CMakeLists.txt``
- files. By default this will also turn on deprecation warnings.
+ これは ``CMakeLists.txt`` ファイルの作者向けの警告表示を有効にすることを意味する。
+ このオプションを指定すると非推奨（*deprecated*）の警告も表示する
 
 .. option:: -Wdeprecated
 
- Enable deprecated functionality warnings.
+ 非推奨（*deprecated*）な機能についての警告（*Warning*）を抑制しない。
 
- Enable warnings for usage of deprecated functionality, that are meant
- for the author of the ``CMakeLists.txt`` files.
+ これは ``CMakeLists.txt`` ファイルの作者に対して、廃止予定の機能を使用したら警告を表示することを意味する。
 
 .. option:: -Wno-deprecated
 
- Suppress deprecated functionality warnings.
+ 非推奨（*deprecated*）な機能についての警告（*Warning*）を抑制する。
 
- Suppress warnings for usage of deprecated functionality, that are meant
- for the author of the ``CMakeLists.txt`` files.
+ これは ``CMakeLists.txt`` ファイルの作者に対して、廃止予定の機能を使用しても警告を表示しないことを意味する。
 
 .. option:: -Werror=<what>
 
- Treat CMake warnings as errors. ``<what>`` must be one of the following:
+ CMake の警告（*Warning*）をエラーとして扱う。
+ ``<what>`` には次のいずれかを指定すること：
 
  ``dev``
-   Make developer warnings errors.
+  開発者向けの警告（*Warning*）をエラーにする。
 
-   Make warnings that are meant for the author of the ``CMakeLists.txt`` files
-   errors. By default this will also turn on deprecated warnings as errors.
+  これは ``CMakeLists.txt`` ファイルの作者に対する警告をエラー扱いにすることを意味する。
+  このオプションを指定すると、開発者向けの警告の他に非推奨（*deprecated*）の警告もエラーになる（デフォルト）。  
 
  ``deprecated``
-  Make deprecated macro and function warnings errors.
+  非推奨（*deprecated*）なマクロと関数の警告（*Warning*）をエラーにする。
 
-  Make warnings for usage of deprecated macros and functions, that are meant
-  for the author of the ``CMakeLists.txt`` files, errors.
+  これは ``CMakeLists.txt`` ファイルの作者に対して、廃止予定のマクロや関数を使用したときの警告をエラーにすることを意味する。
 
 .. option:: -Wno-error=<what>
 
- Do not treat CMake warnings as errors. ``<what>`` must be one of the following:
+ CMake の警告（*Warning*）をエラーとして扱わない。
+ ``<what>`` には次のいずれかを指定すること：
 
  ``dev``
-  Make warnings that are meant for the author of the ``CMakeLists.txt`` files not
-  errors. By default this will also turn off deprecated warnings as errors.
+  これは ``CMakeLists.txt`` ファイルの作者に対する警告をエラー扱いにしないことを意味する。
+  このオプションを指定すると、開発者向けの警告の他に非推奨（*deprecated*）の警告もエラーにならない（デフォルト）。
 
  ``deprecated``
-  Make warnings for usage of deprecated macros and functions, that are meant
-  for the author of the ``CMakeLists.txt`` files, not errors.
+  これは ``CMakeLists.txt`` ファイルの作者に対して、廃止予定のマクロや関数を使用したときの警告をエラーにしないことを意味する。
