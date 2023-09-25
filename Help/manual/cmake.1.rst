@@ -363,81 +363,69 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --trace-source=<file>
 
- Put cmake in trace mode, but output only lines of a specified file.
+ CMake をトレースモードで実行するが、指定したファイルに対してだけ出力する。
 
- Multiple options are allowed.
+ ファイルが複数ある場合は、このオプションを複数指定する。
 
 .. option:: --trace-redirect=<file>
 
- Put cmake in trace mode and redirect trace output to a file instead of stderr.
+ CMake をトレースモードで実行し、その出力を標準エラー出力ではなくファイルに書き出す。
 
 .. option:: --warn-uninitialized
 
- Warn about uninitialized values.
+ 初期化していない値を警告する。
 
- Print a warning when an uninitialized variable is used.
+ 初期化していない変数を使用した時に警告を出力する。
 
 .. option:: --warn-unused-vars
 
- Does nothing.  In CMake versions 3.2 and below this enabled warnings about
- unused variables.  In CMake versions 3.3 through 3.18 the option was broken.
- In CMake 3.19 and above the option has been removed.
+ 何もしない。
+ CMake バージョン 3.2 以下では、このオプションは未使用の変数について警告を出力する。
+ CMake バージョン 3.3 から 3.18 では、このオプションは機能しない。
+ CMake バージョン 3.19 以上では、このオプションは削除された。
 
 .. option:: --no-warn-unused-cli
 
- Don't warn about command line options.
+ コマンドライン・オプションについては警告しない。
 
- Don't find variables that are declared on the command line, but not
- used.
+ コマンドラインから変数を追加したが実際に使用していない場合、`find` コマンドの検索対象にしない。
 
 .. option:: --check-system-vars
 
- Find problems with variable usage in system files.
+ ビルドシステムのファイルに、未使用または未初期化の変数がないかチェックする。
 
- Normally, unused and uninitialized variables are searched for only
- in :variable:`CMAKE_SOURCE_DIR` and :variable:`CMAKE_BINARY_DIR`.
- This flag tells CMake to warn about other files as well.
+ デフォルトでは未使用と未初期化の変数は :variable:`CMAKE_SOURCE_DIR` と :variable:`CMAKE_BINARY_DIR` の中でしか検索しない。
+ このオプションを指定すると、それ以外のファイルについてチェックし警告するようになる。
 
 .. option:: --compile-no-warning-as-error
 
- Ignore target property :prop_tgt:`COMPILE_WARNING_AS_ERROR` and variable
- :variable:`CMAKE_COMPILE_WARNING_AS_ERROR`, preventing warnings from being
- treated as errors on compile.
+ ビルドターゲットのプロパティ :prop_tgt:`COMPILE_WARNING_AS_ERROR` と変数 :variable:`CMAKE_COMPILE_WARNING_AS_ERROR` を無視し、ターゲットのコンパイル時に警告がエラーとして扱われないようにする。
 
 .. option:: --profiling-output=<path>
 
- Used in conjunction with
- :option:`--profiling-format <cmake --profiling-format>` to output to a
- given path.
+ オプション :option:`--profiling-format <cmake --profiling-format>` と組み合わせて使用する。指定したパスに結果を出力する。
 
-.. option:: --profiling-format=<file>
+.. option:: --profiling-format=<format>
 
- Enable the output of profiling data of CMake script in the given format.
+ CMake スクリプトに対するプロファイルデータを、指定したフォーマットで出力する。
 
- This can aid performance analysis of CMake scripts executed. Third party
- applications should be used to process the output into human readable format.
+ このオプションは、CMake スクリプト実行時のパフォーマンス分析に役立つ。
+ この出力を、サードパーティ製のアプリケーションを使って可読でわかりやすいフォーマットに変換する必要がある。
 
- Currently supported values are:
- ``google-trace`` Outputs in Google Trace Format, which can be parsed by the
- about:tracing tab of Google Chrome or using a plugin for a tool like Trace
- Compass.
+ 現在サポートしているフォーマット：
+ ``google-trace`` は Google トレース・フォーマットで出力する（Google Chrome ブラウザの about:tracing タブやトレースコンパスのようなツールのプラグインを使ってパースできる）
 
 .. option:: --preset <preset>, --preset=<preset>
 
- Reads a :manual:`preset <cmake-presets(7)>` from
- ``<path-to-source>/CMakePresets.json`` and
- ``<path-to-source>/CMakeUserPresets.json``. The preset may specify the
- generator and the build directory, and a list of variables and other
- arguments to pass to CMake. The current working directory must contain
- CMake preset files. The :manual:`CMake GUI <cmake-gui(1)>` can
- also recognize ``CMakePresets.json`` and ``CMakeUserPresets.json`` files. For
- full details on these files, see :manual:`cmake-presets(7)`.
+ Reads a :manual:`preset <cmake-presets(7)>` from ``<path-to-source>/CMakePresets.json`` and ``<path-to-source>/CMakeUserPresets.json``.
+ The preset may specify the generator and the build directory, and a list of variables and other arguments to pass to CMake.
+ The current working directory must contain CMake preset files.
+ The :manual:`CMake GUI <cmake-gui(1)>` can also recognize ``CMakePresets.json`` and ``CMakeUserPresets.json`` files.
+ For full details on these files, see :manual:`cmake-presets(7)`.
 
- The presets are read before all other command line options. The options
- specified by the preset (variables, generator, etc.) can all be overridden by
- manually specifying them on the command line. For example, if the preset sets
- a variable called ``MYVAR`` to ``1``, but the user sets it to ``2`` with a
- ``-D`` argument, the value ``2`` is preferred.
+ The presets are read before all other command line options.
+ The options specified by the preset (variables, generator, etc.) can all be overridden by manually specifying them on the command line.
+ For example, if the preset sets a variable called ``MYVAR`` to ``1``, but the user sets it to ``2`` with a ``-D`` argument, the value ``2`` is preferred.
 
 .. option:: --list-presets[=<type>]
 
@@ -486,12 +474,11 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debugger-pipe <pipe name>, --debugger-pipe=<pipe name>
 
-  Name of the pipe (on Windows) or domain socket (on Unix) to use for
-  debugger communication.
+  デバッガとの通信で使用するパイプの名前（Windows 系）またはドメインソケット（Unix 系）を指定する。
 
 .. option:: --debugger-dap-log <log path>, --debugger-dap-log=<log path>
 
-  Logs all debugger communication to the specified file.
+  デバッガとの通信ログをファイルに記録する。
 
 .. _`Build Tool Mode`:
 
