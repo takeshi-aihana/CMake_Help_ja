@@ -417,35 +417,33 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --preset <preset>, --preset=<preset>
 
- Reads a :manual:`preset <cmake-presets(7)>` from ``<path-to-source>/CMakePresets.json`` and ``<path-to-source>/CMakeUserPresets.json``.
- The preset may specify the generator and the build directory, and a list of variables and other arguments to pass to CMake.
- The current working directory must contain CMake preset files.
- The :manual:`CMake GUI <cmake-gui(1)>` can also recognize ``CMakePresets.json`` and ``CMakeUserPresets.json`` files.
- For full details on these files, see :manual:`cmake-presets(7)`.
+ ``<path-to-source>/CMakePresets.json`` と ``<path-to-source>/CMakeUserPresets.json`` から :manual:`preset <cmake-presets(7)>` を読み込む。
+ この preset には、ジェネレータとビルドツリー、変数のリスト、そして CMake に渡すその他の引数を指定できる。
+ preset ファイルは、現在の作業ディレクトリ（cwd）に格納しておくこと。
+ :manual:`CMake GUI <cmake-gui(1)>` は ``CMakePresets.json`` と ``CMakeUserPresets.json`` のファイルも認識できる。
+ これらのファイルについて詳細は :manual:`cmake-presets(7)` を参照のこと。
 
- The presets are read before all other command line options.
- The options specified by the preset (variables, generator, etc.) can all be overridden by manually specifying them on the command line.
- For example, if the preset sets a variable called ``MYVAR`` to ``1``, but the user sets it to ``2`` with a ``-D`` argument, the value ``2`` is preferred.
+ preset は、他のコマンドライン・オプションよりも先に CMake が解釈する。
+ preset が指定したオプション（変数、ジェネレータなど）は全て、コマンドラインから指定した値で上書きすることが可能。
+ たとえば、preset が変数  ``MYVAR`` に ``1`` をセットしている場合に、コマンドラインから :option:`-D <cmake -D>` オプションで ``2`` にセットすると、この ``2`` が優先される。
 
 .. option:: --list-presets[=<type>]
 
- Lists the available presets of the specified ``<type>``.  Valid values for
- ``<type>`` are ``configure``, ``build``, ``test``, ``package``, or ``all``.
- If ``<type>`` is omitted, ``configure`` is assumed.  The current working
- directory must contain CMake preset files.
+ ``<type>`` の preset で利用可能なものの一覧を出力する。
+ ``<type>`` に指定できる値は ``configure`` 、``build`` 、 ``test`` 、 ``package`` 、 ``all`` のいずれか。
+ ``<type>`` を省略すると ``configure`` が指定されたものとする。
+ preset ファイルは、現在の作業ディレクトリ（cwd）に格納しておくこと。
 
 .. option:: --debugger
 
-  Enables interactive debugging of the CMake language. CMake exposes a debugging
-  interface on the pipe named by :option:`--debugger-pipe <cmake --debugger-pipe>`
-  that conforms to the `Debug Adapter Protocol`_ specification with the following
-  modifications.
+  CMake 言語の対話型デバッグを有効にする。
+  CMake は :option:`--debugger-pipe <cmake --debugger-pipe>` オプションで指定したパイプ上にデバッグ用インタフェースを公開する。
+  このインタフェースは `Debug Adapter Protocol`_  に、以下に示す幾つか変更を加えた仕様に準拠する。
 
-  The ``initialize`` response includes an additional field named ``cmakeVersion``
-  which specifies the version of CMake being debugged.
+  ``initialize`` コマンドの応答にはデバッグ中の CMake のバージョンを表す ``cmakeVersion`` と云う追加フィールドが含まれている。
 
   .. code-block:: json
-    :caption: Debugger initialize response
+    :caption: デバッガの initialize コマンドの応答
 
     {
       "cmakeVersion": {
@@ -456,19 +454,19 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
       }
     }
 
-  The members are:
+  このフィールドのメンバは：
 
   ``major``
-    An integer specifying the major version number.
+    メジャーバージョンの番号（整数値）
 
   ``minor``
-    An integer specifying the minor version number.
+    マイナーバージョンの番号（整数値）
 
   ``patch``
-    An integer specifying the patch version number.
+    パッチバージョンの番号（整数値）
 
   ``full``
-    A string specifying the full CMake version.
+    CMake のバージョン（文字列）
 
 .. _`Debug Adapter Protocol`: https://microsoft.github.io/debug-adapter-protocol/
 
