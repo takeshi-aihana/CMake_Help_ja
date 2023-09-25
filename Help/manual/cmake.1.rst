@@ -73,7 +73,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 ジェネレータ（Generator）
   これは CMake で生成するビルドシステムの種類を指定します。
-  サポートしているすべてのジェネレータについては、マニュアルの :manual:`cmake-generators(7)` を参照して下さい。
+  サポートしている全てのジェネレータについては、マニュアルの :manual:`cmake-generators(7)` を参照して下さい。
   :option:`cmake --help` を実行した場合も、実際に利用可能なジェネレータの一覧が表示されます。
   オプションの :option:`-G <cmake -G>` を使ってジェネレータを指定する、あるいは現在のプラットフォーム向けのデフォルトのジェネレータを CMake に選択させる方法があります。
 
@@ -123,7 +123,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
     $ cd build
     $ cmake .
 
-すべてのコマンド・シグネチャにおいて、``<options>`` には 0 個以上の `オプション`_ を指定します。
+全てのコマンド・シグネチャにおいて、``<options>`` には 0 個以上の `オプション`_ を指定します。
 
 上で説明したとおり、ソースツリーとビルドツリーを一緒に指定しても問題ありません。
 オプションの :option:`-S <cmake -S>` や :option:`-B <cmake -B>` で指定するパス名は常にソースツリーまたはビルドツリーとして扱われます。
@@ -189,7 +189,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: -N
 
- ビューモードにする。
+ CMake をビューモードで実行する。
 
  キャッシュを読み込むだけ。
  ビルドシステムの設定（*configure*）や生成（*generate*）のステップは実行しない。
@@ -250,7 +250,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debug-output
 
- デバッグモードにする。
+ CMake をデバッグモードで実行する。
 
  CMake 実行中に、 :command:`message(SEND_ERROR)` コマンドを使ってスタックトレースなどの追加情報を出力する。
 
@@ -264,52 +264,46 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debug-find-pkg=<pkg>[,...]
 
- CMake の `find` コマンドをデバッグモードで実行するg mode when running under calls to :command:`find_package(\<pkg\>) <find_package>`, where ``<pkg>`` is an entry in the given comma-separated list of case-sensitive package names.
+ CMake の :command:`find_package(\<pkg\>) <find_package>` （ ``<pkg>`` はパッケージ名を表す（大小文字を区別する）文字列をカンマで区切って並べたもの）コマンドをデバッグモードで実行する。
 
- Like :option:`--debug-find <cmake --debug-find>`, but limiting scope to the specified packages.
-
- Put cmake find commands in a debug mode when running under calls to :command:`find_package(\<pkg\>) <find_package>`, where ``<pkg>`` is an entry in the given comma-separated list of case-sensitive package names.
-
- Like :option:`--debug-find <cmake --debug-find>`, but limiting scope to the specified packages.
+ :option:`--debug-find <cmake --debug-find>` オプションと違う点は、指定したパッケージについてのみ検索すること。
 
 .. option:: --debug-find-var=<var>[,...]
 
- Put cmake find commands in a debug mode when called with ``<var>``
- as the result variable, where ``<var>`` is an entry in the given
- comma-separated list.
 
- Like :option:`--debug-find <cmake --debug-find>`, but limiting scope
- to the specified variable names.
+ 変数 ``<var>`` （変数を表す文字列をカンマで区切って並べたもの）を検索する CMake の `find` コマンドをデバッグモードで実行する。
+
+ :option:`--debug-find <cmake --debug-find>` オプションと違う点は、指定した変数についてのみ検索すること。
 
 .. option:: --trace
 
- Put cmake in trace mode.
+ CMake をトレースモードで実行する。
 
- Print a trace of all calls made and from where.
+ 何のコマンドが何処で呼ばれたかが分かるトレース情報を出力する。
 
 .. option:: --trace-expand
 
- Put cmake in trace mode.
+ CMake をトレースモードで実行する。
 
- Like :option:`--trace <cmake --trace>`, but with variables expanded.
+ :option:`--trace <cmake --trace>` オプションと違う点は、変数の内容が展開されて出力されること。
 
 .. option:: --trace-format=<format>
 
- Put cmake in trace mode and sets the trace output format.
+ CMake を出力フォーマットを指定して、トレースモードで実行する。
 
- ``<format>`` can be one of the following values.
+ ``<format>`` には次のいずれかを指定すること：
 
    ``human``
-     Prints each trace line in a human-readable format. This is the
-     default format.
+     一行ごとに可読なフォーマットでトレース結果を出力する。
+     これがデフォルトのフォーマット。
 
    ``json-v1``
-     Prints each line as a separate JSON document. Each document is
-     separated by a newline ( ``\n`` ). It is guaranteed that no
-     newline characters will be present inside a JSON document.
+     一行毎に JSON ドキュメントとしてトレース結果を出力する。
+     一行毎に JSON ドキュメントは改行 ( ``\n`` ) で区切られる。
+     JSON ドキュメントの内に改行文字が出力されないことが保証されている。
 
      .. code-block:: json
-       :caption: JSON trace format
+       :caption: JSON ドキュメント形式のトレース出力
 
        {
          "file": "/full/path/to/the/CMake/file.txt",
@@ -321,49 +315,39 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
          "global_frame": 4
        }
 
-     The members are:
+     出力されるメンバのキー：
 
      ``file``
-       The full path to the CMake source file where the function
-       was called.
+       呼び出された関数が定義された CMake ソースファイルへの絶対パス
 
      ``line``
-       The line in ``file`` where the function call begins.
+       呼び出された関数定義の先頭行
 
      ``line_end``
-       If the function call spans multiple lines, this field will
-       be set to the line where the function call ends. If the function
-       calls spans a single line, this field will be unset. This field
-       was added in minor version 2 of the ``json-v1`` format.
+       呼び出された関数定義の終了行（関数が一行だけの場合は空、このメンバは ``json-v1`` のバージョン 2 で追加された）
 
      ``defer``
-       Optional member that is present when the function call was deferred
-       by :command:`cmake_language(DEFER)`.  If present, its value is a
-       string containing the deferred call ``<id>``.
+       :command:`cmake_language(DEFER)` コマンドで関数呼び出しが延期された時に追加されるメンバで、延期された呼び出しを識別する文字列 ``<id>`` 
 
      ``cmd``
-       The name of the function that was called.
+      呼び出された関数名
 
      ``args``
-       A string list of all function parameters.
+       関数の引数を表す文字列を要素とするリスト
 
      ``time``
-       Timestamp (seconds since epoch) of the function call.
+       関数呼出しが発生した時のタイムスタンプ（エポックからの秒数）
 
      ``frame``
-       Stack frame depth of the function that was called, within the
-       context of the  ``CMakeLists.txt`` being processed currently.
+       処理中の ``CMakeLists.txt`` のコンテキスト中で、関数が呼び出されたスタックフレームの深さ
 
      ``global_frame``
-       Stack frame depth of the function that was called, tracked globally
-       across all ``CMakeLists.txt`` files involved in the trace. This field
-       was added in minor version 2 of the ``json-v1`` format.
+       ``CMakeLists.txt`` ファイル全体で追跡される関数が呼び出されたスタックフレームの深さ（このメンバは ``json-v1`` のバージョン 2 で追加された）
 
-     Additionally, the first JSON document outputted contains the
-     ``version`` key for the current major and minor version of the
-
+     さらに、最初に出力される JSON ドキュメントには、次のフォーマットに従った ``version`` キーが含まれる：
+     
      .. code-block:: json
-       :caption: JSON version format
+       :caption: JSON のバージョン出力
 
        {
          "version": {
@@ -372,11 +356,10 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
          }
        }
 
-     The members are:
+     出力されるメンバのキー：
 
      ``version``
-       Indicates the version of the JSON format. The version has a
-       major and minor components following semantic version conventions.
+       JSON フォーマットのバージョンを表す（このバージョンは major と minor のメンバを持つ）
 
 .. option:: --trace-source=<file>
 
