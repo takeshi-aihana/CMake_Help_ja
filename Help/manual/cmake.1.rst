@@ -226,61 +226,51 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --log-context
 
- Enable the :command:`message` command outputting context attached to each
- message.
+ :command:`message` コマンドで出力するメッセージにコンテキストを付与する。
 
- This option turns on showing context for the current CMake run only.
- To make showing the context persistent for all subsequent CMake runs, set
- :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` as a cache variable instead.
- When this command line option is given, :variable:`CMAKE_MESSAGE_CONTEXT_SHOW`
- is ignored.
+ このオプションは、現在の ``CMakeLists.txt`` に対する CMake 実行時にのみコンテキストを表示するようにする。
+ CMake を実行するたびにコンテキストを表示させたいのであれば、環境変数 :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` にセットしてキャッシュ変数にすること。
+ なの、このオプションを指定して CMake を実行すると、環境変数 :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` の値は無視される。
 
 .. option:: --debug-trycompile
 
- Do not delete the files and directories created for
- :command:`try_compile` / :command:`try_run` calls.
- This is useful in debugging failed checks.
+ :command:`try_compile` / :command:`try_run` コマンドの呼び出しで生成したファイルやディレクトリを削除しない。
+ これは CMake 実行時のエラーをデバッグする際に便利なオプションである。
 
- Note that some uses of :command:`try_compile` may use the same build tree,
- which will limit the usefulness of this option if a project executes more
- than one :command:`try_compile`.  For example, such uses may change results
- as artifacts from a previous try-compile may cause a different test to either
- pass or fail incorrectly.  This option is best used only when debugging.
+ :command:`try_compile` コマンドは同じビルドツリーで実行しても特に警告しないので、もしプロジェクトが :command:`try_compile` コマンドを複数回呼び出すようになっていると、期待した結果にならない可能性があるので注意すること。
+ このような場合、たとえば一つ前の実行で生成された成果物によりから別のテストの結果が変わってしまい、最終的な結果が変わってしまう可能性がある。
+ このオプションはデバッグ時にのみ使用すべきである。
 
- (With respect to the preceding, the :command:`try_run` command
- is effectively a :command:`try_compile`.  Any combination of the two
- is subject to the potential issues described.)
+ （上のケースに関して、 :command:`try_run` コマンドは実際のところ :command:`try_compile` コマンドと等価である。
+ これら二つのコマンドの組み合わせが、ここで説明した潜在的な問題の影響を受ける可能性があるので注意すること）
 
  .. versionadded:: 3.25
 
-   When this option is enabled, every try-compile check prints a log
-   message reporting the directory in which the check is performed.
+   このオプションを指定すると :command:`try_compile` コマンドを実行するたびに、 チェックしたディレクトリに関するログ・メッセージを出力する。
 
 .. option:: --debug-output
 
- Put cmake in a debug mode.
+ デバッグモードにする。
 
- Print extra information during the cmake run like stack traces with
- :command:`message(SEND_ERROR)` calls.
+ CMake 実行中に、 :command:`message(SEND_ERROR)` コマンドを使ってスタックトレースなどの追加情報を出力する。
 
 .. option:: --debug-find
 
- Put cmake find commands in a debug mode.
+ CMake の `find` コマンドをデバッグモードで実行する。
 
- Print extra find call information during the cmake run to standard
- error. Output is designed for human consumption and not for parsing.
- See also the :variable:`CMAKE_FIND_DEBUG_MODE` variable for debugging
- a more local part of the project.
+ CMake 実行中に `find` コマンドの追加情報を標準エラー出力に出力する。
+ この出力は可読なフォーマットであり、出力結果の解析に向いた出力ではないので注意すること。
+ プロジェクトでさらにローカルな部分をデバッグする際は、環境変数 :variable:`CMAKE_FIND_DEBUG_MODE` の説明も参照してください。
 
 .. option:: --debug-find-pkg=<pkg>[,...]
 
- Put cmake find commands in a debug mode when running under calls
- to :command:`find_package(\<pkg\>) <find_package>`, where ``<pkg>``
- is an entry in the given comma-separated list of case-sensitive package
- names.
+ CMake の `find` コマンドをデバッグモードで実行するg mode when running under calls to :command:`find_package(\<pkg\>) <find_package>`, where ``<pkg>`` is an entry in the given comma-separated list of case-sensitive package names.
 
- Like :option:`--debug-find <cmake --debug-find>`, but limiting scope
- to the specified packages.
+ Like :option:`--debug-find <cmake --debug-find>`, but limiting scope to the specified packages.
+
+ Put cmake find commands in a debug mode when running under calls to :command:`find_package(\<pkg\>) <find_package>`, where ``<pkg>`` is an entry in the given comma-separated list of case-sensitive package names.
+
+ Like :option:`--debug-find <cmake --debug-find>`, but limiting scope to the specified packages.
 
 .. option:: --debug-find-var=<var>[,...]
 
