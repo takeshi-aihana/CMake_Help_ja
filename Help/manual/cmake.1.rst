@@ -466,7 +466,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
     パッチバージョンの番号（整数値）
 
   ``full``
-    CMake のバージョン（文字列）
+    バージョンの完全形（文字列）
 
 .. _`Debug Adapter Protocol`: https://microsoft.github.io/debug-adapter-protocol/
 
