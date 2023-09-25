@@ -73,6 +73,8 @@ a separate build tree::
   $ export LC_ALL=C
   $ ../bootstrap --sphinx-html && make
 
+for Japanese translation, refer to https://runebook.dev/ja/docs/cmake/manual/cmake.1
+
 Windows
 ^^^^^^^
 

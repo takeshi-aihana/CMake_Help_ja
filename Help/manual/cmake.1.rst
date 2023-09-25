@@ -178,58 +178,51 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: -L[A][H]
 
- List non-advanced cached variables.
 
- List ``CACHE`` variables will run CMake and list all the variables from
- the CMake ``CACHE`` that are not marked as ``INTERNAL`` or :prop_cache:`ADVANCED`.
- This will effectively display current CMake settings, which can then be
- changed with :option:`-D <cmake -D>` option.  Changing some of the variables
- may result in more variables being created.  If ``A`` is specified, then it
- will display also advanced variables.  If ``H`` is specified, it will also
- display help for each variable.
+ `ADVANCED` ではないキャッシュ変数を一覧表示する。
+
+ CMake の ``CACHE`` エントリ のうち ``INTERNAL`` にも :prop_cache:`ADVANCED` にも分類されていない全ての変数を一覧表示する。
+ これは CMake で、オプション :option:`-D <cmake -D>` を使ってカスタマイズ可能な設定の現在の値を確認する際に便利なオプションである。
+ 任意の変数の変更すると、たくさんの変数が生成される場合がある。
+ ``A`` を指定すると :prop_cache:`ADVANCED` な変数も表示する。
+ ``H`` を指定すると各変数のヘルプも表示する
 
 .. option:: -N
 
- View mode only.
+ ビューモードにする。
 
- Only load the cache.  Do not actually run configure and generate
- steps.
+ キャッシュを読み込むだけ。
+ ビルドシステムの設定（*configure*）や生成（*generate*）のステップは実行しない。
+
 
 .. option:: --graphviz=<file>
 
- Generate graphviz of dependencies, see :module:`CMakeGraphVizOptions` for more.
+ ビルド時の依存関係を図化した graphviz のグラフを生成する（詳細は :module:`CMakeGraphVizOptions` を参照のこと）。
 
- Generate a graphviz input file that will contain all the library and
- executable dependencies in the project.  See the documentation for
- :module:`CMakeGraphVizOptions` for more details.
+ 生成した graphviz 向けの入力ファイルには、CMake プロジェクトの中にある全てのライブラリと実行形式の依存関係が含まれる。
+ 詳細は :module:`CMakeGraphVizOptions` のドキュメントを参照のこと。
 
 .. option:: --system-information [file]
 
- Dump information about this system.
+ お使いのシステムの情報をダンプする。
 
- Dump a wide range of information about the current system.  If run
- from the top of a binary tree for a CMake project it will dump
- additional information such as the cache, log files etc.
+ 現在のシステムについて幅広く情報を収集しダンプする。
+ CMake プロジェクトのビルド・ツリーの最上位で実行すると、キャシュやログファイルなどの追加情報もダンプする。
 
 .. option:: --log-level=<level>
 
- Set the log ``<level>``.
+ ログ・レベルを ``<level>`` にする。
 
- The :command:`message` command will only output messages of the specified
- log level or higher.  The valid log levels are ``ERROR``, ``WARNING``,
- ``NOTICE``, ``STATUS`` (default), ``VERBOSE``, ``DEBUG``, or ``TRACE``.
+ :command:`message` コマンドは、ここで指定したログ・レベル以上のメッセージだけ出力する。
+ 指定可能なログ・レベルは： ``ERROR``, ``WARNING``, ``NOTICE``, ``STATUS`` （これがデフォルト）, ``VERBOSE``, ``DEBUG``, ``TRACE``
 
- To make a log level persist between CMake runs, set
- :variable:`CMAKE_MESSAGE_LOG_LEVEL` as a cache variable instead.
- If both the command line option and the variable are given, the command line
- option takes precedence.
+ CMake を実行するたびに同じログ・レベルを使いたいのであれば、このオプションの代わりに変数 :variable:`CMAKE_MESSAGE_LOG_LEVEL` にセットしてキャッシュ変数にすること。
+ もしオプションと環境変数の両方を指定した場合は、このオプションが優先される。
 
- For backward compatibility reasons, ``--loglevel`` is also accepted as a
- synonym for this option.
+ 後方互換性の理由から、``--loglevel`` オプションも同義として扱われる。
 
  .. versionadded:: 3.25
-   See the :command:`cmake_language` command for a way to
-   :ref:`query the current message logging level <query_message_log_level>`.
+   :ref:`現在のログ・レベルを問い合わせる <query_message_log_level>` 方法については、:command:`cmake_language` コマンドの説明を参照のこと。
 
 .. option:: --log-context
 
