@@ -485,14 +485,14 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. program:: cmake
 
-CMake はプロジェクトで生成済みのビルドシステム（ビルドツリー）をビルドするためのマンドライン（*CLI Signature*）を提供している：
+CMake は、プロジェクトで生成したビルドシステム（ビルドツリー）をビルドするためのコマンドライン（*CLI Signature*）を提供している：
 
 .. code-block:: shell
 
   cmake --build <dir>             [<options>] [-- <build-tool-options>]
   cmake --build --preset <preset> [<options>] [-- <build-tool-options>]
 
-これは、以下のオプションを使ってネイティブなビルドツールのコマンドライン・インタフェースを抽象化している：
+このコマンドラインは、以下のオプションを使ってネイティブなビルドツールのコマンドライン・インタフェースを抽象化している：
 
 .. option:: --build <dir>
 
@@ -532,7 +532,7 @@ CMake はプロジェクトで生成済みのビルドシステム（ビルド�
 
 .. option:: --config <cfg>
 
-  複数ある configuration ツールの中から ``<cfg>`` のツールを選択する。
+  複数ある configuration ツールの中から ``<cfg>`` を選択する。
 
 .. option:: --clean-first
 
@@ -542,10 +542,10 @@ CMake はプロジェクトで生成済みのビルドシステム（ビルド�
 
   .. versionadded:: 3.23
 
-  ビルドを開始する前に、外部のパッケージ・マネージャ（例: Nuget）からリモートにあるパッケージ参照を解決する。
-  ``<value>`` が ``on`` （デフォルト）の場合、パッケージはビルド開始する前にパッケージを復元する。
-  ``<value>`` が ``only`` の場合、パッケージは復元されるが、ビルドは実行しない。
-  ``<value>`` が ``off`` の場合、パッケージは復元されない。
+  ビルドを開始する前に、外部のパッケージ・マネージャ（Nuget など）を使ってリモート・パッケージへの参照を解決する。
+  ``<value>`` が ``on`` （デフォルト）の場合、ビルドを開始する前にパッケージを復元する。
+  ``<value>`` が ``only`` の場合、パッケージは復元するがビルドは実行しない。
+  ``<value>`` が ``off`` の場合、パッケージは復元しない。
 
   ターゲットがパッケージの参照を定義していない場合、このオプションは何もしない。
 
@@ -564,7 +564,7 @@ CMake はプロジェクトで生成済みのビルドシステム（ビルド�
 
 .. option:: -v, --verbose
 
-  ビルド冗長な出力を有効にする（もしネイティブのビルドツールがサポートしていれば、実行するビルドコマンドでも冗長な出力にする）
+  冗長な出力を有効にする（もしネイティブのビルドツールがサポートしていれば、実行するビルドコマンドでも冗長な出力にする）
 
   環境変数 :envvar:`VERBOSE` またはキャシュ変数 :variable:`CMAKE_VERBOSE_MAKEFILE` がセットされている場合、このオプションを省略できる。
 
@@ -572,7 +572,7 @@ CMake はプロジェクトで生成済みのビルドシステム（ビルド�
 
   これより後ろにあるオプションをネイティブのビルドツールに渡す。
 
-オプションを付けずに :option:`cmake --build` を実行すると表示される簡易ヘルプが。
+オプションを付けずに :option:`cmake --build` を実行すると簡易ヘルプを表示する。
 
 
 プロジェクトをインストールする
@@ -580,50 +580,51 @@ CMake はプロジェクトで生成済みのビルドシステム（ビルド�
 
 .. program:: cmake
 
-CMake provides a command-line signature to install an already-generated
-project binary tree:
+CMake は、プロジェクトで生成したビルドシステム（ビルドツリー）をインストールするためのコマンドライン（*CLI Signature*）を提供している：
 
 .. code-block:: shell
 
   cmake --install <dir> [<options>]
 
-This may be used after building a project to run installation without
-using the generated build system or the native build tool.
-The options are:
+このコマンドラインは、プロジェクトをビルドしたあと、生成したビルドシステムやネイティブなビルドツールを使わずにインストールを実行する際に使用する。
+利用可能なオプションは：
 
 .. option:: --install <dir>
 
-  Project binary directory to install. This is required and must be first.
+  インストールするプロジェクトのビルドツリー（バイナリツリー）。
+  これは必須のオプションで、一番最初に指定すること。
 
 .. program:: cmake--install
 
 .. option:: --config <cfg>
 
-  For multi-configuration generators, choose configuration ``<cfg>``.
+  複数ある configuration ツールの中から ``<cfg>`` を選択する。
 
 .. option:: --component <comp>
 
-  Component-based install. Only install component ``<comp>``.
+  コンポーネント単位でインストールする。
+  ``<comp>`` が指すコンポーネントだけインストールする。
 
 .. option:: --default-directory-permissions <permissions>
 
-  Default directory install permissions. Permissions in format ``<u=rwx,g=rx,o=rx>``.
+  ディレクトリをインストールしたあとのパーミッション（これがデフォルトになる）。
+  ``<u=rwx,g=rx,o=rx>`` のフォーマットで指定すること。
 
 .. option:: --prefix <prefix>
 
-  Override the installation prefix, :variable:`CMAKE_INSTALL_PREFIX`.
+  インストール先の Prefix を表す変数 :variable:`CMAKE_INSTALL_PREFIX` を上書きする。
 
 .. option:: --strip
 
-  Strip before installing.
+  インストールする前にバイナリをストリップする（バイナリに含まれるデバッグ情報などを削除する）。
 
 .. option:: -v, --verbose
 
-  Enable verbose output.
+  冗長な出力を有効にする。
 
-  This option can be omitted if :envvar:`VERBOSE` environment variable is set.
+  環境変数 :envvar:`VERBOSE` がセットされている場合、このオプションを省略できる。
 
-Run :option:`cmake --install` with no options for quick help.
+オプションを付けずに :option:`cmake --install` を実行すると簡易ヘルプを表示する。
 
 プロジェクトを開く
 ==================
@@ -634,8 +635,8 @@ Run :option:`cmake --install` with no options for quick help.
 
   cmake --open <dir>
 
-Open the generated project in the associated application.  This is only
-supported by some generators.
+生成したプロジェクトのビルドシステムを、関連付けられたアプリケーションで開く。
+この機能は一部のジェネレータでのみサポートしている。
 
 
 .. _`Script Processing Mode`:
@@ -659,14 +660,15 @@ CMake スクリプトを実行する
 
 .. option:: -P <cmake-script-file>
 
- Process the given cmake file as a script written in the CMake
- language.  No configure or generate step is performed and the cache
- is not modified.  If variables are defined using ``-D``, this must be
- done before the ``-P`` argument.
+ Process the given cmake file as a script written in the CMake language.
+ No configure or generate step is performed and the cache is not modified.
+ If variables are defined using ``-D``, this must be done before the ``-P`` argument.
 
-Any options after ``--`` are not parsed by CMake, but they are still included
-in the set of :variable:`CMAKE_ARGV<n> <CMAKE_ARGV0>` variables passed to the
-script (including the ``--`` itself).
+ Process the given cmake file as a script written in the CMake language.
+ No configure or generate step is performed and the cache is not modified.
+ If variables are defined using ``-D``, this must be done before the ``-P`` argument.
+
+Any options after ``--`` are not parsed by CMake, but they are still included in the set of :variable:`CMAKE_ARGV<n> <CMAKE_ARGV0>` variables passed to the script (including the ``--`` itself).
 
 
 .. _`Run a Command-Line Tool`:
