@@ -365,7 +365,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
  CMake をトレースモードで実行するが、指定したファイルに対してだけ出力する。
 
- ファイルが複数ある場合は、このオプションを複数指定する。
+ このオプションは複数指定できる（複数のファイルを指定できる）。
 
 .. option:: --trace-redirect=<file>
 
@@ -436,7 +436,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debugger
 
-  CMake 言語の対話型デバッグを有効にする。
+  CMake 言語を使った対話型デバッガを有効にする。
   CMake は :option:`--debugger-pipe <cmake --debugger-pipe>` オプションで指定したパイプ上にデバッグ用インタフェースを公開する。
   このインタフェースは `Debug Adapter Protocol`_  に、以下に示す幾つか変更を加えた仕様に準拠する。
 
@@ -485,106 +485,95 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. program:: cmake
 
-CMake provides a command-line signature to build an already-generated
-project binary tree:
+CMake はプロジェクトで生成済みのビルドシステム（ビルドツリー）をビルドするためのマンドライン（*CLI Signature*）を提供している：
 
 .. code-block:: shell
 
   cmake --build <dir>             [<options>] [-- <build-tool-options>]
   cmake --build --preset <preset> [<options>] [-- <build-tool-options>]
 
-This abstracts a native build tool's command-line interface with the
-following options:
+これは、以下のオプションを使ってネイティブなビルドツールのコマンドライン・インタフェースを抽象化している：
 
 .. option:: --build <dir>
 
-  Project binary directory to be built.  This is required (unless a preset
-  is specified) and must be first.
+  ビルドするプロジェクトのビルドツリー（バイナリツリー）。
+  これはビルドに必須のディレクトリで、（preset が指定されていない限り）必ず最初に指定すること。
 
 .. program:: cmake--build
 
 .. option:: --preset <preset>, --preset=<preset>
 
-  Use a build preset to specify build options. The project binary directory
-  is inferred from the ``configurePreset`` key. The current working directory
-  must contain CMake preset files.
-  See :manual:`preset <cmake-presets(7)>` for more details.
+  preset を使用して、いろいろなビルド・オプションを一度に指定する。
+  プロジェクトのビルドツリー（ビルドディレクトリ）は ``configurePreset`` キーから推測する。
+  preset ファイルは、現在の作業ディレクトリ（cwd）に格納しておくこと。
+  詳細は :manual:`preset <cmake-presets(7)>` を参照のこと。
 
 .. option:: --list-presets
 
-  Lists the available build presets. The current working directory must
-  contain CMake preset files.
+  preset で利用可能なものの一覧を出力する。
+  preset ファイルは、現在の作業ディレクトリ（cwd）に格納しておくこと。
 
 .. option:: -j [<jobs>], --parallel [<jobs>]
 
   .. versionadded:: 3.12
 
-  The maximum number of concurrent processes to use when building.
-  If ``<jobs>`` is omitted the native build tool's default number is used.
+  ビルド時で使用する並列実行が可能なジョブの最大数。
+  ``<jobs>`` を省略すると、ネイティブなビルドツールのデフォルトの並列レベルを使用する。
 
-  The :envvar:`CMAKE_BUILD_PARALLEL_LEVEL` environment variable, if set,
-  specifies a default parallel level when this option is not given.
+  このオプションを指定せず、環境変数 :envvar:`CMAKE_BUILD_PARALLEL_LEVEL` がセットされている場合は、この環境変数の値がデフォルトの並列レベルとなる。
 
-  Some native build tools always build in parallel.  The use of ``<jobs>``
-  value of ``1`` can be used to limit to a single job.
+  一部のネイティブなビルドツールは常に並列ビルドを行う。
+  ``<jobs>`` を ``1`` にすると、そのようなビルドツールでも単一のジョブに制限できる。
 
 .. option:: -t <tgt>..., --target <tgt>...
 
-  Build ``<tgt>`` instead of the default target.  Multiple targets may be
-  given, separated by spaces.
+  デフォルトのターゲットの代わりに ``<tgt>`` をビルドする。
+  複数の ``<tgt>`` を指定する場合は空白で区切ること。
 
 .. option:: --config <cfg>
 
-  For multi-configuration tools, choose configuration ``<cfg>``.
+  複数ある configuration ツールの中から ``<cfg>`` のツールを選択する。
 
 .. option:: --clean-first
 
-  Build target ``clean`` first, then build.
-  (To clean only, use :option:`--target clean <cmake--build --target>`.)
+  まずターゲットを ``clean`` してからビルドする（ターゲットを ``clean`` したいだけなら、:option:`--target clean <cmake--build --target>` を使うこと）。
 
 .. option:: --resolve-package-references=<value>
 
   .. versionadded:: 3.23
 
-  Resolve remote package references from external package managers (e.g. NuGet)
-  before build. When ``<value>`` is set to ``on`` (default), packages will be
-  restored before building a target.  When ``<value>`` is set to ``only``, the
-  packages will be restored, but no build will be performed.  When
-  ``<value>`` is set to ``off``, no packages will be restored.
+  ビルドを開始する前に、外部のパッケージ・マネージャ（例: Nuget）からリモートにあるパッケージ参照を解決する。
+  ``<value>`` が ``on`` （デフォルト）の場合、パッケージはビルド開始する前にパッケージを復元する。
+  ``<value>`` が ``only`` の場合、パッケージは復元されるが、ビルドは実行しない。
+  ``<value>`` が ``off`` の場合、パッケージは復元されない。
 
-  If the target does not define any package references, this option does nothing.
+  ターゲットがパッケージの参照を定義していない場合、このオプションは何もしない。
 
-  This setting can be specified in a build preset (using
-  ``resolvePackageReferences``). The preset setting will be ignored, if this
-  command line option is specified.
+  この設定は preset （``resolvePackageReferences`` キー）で指定できる。
+  このオプションを指定すると、preset の値は無視される。
 
-  If no command line parameter or preset option are provided, an environment-
-  specific cache variable will be evaluated to decide, if package restoration
-  should be performed.
+  このオプションが指定されず、preset も提供されていない場合、ビルド環境固有のキャッシュ変数が評価され、パッケージを復元するかどうかを決定する。
 
-  When using the Visual Studio generator, package references are defined
-  using the :prop_tgt:`VS_PACKAGE_REFERENCES` property. Package references
-  are restored using NuGet. It can be disabled by setting the
-  ``CMAKE_VS_NUGET_PACKAGE_RESTORE`` variable to ``OFF``.
+  Visual Studio のジェネレータでは、パッケージ参照はプロパティ :prop_tgt:`VS_PACKAGE_REFERENCES` で定義される。
+  その時のパッケージ参照は NuGet を使用して復元される。
+  変数 ``CMAKE_VS_NUGET_PACKAGE_RESTORE`` を ``OFF`` にすると、この機能を無効にできる。
 
 .. option:: --use-stderr
 
-  Ignored.  Behavior is default in CMake >= 3.0.
+  このオプションは無視する。CMake のバージョンが 3.0 以上から、これ（標準エラー出力を使う）がデフォルトの挙動である。
 
 .. option:: -v, --verbose
 
-  Enable verbose output - if supported - including the build commands to be
-  executed.
+  ビルド冗長な出力を有効にする（もしネイティブのビルドツールがサポートしていれば、実行するビルドコマンドでも冗長な出力にする）
 
-  This option can be omitted if :envvar:`VERBOSE` environment variable or
-  :variable:`CMAKE_VERBOSE_MAKEFILE` cached variable is set.
-
+  環境変数 :envvar:`VERBOSE` またはキャシュ変数 :variable:`CMAKE_VERBOSE_MAKEFILE` がセットされている場合、このオプションを省略できる。
 
 .. option:: --
 
-  Pass remaining options to the native tool.
+  これより後ろにあるオプションをネイティブのビルドツールに渡す。
 
-Run :option:`cmake --build` with no options for quick help.
+オプションを付けずに :option:`cmake --build` を実行すると表示される簡易ヘルプが。
+
 
 プロジェクトをインストールする
 ==============================
