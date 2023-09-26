@@ -24,7 +24,7 @@ cmake(1)
  `CMake スクリプトを実行する`_
   cmake [-D <var>=<value>]... -P <cmake-script-file>
 
- `コマンドライン・ツールを実行する`_
+ `コマンド・ツールを実行する`_
   cmake -E <command> [<options>]
 
  `パッケージ検索ツールを実行する`_
@@ -86,7 +86,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 プロジェクトのビルドシステムを生成する
 ======================================
 
-次に示すコマンド・シグネチャのいずれかに、ソースツリーとビルドツリーを指定して CMake を実行すると、ビルドシステムが生成されます：
+次に示すコマンドライン（*CLI Signature*）のいずれかに、ソースツリーとビルドツリーを指定して CMake を実行すると、ビルドシステムが生成されます：
 
 ``cmake [<options>] -B <path-to-build> [-S <path-to-source>]``
 
@@ -123,7 +123,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
     $ cd build
     $ cmake .
 
-全てのコマンド・シグネチャにおいて、``<options>`` には 0 個以上の `オプション`_ を指定します。
+全てのコマンドラインにおいて、``<options>`` には 0 個以上の `オプション`_ を指定します。
 
 上で説明したとおり、ソースツリーとビルドツリーを一緒に指定しても問題ありません。
 オプションの :option:`-S <cmake -S>` や :option:`-B <cmake -B>` で指定するパス名は常にソースツリーまたはビルドツリーとして扱われます。
@@ -463,7 +463,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
     マイナーバージョンの番号（整数値）
 
   ``patch``
-    パッチバージョンの番号（整数値）
+    パッチレベルの番号（整数値）
 
   ``full``
     バージョンの完全形（文字列）
@@ -570,7 +570,7 @@ CMake は、プロジェクトで生成したビルドシステム（ビルド�
 
 .. option:: --
 
-  これより後ろにあるオプションをネイティブのビルドツールに渡す。
+  これより後ろにあるオプションの並びをネイティブのビルドツールに渡す。
 
 オプションを付けずに :option:`cmake --build` を実行すると簡易ヘルプを表示する。
 
@@ -654,31 +654,26 @@ CMake スクリプトを実行する
 
 .. option:: -D <var>=<value>
 
- Define a variable for script mode.
+ スクリプトに渡す変数を定義する。
 
 .. program:: cmake
 
 .. option:: -P <cmake-script-file>
 
- Process the given cmake file as a script written in the CMake language.
- No configure or generate step is performed and the cache is not modified.
- If variables are defined using ``-D``, this must be done before the ``-P`` argument.
+ 指定したファイルを CMake 言語で書かれたスクリプトとして処理する。
+ 何かを設定したり生成することはなく、キャッシュは変更されない。
+ ``-D`` オプションで変数を定義する際は、この ``-P`` オプションを使った引数よりも前に置くこと。
 
- Process the given cmake file as a script written in the CMake language.
- No configure or generate step is performed and the cache is not modified.
- If variables are defined using ``-D``, this must be done before the ``-P`` argument.
-
-Any options after ``--`` are not parsed by CMake, but they are still included in the set of :variable:`CMAKE_ARGV<n> <CMAKE_ARGV0>` variables passed to the script (including the ``--`` itself).
-
+CMake は ``--`` の後ろにあるオプションの並びを解析しないが、それらはスクリプトに渡される変数 :variable:`CMAKE_ARGV<n> <CMAKE_ARGV0>` の集合に ``--`` と一緒に含まれる。
 
 .. _`Run a Command-Line Tool`:
 
-コマンドライン・ツールを実行する
-================================
+コマンド・ツールを実行する
+==========================
 
 .. program:: cmake
 
-CMake provides builtin command-line tools through the signature
+CMake は、組み込みのコマンド・ツールを利用するためのコマンドライン（*CLI Signature*）を提供している：
 
 .. code-block:: shell
 
@@ -686,38 +681,38 @@ CMake provides builtin command-line tools through the signature
 
 .. option:: -E [help]
 
-  Run ``cmake -E`` or ``cmake -E help`` for a summary of commands.
+  ``cmake -E`` または ``cmake -E help`` を実行すると利用可能なコマンド・ツールのサマリを表示する
 
 .. program:: cmake-E
 
-Available commands are:
+利用可能なコマンド・ツールは:
 
 .. option:: capabilities
 
   .. versionadded:: 3.7
 
-  Report cmake capabilities in JSON format. The output is a JSON object
-  with the following keys:
+  CMake が処理できる機能と諸元を JSON 形式で報告する。
+  出力される情報は以下のキーを持つ JSON オブジェクトである。
 
   ``version``
-    A JSON object with version information. Keys are:
+    バージョン情報を持つ JSON オブジェクトで、保有するキーは：
 
     ``string``
-      The full version string as displayed by cmake :option:`--version <cmake --version>`.
+      CMake のオプション :option:`--version <cmake --version>` で表示されるバージョンの完全形（文字列）
     ``major``
-      The major version number in integer form.
+      メジャーバージョンの番号（整数値）
     ``minor``
-      The minor version number in integer form.
+      マイナーバージョンの番号（整数値）
     ``patch``
-      The patch level in integer form.
+      パッチレベルの番号（整数値）
     ``suffix``
-      The cmake version suffix string.
+      CMake のバージョン末尾の文字列
     ``isDirty``
-      A bool that is set if the cmake build is from a dirty tree.
+      CMake ビルドが Dirty ツリーから行われるかどうかを示す論理値
 
   ``generators``
-    A list available generators. Each generator is a JSON object with the
-    following keys:
+    A list available generators.
+    Each generator is a JSON object with the following keys:
 
     ``name``
       A string containing the name of the generator.
@@ -728,17 +723,14 @@ Available commands are:
     ``supportedPlatforms``
       .. versionadded:: 3.21
 
-      Optional member that may be present when the generator supports
-      platform specification via :variable:`CMAKE_GENERATOR_PLATFORM`
-      (:option:`-A ... <cmake -A>`).  The value is a list of platforms known to
-      be supported.
+      Optional member that may be present when the generator supports platform specification via :variable:`CMAKE_GENERATOR_PLATFORM` (:option:`-A ... <cmake -A>`).
+      The value is a list of platforms known to be supported.
     ``extraGenerators``
-      A list of strings with all the :ref:`Extra Generators` compatible with
-      the generator.
+      A list of strings with all the :ref:`Extra Generators` compatible with the generator.
 
   ``fileApi``
-    Optional member that is present when the :manual:`cmake-file-api(7)`
-    is available.  The value is a JSON object with one member:
+    Optional member that is present when the :manual:`cmake-file-api(7)` is available.
+    The value is a JSON object with one member:
 
     ``requests``
       A JSON array containing zero or more supported file-api requests.
@@ -748,9 +740,7 @@ Available commands are:
         Specifies one of the supported :ref:`file-api object kinds`.
 
       ``version``
-        A JSON array whose elements are each a JSON object containing
-        ``major`` and ``minor`` members specifying non-negative integer
-        version components.
+        A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
 
   ``serverMode``
     ``true`` if cmake supports server-mode and ``false`` otherwise.
@@ -764,8 +754,7 @@ Available commands are:
   ``debugger``
     .. versionadded:: 3.27
 
-    ``true`` if the :option:`--debugger <cmake --debugger>` mode
-    is supported and ``false`` otherwise.
+    ``true`` if the :option:`--debugger <cmake --debugger>` mode is supported and ``false`` otherwise.
 
 .. option:: cat [--] <files>...
 
@@ -779,10 +768,8 @@ Available commands are:
 
     .. versionadded:: 3.24
 
-    Added support for the double dash argument ``--``. This basic implementation
-    of ``cat`` does not support any options, so using a option starting with
-    ``-`` will result in an error. Use ``--`` to indicate the end of options, in
-    case a file starts with ``-``.
+    Added support for the double dash argument ``--``. This basic implementation of ``cat`` does not support any options, so using a option starting with ``-`` will result in an error.
+    Use ``--`` to indicate the end of options, in case a file starts with ``-``.
 
 .. program:: cmake-E
 
@@ -792,9 +779,9 @@ Available commands are:
 
 .. option:: compare_files [--ignore-eol] <file1> <file2>
 
-  Check if ``<file1>`` is same as ``<file2>``. If files are the same,
-  then returns ``0``, if not it returns ``1``.  In case of invalid
-  arguments, it returns 2.
+  Check if ``<file1>`` is same as ``<file2>``.
+  If files are the same, then returns ``0``, if not it returns ``1``.
+  In case of invalid arguments, it returns 2.
 
   .. program:: cmake-E_compare_files
 
