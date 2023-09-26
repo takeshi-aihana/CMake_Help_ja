@@ -695,7 +695,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
   出力される情報は以下のキーを持つ JSON オブジェクトである。
 
   ``version``
-    バージョン情報を持つ JSON オブジェクトで、保有するキーは：
+    バージョン情報を持つ JSON オブジェクトで、保持するキーは：
 
     ``string``
       CMake のオプション :option:`--version <cmake --version>` で表示されるバージョンの完全形（文字列）
@@ -711,8 +711,8 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
       CMake ビルドが Dirty ツリーから行われるかどうかを示す論理値
 
   ``generators``
-    A list available generators.
-    Each generator is a JSON object with the following keys:
+    利用可能なジェネレータを要素とするリスト。
+    ジェネレータはそれぞれ以下のキーを持つ JSON オブジェクトである：
 
     ``name``
       A string containing the name of the generator.
