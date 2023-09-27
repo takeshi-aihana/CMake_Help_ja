@@ -715,31 +715,35 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
     ジェネレータはそれぞれ以下のキーを持つ JSON オブジェクトである：
 
     ``name``
-      A string containing the name of the generator.
+      ジェネレータの名前（文字列）
     ``toolsetSupport``
-      ``true`` if the generator supports toolsets and ``false`` otherwise.
+      このジェネレータがツールセットをサポートしている場合は ``true``、それ以外は ``false``
     ``platformSupport``
-      ``true`` if the generator supports platforms and ``false`` otherwise.
+      このジェネレータが複数のプラットフォームをサポートしている場合は ``true``、それ以外は ``false``
     ``supportedPlatforms``
       .. versionadded:: 3.21
 
-      Optional member that may be present when the generator supports platform specification via :variable:`CMAKE_GENERATOR_PLATFORM` (:option:`-A ... <cmake -A>`).
-      The value is a list of platforms known to be supported.
+      このキーはオプションで、このジェネレータが変数 :variable:`CMAKE_GENERATOR_PLATFORM` （オプション :option:`-A ... <cmake -A>` ）経由で指定されたプラットフォーム仕様（ *Platform Specification* ）をサポートしている時に出力される場合がある。
+      その値は、サポートしているプラットフォームを要素とするリスト。
     ``extraGenerators``
-      A list of strings with all the :ref:`Extra Generators` compatible with the generator.
+      このジェネレータと互換性がある全ての :ref:`Extra Generators` を表す文字列
 
   ``fileApi``
-    Optional member that is present when the :manual:`cmake-file-api(7)` is available.
-    The value is a JSON object with one member:
+    :manual:`cmake-file-api(7)` が利用可能な場合に追加される。
+    その値は一個のメンバを持つ JSON オブジェクト：
 
     ``requests``
-      A JSON array containing zero or more supported file-api requests.
-      Each request is a JSON object with members:
+      0 個以上のサポート済み file-api のリクエストを含む JSON の配列。
+      各リクエストは次のメンバを持つ JSON オブジェクトである：
 
       ``kind``
+        サポートしている :ref:`file-api object kinds` の一つ。
+
         Specifies one of the supported :ref:`file-api object kinds`.
 
       ``version``
+        A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
+
         A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
 
   ``serverMode``
