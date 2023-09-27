@@ -737,9 +737,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
       各リクエストは次のメンバを持つ JSON オブジェクトである：
 
       ``kind``
-        サポートしている :ref:`file-api object kinds` の一つ。
-
-        Specifies one of the supported :ref:`file-api object kinds`.
+        サポートしている :ref:`file-api object kinds` の一つを指定する。
 
       ``version``
         A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
