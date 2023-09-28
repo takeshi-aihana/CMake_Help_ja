@@ -726,43 +726,41 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
       このキーはオプションで、このジェネレータが変数 :variable:`CMAKE_GENERATOR_PLATFORM` （オプション :option:`-A ... <cmake -A>` ）経由で指定されたプラットフォーム仕様（ *Platform Specification* ）をサポートしている時に出力される場合がある。
       その値は、サポートしているプラットフォームを要素とするリスト。
     ``extraGenerators``
-      このジェネレータと互換性がある全ての :ref:`Extra Generators` を表す文字列
+      このジェネレータと互換性がある全ての :ref:`Extra Generators` を表す文字列。
 
   ``fileApi``
     :manual:`cmake-file-api(7)` が利用可能な場合に追加される。
     その値は一個のメンバを持つ JSON オブジェクト：
 
     ``requests``
-      0 個以上のサポート済み file-api のリクエストを含む JSON の配列。
+      サポートしている file-api の 0 個以上のリクエストを要素とする JSON 配列。
       各リクエストは次のメンバを持つ JSON オブジェクトである：
 
       ``kind``
         サポートしている :ref:`file-api object kinds` の一つを指定する。
 
       ``version``
-        A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
-
-        A JSON array whose elements are each a JSON object containing ``major`` and ``minor`` members specifying non-negative integer version components.
+        コンポーネントのバージョン（負ではない整数値）を表す ``major`` と ``minor`` を格納した JSON オブジェクトを要素とする JSON 配列。
 
   ``serverMode``
-    ``true`` if cmake supports server-mode and ``false`` otherwise.
-    Always false since CMake 3.20.
+    CMake がサーバ・モードをサポートしている場合は ``true``、それ以外は ``false``。
+    CMake バージョン 3.20 以降は常に ``false``。
 
   ``tls``
     .. versionadded:: 3.25
 
-    ``true`` if TLS support is enabled and ``false`` otherwise.
+    TLS をサポートしている場合は ``true`` 、それ以外は ``false``。
 
   ``debugger``
     .. versionadded:: 3.27
 
-    ``true`` if the :option:`--debugger <cmake --debugger>` mode is supported and ``false`` otherwise.
+    オプション :option:`--debugger <cmake --debugger>` をサポートしている場合は ``true``、それ以外は ``false``。
 
 .. option:: cat [--] <files>...
 
   .. versionadded:: 3.18
 
-  Concatenate files and print on the standard output.
+  いくつかのファイルを連結して、その中身を標準出力に出力する。
 
   .. program:: cmake-E_cat
 
@@ -770,20 +768,21 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
     .. versionadded:: 3.24
 
-    Added support for the double dash argument ``--``. This basic implementation of ``cat`` does not support any options, so using a option starting with ``-`` will result in an error.
-    Use ``--`` to indicate the end of options, in case a file starts with ``-``.
+    二重ダッシュの引数 ``--`` をサポートした。
+    この ``cat`` コマンドは基本的にオプションを受け取らない実装なので、 ``-`` で始まるオプションを渡すとエラーになる。
+    ``-`` で始まるファイルを引数として渡す場合は、オプションではないことを CMake に指示するために ``--`` と併用すること。
 
 .. program:: cmake-E
 
 .. option:: chdir <dir> <cmd> [<arg>...]
 
-  Change the current working directory and run a command.
+  現在の作業ディレクトリ（cwd）を変更してからコマンドを実行する。
 
 .. option:: compare_files [--ignore-eol] <file1> <file2>
 
-  Check if ``<file1>`` is same as ``<file2>``.
-  If files are the same, then returns ``0``, if not it returns ``1``.
-  In case of invalid arguments, it returns 2.
+  ``<file1>`` と ``<file2>`` が同じものかどうかをチェックする。
+  両方が同じファイルならば ``0`` を返し、同じでなければ ``1`` を返す。
+  それ以外（おかしな引数を渡した場合）は ``2`` を返す。
 
   .. program:: cmake-E_compare_files
 
@@ -791,127 +790,123 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
     .. versionadded:: 3.14
 
-    The option implies line-wise comparison and ignores LF/CRLF differences.
+    このオプションは行単位でファイルを比較する（その際は行末の LF/CRLF 文字は無視する）。
 
 .. program:: cmake-E
 
 .. option:: copy <file>... <destination>, copy -t <destination> <file>...
 
-  Copy files to ``<destination>`` (either file or directory).
-  If multiple files are specified, or if ``-t`` is specified, the
-  ``<destination>`` must be directory and it must exist. If ``-t`` is not
-  specified, the last argument is assumed to be the ``<destination>``.
-  Wildcards are not supported. ``copy`` does follow symlinks. That means it
-  does not copy symlinks, but the files or directories it point to.
+  指定したファイルを ``<destination>`` （ファイルまたはディレクトリのいずれか）にコピーする。
+  複数のファイルを指定する場合、または ``-t`` を付ける場合、``<destination>`` にはディレクトリを指定すること（必ず存在しているディレクトリを指定すること）。
+  ``-t`` を付けない場合、最後の引数が ``<destination>`` であるとみなす。
+  ワイルドカードはサポートしていない。
+  ``copy`` コマンドはシンボリックリンクをたどる。
+  つまり、シンボリックリンクはコピーされず、シンボリックリンクが指すファイルまたはディレクトリをコピーする。
 
   .. versionadded:: 3.5
-    Support for multiple input files.
+    複数のファイルを引数に指定できるようになった。
 
   .. versionadded:: 3.26
-    Support for ``-t`` argument.
+    ``-t`` オプションをサポートした。
 
 .. option:: copy_directory <dir>... <destination>
 
-  Copy content of ``<dir>...`` directories to ``<destination>`` directory.
-  If ``<destination>`` directory does not exist it will be created.
-  ``copy_directory`` does follow symlinks.
+  ディレクトリ ``<dir>...`` 配下をディレクトリ ``<destination>`` へコピーする。
+  もし ``<destination>`` ディレクトリが存在していない場合は作成する。
+  ``copy_directory`` コマンドはシンボリックリンクをたどる。
 
   .. versionadded:: 3.5
-    Support for multiple input directories.
+    複数のディレクトリを引数に指定できるようになった。
 
   .. versionadded:: 3.15
-    The command now fails when the source directory does not exist.
-    Previously it succeeded by creating an empty destination directory.
+    指定したソース・ディレクトリ ``<dir>`` が存在しない場合は、コマンド実行を失敗するようになった。
+    以前は、空の ``<destination>`` を作成して、コマンド実行を成功としていた。
 
 .. option:: copy_directory_if_different <dir>... <destination>
 
   .. versionadded:: 3.26
 
-  Copy changed content of ``<dir>...`` directories to ``<destination>`` directory.
-  If ``<destination>`` directory does not exist it will be created.
+  ディレクトリ ``<dir>...`` 配下で変更されたものをディレクトリ ``<destination>`` へコピーする。
+  もし ``<destination>`` ディレクトリが存在していない場合は作成する。
 
-  ``copy_directory_if_different`` does follow symlinks.
-  The command fails when the source directory does not exist.
+  ``copy_directory_if_different`` コマンドはシンボリックリンクをたどる。
+  指定したソース・ディレクトリ ``<dir>`` が存在しない場合は、コマンド実行は失敗する。
 
 .. option:: copy_if_different <file>... <destination>
 
-  Copy files to ``<destination>`` (either file or directory) if
-  they have changed.
-  If multiple files are specified, the ``<destination>`` must be
-  directory and it must exist.
-  ``copy_if_different`` does follow symlinks.
+  指定したファイルのうち変更されているものを ``<destination>`` （ファイルまたはディレクトリのいずれか）にコピーする。
+  複数のファイルを指定する場合、``<destination>`` にはディレクトリを指定すること（必ず存在しているディレクトリを指定すること）。
+  ``copy_if_different`` コマンドはシンボリックリンクをたどる。
 
   .. versionadded:: 3.5
-    Support for multiple input files.
+    複数のファイルを引数に指定できるようになった。
 
 .. option:: create_symlink <old> <new>
 
-  Create a symbolic link ``<new>`` naming ``<old>``.
+  ``<old>`` を指すシンボリックリンク ``<new>`` を作成する。
 
   .. versionadded:: 3.13
-    Support for creating symlinks on Windows.
+    Windows でシンボリックリンクの作成をサポートした。
 
   .. note::
-    Path to where ``<new>`` symbolic link will be created has to exist beforehand.
+    作成するシンボリックリンク ``<new>`` までパスが事前に存在しているものとする。
 
 .. option:: create_hardlink <old> <new>
 
   .. versionadded:: 3.19
 
-  Create a hard link ``<new>`` naming ``<old>``.
+  ``<old>`` を指すハードリンク ``<new>`` を作成する。
 
   .. note::
-    Path to where ``<new>`` hard link will be created has to exist beforehand.
-    ``<old>`` has to exist beforehand.
+    作成するハードリンク ``<new>`` までのパスが事前に存在しているものとする。
+    ``<old>`` には存在しているファイルを指定すること。
 
 .. option:: echo [<string>...]
 
-  Displays arguments as text.
+  引数を文字として出力する。
 
 .. option:: echo_append [<string>...]
 
-  Displays arguments as text but no new line.
+  引数を文字として出力するが、改行はしない。
 
 .. option:: env [<options>] [--] <command> [<arg>...]
 
   .. versionadded:: 3.1
 
-  Run command in a modified environment. Options are:
+  指定したコマンドを、変更した環境で実行する。
+  指定できるオプションは：
 
   .. program:: cmake-E_env
 
   .. option:: NAME=VALUE
 
-    Replaces the current value of ``NAME`` with ``VALUE``.
+    変数 ``NAME`` の値を ``VALUE`` にする。
 
   .. option:: --unset=NAME
 
-    Unsets the current value of ``NAME``.
+    変数 ``NAME`` の値を解除して空にする。
 
   .. option:: --modify ENVIRONMENT_MODIFICATION
 
     .. versionadded:: 3.25
 
-    Apply a single :prop_test:`ENVIRONMENT_MODIFICATION` operation to the
-    modified environment.
+    変更した環境に :prop_test:`ENVIRONMENT_MODIFICATION` の操作を一度だけ適用する。
 
-    The ``NAME=VALUE`` and ``--unset=NAME`` options are equivalent to
-    ``--modify NAME=set:VALUE`` and ``--modify NAME=unset:``, respectively.
-    Note that ``--modify NAME=reset:`` resets ``NAME`` to the value it had
-    when :program:`cmake` launched (or unsets it), not to the most recent
-    ``NAME=VALUE`` option.
+    オプションの ``NAME=VALUE`` と ``--unset=NAME`` は、それぞれ ``--modify NAME=set:VALUE`` と ``--modify NAME=unset:`` に等価である。
+    ``--modify NAME=reset:`` は、``NAME=VALUE`` スタイルには従わず、変数 ``NAME`` を :program:`cmake` を実行したときの値（または何も値が設定されていない状態）にリセットするオプションであることに注意すること。
 
   .. option:: --
 
     .. versionadded:: 3.24
 
-    Added support for the double dash argument ``--``. Use ``--`` to stop
-    interpreting options/environment variables and treat the next argument as
-    the command, even if it start with ``-`` or contains a ``=``.
+    二重ダッシュの引数 ``--`` をサポートした。
+    ``--`` を指定すると、それ以降の引数をオプションや環境変数として扱うのを止め、``-`` で始まっていたり ``=`` を含んでいたとしてもコマンド ``<command>`` の引数 ``<arg>`` として扱う。
 
 .. program:: cmake-E
 
 .. option:: environment
+
+  Display the current environment variables.
 
   Display the current environment variables.
 
@@ -921,13 +916,21 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   Do nothing, with an exit code of 1.
 
+  Do nothing, with an exit code of 1.
+
 .. option:: make_directory <dir>...
 
-  Create ``<dir>`` directories.  If necessary, create parent
-  directories too.  If a directory already exists it will be
-  silently ignored.
+  Create ``<dir>`` directories.
+  If necessary, create parent directories too.
+  If a directory already exists it will be silently ignored.
+
+  Create ``<dir>`` directories.
+  If necessary, create parent directories too.
+  If a directory already exists it will be silently ignored.
 
   .. versionadded:: 3.5
+    Support for multiple input directories.
+
     Support for multiple input directories.
 
 .. option:: md5sum <file>...
