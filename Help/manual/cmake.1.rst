@@ -185,7 +185,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
  これは CMake で、オプション :option:`-D <cmake -D>` を使ってカスタマイズ可能な設定の現在の値を確認する際に便利なオプションである。
  任意の変数の変更すると、たくさんの変数が生成される場合がある。
  ``A`` を指定すると :prop_cache:`ADVANCED` な変数も表示する。
- ``H`` を指定すると各変数のヘルプも表示する
+ ``H`` を指定すると各変数のヘルプも表示する。
 
 .. option:: -N
 
@@ -1022,32 +1022,27 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.0
 
-  Sleep for ``<number>`` seconds.
-  ``<number>`` may be a floating point number.
-  A practical minimum is about 0.1 seconds due to overhead in starting/stopping CMake executable.
-  This can be useful in a CMake script to insert a delay:
-
-  Sleep for ``<number>`` seconds.
-  ``<number>`` may be a floating point number.
-  A practical minimum is about 0.1 seconds due to overhead in starting/stopping CMake executable.
-  This can be useful in a CMake script to insert a delay:
+  ``<number>`` 秒間スリープする。
+  ``<number>`` は浮動小数点数で指定できる。
+  実際のところ CMake の起動と停止でオーバーヘッドが発生するので、指定できる値は約 0.1 秒からである。
+  これは、次に示すような CMake スクリプトの中で遅延を生成したい時に便利である：
 
   .. code-block:: cmake
 
-    # Sleep for about 0.5 seconds
+    # 0.5秒間スリープする
     execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 0.5)
 
 .. option:: tar [cxt][vf][zjJ] file.tar [<options>] [--] [<pathname>...]
 
-  Create or extract a tar or zip archive.
-  Options are:
+  tar や zip アーカイブを作成したり展開する。
+  利用できるオプションは：
 
   .. program:: cmake-E_tar
 
   .. option:: c
 
-    Create a new archive containing the specified files.
-    If used, the ``<pathname>...`` argument is mandatory.
+    指定したファイルを格納した新しいアーカイブを作成する。
+    ``<pathname>...`` は必須の引数である。
 
   .. option:: x
 
