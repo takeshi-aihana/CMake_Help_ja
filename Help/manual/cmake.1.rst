@@ -797,8 +797,8 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 .. option:: copy <file>... <destination>, copy -t <destination> <file>...
 
   指定したファイルを ``<destination>`` （ファイルまたはディレクトリのいずれか）にコピーする。
-  複数のファイルを指定する場合、または ``-t`` を付ける場合、``<destination>`` にはディレクトリを指定すること（必ず存在しているディレクトリを指定すること）。
-  ``-t`` を付けない場合、最後の引数が ``<destination>`` であるとみなす。
+  複数のファイルを指定する、または ``-t`` を付ける場合、``<destination>`` にはディレクトリを指定すること（必ず存在しているディレクトリを指定すること）。
+  ``-t`` を付けない場合、最後の引数が ``<destination>`` とみなす。
   ワイルドカードはサポートしていない。
   ``copy`` コマンドはシンボリックリンクをたどる。
   つまり、シンボリックリンクはコピーされず、シンボリックリンクが指すファイルまたはディレクトリをコピーする。
@@ -812,7 +812,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 .. option:: copy_directory <dir>... <destination>
 
   ディレクトリ ``<dir>...`` 配下をディレクトリ ``<destination>`` へコピーする。
-  もし ``<destination>`` ディレクトリが存在していない場合は作成する。
+  ``<destination>`` ディレクトリが存在していない場合は作成する。
   ``copy_directory`` コマンドはシンボリックリンクをたどる。
 
   .. versionadded:: 3.5
@@ -827,7 +827,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
   .. versionadded:: 3.26
 
   ディレクトリ ``<dir>...`` 配下で変更されたものをディレクトリ ``<destination>`` へコピーする。
-  もし ``<destination>`` ディレクトリが存在していない場合は作成する。
+  ``<destination>`` ディレクトリが存在していない場合は作成する。
 
   ``copy_directory_if_different`` コマンドはシンボリックリンクをたどる。
   指定したソース・ディレクトリ ``<dir>`` が存在しない場合は、コマンド実行は失敗する。
@@ -863,17 +863,17 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
 .. option:: echo [<string>...]
 
-  引数を文字として出力する。
+  引数を文字列として出力する。
 
 .. option:: echo_append [<string>...]
 
-  引数を文字として出力するが、改行はしない。
+  引数を文字列として出力するが、改行はしない。
 
 .. option:: env [<options>] [--] <command> [<arg>...]
 
   .. versionadded:: 3.1
 
-  指定したコマンドを、変更した環境で実行する。
+  指定したコマンドを、オプションで変更した環境で実行する。
   指定できるオプションは：
 
   .. program:: cmake-E_env
@@ -906,36 +906,26 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
 .. option:: environment
 
-  Display the current environment variables.
-
-  Display the current environment variables.
+  現在の環境変数を表示する。
 
 .. option:: false
 
   .. versionadded:: 3.16
 
-  Do nothing, with an exit code of 1.
-
-  Do nothing, with an exit code of 1.
+  何もせず、終了コード ``1`` で終了する。
 
 .. option:: make_directory <dir>...
 
-  Create ``<dir>`` directories.
-  If necessary, create parent directories too.
-  If a directory already exists it will be silently ignored.
-
-  Create ``<dir>`` directories.
-  If necessary, create parent directories too.
-  If a directory already exists it will be silently ignored.
+  ディレクトリ ``<dir>`` を作成する。
+  必要に応じて、親ディレクトリも作成する。
+  既にディレクトリが存在している場合は何も出力せずに終了する。
 
   .. versionadded:: 3.5
-    Support for multiple input directories.
-
-    Support for multiple input directories.
+    複数のディレクトリを引数に指定できるようになった。
 
 .. option:: md5sum <file>...
 
-  Create MD5 checksum of files in ``md5sum`` compatible format::
+  ファイルの MD5 チェックサムを ``md5sum`` と互換性のあるフォーマットで生成する::
 
      351abe79cd3800b38cdfb25d45015a15  file1.txt
      052f86c15bbde68af55c7f7b340ab639  file2.txt
@@ -944,7 +934,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.10
 
-  Create SHA1 checksum of files in ``sha1sum`` compatible format::
+  ファイルの SHA1 チェックサムを ``sha1sum`` と互換性のあるフォーマットで生成する::
 
      4bb7932a29e6f73c97bb9272f2bdc393122f86e0  file1.txt
      1df4c8f318665f9a5f2ed38f55adadb7ef9f559c  file2.txt
@@ -953,7 +943,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.10
 
-  Create SHA224 checksum of files in ``sha224sum`` compatible format::
+  ファイルの SHA224 チェックサムを ``sha224sum`` と互換性のあるフォーマットで生成する::
 
      b9b9346bc8437bbda630b0b7ddfc5ea9ca157546dbbf4c613192f930  file1.txt
      6dfbe55f4d2edc5fe5c9197bca51ceaaf824e48eba0cc453088aee24  file2.txt
@@ -962,7 +952,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.10
 
-  Create SHA256 checksum of files in ``sha256sum`` compatible format::
+  ファイルの SHA256 チェックサムを ``sha256sum`` と互換性のあるフォーマットで生成する::
 
      76713b23615d31680afeb0e9efe94d47d3d4229191198bb46d7485f9cb191acc  file1.txt
      15b682ead6c12dedb1baf91231e1e89cfc7974b3787c1e2e01b986bffadae0ea  file2.txt
@@ -971,7 +961,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.10
 
-  Create SHA384 checksum of files in ``sha384sum`` compatible format::
+  ファイルの SHA384 チェックサムを ``sha384sum`` と互換性のあるフォーマットで生成する::
 
      acc049fedc091a22f5f2ce39a43b9057fd93c910e9afd76a6411a28a8f2b8a12c73d7129e292f94fc0329c309df49434  file1.txt
      668ddeb108710d271ee21c0f3acbd6a7517e2b78f9181c6a2ff3b8943af92b0195dcb7cce48aa3e17893173c0a39e23d  file2.txt
@@ -980,7 +970,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.10
 
-  Create SHA512 checksum of files in ``sha512sum`` compatible format::
+  ファイルの SHA512 チェックサムを ``sha512sum`` と互換性のあるフォーマットで生成する::
 
      2a78d7a6c5328cfb1467c63beac8ff21794213901eaadafd48e7800289afbc08e5fb3e86aa31116c945ee3d7bf2a6194489ec6101051083d1108defc8e1dba89  file1.txt
      7a0b54896fe5e70cca6dd643ad6f672614b189bf26f8153061c4d219474b05dad08c4e729af9f4b009f1a1a280cb625454bf587c690f4617c27e3aebdf3b7a2d  file2.txt
@@ -989,54 +979,58 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. deprecated:: 3.17
 
-  Remove the file(s). The planned behavior was that if any of the
-  listed files already do not exist, the command returns a non-zero exit code,
-  but no message is logged. The ``-f`` option changes the behavior to return a
-  zero exit code (i.e. success) in such situations instead.
-  ``remove`` does not follow symlinks. That means it remove only symlinks
-  and not files it point to.
+  指定したファイルを削除する。
+  このコマンドの設計時の挙動は、指定したファイルが存在していなかったら 0 以外の値を終了コードとして返すが、ログは出力しないというものだった。
+  そのような場合、``-f`` オプションは終了コードとして 0 を返すように挙動を変更する（すなわち成功する）。
+  ``remove`` コマンドはシンボリックリンクをたどらない。
+  つまり、シンボリックリンクだけ削除して、それが指しているファイルは削除しない。
 
-  The implementation was buggy and always returned 0. It cannot be fixed without
-  breaking backwards compatibility. Use ``rm`` instead.
+  このコマンドの実装にはバグがあり、常に終了コードとして 0 を返していた。
+  下位バージョンとの互換性を失わずに、このバグを修正することはできない懸念が残っていた。
+  代わりに ``rm`` コマンドを使用すること。
 
 .. option:: remove_directory <dir>...
 
   .. deprecated:: 3.17
 
-  Remove ``<dir>`` directories and their contents. If a directory does
-  not exist it will be silently ignored.
-  Use ``rm`` instead.
+  指定したディレクトリ ``<dir>`` 配下を削除する。
+  指定したディレクトリが存在していなかったら何も出力せずに終了する。
+  代わりに ``rm`` コマンドを使用すること。
 
   .. versionadded:: 3.15
-    Support for multiple directories.
+    複数のディレクトリをサポートした。
 
   .. versionadded:: 3.16
-    If ``<dir>`` is a symlink to a directory, just the symlink will be removed.
+    ``<dir>`` がディレクトリを指すシンボリックリンクの場合、シンボリックリンクだけを削除する。
 
 .. option:: rename <oldname> <newname>
 
-  Rename a file or directory (on one volume). If file with the ``<newname>`` name
-  already exists, then it will be silently replaced.
+  一つのボリューム上にあるファイルやディレクトリの名前を変更する。
+  既に ``<newname>`` の名前を持つファイルが存在している場合は何も出力せずに終了する。
 
 .. option:: rm [-rRf] [--] <file|dir>...
 
   .. versionadded:: 3.17
 
-  Remove the files ``<file>`` or directories ``<dir>``.
-  Use ``-r`` or ``-R`` to remove directories and their contents recursively.
-  If any of the listed files/directories do not exist, the command returns a
-  non-zero exit code, but no message is logged. The ``-f`` option changes
-  the behavior to return a zero exit code (i.e. success) in such
-  situations instead. Use ``--`` to stop interpreting options and treat all
-  remaining arguments as paths, even if they start with ``-``.
+  指定したファイル ``<file>`` やディレクトリ ``<dir>`` を削除する。
+  オプションの ``-r`` や ``-R`` を使うと、ディレクトリの他にそのディレクトリ配下も再帰的に削除する。
+  指定したファイルやディレクトリが存在していなかったら、 このコマンドは 0 以外の値を終了コードとして返すが、ログは出力しない。
+  そのような場合、``-f`` オプションは終了コードとして 0 を返すように挙動を変更する（すなわち成功する）。
+  二重ダッシュ ``--`` 以降はオプションとして扱うのを止めて、残りの引数は ``-`` で始まる場合でもすべてパス名として扱う。
 
 .. option:: sleep <number>
 
   .. versionadded:: 3.0
 
-  Sleep for ``<number>`` seconds. ``<number>`` may be a floating point number.
-  A practical minimum is about 0.1 seconds due to overhead in starting/stopping
-  CMake executable. This can be useful in a CMake script to insert a delay:
+  Sleep for ``<number>`` seconds.
+  ``<number>`` may be a floating point number.
+  A practical minimum is about 0.1 seconds due to overhead in starting/stopping CMake executable.
+  This can be useful in a CMake script to insert a delay:
+
+  Sleep for ``<number>`` seconds.
+  ``<number>`` may be a floating point number.
+  A practical minimum is about 0.1 seconds due to overhead in starting/stopping CMake executable.
+  This can be useful in a CMake script to insert a delay:
 
   .. code-block:: cmake
 
@@ -1045,7 +1039,8 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
 .. option:: tar [cxt][vf][zjJ] file.tar [<options>] [--] [<pathname>...]
 
-  Create or extract a tar or zip archive.  Options are:
+  Create or extract a tar or zip archive.
+  Options are:
 
   .. program:: cmake-E_tar
 
