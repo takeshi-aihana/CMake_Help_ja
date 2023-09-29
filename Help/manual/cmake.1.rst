@@ -900,7 +900,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
     .. versionadded:: 3.24
 
     二重ダッシュの引数 ``--`` をサポートした。
-    ``--`` を指定すると、それ以降の引数をオプションや環境変数として扱うのを止め、``-`` で始まっていたり ``=`` を含んでいたとしてもコマンド ``<command>`` の引数 ``<arg>`` として扱う。
+    ``--`` を指定すると、それ以降の引数をオプションや環境変数として扱うのを止め、``-`` で始まっていたり ``=`` を含んでいる場合でもコマンド ``<command>`` の引数 ``<arg>`` として扱う。
 
 .. program:: cmake-E
 
@@ -912,7 +912,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. versionadded:: 3.16
 
-  何もせず、終了コード ``1`` で終了する。
+  終了コード 1 を返すだけで何もしない。
 
 .. option:: make_directory <dir>...
 
@@ -1046,118 +1046,109 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   .. option:: x
 
-    Extract to disk from the archive.
+    アーカイブの中身を展開する。
 
     .. versionadded:: 3.15
-      The ``<pathname>...`` argument could be used to extract only selected files
-      or directories.
-      When extracting selected files or directories, you must provide their exact
-      names including the path, as printed by list (``-t``).
+      引数の ``<pathname>...`` を使用して、選択したファイルやディレクトリだけを展開することができる。
+      選択したファイルやディレクトリを展開する際は、オプション ``-t`` で出力されるものと同じパス名を含む正確なファイル名を指定すること。
 
   .. option:: t
 
-    List archive contents.
+    アーカイブの中身（ファイルやディレクトリ）を一覧表示する。
 
     .. versionadded:: 3.15
-      The ``<pathname>...`` argument could be used to list only selected files
-      or directories.
+      引数の ``<pathname>...`` を使用して、選択したファイルやディレクトリだけを一覧表示できるようになった。
 
   .. option:: v
 
-    Produce verbose output.
+    詳細な出力を生成する。
 
   .. option:: z
 
-    Compress the resulting archive with gzip.
+    作成したアーカイブを gzip で圧縮する。
 
   .. option:: j
 
-    Compress the resulting archive with bzip2.
+    作成したアーカイブを bzip2 で圧縮する。
 
   .. option:: J
 
     .. versionadded:: 3.1
 
-    Compress the resulting archive with XZ.
+    作成したアーカイブを XZ で圧縮する。
 
   .. option:: --zstd
 
     .. versionadded:: 3.15
 
-    Compress the resulting archive with Zstandard.
+    作成したアーカイブを Zstandard で圧縮する。
 
   .. option:: --files-from=<file>
 
     .. versionadded:: 3.1
 
-    Read file names from the given file, one per line.
-    Blank lines are ignored.  Lines may not start in ``-``
-    except for ``--add-file=<name>`` to add files whose
-    names start in ``-``.
+    指定した ``<file>`` からアーカイブに含めるファイル名を取得する（一行につき1ファイル）。
+    空行は無視する。
+    ``-`` で始まるファイルを追加するオプション ``--add-file=<name>`` を除いて、``<file>`` の各行は ``-`` で始めないこと。
 
   .. option:: --format=<format>
 
     .. versionadded:: 3.3
 
-    Specify the format of the archive to be created.
-    Supported formats are: ``7zip``, ``gnutar``, ``pax``,
-    ``paxr`` (restricted pax, default), and ``zip``.
+    作成するアーカイブのフォーマットを指定する。
+    サポートしているフォーマット： ``7zip``, ``gnutar``, ``pax``, ``paxr`` （デフォルトは制限付き pax）, ``zip``
 
   .. option:: --mtime=<date>
 
     .. versionadded:: 3.1
 
-    Specify modification time recorded in tarball entries.
+    アーカイブの中の各ファイルで記録される変更日時（*modification time*）を指定する。
 
   .. option:: --touch
 
     .. versionadded:: 3.24
 
-    Use current local timestamp instead of extracting file timestamps
-    from the archive.
+    アーカイブの中の各ファイルに記録されているタイムスタンプで展開する代わりに、現在のローカルの日時をタイムスタンプにする。
 
   .. option:: --
 
     .. versionadded:: 3.1
 
-    Stop interpreting options and treat all remaining arguments
-    as file names, even if they start with ``-``.
+    これ以降の引数をオプションとして扱うのを止め、``-`` で始まる場合でも全てファイル名として扱う。
 
   .. versionadded:: 3.1
-    LZMA (7zip) support.
+    LZMA (7zip) をサポートするようになった。
 
   .. versionadded:: 3.15
-    The command now continues adding files to an archive even if some of the
-    files are not readable.  This behavior is more consistent with the classic
-    ``tar`` tool. The command now also parses all flags, and if an invalid flag
-    was provided, a warning is issued.
+    一部のファイルを読み取れなかった場合でも停止せずに、アーカイブにファイルの追加を継続するようになった。
+    この修正により、従来の ``tar`` ツールと同じ挙動をさらに保証できるようになった。
+    さらに全てのフラグを解析するようになり、無効なフラグが指定されたら警告するようになった。
 
 .. program:: cmake-E
 
 .. option:: time <command> [<args>...]
 
-  Run ``<command>`` and display elapsed time (including overhead of CMake frontend).
+  ``<command>`` を実行したあとに経過時間（CMake の起動と停止の時間も含む）を表示する
 
   .. versionadded:: 3.5
-    The command now properly passes arguments with spaces or special characters
-    through to the child process. This may break scripts that worked around the
-    bug with their own extra quoting or escaping.
+    空白や特殊文字を含む引数を子プロセスに正しく渡せるようになった。
+    これにより、従来とおりに独自に追加した引用符やエスケープ文字でバグが発生しなくなったりスクリプトが機能しなくなる場合がある。
 
 .. option:: touch <file>...
 
-  Creates ``<file>`` if file do not exist.
-  If ``<file>`` exists, it is changing ``<file>`` access and modification times.
+  ファイル ``<file>`` が存在していなければ、その ``<file>`` を作成する。
+  ``<file>`` が存在している場合は、そのファイルのアクセス日時（*access time*）と変更日時（*modification time*）を変更する。
 
 .. option:: touch_nocreate <file>...
 
-  Touch a file if it exists but do not create it.  If a file does
-  not exist it will be silently ignored.
+  ``<file>`` が存在している場合はファイルを touch するが、``<file>`` は作成しない。
+  ``<file>`` が存在していない場合は無視する。
 
 .. option:: true
 
   .. versionadded:: 3.16
 
-  Do nothing, with an exit code of 0.
+  終了コード 0 を返すだけで何もしない。
 
 Windows-specific Command-Line Tools
 -----------------------------------
