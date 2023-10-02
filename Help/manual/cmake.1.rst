@@ -1141,7 +1141,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
 .. option:: touch_nocreate <file>...
 
-  ``<file>`` が存在している場合はファイルを touch するが、``<file>`` は作成しない。
+  ``<file>`` が存在している場合はファイルを ``touch`` するが、``<file>`` は作成しない。
   ``<file>`` が存在していない場合は無視する。
 
 .. option:: true
@@ -1150,32 +1150,30 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
 
   終了コード 0 を返すだけで何もしない。
 
-Windows-specific Command-Line Tools
------------------------------------
+Windows 専用のコマンド・ツール
+------------------------------
 
-The following ``cmake -E`` commands are available only on Windows:
+次の ``cmake -E`` コマンド・ツールは Windows でのみ利用できます：
 
 .. option:: delete_regv <key>
 
-  Delete Windows registry value.
+  Windows レジストリで ``<key>`` の値を削除する。
 
 .. option:: env_vs8_wince <sdkname>
 
   .. versionadded:: 3.2
 
-  Displays a batch file which sets the environment for the provided
-  Windows CE SDK installed in VS2005.
+  VS2005 にインストールされている Windows CE SDK 向けの環境を設定するバッチファイルを表示する。
 
 .. option:: env_vs9_wince <sdkname>
 
   .. versionadded:: 3.2
 
-  Displays a batch file which sets the environment for the provided
-  Windows CE SDK installed in VS2008.
+  VS2008 にインストールされている Windows CE SDK 向けの環境を設定するバッチファイルを表示する。
 
 .. option:: write_regv <key> <value>
 
-  Write Windows registry value.
+  Windows レジストリで ``<key>`` の値に ``<value>`` を書き込む。
 
 
 パッケージ検索ツールを実行する
@@ -1183,20 +1181,18 @@ The following ``cmake -E`` commands are available only on Windows:
 
 .. program:: cmake--find-package
 
-CMake provides a pkg-config like helper for Makefile-based projects:
+CMake は Makefile を使うプロジェクト向けに pkg-config に似たヘルパーを提供しています：
 
 .. code-block:: shell
 
   cmake --find-package [<options>]
 
-It searches a package using :command:`find_package()` and prints the
-resulting flags to stdout.  This can be used instead of pkg-config
-to find installed libraries in plain Makefile-based projects or in
-autoconf-based projects (via ``share/aclocal/cmake.m4``).
+:command:`find_package()` コマンドを使ってライブラリを探し、見つかったフラグを標準出力に出力します。
+これを pkg-config の代わりに使用すると、Makefile を使うプロジェクトや autoconf を使ったプロジェクトで（``share/aclocal/cmake.m4`` を介して）インストールされているライブラリを探すことができます。
 
 .. note::
-  This mode is not well-supported due to some technical limitations.
-  It is kept for compatibility but should not be used in new projects.
+  このモードは、いくつかの技術的な制限のため十分にサポートされていません。
+  これは CMake の互換性を維持するために残されている機能ですが、新しいプロジェクトでは使用しないこと。
 
 .. _`Workflow Mode`:
 
@@ -1205,38 +1201,36 @@ autoconf-based projects (via ``share/aclocal/cmake.m4``).
 
 .. program:: cmake
 
-:manual:`CMake Presets <cmake-presets(7)>` provides a way to execute multiple
-build steps in order:
+:manual:`CMake Presets <cmake-presets(7)>` は複数のビルドステップを順番に実行していく手段を提供します。
 
 .. code-block:: shell
 
   cmake --workflow [<options>]
 
-The options are:
+利用できるオプションは：
 
 .. option:: --workflow
 
-  Select a :ref:`Workflow Preset` using one of the following options.
+  このあとのオプションのいずれかを使って :ref:`Workflow Preset` を選択する。
 
 .. program:: cmake--workflow
 
 .. option:: --preset <preset>, --preset=<preset>
 
-  Use a workflow preset to specify a workflow. The project binary directory
-  is inferred from the initial configure preset. The current working directory
-  must contain CMake preset files.
-  See :manual:`preset <cmake-presets(7)>` for more details.
+  :ref:`Workflow Preset` を使ってワークフローを指定する。
+  プロジェクトのビルドツリー（バイナリツリー）は、初期の設定プリセットから推測する。
+  必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
+  詳細は :manual:`preset <cmake-presets(7)>` を参照のこと。
 
 .. option:: --list-presets
 
-  Lists the available workflow presets. The current working directory must
-  contain CMake preset files.
+  利用可能なワークフローのプリセットを一覧表示する。[#aihana]
+  必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
 
 .. option:: --fresh
 
-  Perform a fresh configuration of the build tree.
-  This removes any existing ``CMakeCache.txt`` file and associated
-  ``CMakeFiles/`` directory, and recreates them from scratch.
+  ビルドツリーで、新たな構成を作成する。
+  これにより、既存の ``CMakeCache.txt`` ファイルと関連する ``CMakeFiles/`` ディレクトリが削除され、改めて実行した構成で再作成される。
 
 ヘルプを表示する
 ================
