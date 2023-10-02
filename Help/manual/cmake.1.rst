@@ -1192,7 +1192,7 @@ CMake は Makefile を使うプロジェクト向けに pkg-config に似たヘ�
 
 .. note::
   このモードは、いくつかの技術的な制限のため十分にサポートされていません。
-  これは CMake の互換性を維持するために残されている機能ですが、新しいプロジェクトでは使用しないこと。
+  これは CMake の互換性を維持するために残されている機能ですが、新しいプロジェクトでは使用しないで下さい。
 
 .. _`Workflow Mode`:
 
@@ -1224,7 +1224,7 @@ CMake は Makefile を使うプロジェクト向けに pkg-config に似たヘ�
 
 .. option:: --list-presets
 
-  利用可能なワークフローのプリセットを一覧表示する。[#aihana]
+  利用可能なワークフローのプリセットを一覧表示する。
   必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
 
 .. option:: --fresh
@@ -1232,22 +1232,23 @@ CMake は Makefile を使うプロジェクト向けに pkg-config に似たヘ�
   ビルドツリーで、新たな構成を作成する。
   これにより、既存の ``CMakeCache.txt`` ファイルと関連する ``CMakeFiles/`` ディレクトリが削除され、改めて実行した構成で再作成される。
 
+            
 ヘルプを表示する
 ================
 
 .. program:: cmake
 
-To print selected pages from the CMake documentation, use
+CMake のドキュメントから特定のページを出力する場合は：
 
 .. code-block:: shell
 
   cmake --help[-<topic>]
 
-with one of the following options:
+に、以下のオプションのいずれかを指定する：
 
 .. include:: OPTIONS_HELP.txt
 
-To view the presets available for a project, use
+プロジェクトで利用可能なプリセットを表示する場合は：
 
 .. code-block:: shell
 
@@ -1256,13 +1257,12 @@ To view the presets available for a project, use
 
 .. _`CMake Exit Code`:
 
-Return Value (Exit Code)
-========================
+返り値（終了コード）
+====================
 
-Upon regular termination, the :program:`cmake` executable returns the exit code ``0``.
+正常で終了すると、:program:`cmake` は終了コードとして ``0`` を返します。
 
-If termination is caused by the command :command:`message(FATAL_ERROR)`,
-or another error condition, then a non-zero exit code is returned.
+:command:`message(FATAL_ERROR)` を出力してで終了した、または別のエラーによって終了した場合は、終了コードとしてゼロ以外の数値を返します。
 
 
 関連項目

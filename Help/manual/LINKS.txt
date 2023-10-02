@@ -1,17 +1,16 @@
-The following resources are available to get help using CMake:
+CMake を使う際のヘルプを得るには、以下のリソースが利用可能です：
 
-Home Page
+ホーム・ページ
  https://cmake.org
 
- The primary starting point for learning about CMake.
+ CMake について学習する際の一番最初のスタート地点です。
 
-Online Documentation and Community Resources
+オンライン・ドキュメントとコミュニティ
  https://cmake.org/documentation
 
- Links to available documentation and community resources may be
- found on this web page.
+ 利用可能なドキュメントやコミュニティへのリンクへのリンクは、このウェブページから見つけることができます。
 
-Discourse Forum
+フォーラム
  https://discourse.cmake.org
 
- The Discourse Forum hosts discussion and questions about CMake.
+ このフォーラムは CMake に関して質問したり議論する場です。
