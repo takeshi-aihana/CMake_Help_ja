@@ -124,13 +124,13 @@ ctest(1)
 
  ``<file>`` に指定した :ref:`リソース仕様ファイル <ctest-resource-specification-file>` を使用し、:ref:`リソースの確保 <ctest-resource-allocation>` を有効にして CTest を実行する。
 
- :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
+ :program:`ctest` を `ダッシュボード・クライアント`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
 
 .. option:: --test-load <level>
 
  たとえば、オプション :option:`-j <ctest -j>` を付けるなどしてテストを並列で実行している時、CPU 負荷がしきい値を越える可能性がある場合はテストを開始しないようにする。
 
- :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``TestLoad`` オプションがセットされる。
+ :program:`ctest` を `ダッシュボード・クライアント`_ として実行すると、これにより `CTest Test Step`_ の ``TestLoad`` オプションがセットされる。
 
 .. option:: -Q, --quiet
 
@@ -150,129 +150,101 @@ ctest(1)
 
  .. versionadded:: 3.21
 
- Write test results in JUnit format.
+ テスト結果を JUnit 形式で書き込む。
 
- This option tells CTest to write test results to ``<file>`` in JUnit XML format.
- If ``<file>`` already exists, it will be overwritten.
- If using the :option:`-S <ctest -S>` option to run a dashboard script, use the ``OUTPUT_JUNIT`` keyword with the :command:`ctest_test` command instead.
-
- Write test results in JUnit format.
-
- This option tells CTest to write test results to ``<file>`` in JUnit XML format.
- If ``<file>`` already exists, it will be overwritten.
- If using the :option:`-S <ctest -S>` option to run a dashboard script, use the ``OUTPUT_JUNIT`` keyword with the :command:`ctest_test` command instead.
+ このオプションは CTest に、テスト結果を``<file>`` に JUnit XML 形式で書き込むよう指示する。
+ 既に ``<file>`` が存在している場合は、その内容を上書きする。
+ オプション :option:`-S <ctest -S>` を使ってダッシュボードのスクリプトを実行する場合は、代わりにキーワードの ``OUTPUT_JUNIT`` を :command:`ctest_test` コマンドで使用する。
 
 .. option:: -N, --show-only[=<format>]
 
- Disable actual execution of tests.
+ 実際のテストの実行を無効にする。
 
- This option tells CTest to list the tests that would be run but not actually run them.  Useful in conjunction with the :option:`-R <ctest -R>` and :option:`-E <ctest -E>` options.
-
- Disable actual execution of tests.
-
- This option tells CTest to list the tests that would be run but not actually run them.  Useful in conjunction with the :option:`-R <ctest -R>` and :option:`-E <ctest -E>` options.
+ このオプションは CTest に、実行するテストの一覧を表示するよう指示するが、実際にはそれらのテストを実行しない。
+ オプション :option:`-R <ctest -R>` と :option:`-E <ctest -E>` と一緒に組み合わせて使用すると便利である。
 
  .. versionadded:: 3.14
 
-   The ``--show-only`` option accepts a ``<format>`` value.
+   オプション ``--show-only`` は ``<format>`` を受け取るようになった。
 
- ``<format>`` can be one of the following values.
+ ``<format>`` は次の値のいずれか：
 
    ``human``
-     Human-friendly output.  This is not guaranteed to be stable.
-     This is the default.
+     可読な形式にする。
+     これが安定した出力であるかは保証しない。
+     これがデフォルトの値。
 
    ``json-v1``
-     Dump the test information in JSON format.
-     See `Show as JSON Object Model`_.
+     出力を JSON 形式にダンプする。
+     `Show as JSON Object Model`_ を参照のこと。
 
 .. option:: -L <regex>, --label-regex <regex>
 
- Run tests with labels matching regular expression as described under
- :ref:`string(REGEX) <Regex Specification>`.
+ 正規表現にマッチするラベルが付いたテストを実行する。利用可能な正規表現については :ref:`string(REGEX) <Regex Specification>` を参照のこと。
 
- This option tells CTest to run only the tests whose labels match the
- given regular expression.  When more than one ``-L`` option is given,
- a test will only be run if each regular expression matches at least one
- of the test's labels (i.e. the multiple ``-L`` labels form an ``AND``
- relationship).  See `Label Matching`_.
+ このオプションは CTest に、指定した正規表現にマッチするラベルを持つテストだけ実行するよう指示する。
+ このオプション ``-L`` を複数指定すると、それぞれの正規表現とテストのラベルが少なくとも一つマッチした場合にだけテストを実行する（すなわち複数の ``-L`` で指定したラベルを ``AND`` で連結した条件を形成する）。
+ `Label Matching`_ を参照のこと。
 
 .. option:: -R <regex>, --tests-regex <regex>
 
- Run tests matching regular expression.
+ 正規表現に名前がマッチするテストを実行する。
 
- This option tells CTest to run only the tests whose names match the
- given regular expression.
+ このオプションは CTest に、指定した正規表現にマッチする名前を持つテストだけ実行するよう指示する。
 
 .. option:: -E <regex>, --exclude-regex <regex>
 
- Exclude tests matching regular expression.
+ 正規表現にマッチするテストを除外する。
 
- This option tells CTest to NOT run the tests whose names match the
- given regular expression.
+ このオプションは CTest に、指定した正規表現にマッチする名前を持つテストを実行しないよう指示する。
 
 .. option:: -LE <regex>, --label-exclude <regex>
 
- Exclude tests with labels matching regular expression.
+ 正規表現にマッチするラベルが付いテストを除外する。
 
- This option tells CTest to NOT run the tests whose labels match the
- given regular expression.  When more than one ``-LE`` option is given,
- a test will only be excluded if each regular expression matches at least one
- of the test's labels (i.e. the multiple ``-LE`` labels form an ``AND``
- relationship).  See `Label Matching`_.
+ このオプションは CTest に、指定した正規表現にマッチするラベルが付いたテストを実行しないよう指示する。
+ このオプション ``-LE`` を複数指定すると、それぞれの正規表現とテストのラベルが少なくとも一つマッチした場合にだけテストを除外する（すなわち複数の ``-LE`` で指定したラベルを ``AND`` で連結した条件を形成する）。
+ `Label Matching`_ を参照のこと。
 
 .. option:: -FA <regex>, --fixture-exclude-any <regex>
 
- Exclude fixtures matching ``<regex>`` from automatically adding any tests to
- the test set.
+ Exclude fixtures matching ``<regex>`` from automatically adding any tests to the test set.
 
- If a test in the set of tests to be executed requires a particular fixture,
- that fixture's setup and cleanup tests would normally be added to the test set
- automatically. This option prevents adding setup or cleanup tests for fixtures
- matching the ``<regex>``. Note that all other fixture behavior is retained,
- including test dependencies and skipping tests that have fixture setup tests
- that fail.
+ If a test in the set of tests to be executed requires a particular fixture, that fixture's setup and cleanup tests would normally be added to the test set automatically.
+ This option prevents adding setup or cleanup tests for fixtures matching the ``<regex>``.
+ Note that all other fixture behavior is retained, including test dependencies and skipping tests that have fixture setup tests that fail.
 
 .. option:: -FS <regex>, --fixture-exclude-setup <regex>
 
- Same as :option:`-FA <ctest -FA>` except only matching setup tests are
- excluded.
+ Same as :option:`-FA <ctest -FA>` except only matching setup tests are excluded.
 
 .. option:: -FC <regex>, --fixture-exclude-cleanup <regex>
 
- Same as :option:`-FA <ctest -FA>` except only matching cleanup tests are
- excluded.
+ Same as :option:`-FA <ctest -FA>` except only matching cleanup tests are excluded.
 
 .. option:: -I [Start,End,Stride,test#,test#|Test file], --tests-information
 
  Run a specific number of tests by number.
 
- This option causes CTest to run tests starting at number ``Start``,
- ending at number ``End``, and incrementing by ``Stride``.  Any additional
- numbers after ``Stride`` are considered individual test numbers.  ``Start``,
- ``End``, or ``Stride`` can be empty.  Optionally a file can be given that
- contains the same syntax as the command line.
+ This option causes CTest to run tests starting at number ``Start``, ending at number ``End``, and incrementing by ``Stride``.
+ Any additional numbers after ``Stride`` are considered individual test numbers.
+ ``Start``, ``End``, or ``Stride`` can be empty.
+ Optionally a file can be given that contains the same syntax as the command line.
 
 .. option:: -U, --union
 
  Take the Union of :option:`-I <ctest -I>` and :option:`-R <ctest -R>`.
 
- When both :option:`-R <ctest -R>` and :option:`-I <ctest -I>` are specified
- by default the intersection of tests are run.  By specifying ``-U`` the union
- of tests is run instead.
+ When both :option:`-R <ctest -R>` and :option:`-I <ctest -I>` are specified by default the intersection of tests are run.
+ By specifying ``-U`` the union of tests is run instead.
 
 .. option:: --rerun-failed
 
  Run only the tests that failed previously.
 
- This option tells CTest to perform only the tests that failed during
- its previous run.  When this option is specified, CTest ignores all
- other options intended to modify the list of tests to run (
- :option:`-L <ctest -L>`, :option:`-R <ctest -R>`, :option:`-E <ctest -E>`,
- :option:`-LE <ctest -LE>`, :option:`-I <ctest -I>`, etc).  In the event that
- CTest runs and no tests fail, subsequent calls to CTest with the
- ``--rerun-failed`` option will run the set of tests that most recently
- failed (if any).
+ This option tells CTest to perform only the tests that failed during its previous run.
+ When this option is specified, CTest ignores all other options intended to modify the list of tests to run (:option:`-L <ctest -L>`, :option:`-R <ctest -R>`, :option:`-E <ctest -E>`, :option:`-LE <ctest -LE>`, :option:`-I <ctest -I>`, etc).
+ In the event that CTest runs and no tests fail, subsequent calls to CTest with the ``--rerun-failed`` option will run the set of tests that most recently failed (if any).
 
 .. option:: --repeat <mode>:<n>
 
@@ -425,8 +397,7 @@ ctest(1)
 
  .. versionadded:: 3.26
 
- This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION`
- environment variable.
+ This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION` environment variable.
 
 ヘルプを表示する
 ================
