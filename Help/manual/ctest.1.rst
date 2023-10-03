@@ -137,7 +137,7 @@ ctest(1)
  CTest の出力を抑制する。
 
  このオプションは全ての出力を抑制する。
- オプション :option:`--output-log <ctest --output-log>` を指定している場合は、依然としてログファイルに出力が書き込まれる。
+ オプション :option:`--output-log <ctest --output-log>` を指定している場合は、依然としてログファイルに書き込まれる。
  このオプションを指定すると、:option:`--verbose <ctest --verbose>`、:option:`--extra-verbose <ctest --extra-verbose>`、:option:`--debug <ctest --debug>` といったオプションは無視される。
 
 .. option:: -O <file>, --output-log <file>
@@ -152,7 +152,7 @@ ctest(1)
 
  テスト結果を JUnit 形式で書き込む。
 
- このオプションは CTest に、テスト結果を``<file>`` に JUnit XML 形式で書き込むよう指示する。
+ このオプションは CTest に、テスト結果を ``<file>`` に JUnit XML 形式で書き込むよう指示する。
  既に ``<file>`` が存在している場合は、その内容を上書きする。
  オプション :option:`-S <ctest -S>` を使ってダッシュボードのスクリプトを実行する場合は、代わりにキーワードの ``OUTPUT_JUNIT`` を :command:`ctest_test` コマンドで使用する。
 
@@ -165,13 +165,13 @@ ctest(1)
 
  .. versionadded:: 3.14
 
-   オプション ``--show-only`` は ``<format>`` を受け取るようになった。
+   このオプション ``--show-only`` が ``<format>`` を受け取るようになった。
 
  ``<format>`` は次の値のいずれか：
 
    ``human``
      可読な形式にする。
-     これが安定した出力であるかは保証しない。
+     これが安定した出力であるかは保証していない。
      これがデフォルトの値。
 
    ``json-v1``
@@ -200,13 +200,19 @@ ctest(1)
 
 .. option:: -LE <regex>, --label-exclude <regex>
 
- 正規表現にマッチするラベルが付いテストを除外する。
+ 正規表現にマッチするラベルが付いたテストを除外する。
 
  このオプションは CTest に、指定した正規表現にマッチするラベルが付いたテストを実行しないよう指示する。
  このオプション ``-LE`` を複数指定すると、それぞれの正規表現とテストのラベルが少なくとも一つマッチした場合にだけテストを除外する（すなわち複数の ``-LE`` で指定したラベルを ``AND`` で連結した条件を形成する）。
  `Label Matching`_ を参照のこと。
 
 .. option:: -FA <regex>, --fixture-exclude-any <regex>
+
+ ``<regex>`` にマッチするフィクスチャを、テストの集合に自動追加するテストから除外する。
+
+ 実行するテストの集合の中に特定のフィクスチャが必要なテストがある場合、そのフィクスチャの Setup テストと Cleanup テストが自動的にそのテストに追加される。
+ このオプションを使うと、正規表現の ``<regex>`` にマッチするフィクスチャの Setup テストまたは Cleanup テストを追加できなくなる。
+ テストの依存関係や失敗したフィクスチャの Setup テストを持つテストのスキップなど、他の全てのフィクスチャの挙動が記憶されることに注意すること。
 
  Exclude fixtures matching ``<regex>`` from automatically adding any tests to the test set.
 
