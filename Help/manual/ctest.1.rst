@@ -33,7 +33,7 @@ ctest(1)
 ====
 
 :program:`ctest` は、CMake のテストを制御するプログラムです。
-:command:`enable_testing` と :command:`add_test` のコマンドを使用するプロジェクトで生成された CMake のビルドツリーはテストの実行をサポートしています。
+:command:`enable_testing` と :command:`add_test` のコマンドを使用するプロジェクトで生成された CMake のビルドツリーは、CTest によるテストをサポートしています。
 このコマンドライン・インタフェース（CLI）はいろいろなテストを実行し、その結果を報告します。
 
 .. _`Run Tests`:
@@ -106,7 +106,7 @@ ctest(1)
 
  フェイルオーバーを有効にする。
 
- このオプションを使うと、CTest は以前に中断した一連のテストを再開できるようになる。
+ このオプションを使うと、CTest は以前に中断した一連のテストを再開できる。
  中断が発生していない場合は何もしない。
 
 .. option:: -j <jobs>, --parallel <jobs>
@@ -122,39 +122,29 @@ ctest(1)
 
 .. option:: --resource-spec-file <file>
 
- Run CTest with :ref:`resource allocation <ctest-resource-allocation>` enabled, using the :ref:`resource specification file <ctest-resource-specification-file>` specified in ``<file>``.
+ ``<file>`` に指定した :ref:`リソース仕様ファイル <ctest-resource-specification-file>` を使用し、:ref:`リソースの確保 <ctest-resource-allocation>` を有効にして CTest を実行する。
 
- When :program:`ctest` is run as a `Dashboard Client`_ this sets the ``ResourceSpecFile`` option of the `CTest Test Step`_.
-
- Run CTest with :ref:`resource allocation <ctest-resource-allocation>` enabled, using the :ref:`resource specification file <ctest-resource-specification-file>` specified in ``<file>``.
-
- When :program:`ctest` is run as a `Dashboard Client`_ this sets the ``ResourceSpecFile`` option of the `CTest Test Step`_.
+ :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
 
 .. option:: --test-load <level>
 
- While running tests in parallel (e.g. with :option:`-j <ctest -j>`), try
- not to start tests when they may cause the CPU load to pass above a given
- threshold.
+ たとえば、オプション :option:`-j <ctest -j>` を付けるなどしてテストを並列で実行している時、CPU 負荷がしきい値を越える可能性がある場合はテストを開始しないようにする。
 
- When :program:`ctest` is run as a `Dashboard Client`_ this sets the
- ``TestLoad`` option of the `CTest Test Step`_.
+ :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``TestLoad`` オプションがセットされる。
 
 .. option:: -Q, --quiet
 
- Make CTest quiet.
+ CTest の出力を抑制する。
 
- This option will suppress all the output.  The output log file will
- still be generated if the :option:`--output-log <ctest --output-log>` is
- specified.  Options such as :option:`--verbose <ctest --verbose>`,
- :option:`--extra-verbose <ctest --extra-verbose>`, and
- :option:`--debug <ctest --debug>` are ignored
- if ``--quiet`` is specified.
+ このオプションは全ての出力を抑制する。
+ オプション :option:`--output-log <ctest --output-log>` を指定している場合は、依然としてログファイルに出力が書き込まれる。
+ このオプションを指定すると、:option:`--verbose <ctest --verbose>`、:option:`--extra-verbose <ctest --extra-verbose>`、:option:`--debug <ctest --debug>` といったオプションは無視される。
 
 .. option:: -O <file>, --output-log <file>
 
- Output to log file.
+ 出力をファイルに書き込む。
 
- This option tells CTest to write all its output to a ``<file>`` log file.
+ このオプションは CTest に、全ての出力を ``<file>`` というログファイルに書き込むよう指示する。
 
 .. option:: --output-junit <file>
 
@@ -162,18 +152,25 @@ ctest(1)
 
  Write test results in JUnit format.
 
- This option tells CTest to write test results to ``<file>`` in JUnit XML
- format. If ``<file>`` already exists, it will be overwritten. If using the
- :option:`-S <ctest -S>` option to run a dashboard script, use the
- ``OUTPUT_JUNIT`` keyword with the :command:`ctest_test` command instead.
+ This option tells CTest to write test results to ``<file>`` in JUnit XML format.
+ If ``<file>`` already exists, it will be overwritten.
+ If using the :option:`-S <ctest -S>` option to run a dashboard script, use the ``OUTPUT_JUNIT`` keyword with the :command:`ctest_test` command instead.
+
+ Write test results in JUnit format.
+
+ This option tells CTest to write test results to ``<file>`` in JUnit XML format.
+ If ``<file>`` already exists, it will be overwritten.
+ If using the :option:`-S <ctest -S>` option to run a dashboard script, use the ``OUTPUT_JUNIT`` keyword with the :command:`ctest_test` command instead.
 
 .. option:: -N, --show-only[=<format>]
 
  Disable actual execution of tests.
 
- This option tells CTest to list the tests that would be run but not
- actually run them.  Useful in conjunction with the :option:`-R <ctest -R>`
- and :option:`-E <ctest -E>` options.
+ This option tells CTest to list the tests that would be run but not actually run them.  Useful in conjunction with the :option:`-R <ctest -R>` and :option:`-E <ctest -E>` options.
+
+ Disable actual execution of tests.
+
+ This option tells CTest to list the tests that would be run but not actually run them.  Useful in conjunction with the :option:`-R <ctest -R>` and :option:`-E <ctest -E>` options.
 
  .. versionadded:: 3.14
 
