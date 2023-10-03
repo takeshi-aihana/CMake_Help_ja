@@ -1,144 +1,134 @@
-.. cmake-manual-description: CTest Command-Line Reference
+.. cmake-manual-description: CTest コマンドライン・リファレンス
 
 ctest(1)
 ********
 
 .. contents::
 
-Synopsis
-========
+概要
+====
 
 .. parsed-literal::
 
- `Run Tests`_
+ `テストを実行する`_
   ctest [<options>] [--test-dir <path-to-build>]
 
- `Build and Test Mode`_
+ `ビルドとテストのモード`_
   ctest --build-and-test <path-to-source> <path-to-build>
         --build-generator <generator> [<options>...]
        [--build-options <opts>...]
        [--test-command <command> [<args>...]]
 
- `Dashboard Client`_
+ `ダッシュボード・クライアント`_
   ctest -D <dashboard>         [-- <dashboard-options>...]
   ctest -M <model> -T <action> [-- <dashboard-options>...]
   ctest -S <script>            [-- <dashboard-options>...]
   ctest -SP <script>           [-- <dashboard-options>...]
 
- `View Help`_
+ `ヘルプを表示する`_
   ctest --help[-<topic>]
 
 
-Description
-===========
+説明
+====
 
-The :program:`ctest` executable is the CMake test driver program.
-CMake-generated build trees created for projects that use the
-:command:`enable_testing` and :command:`add_test` commands have testing support.
-This program will run the tests and report results.
+:program:`ctest` は、CMake のテストを制御するプログラムです。
+:command:`enable_testing` と :command:`add_test` のコマンドを使用するプロジェクトで生成された CMake のビルドツリーはテストの実行をサポートしています。
+このコマンドライン・インタフェース（CLI）はいろいろなテストを実行し、その結果を報告します。
 
 .. _`Run Tests`:
 
-Run Tests
-=========
+テストを実行する
+================
 
 .. program:: ctest
 
 .. option:: --preset <preset>, --preset=<preset>
 
- Use a test preset to specify test options. The project binary directory
- is inferred from the ``configurePreset`` key. The current working directory
- must contain CMake preset files.
- See :manual:`preset <cmake-presets(7)>` for more details.
+ テスト用プリセットを使ってテストのオプションを指定する。
+ プロジェクトのビルドツリー（バイナリツリー）は ``configurePreset`` キーから推測する。
+ 必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
+ 詳細は :manual:`preset <cmake-presets(7)>` を参照のこと。
 
 .. option:: --list-presets
 
- Lists the available test presets. The current working directory must contain
- CMake preset files.
+ 利用可能なテスト用プリセットを一覧表示する。
+ 必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
 
 .. option:: -C <cfg>, --build-config <cfg>
 
- Choose configuration to test.
+ テストする構成を選択する。
 
- Some CMake-generated build trees can have multiple build
- configurations in the same tree.  This option can be used to specify
- which one should be tested.  Example configurations are ``Debug`` and
- ``Release``.
+ CMake が生成したビルドツリー（バイナリツリー）の中には、同じツリーの中に複数の構成を保持できる場合がある。
+ このオプションで、どの構成をテストするかを指定することができる。
+ 構成としては、例えば ``Debug`` と ``Release`` がある。
 
 .. option:: --progress
 
- Enable short progress output from tests.
+ テストからの簡単な進捗報告を有効にする。
 
- When the output of :program:`ctest` is being sent directly to a terminal, the
- progress through the set of tests is reported by updating the same line
- rather than printing start and end messages for each test on new lines.
- This can significantly reduce the verbosity of the test output.
- Test completion messages are still output on their own line for failed
- tests and the final test summary will also still be logged.
+ 直接 :program:`ctest` の出力が端末に送られる時に、一連のテストの進捗を（一行ごとにテストの開始と終了のメッセージを出力するのではなく、同じ行のメッセージを更新することで）報告する。
+ これにより、冗長な出力が大幅に軽減される。
+ テストの完了メッセージは、テストが失敗した場合でも同じ行に出力し、最終的な結果も同じように出力する。
 
- This option can also be enabled by setting the environment variable
- :envvar:`CTEST_PROGRESS_OUTPUT`.
+ このオプションは環境変数 :envvar:`CTEST_PROGRESS_OUTPUT` を使って有効にすることもできる。
 
 .. option:: -V, --verbose
 
- Enable verbose output from tests.
+ テストからの冗長な出力を有効にする。
 
- Test output is normally suppressed and only summary information is
- displayed.  This option will show all test output.
+ 通常は出力を抑制するため、テストとその結果について概要が表示されるだけである。
+ このオプションで、テストから送られる全ての出力を表示する。
 
 .. option:: -VV, --extra-verbose
 
- Enable more verbose output from tests.
+ テストからの出力をさらに冗長なものにする。
 
- Test output is normally suppressed and only summary information is
- displayed.  This option will show even more test output.
+ 通常の出力は抑制されるので、テストとその結果について概要が表示されるだけである。
+ このオプションで、さらに多くの出力を表示する。
 
 .. option:: --debug
 
- Displaying more verbose internals of CTest.
+ CTest の詳細な内部ログを表示する。
 
- This feature will result in a large number of output that is mostly
- useful for debugging dashboard problems.
+ このオプションで、ダッシュボードの問題をデバッグする際に有益な情報をたくさん出力する。
 
 .. option:: --output-on-failure
 
- Output anything outputted by the test program if the test should fail.
- This option can also be enabled by setting the
- :envvar:`CTEST_OUTPUT_ON_FAILURE` environment variable
+ テストが失敗した場合に、テストからの出力を全て表示する。
+ このオプションは環境変数 :envvar:`CTEST_OUTPUT_ON_FAILURE` を使って有効にすることもできる。
 
 .. option:: --stop-on-failure
 
- Stop running the tests when the first failure happens.
+ テストが初めて失敗した時に実行中のテストを停止する。
 
 .. option:: -F
 
- Enable failover.
+ フェイルオーバーを有効にする。
 
- This option allows CTest to resume a test set execution that was
- previously interrupted.  If no interruption occurred, the ``-F`` option
- will have no effect.
+ このオプションを使うと、CTest は以前に中断した一連のテストを再開できるようになる。
+ 中断が発生していない場合は何もしない。
 
 .. option:: -j <jobs>, --parallel <jobs>
 
- Run the tests in parallel using the given number of jobs.
+ 指定したジョブ数でテストを並列で実行する。
 
- This option tells CTest to run the tests in parallel using given
- number of jobs. This option can also be set by setting the
- :envvar:`CTEST_PARALLEL_LEVEL` environment variable.
+ このオプションは、指定したジョブ数でテストを並列実行するように CTest に指示するだけ（必ずしも指定したとおりになるとは限らない）。
+ このオプションは環境変数 :envvar:`CTEST_PARALLEL_LEVEL` を使って有効にすることもできる。
 
- This option can be used with the :prop_test:`PROCESSORS` test property.
+ このオプションは、テスト・プロパティの :prop_test:`PROCESSORS` と一緒に使用できる。
 
- See `Label and Subproject Summary`_.
+ 詳細は `Label and Subproject Summary`_ を参照のこと。
 
 .. option:: --resource-spec-file <file>
 
- Run CTest with :ref:`resource allocation <ctest-resource-allocation>` enabled,
- using the
- :ref:`resource specification file <ctest-resource-specification-file>`
- specified in ``<file>``.
+ Run CTest with :ref:`resource allocation <ctest-resource-allocation>` enabled, using the :ref:`resource specification file <ctest-resource-specification-file>` specified in ``<file>``.
 
- When :program:`ctest` is run as a `Dashboard Client`_ this sets the
- ``ResourceSpecFile`` option of the `CTest Test Step`_.
+ When :program:`ctest` is run as a `Dashboard Client`_ this sets the ``ResourceSpecFile`` option of the `CTest Test Step`_.
+
+ Run CTest with :ref:`resource allocation <ctest-resource-allocation>` enabled, using the :ref:`resource specification file <ctest-resource-specification-file>` specified in ``<file>``.
+
+ When :program:`ctest` is run as a `Dashboard Client`_ this sets the ``ResourceSpecFile`` option of the `CTest Test Step`_.
 
 .. option:: --test-load <level>
 
@@ -441,8 +431,8 @@ Run Tests
  This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION`
  environment variable.
 
-View Help
-=========
+ヘルプを表示する
+================
 
 To print version details or selected pages from the CMake documentation,
 use one of the following options:
@@ -538,8 +528,8 @@ for ``SubprojectB``).
 
 .. _`Build and Test Mode`:
 
-Build and Test Mode
-===================
+ビルドとテストのモード
+======================
 
 CTest provides a command-line signature to configure (i.e. run cmake on),
 build, and/or execute a test::
@@ -639,8 +629,8 @@ this mode include:
 
 .. _`Dashboard Client`:
 
-Dashboard Client
-================
+ダッシュボード・クライアント
+============================
 
 CTest can operate as a client for the `CDash`_ software quality dashboard
 application.  As a dashboard client, CTest performs a sequence of steps
@@ -1836,7 +1826,7 @@ fixture in their :prop_test:`FIXTURES_REQUIRED`, and a resource spec file may
 not be specified with the ``--resource-spec-file`` argument or the
 :variable:`CTEST_RESOURCE_SPEC_FILE` variable.
 
-See Also
+関連項目
 ========
 
 .. include:: LINKS.txt
