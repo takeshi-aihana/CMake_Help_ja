@@ -351,7 +351,7 @@ ctest(1)
 
 .. option:: --submit-index
 
- これは、古い Dart2 ダッシュボード・サーバ向けの旧式のオプション。
+ これは、古い Dart2 ダッシュボード・サーバ向けの旧式のオプションである。
  使用しないこと。
 
 .. option:: --timeout <seconds>
@@ -364,10 +364,9 @@ ctest(1)
 
  全てのテストの実行を停止する時刻をセットする。
 
- 全てのテストをタイムアウトにする実際の時刻をセットする。
- 例: ``7:00:00 -0400``.
+ 全てのテストをタイムアウトにする実際の時刻（例:``7:00:00 -0400``）をセットする。
  cURL の date パーサが理解できる全てのフォーマットを受け入れる。
- タイムゾーンを指定しない場合はローカルの時刻でるものとする。
+ タイムゾーン（例:``-0400``）を指定しない場合はローカルの時刻でるものとする。
 
 .. option:: --print-labels
 
@@ -380,7 +379,7 @@ ctest(1)
  テストが見つからなかった場合の結果をエラー（``<action>`` が ``error`` の時）、または無視（``<action>`` が ``ignore`` の時）のどちらかにみなす。
 
  テストが見つからなかった場合の CTest のデフォルトの挙動は常にエラーメッセージをログするであるが、スクリプトモードだけエラーコードを返す。
- このオプションは、テストが見つからなかった場合にエラーコードを返す、または無視するかのどちらかにすることで CTest の動作を統一する。
+ このオプションは、テストが見つからなかった場合にエラーコードを返す、または無視するかのどちらかにすることで CTest の挙動を統一する。
 
  .. versionadded:: 3.26
 
@@ -389,20 +388,24 @@ ctest(1)
 ヘルプを表示する
 ================
 
-To print version details or selected pages from the CMake documentation,
-use one of the following options:
+To print version details or selected pages from the CMake documentation, use one of the following options:
+
+To print version details or selected pages from the CMake documentation, use one of the following options:
 
 .. include:: OPTIONS_HELP.txt
 
 .. _`Label Matching`:
 
-Label Matching
-==============
+ラベル・マッチング
+==================
 
-Tests may have labels attached to them. Tests may be included
-or excluded from a test run by filtering on the labels.
-Each individual filter is a regular expression applied to
-the labels attached to a test.
+Tests may have labels attached to them.
+Tests may be included or excluded from a test run by filtering on the labels.
+Each individual filter is a regular expression applied to the labels attached to a test.
+
+Tests may have labels attached to them.
+Tests may be included or excluded from a test run by filtering on the labels.
+Each individual filter is a regular expression applied to the labels attached to a test.
 
 When :option:`-L <ctest -L>` is used, in order for a test to be included in a
 test run, each regular expression must match at least one
