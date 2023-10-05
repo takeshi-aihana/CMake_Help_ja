@@ -69,7 +69,7 @@ ctest(1)
 
  直接 :program:`ctest` の出力が端末に送られる時に、一連のテストの進捗を（一行ごとにテストの開始と終了のメッセージを出力するのではなく、同じ行のメッセージを更新することで）報告する。
  これにより、冗長な出力が大幅に軽減される。
- テストの完了メッセージは、テストが失敗した場合でも同じ行に出力し、最終的な結果も同じように出力する。
+ テストの完了メッセージは、テストが NG であった場合でも同じ行に出力し、最終的な結果も同じように出力する。
 
  このオプションは環境変数 :envvar:`CTEST_PROGRESS_OUTPUT` を使って有効にすることもできる。
 
@@ -95,12 +95,12 @@ ctest(1)
 
 .. option:: --output-on-failure
 
- テストが失敗した場合に、テストからの出力を全て表示する。
+ テストが NG になった場合に、テストからの出力を全て表示する。
  このオプションは環境変数 :envvar:`CTEST_OUTPUT_ON_FAILURE` を使って有効にすることもできる。
 
 .. option:: --stop-on-failure
 
- テストが初めて失敗した時に実行中のテストを停止する。
+ テストが初めて NG になった時に実行中のテストを停止する。
 
 .. option:: -F
 
@@ -208,102 +208,98 @@ ctest(1)
 
 .. option:: -FA <regex>, --fixture-exclude-any <regex>
 
- ``<regex>`` にマッチするフィクスチャを、テストの集合に自動追加するテストから除外する。
+ 自動的にフィクスチャ向けテストが追加されるテストの集合で、``<regex>`` にマッチするフィクスチャを除外する。
 
- 実行するテストの集合の中に特定のフィクスチャが必要なテストがある場合、そのフィクスチャの Setup テストと Cleanup テストが自動的にそのテストに追加される。
- このオプションを使うと、正規表現の ``<regex>`` にマッチするフィクスチャの Setup テストまたは Cleanup テストを追加できなくなる。
- テストの依存関係や失敗したフィクスチャの Setup テストを持つテストのスキップなど、他の全てのフィクスチャの挙動が記憶されることに注意すること。
-
- Exclude fixtures matching ``<regex>`` from automatically adding any tests to the test set.
-
- If a test in the set of tests to be executed requires a particular fixture, that fixture's setup and cleanup tests would normally be added to the test set automatically.
- This option prevents adding setup or cleanup tests for fixtures matching the ``<regex>``.
- Note that all other fixture behavior is retained, including test dependencies and skipping tests that have fixture setup tests that fail.
+ 通常、実行するテストの集合に特定のフィクスチャが必要なものがある場合は、そのフィクスチャ向けの Setup テストと Cleanup テストが自動的にそのテストに追加される。
+ このオプションを使うと、正規表現の ``<regex>`` にマッチするフィクスチャ向けの Setup テストや Cleanup テストの自動追加を抑制できる。
+ テストの依存関係やフィクスチャの Setup テストが NG でスキップするテストなど、その他の全てのフィクスチャの挙動は維持されることに注意すること。
 
 .. option:: -FS <regex>, --fixture-exclude-setup <regex>
 
- Same as :option:`-FA <ctest -FA>` except only matching setup tests are excluded.
+ ``<regex>`` にマッチするフィクスチャ向けの Setup テストだけ除外されること以外は、オプション :option:`-FA <ctest -FA>` と同じ。
 
 .. option:: -FC <regex>, --fixture-exclude-cleanup <regex>
 
- Same as :option:`-FA <ctest -FA>` except only matching cleanup tests are excluded.
+ ``<regex>`` にマッチするフィクスチャ向けの Cleanup テストだけ除外されること以外は、オプション :option:`-FA <ctest -FA>` と同じ。
 
 .. option:: -I [Start,End,Stride,test#,test#|Test file], --tests-information
 
- Run a specific number of tests by number.
+ 番号ごとに特定の数だけテストを実行する。
 
- This option causes CTest to run tests starting at number ``Start``, ending at number ``End``, and incrementing by ``Stride``.
- Any additional numbers after ``Stride`` are considered individual test numbers.
- ``Start``, ``End``, or ``Stride`` can be empty.
- Optionally a file can be given that contains the same syntax as the command line.
+ このオプションを指定すると、CTest は ``Start`` に指定した番号のテストで開始し、``Stride`` に指定した数で番号を増やしながら、``End`` に指定した番号のテストで終了する。
+ ``Stride`` の数のあとに追加で指定した数は個別のテスト番号とみなされる。
+ ``Start``、``End``、``Stride`` に何も指定しないこともできる。
+ オプションで、（直接コマンドラインにオプションを渡す代わりに）このコマンドラインの構文に従った文字列が記載されたファイルを読み込ませることもできる。
 
 .. option:: -U, --union
 
- Take the Union of :option:`-I <ctest -I>` and :option:`-R <ctest -R>`.
+ オプション :option:`-I <ctest -I>` と :option:`-R <ctest -R>` の論理和（OR）を受け取る
 
- When both :option:`-R <ctest -R>` and :option:`-I <ctest -I>` are specified by default the intersection of tests are run.
- By specifying ``-U`` the union of tests is run instead.
+ オプション :option:`-R <ctest -R>` と :option:`-I <ctest -I>` の両方がデフォルトで指定されている時は、複数のテストで共通な箇所を実行する。
+ このオプション ``-U`` を指定すると、複数のテストを結合した箇所を実行する。
 
 .. option:: --rerun-failed
 
- Run only the tests that failed previously.
+ 以前に NG だったテストだけを再び実施する。
 
- This option tells CTest to perform only the tests that failed during its previous run.
- When this option is specified, CTest ignores all other options intended to modify the list of tests to run (:option:`-L <ctest -L>`, :option:`-R <ctest -R>`, :option:`-E <ctest -E>`, :option:`-LE <ctest -LE>`, :option:`-I <ctest -I>`, etc).
- In the event that CTest runs and no tests fail, subsequent calls to CTest with the ``--rerun-failed`` option will run the set of tests that most recently failed (if any).
+ このオプションは CTest に、前回テストを実行した際に NG になったテストだけを実行するよう指示する。
+ このオプションを指定すると、CTest は他に指定したオプションのうち、テストの実行順序に影響を与えるオプションを全て無視する（例えば、オプション :option:`-L <ctest -L>`、:option:`-R <ctest -R>`、:option:`-E <ctest -E>`、:option:`-LE <ctest -LE>`、:option:`-I <ctest -I>` など）。
+ CTest が実行したテストが OK だったあとに、このオプション ``--rerun-failed`` を指定して CTest を呼び出した場合は、最後に NG だったテストがあれば、そのテストの集合を実行する。
 
 .. option:: --repeat <mode>:<n>
 
-  Run tests repeatedly based on the given ``<mode>`` up to ``<n>`` times.
-  The modes are:
+  指定したモード ``<mode>`` で、テストを最大 ``<n>`` 回繰り返し実行する。
+  指定できるモードは：
 
   ``until-fail``
-    Require each test to run ``<n>`` times without failing in order to pass.
-    This is useful in finding sporadic failures in test cases.
+    このモードをパスするには、各テストが NG にならずに ``<n>`` 回繰り返し実行し続ける必要がある。
+    これは、テストケース内で散発的な NG を見つける場合に便利なモードである。
 
   ``until-pass``
-    Allow each test to run up to ``<n>`` times in order to pass.
-    Repeats tests if they fail for any reason.
-    This is useful in tolerating sporadic failures in test cases.
+    このモードは、各テストを順番に最大 ``<n>`` 回繰り返し実行する。
+    なんらかの理由で NG になったら、そのテストを（結果が OK になるまで）繰り返し実行する。
+    これは、テストケース内で散発的な NG を許容し、それを確認する場合に便利なモードである。
 
   ``after-timeout``
-    Allow each test to run up to ``<n>`` times in order to pass.
-    Repeats tests only if they timeout.
-    This is useful in tolerating sporadic timeouts in test cases
-    on busy machines.
+    このモードは、各テストを順番に最大 ``<n>`` 回繰り返し実行する。
+    実行中にタイムアウトが発生した場合にだけ、そのテストを繰り返し実行する。
+    これは、テストケース内で散発的なタイムアウトを許容し、それを確認する場合に便利なモードである。
 
 .. option:: --repeat-until-fail <n>
 
- Equivalent to :option:`--repeat until-fail:\<n\> <ctest --repeat>`.
+ オプション :option:`--repeat until-fail:\<n\> <ctest --repeat>` と同じ。
 
 .. option:: --max-width <width>
 
- Set the max width for a test name to output.
+ 出力するテスト名の最大長を指定する。
 
- Set the maximum width for each test name to show in the output.
- This allows the user to widen the output to avoid clipping the test
- name which can be very annoying.
+ テスト結果に表示するテスト名の文字数の最大値を指定する。
+ このオプションを指定すると、ユーザはテスト結果を広げた際の煩わしいテスト名の選択を回避できる。
 
 .. option:: --interactive-debug-mode [0|1]
 
- Set the interactive mode to ``0`` or ``1``.
+ 対話モードを ``0`` または ``1`` にセットする。
 
- This option causes CTest to run tests in either an interactive mode
- or a non-interactive mode.  In dashboard mode (``Experimental``, ``Nightly``,
- ``Continuous``), the default is non-interactive.  In non-interactive mode,
- the environment variable :envvar:`DASHBOARD_TEST_FROM_CTEST` is set.
+ このオプションを指定すると、CTest は対話モードまたは非対話モードのどちらかでテストを実行するようになる。
+ ただし、ダッシュボード・モード（``Experimental``、``Nightly``、``Continuous``）にいる場合は、デフォルトで非対話モードが強制される。
+ 非対話モードにいる場合は、環境変数 :envvar:`DASHBOARD_TEST_FROM_CTEST` がセットされる。
 
- Prior to CMake 3.11, interactive mode on Windows allowed system debug
- popup windows to appear.  Now, due to CTest's use of ``libuv`` to launch
- test processes, all system debug popup windows are always blocked.
+ バージョン 3.11 より前の CMake では、Windows での対話モード中にデバッグ用のポップアップ・ウィンドウが表示されるようになっていた。
+ 現在のバージョンでは、CTest が ``libuv`` ライブラリを利用してテスト用のプロセスをいくつか起動するようになったので、このようなポップアップ・ウィンドウの表示は全て表示されなくなっている。
 
 .. option:: --no-label-summary
 
  Disable timing summary information for labels.
 
- This option tells CTest not to print summary information for each
- label associated with the tests run.  If there are no labels on the
- tests, nothing extra is printed.
+ This option tells CTest not to print summary information for each label associated with the tests run.
+ If there are no labels on the tests, nothing extra is printed.
+
+ See `Label and Subproject Summary`_.
+
+ Disable timing summary information for labels.
+
+ This option tells CTest not to print summary information for each label associated with the tests run.
+ If there are no labels on the tests, nothing extra is printed.
 
  See `Label and Subproject Summary`_.
 
@@ -311,16 +307,25 @@ ctest(1)
 
  Disable timing summary information for subprojects.
 
- This option tells CTest not to print summary information for each
- subproject associated with the tests run.  If there are no subprojects on the
- tests, nothing extra is printed.
+ This option tells CTest not to print summary information for each subproject associated with the tests run.
+ If there are no subprojects on the tests, nothing extra is printed.
+
+ See `Label and Subproject Summary`_.
+
+ Disable timing summary information for subprojects.
+
+ This option tells CTest not to print summary information for each subproject associated with the tests run.
+ If there are no subprojects on the tests, nothing extra is printed.
 
  See `Label and Subproject Summary`_.
 
 .. option:: --test-dir <dir>
 
- Specify the directory in which to look for tests, typically a CMake project
- build directory. If not specified, the current directory is used.
+ Specify the directory in which to look for tests, typically a CMake project build directory.
+ If not specified, the current directory is used.
+
+ Specify the directory in which to look for tests, typically a CMake project build directory.
+ If not specified, the current directory is used.
 
 .. option:: --test-output-size-passed <size>
 
