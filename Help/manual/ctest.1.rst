@@ -377,16 +377,14 @@ ctest(1)
 
 .. option:: --no-tests=<action>
 
- Regard no tests found either as error (when ``<action>`` is set to ``error``) or ignore it (when ``<action>`` is set to ``ignore``).
+ テストが見つからなかった場合の結果をエラー（``<action>`` が ``error`` の時）、または無視（``<action>`` が ``ignore`` の時）のどちらかにみなす。
 
- If no tests were found, the default behavior of CTest is to always log an error message but to return an error code in script mode only.
- This option unifies the behavior of CTest by either returning an error code if no tests were found or by ignoring it.
+ テストが見つからなかった場合の CTest のデフォルトの挙動は常にエラーメッセージをログするであるが、スクリプトモードだけエラーコードを返す。
+ このオプションは、テストが見つからなかった場合にエラーコードを返す、または無視するかのどちらかにすることで CTest の動作を統一する。
 
  .. versionadded:: 3.26
 
- This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION` environment variable.
-
- This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION` environment variable.
+ このオプションは環境変数 :envvar:`CTEST_NO_TESTS_ACTION` を使って有効にすることもできる。
 
 ヘルプを表示する
 ================
