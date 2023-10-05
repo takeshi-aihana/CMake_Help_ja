@@ -233,7 +233,7 @@ ctest(1)
 
 .. option:: -U, --union
 
- オプション :option:`-I <ctest -I>` と :option:`-R <ctest -R>` の論理和（OR）を受け取る
+ オプション :option:`-I <ctest -I>` と :option:`-R <ctest -R>` の論理和（OR）が指定されたものと受け取る。
 
  オプション :option:`-R <ctest -R>` と :option:`-I <ctest -I>` の両方がデフォルトで指定されている時は、複数のテストで共通な箇所を実行する。
  このオプション ``-U`` を指定すると、複数のテストを結合した箇所を実行する。
@@ -289,124 +289,102 @@ ctest(1)
 
 .. option:: --no-label-summary
 
- Disable timing summary information for labels.
+ ラベルへの「サマリ情報」を無効にする。
 
- This option tells CTest not to print summary information for each label associated with the tests run.
- If there are no labels on the tests, nothing extra is printed.
+ このオプションは CTest に、テストの実行に関連づけられたラベルにサマリ情報を出力しないように指示する。
+ テストにラベルが付与されていない場合、追加情報は何も出力されない。
 
- See `Label and Subproject Summary`_.
-
- Disable timing summary information for labels.
-
- This option tells CTest not to print summary information for each label associated with the tests run.
- If there are no labels on the tests, nothing extra is printed.
-
- See `Label and Subproject Summary`_.
+ `Label and Subproject Summary`_ を参照のこと。
 
 .. option:: --no-subproject-summary
 
- Disable timing summary information for subprojects.
+ サブプロジェクトへの「サマリ情報」を無効にする。
 
- This option tells CTest not to print summary information for each subproject associated with the tests run.
- If there are no subprojects on the tests, nothing extra is printed.
+ このオプションは CTest に、テストの実行に関連づけられたサブプロジェクトにサマリ情報を出力しないように指示する。
+ テストにサブプロジェクトが付与されていない場合、追加情報は何も出力されない。
 
- See `Label and Subproject Summary`_.
-
- Disable timing summary information for subprojects.
-
- This option tells CTest not to print summary information for each subproject associated with the tests run.
- If there are no subprojects on the tests, nothing extra is printed.
-
- See `Label and Subproject Summary`_.
+ `Label and Subproject Summary`_ を参照のこと。
 
 .. option:: --test-dir <dir>
 
- Specify the directory in which to look for tests, typically a CMake project build directory.
- If not specified, the current directory is used.
-
- Specify the directory in which to look for tests, typically a CMake project build directory.
- If not specified, the current directory is used.
+ テストを検索するディレクトリ（CMake プロジェクトのビルドツリー）を指定する。
+ 何も指定しない場合は、現在のディレクトリを使用する。
 
 .. option:: --test-output-size-passed <size>
 
  .. versionadded:: 3.4
 
- Limit the output for passed tests to ``<size>`` bytes.
+ 結果が OK だったテストの出力を ``<size>`` バイトに制限する。
 
 .. option:: --test-output-size-failed <size>
 
  .. versionadded:: 3.4
 
- Limit the output for failed tests to ``<size>`` bytes.
+ 結果が NG だったテストの出力を ``<size>`` バイトに制限する。
 
 .. option:: --test-output-truncation <mode>
 
  .. versionadded:: 3.24
 
- Truncate ``tail`` (default), ``middle`` or ``head`` of test output once
- maximum output size is reached.
+ 出力結果が最大値に到達したら、それ以降の出力（行単位）を以下の場所で切り捨てる：``tail`` （デフォルト）、``middle``、``head``
 
 .. option:: --overwrite
 
- Overwrite CTest configuration option.
+ CTest プロジェクトの構成オプションを上書きする。
 
- By default CTest uses configuration options from configuration file.
- This option will overwrite the configuration option.
+ 通常 CTest は構成ファイルにあるオプションを使う。
+ このオプションは、そのオプションを上書きする。
 
 .. option:: --force-new-ctest-process
 
- Run child CTest instances as new processes.
+ CTest のインスタンスを生成し、新しい子プロセスとして実行する。
 
- By default CTest will run child CTest instances within the same
- process.  If this behavior is not desired, this argument will
- enforce new processes for child CTest processes.
+ デフォルトで、CTest は同一プロセスの中でインスタンスを生成して実行している。
+ この挙動が望ましくない場合、このオプションは CTest に新しいプロセスの生成を強制する。
 
 .. option:: --schedule-random
 
- Use a random order for scheduling tests.
+ テストの実行スケジュールをランダムな順番にする。
 
- This option will run the tests in a random order.  It is commonly
- used to detect implicit dependencies in a test suite.
+ このオプションは複数のテストをランダムな順番で実行する。
+ このオプションは、一般的にテストの集合で暗黙の依存関係を検出するときに使用する。
 
 .. option:: --submit-index
 
- Legacy option for old Dart2 dashboard server feature.
- Do not use.
+ これは、古い Dart2 ダッシュボード・サーバ向けの旧式のオプション。
+ 使用しないこと。
 
 .. option:: --timeout <seconds>
 
- Set the default test timeout.
+ デフォルトのタイムアウトをセットする。
 
- This option effectively sets a timeout on all tests that do not
- already have a timeout set on them via the :prop_test:`TIMEOUT`
- property.
+ このオプションは プロパティの :prop_test:`TIMEOUT` を介して、まだタイムアウトが有効になっていない全てのテストに適用する。
 
 .. option:: --stop-time <time>
 
- Set a time at which all tests should stop running.
+ 全てのテストの実行を停止する時刻をセットする。
 
- Set a real time of day at which all tests should timeout.  Example:
- ``7:00:00 -0400``.  Any time format understood by the curl date parser
- is accepted.  Local time is assumed if no timezone is specified.
+ 全てのテストをタイムアウトにする実際の時刻をセットする。
+ 例: ``7:00:00 -0400``.
+ cURL の date パーサが理解できる全てのフォーマットを受け入れる。
+ タイムゾーンを指定しない場合はローカルの時刻でるものとする。
 
 .. option:: --print-labels
 
- Print all available test labels.
+ 利用可能な全てのラベルを出力する。
 
- This option will not run any tests, it will simply print the list of
- all labels associated with the test set.
+ このオプションはテストは実行せず、テストの集合に関連付けられている全てのラベルの一覧を出力するだけ。
 
 .. option:: --no-tests=<action>
 
- Regard no tests found either as error (when ``<action>`` is set to
- ``error``) or ignore it (when ``<action>`` is set to ``ignore``).
+ Regard no tests found either as error (when ``<action>`` is set to ``error``) or ignore it (when ``<action>`` is set to ``ignore``).
 
- If no tests were found, the default behavior of CTest is to always log an
- error message but to return an error code in script mode only.  This option
- unifies the behavior of CTest by either returning an error code if no tests
- were found or by ignoring it.
+ If no tests were found, the default behavior of CTest is to always log an error message but to return an error code in script mode only.
+ This option unifies the behavior of CTest by either returning an error code if no tests were found or by ignoring it.
 
  .. versionadded:: 3.26
+
+ This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION` environment variable.
 
  This option can also be set by setting the :envvar:`CTEST_NO_TESTS_ACTION` environment variable.
 
