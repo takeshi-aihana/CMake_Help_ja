@@ -19,7 +19,7 @@ ctest(1)
        [--build-options <opts>...]
        [--test-command <command> [<args>...]]
 
- `ダッシュボード・クライアント`_
+ `Dashboard Client`_
   ctest -D <dashboard>         [-- <dashboard-options>...]
   ctest -M <model> -T <action> [-- <dashboard-options>...]
   ctest -S <script>            [-- <dashboard-options>...]
@@ -124,13 +124,13 @@ ctest(1)
 
  ``<file>`` に指定した :ref:`リソース仕様ファイル <ctest-resource-specification-file>` を使用し、:ref:`リソースの確保 <ctest-resource-allocation>` を有効にして CTest を実行する。
 
- :program:`ctest` を `ダッシュボード・クライアント`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
+ :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
 
 .. option:: --test-load <level>
 
  たとえば、オプション :option:`-j <ctest -j>` を付けるなどしてテストを並列で実行している時、CPU 負荷がしきい値を越える可能性がある場合はテストを開始しないようにする。
 
- :program:`ctest` を `ダッシュボード・クライアント`_ として実行すると、これにより `CTest Test Step`_ の ``TestLoad`` オプションがセットされる。
+ :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``TestLoad`` オプションがセットされる。
 
 .. option:: -Q, --quiet
 
@@ -482,7 +482,7 @@ CTest は、CMake による構成モード、ビルド・モード、そして�
         [--build-options <opts>...]
         [--test-command <command> [<args>...]]
 
-構成とテストはオプションです。
+構成モードとテスト・モードはオプションです。
 このコマンドラインへの引数はソースツリーとバイナリツリーです。
 オプション ``--build-and-test`` を指定する際は、オプション ``--build-generator`` も *必ず* 指定して下さい。
 オプション ``--test-command`` を指定すると、それらのコマンドはビルドが完了したあとに実行します。
@@ -502,72 +502,73 @@ CTest は、CMake による構成モード、ビルド・モード、そして�
 
 .. option:: --build-nocmake
 
- Run the build without running cmake first.
+ 最初にCMake を実行せずにビルドする。
 
- Skip the cmake step.
+ CMake のステップをスキップする。
 
 .. option:: --build-run-dir
 
- Specify directory to run programs from.
+ プログラムを実行するディレクトリを指定する。
 
- Directory where programs will be after it has been compiled.
+ ビルドしたあとにプログラムをインストールするデイレクトリ。
 
 .. option:: --build-two-config
 
- Run CMake twice.
+ CMake を二回実行する。
 
 .. option:: --build-exe-dir
 
- Specify the directory for the executable.
+ 実行形式をインストールするディレクトリを指定する。
 
 .. option:: --build-generator
 
- Specify the generator to use. See the :manual:`cmake-generators(7)` manual.
+ ビルドで使用するジェネレータ（Generator）を指定する。
+ :manual:`cmake-generators(7)` を参照のこと。
 
 .. option:: --build-generator-platform
 
- Specify the generator-specific platform.
+ ジェネレータ（Generator）専用のプラットホームを指定する。
 
 .. option:: --build-generator-toolset
 
- Specify the generator-specific toolset.
+ ジェネレータ（Generator）専用のツールセットを指定する。
 
 .. option:: --build-project
 
- Specify the name of the project to build.
+ ビルドするプロジェクトの名前を指定する。
 
 .. option:: --build-makeprogram
 
- Specify the explicit make program to be used by CMake when configuring and building the project.
- Only applicable for Make and Ninja based generators.
+ プロジェクトの構成とビルドを実行する際に CMake が使用する Make プログラムを明示的に指定する。
+ ジェネレータ（Generator）が Make または Ninja の時にだけ有効になる。
 
 .. option:: --build-noclean
 
- Skip the make clean step.
+ Make のクリーン・ステップをスキップする。
 
 .. option:: --build-config-sample
 
- A sample executable to use to determine the configuration that should be used.
- e.g.  ``Debug``, ``Release`` etc.
+ 構成を選択する際に使用するサンプルの実行形式を指定する。
+ 選択する構成は ``Debug``、``Release`` など。
 
 .. option:: --build-options
 
- Additional options for configuring the build (i.e. for CMake, not for the build tool).
- Note that if this is specified, the ``--build-options`` keyword and its arguments must be the last option given on the command line, with the possible exception of ``--test-command``.
+ ビルドを構成する際の追加オプションを指定する（ビルド・ツールではなく CMake 用）。
+ このオプション ``--build-options`` とその引数はコマンドラインの最後で指定すること（オプション ``--test-command`` を指定した時を除く）。
 
 .. option:: --test-command
 
- The command to run as the test step with the :option:`--build-and-test <ctest --build-and-test>` option.
- All arguments following this keyword will be assumed to be part of the test command line, so it must be the last option given.
+ オプション :option:`--build-and-test <ctest --build-and-test>` を使用した時に、テスト・モードで実行するコマンドを指定する。
+ このオプションに渡す全ての引数は、テストコマンドの一部とみなすので、コマンドラインの最後で指定すること。
 
 .. option:: --test-timeout
 
- The time limit in seconds
+ テストで使用するタイムアウトを秒単位で指定する。
 
 .. _`Dashboard Client`:
 
-ダッシュボード・クライアント
-============================
+Dashboard Client
+================
 
 CTest can operate as a client for the `CDash`_ software quality dashboard
 application.  As a dashboard client, CTest performs a sequence of steps
