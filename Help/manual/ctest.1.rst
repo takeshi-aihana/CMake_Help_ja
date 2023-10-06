@@ -183,8 +183,8 @@ ctest(1)
  正規表現にマッチするラベルが付いたテストを実行する。利用可能な正規表現については :ref:`string(REGEX) <Regex Specification>` を参照のこと。
 
  このオプションは CTest に、指定した正規表現にマッチするラベルを持つテストだけ実行するよう指示する。
- このオプション ``-L`` を複数指定すると、それぞれの正規表現とテストのラベルが少なくとも一つマッチした場合にだけテストを実行する（すなわち複数の ``-L`` で指定したラベルを ``AND`` で連結した条件を形成する）。
- `Label Matching`_ を参照のこと。
+ このオプション ``-L`` を複数指定すると、複数ある正規表現のいずれかがテストに付いているラベルに少なくとも一つマッチした場合にだけ、そのテストを実行する（すなわち複数の ``-L`` で指定したラベルを ``AND`` で連結した条件を形成する）。
+ `テストをラベルでフィルタリングする`_ を参照のこと。
 
 .. option:: -R <regex>, --tests-regex <regex>
 
@@ -203,8 +203,8 @@ ctest(1)
  正規表現にマッチするラベルが付いたテストを除外する。
 
  このオプションは CTest に、指定した正規表現にマッチするラベルが付いたテストを実行しないよう指示する。
- このオプション ``-LE`` を複数指定すると、それぞれの正規表現とテストのラベルが少なくとも一つマッチした場合にだけテストを除外する（すなわち複数の ``-LE`` で指定したラベルを ``AND`` で連結した条件を形成する）。
- `Label Matching`_ を参照のこと。
+ このオプション ``-LE`` を複数指定すると、複数ある正規表現のいずれかがテストに付いているラベルに少なくとも一つマッチした場合にだけ、そのテストを除外する（すなわち複数の ``-LE`` で指定したラベルを ``AND`` で連結した条件を形成する）。
+ `テストをラベルでフィルタリングする`_ を参照のこと。
 
 .. option:: -FA <regex>, --fixture-exclude-any <regex>
 
@@ -388,54 +388,39 @@ ctest(1)
 ヘルプを表示する
 ================
 
-To print version details or selected pages from the CMake documentation, use one of the following options:
-
-To print version details or selected pages from the CMake documentation, use one of the following options:
+CMake のドキュメントからバージョン情報や特定のページを出力する場合は、以下のオプションのいずれかを指定する：
 
 .. include:: OPTIONS_HELP.txt
 
 .. _`Label Matching`:
 
-ラベル・マッチング
-==================
+テストをラベルでフィルタリングする
+==================================
 
-Tests may have labels attached to them.
-Tests may be included or excluded from a test run by filtering on the labels.
-Each individual filter is a regular expression applied to the labels attached to a test.
+テストにはラベルが付けられている場合があります。
+ラベルをフィルタリングすることで、任意のテストをテストの実行に含めたり、テストの実行から除外したりできます。
+この時のフィルタとは、テストに付けられたラベルに適用する正規表現のことです。
 
-Tests may have labels attached to them.
-Tests may be included or excluded from a test run by filtering on the labels.
-Each individual filter is a regular expression applied to the labels attached to a test.
+オプション :option:`-L <ctest -L>` を使用して、任意のテストをテストの実行に含めるには、フィルタである正規表現が少なくとも一つのラベルにマッチする必要があります。
+オプション :option:`-L <ctest -L>` を複数指定すると「これらのラベルに **全て** マッチする」ことを意味します。
 
-When :option:`-L <ctest -L>` is used, in order for a test to be included in a
-test run, each regular expression must match at least one
-label.  Using more than one :option:`-L <ctest -L>` option means "match **all**
-of these".
+オプション :option:`-LE <ctest -LE>` は :option:`-L <ctest -L>` と同様に機能しますが、そのラベルが付いたテストを含めるのではなく除外します。
+すなわち、複数ある正規表現のいずれかがテストに付いているラベルに少なくとも一つマッチした場合に、そのテストがテストの実行から除外されます。
 
-The :option:`-LE <ctest -LE>` option works just like :option:`-L <ctest -L>`,
-but excludes tests rather than including them. A test is excluded if each
-regular expression matches at least one label.
+テストにラベルが付いていない場合、オプション :option:`-L <ctest -L>` はそのテストをテストの実行に含めることはなく、オプション :option:`-LE <ctest -LE>` もまたそのテストを除外することはありません。
+ラベルが付いたテストの例として、次のようなラベルが付いた５つのテストがあるとします：
 
-If a test has no labels attached to it, then :option:`-L <ctest -L>` will never
-include that test, and :option:`-LE <ctest -LE>` will never exclude that test.
-As an example of tests with labels, consider five tests,
-with the following labels:
+* *test1* には、二つのラベル *tuesday* と *production* が付いている
+* *test2* には、二つのラベル *tuesday* と *test* が付いている
+* *test3* には、二つのラベル *wednesday* と *production* が付いている
+* *test4* には、ラベル *wednesday* が付いている
+* *test5* には、二つのラベル *friday* と *test* が付いている
 
-* *test1* has labels *tuesday* and *production*
-* *test2* has labels *tuesday* and *test*
-* *test3* has labels *wednesday* and *production*
-* *test4* has label *wednesday*
-* *test5* has labels *friday* and *test*
+:program:`ctest` にオプション ``-L tuesday -L test`` を指定して実行すると、両方のラベルが付いている *test2* が選択されて、テストの実行に含まれます。
+同様に、オプション ``-L test`` を指定して CTest を実行すると *test2* と *test5* のテストが選択されます。これは正規表現が両方のテストに付いているラベルにマッチするからです。
 
-Running :program:`ctest` with ``-L tuesday -L test`` will select *test2*, which has
-both labels. Running CTest with ``-L test`` will select *test2* and
-*test5*, because both of them have a label that matches that regular
-expression.
-
-Because the matching works with regular expressions, take note that
-running CTest with ``-L es`` will match all five tests.
-To select the *tuesday* and *wednesday* tests together, use a single
-regular expression that matches either of them, like ``-L "tue|wed"``.
+ラベルのフィルタリングは正規表現を使って行われるので、もし ``-L es`` を指定して CTest を実行すると5つのテスト全てが選択されるということに注意して下さい。
+したがって、ラベル *tuesday* と *wednesday* が付いたテストをまとめて選択したい場合は、``-L "tue|wed"`` のように、どちらかのラベルにマッチする単一の正規表現を指定する必要があります。
 
 .. _`Label and Subproject Summary`:
 
