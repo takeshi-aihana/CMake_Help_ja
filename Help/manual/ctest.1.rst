@@ -474,8 +474,7 @@ for ``SubprojectB``).
 ビルドとテストのモード
 ======================
 
-CTest provides a command-line signature to configure (i.e. run cmake on),
-build, and/or execute a test::
+CTest は、CMake による構成モード、ビルド・モード、そしてテストを実行するモードのコマンドライン（*CLI Signature*）を提供しています::
 
   ctest --build-and-test <path-to-source> <path-to-build>
         --build-generator <generator>
@@ -483,24 +482,23 @@ build, and/or execute a test::
         [--build-options <opts>...]
         [--test-command <command> [<args>...]]
 
-The configure and test steps are optional. The arguments to this command line
-are the source and binary directories.  The ``--build-generator`` option *must*
-be provided to use ``--build-and-test``.  If ``--test-command`` is specified
-then that will be run after the build is complete.  Other options that affect
-this mode include:
+構成とテストはオプションです。
+このコマンドラインへの引数はソースツリーとバイナリツリーです。
+オプション ``--build-and-test`` を指定する際は、オプション ``--build-generator`` も *必ず* 指定して下さい。
+オプション ``--test-command`` を指定すると、それらのコマンドはビルドが完了したあとに実行します。
+このコマンドラインに影響するその他のオプションは次のとおりです：
 
 .. option:: --build-and-test
 
- Switch into the build and test mode.
+ ビルドとテスト・モードに切り替える。
 
 .. option:: --build-target
 
- Specify a specific target to build.  The option can be given multiple times
- with different targets, in which case each target is built in turn.
- A clean will be done before building each target unless the
- :option:`--build-noclean` option is given.
+ ビルドするターゲットを指定する。
+ このオプションを複数指定することで、いろいろなターゲットを指定することができ、その場合は各ターゲットを順番にビルドする。
+ オプション :option:`--build-noclean` を指定しないと、各ターゲットをビルドする前にビルドのクリーンが実行される。
 
- If no ``--build-target`` is specified, the ``all`` target is built.
+ このオプション ``--build-target`` を指定しない場合、ターゲットを ``all`` としてビルドする。
 
 .. option:: --build-nocmake
 
@@ -540,8 +538,8 @@ this mode include:
 
 .. option:: --build-makeprogram
 
- Specify the explicit make program to be used by CMake when configuring and
- building the project. Only applicable for Make and Ninja based generators.
+ Specify the explicit make program to be used by CMake when configuring and building the project.
+ Only applicable for Make and Ninja based generators.
 
 .. option:: --build-noclean
 
@@ -549,22 +547,18 @@ this mode include:
 
 .. option:: --build-config-sample
 
- A sample executable to use to determine the configuration that
- should be used.  e.g.  ``Debug``, ``Release`` etc.
+ A sample executable to use to determine the configuration that should be used.
+ e.g.  ``Debug``, ``Release`` etc.
 
 .. option:: --build-options
 
- Additional options for configuring the build (i.e. for CMake, not for
- the build tool).  Note that if this is specified, the ``--build-options``
- keyword and its arguments must be the last option given on the command
- line, with the possible exception of ``--test-command``.
+ Additional options for configuring the build (i.e. for CMake, not for the build tool).
+ Note that if this is specified, the ``--build-options`` keyword and its arguments must be the last option given on the command line, with the possible exception of ``--test-command``.
 
 .. option:: --test-command
 
- The command to run as the test step with the
- :option:`--build-and-test <ctest --build-and-test>` option.
- All arguments following this keyword will be assumed to be part of the
- test command line, so it must be the last option given.
+ The command to run as the test step with the :option:`--build-and-test <ctest --build-and-test>` option.
+ All arguments following this keyword will be assumed to be part of the test command line, so it must be the last option given.
 
 .. option:: --test-timeout
 
