@@ -50,7 +50,7 @@
 
  cmake-commands のマニュアル（man）を表示して終了する。
 
- マニュアルの :manual:`cmake-commands(7)` は可読な文字列のフォーマットで出力される。
+ このマニュアル :manual:`cmake-commands(7)` は可読な文字列のフォーマットで出力される。
  |file|
 
 .. option:: --help-module <mod> [<file>]
@@ -71,7 +71,7 @@
 
  cmake-modules のマニュアル（man）を表示して終了する。
 
- マニュアルの :manual:`cmake-modules(7)` は可読な文字列のフォーマットで出力される。
+ このマニュアル :manual:`cmake-modules(7)` は可読な文字列のフォーマットで出力される。
  |file|
 
 .. option:: --help-policy <cmp> [<file>]
@@ -92,7 +92,7 @@
 
  cmake-policies のマニュアル（man）を表示して終了する。
 
- マニュアルの :manual:`cmake-policies(7)` は可読な文字列のフォーマットで出力される。
+ このマニュアル :manual:`cmake-policies(7)` は可読な文字列のフォーマットで出力される。
  |file|
 
 .. option:: --help-property <prop> [<file>]
@@ -113,7 +113,7 @@
 
  cmake-properties のマニュアル（man）を表示して終了する。
 
- マニュアルの :manual:`cmake-properties(7)` は可読な文字列のフォーマットで出力される。
+ このマニュアル :manual:`cmake-properties(7)` は可読な文字列のフォーマットで出力される。
  |file|
 
 .. option:: --help-variable <var> [<file>]
@@ -134,5 +134,5 @@
 
  cmake-variables のマニュアル（man）を表示して終了する。
 
- マニュアルの :manual:`cmake-variables(7)` は可読な文字列のフォーマットで出力される。
+ このマニュアル :manual:`cmake-variables(7)` は可読な文字列のフォーマットで出力される。
  |file|

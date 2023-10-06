@@ -1,22 +1,20 @@
-CMake Tutorial
-**************
+CMake チュートリアル
+********************
 
-Introduction
-============
+はじめに
+========
 
-The CMake tutorial provides a step-by-step guide that covers common build
-system issues that CMake helps address. Seeing how various topics all
-work together in an example project can be very helpful.
+CMake チュートリアルでは、一般的なビルド・システムの課題について CMake で解決するやり方をステップ毎に説明するガイドを提供しています。
+サンプル・プロジェクトの中で、さまざまなトピックスがどのように連携しているのかを確認するのは、とても有用なことです。
 
-Steps
-=====
+ステップ
+========
 
 .. include:: source.txt
 
 |tutorial_source|
-Each step has its own subdirectory containing code that may be used as a
-starting point. The tutorial examples are progressive so that each step
-provides the complete solution for the previous step.
+Each step has its own subdirectory containing code that may be used as a starting point.
+The tutorial examples are progressive so that each step provides the complete solution for the previous step.
 
 .. toctree::
   :maxdepth: 2
