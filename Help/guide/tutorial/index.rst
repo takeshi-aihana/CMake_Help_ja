@@ -4,8 +4,8 @@ CMake チュートリアル
 はじめに
 ========
 
-CMake チュートリアルでは、一般的なビルド・システムの課題について CMake で解決するやり方をステップ毎に説明するガイドを提供しています。
-サンプル・プロジェクトの中で、さまざまなトピックスがどのように連携しているのかを確認するのは、とても有用なことです。
+CMake チュートリアルでは、一般的なビルド・システムの課題について CMake で解決するやり方を順を追って説明するガイドを提供しています。
+サンプル・プロジェクトの中で、さまざまなトピックスがどのように連携しているのかを確認することは、とても有用なことです。
 
 ステップ
 ========
@@ -13,8 +13,8 @@ CMake チュートリアルでは、一般的なビルド・システムの課�
 .. include:: source.txt
 
 |tutorial_source|
-Each step has its own subdirectory containing code that may be used as a starting point.
-The tutorial examples are progressive so that each step provides the complete solution for the previous step.
+実践するステップごとに専用のサブディレクトリがあり、その中には出発点として利用できるサンプルコードがあります。
+チュートリアルにあるサンプルはステップ・バイ・ステップで説明しているので、各ステップはその前のステップでの解決方法が含まれます。
 
 .. toctree::
   :maxdepth: 2

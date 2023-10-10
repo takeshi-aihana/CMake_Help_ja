@@ -1,115 +1,97 @@
-Step 1: A Basic Starting Point
-==============================
+ステップ１: 基本を学ぶ出発点
+============================
 
-Where do I start with CMake? This step will provide an introduction to some of
-CMake's basic syntax, commands, and variables. As these concepts are
-introduced, we will work through three exercises and create a simple CMake
-project.
+CMake の基本を学ぶために、どこから始めればよいでしょうか？
+このステップでは、CMake の基本的な構文、CMake のコマンド、そして CMake の変数についてその一部を紹介します。
+これらの概念について紹介しながら、3つの演習にとりくみ、簡単な CMake プロジェクトを生成してみます。
 
-Each exercise in this step will start with some background information. Then, a
-goal and list of helpful resources are provided. Each file in the
-``Files to Edit`` section is in the ``Step1`` directory and contains one or
-more ``TODO`` comments. Each ``TODO`` represents a line or two of code to
-change or add. The ``TODO`` s are intended to be completed in numerical order,
-first complete  ``TODO 1`` then ``TODO 2``, etc. The ``Getting Started``
-section will give some helpful hints and guide you through the exercise. Then
-the ``Build and Run`` section will walk step-by-step through how to build and
-test the exercise. Finally, at the end of each exercise the intended solution
-is discussed.
+このステップにある演習はそれぞれ、その背景にあるもの（前提や条件）について説明するところから始めます。
+そのあとで演習の目標と、参考になるいろいろなリソースについて説明します。
+「``編集するファイル``」のセクションで説明しているファイルは ``Step1`` ディレクトリの中にあり、それらには ``TODO`` 付きのコメントが複数あります。
+``TODO`` 付きのコメントはそれぞれ、変更や修正が必要な行があることを意味しています。
+``TODO`` 付きのコメントについては、まず ``TODO 1`` を完了させてから ``TODO 2`` に進むように、番号順で完了させることが目標です。
+「``始める``」のセクションでは、演習を通じて有益なヒントを案内します。
+そして「``ビルドと実行``」のセクションでは演習をビルドしてテストする方法について、順を追って説明します。
+最後に、各演習の終わりでその解決方法について説明します。
 
-Also note that each step in the tutorial builds on the next. So, for example,
-the starting code for ``Step2`` is the complete solution to ``Step1``.
+また、このチュートリアルのステップは、それぞれ次のステップにつながっていることに注意して下さい。
+したがって、例えば ``Step2`` で演習するコードは ``Step1`` の演習を解決した内容から始まります。
 
-Exercise 1 - Building a Basic Project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - 簡単なプロジェクトをビルドする
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The most basic CMake project is an executable built from a single source code
-file. For simple projects like this, a ``CMakeLists.txt`` file with three
-commands is all that is required.
+最も簡単で基本的な CMake プロジェクトは、一個のソース・ファイルから一個の実行形式をビルドするというものです。
+このように単純なプロジェクトの場合、ビルドに必要なものは３個のコマンドを記述した ``CMakeLists.txt`` ファイルだけです。
 
-**Note:** Although upper, lower and mixed case commands are supported by CMake,
-lower case commands are preferred and will be used throughout the tutorial.
+**注意:** CMake でサポートしているのは大文字、小文字、そして大小文字が混ざったコマンドですが、小文字のコマンドが他よりも優先され、本チュートリアルでもこれに従います。
 
-Any project's top most CMakeLists.txt must start by specifying a minimum CMake
-version using the :command:`cmake_minimum_required` command. This establishes
-policy settings and ensures that the following CMake functions are run with a
-compatible version of CMake.
+すべてのプロジェクトでは、``CMakeLists.txt`` の先頭で必ず :command:`cmake_minimum_required` コマンドを使って CMake の最小バージョンを指定して下さい。
+これによりプロジェクトのポリシーが確立し、それ以降の関数やコマンドが互換性のあるバージョンの CMake で実行できることを保証します。
 
-To start a project, we use the :command:`project` command to set the project
-name. This call is required with every project and should be called soon after
-:command:`cmake_minimum_required`. As we will see later, this command can
-also be used to specify other project level information such as the language
-or version number.
+プロジェクトを開始するにあたり、:command:`project` コマンドを使ってプロジェクトの名前を設定します。
+これは全てのプロジェクトで必要なコマンドであり、:command:`cmake_minimum_required` コマンドの直後で呼び出して下さい。
+のちほど説明しますが、このコマンドは、他のプロジェクトのレベル情報（プログラミング言語やバージョン番号といったもの）を指定する際にも使用します。
 
-Finally, the :command:`add_executable` command tells CMake to create an
-executable using the specified source code files.
+最後のコマンドである :command:`add_executable` は、指定したソース・ファイルを使って実行形式を生成するよう CMake に指示します。
 
-Goal
+目標
 ----
 
-Understand how to create a simple CMake project.
+簡単な CMake プロジェクトを作成する方法を学ぶ。
 
-Helpful Resources
------------------
+参考情報
+--------
 
 * :command:`add_executable`
 * :command:`cmake_minimum_required`
 * :command:`project`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``CMakeLists.txt``
 
-Getting Started
-----------------
+始める
+------
 
-The source code for ``tutorial.cxx`` is provided in the
-``Help/guide/tutorial/Step1`` directory and can be used to compute the square
-root of a number. This file does not need to be edited in this step.
+ソース・ファイルである ``tutorial.cxx`` は ``Help/guide/tutorial/Step1`` ディレクトリにあり、平方根を計算するプログラムです。
+このステップでは、このファイルを編集しません。
 
-In the same directory is a ``CMakeLists.txt`` file which you will complete.
-Start with ``TODO 1`` and work through ``TODO 3``.
+ソース・ファイルと同じディレクトリに ``CMakeLists.txt`` ファイルがあります。このステップでは、こちらのファイルを完成させます。
+プログラム中の ``TODO 1`` から始めて ``TODO 3`` まで進めて下さい。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Once ``TODO 1`` through ``TODO 3`` have been completed, we are ready to build
-and run our project! First, run the :manual:`cmake <cmake(1)>` executable or the
-:manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it
-with your chosen build tool.
+``TODO 1`` から ``TODO 3`` まで完了したら、プロジェクトをビルドして実行する準備ができました。
+まず :manual:`cmake <cmake(1)>` コマンドか、:manual:`cmake-gui <cmake-gui(1)>` を起動してプロジェクトを構成し、それから指定したビルド・ツールでプロジェクトをビルドします。
 
-For example, from the command line we could navigate to the
-``Help/guide/tutorial`` directory of the CMake source code tree and create a
-build directory:
+たとえば、コマンドラインから CMake のソースコード・ツリーの ``Help/guide/tutorial`` ディレクトリへ移動して、ビルドツリーに相当するディレクトリを作成します：
 
 .. code-block:: console
 
   mkdir Step1_build
 
-Next, navigate to that build directory and run
-:manual:`cmake <cmake(1)>` to configure the project and generate a native build
-system:
+次に、そのディレクトリへ移動し :manual:`cmake <cmake(1)>` を起動してプロジェクトを構成し、ネィティブなビルドシステムを生成します：
 
 .. code-block:: console
 
   cd Step1_build
   cmake ../Step1
 
-Then call that build system to actually compile/link the project:
+そしてビルドシステムを呼び出して、実際にプロジェクトをコンパイル／リンクします：
 
 .. code-block:: console
 
   cmake --build .
 
-For multi-config generators (e.g. Visual Studio), first navigate to the
-appropriate subdirectory, for example:
+multi-config 対応のジェネレータ（たとえば Visual Studio）の場合は、まず次のように適切なサブディレクトリへ移動します：
 
 .. code-block:: console
 
   cd Debug
 
-Finally, try to use the newly built ``Tutorial``:
+最後はビルドした ``Tutorial`` を実行してみます：
 
 .. code-block:: console
 
@@ -118,20 +100,18 @@ Finally, try to use the newly built ``Tutorial``:
   Tutorial
 
 
-**Note:** Depending on the shell, the correct syntax may be ``Tutorial``,
-``./Tutorial`` or ``.\Tutorial``. For simplicity, the exercises will use
-``Tutorial`` throughout.
+**注意:** お使いのシェルによっては ``Tutorial``、あるいは ``./Tutorial``、もしくは ``.\Tutorial`` が正しいコマンドラインかもしれません。
+説明を簡単にするために、ここにある演習では ``Tutorial`` で統一します。
 
-Solution
+解決方法
 --------
 
-As mentioned above, a three line ``CMakeLists.txt`` is all that we need to get
-up and running. The first line is to use :command:`cmake_minimum_required` to
-set the CMake version as follows:
+上で説明したように、ビルドして実行するために必要なことは ``CMakeLists.txt`` にある３行だけです。
+最初の行は :command:`cmake_minimum_required` コマンドを使って、CMake のバージョンをセットしています:
 
 .. raw:: html
 
-  <details><summary>TODO 1: Click to show/hide answer</summary>
+  <details><summary>TODO 1: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 1: CMakeLists.txt
@@ -143,12 +123,11 @@ set the CMake version as follows:
 
   </details>
 
-The next step to make a basic project is to use the :command:`project`
-command as follows to set the project name:
+CMake プロジェクトを作成するための次のステップは、:command:`project` コマンドを使ってプロジェクトの名前をセットすることです：
 
 .. raw:: html
 
-  <details><summary>TODO 2: Click to show/hide answer</summary>
+  <details><summary>TODO 2: （クリックして答を見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 2: CMakeLists.txt
@@ -160,12 +139,11 @@ command as follows to set the project name:
 
   </details>
 
-The last command to call for a basic project is
-:command:`add_executable`. We call it as follows:
+プロジェクトを作成する最後のコマンドは :command:`add_executable` です。次のようにして呼び出します：
 
 .. raw:: html
 
-  <details><summary>TODO 3: Click to show/hide answer</summary>
+  <details><summary>TODO 3: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 3: CMakeLists.txt
