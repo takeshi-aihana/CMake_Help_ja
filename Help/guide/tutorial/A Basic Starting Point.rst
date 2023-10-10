@@ -91,7 +91,7 @@ multi-config 対応のジェネレータ（たとえば Visual Studio）の場�
 
   cd Debug
 
-最後はビルドした ``Tutorial`` を実行してみます：
+最後に、ビルドした ``Tutorial`` を実行してみます：
 
 .. code-block:: console
 
@@ -156,57 +156,54 @@ CMake プロジェクトを作成するための次のステップは、:command
 
   </details>
 
-Exercise 2 - Specifying the C++ Standard
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習２ - Ｃ++ 標準を指定する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CMake has some special variables that are either created behind the scenes or
-have meaning to CMake when set by project code. Many of these variables start
-with ``CMAKE_``. Avoid this naming convention when creating variables for your
-projects. Two of these special user settable variables are
-:variable:`CMAKE_CXX_STANDARD` and :variable:`CMAKE_CXX_STANDARD_REQUIRED`.
-These may be used together to specify the C++ standard needed to build the
-project.
+CMake には、プロジェクト生成中に裏でこっそり生成される、あるいはプロジェクト・コードがセットした時になって初めて CMake で意味を持つ特殊な変数がいくつかあります。
+それらの多くは、変数名が ``CMAKE_`` で始まります。
+プロジェクトで変数を作成する時は、この規則を破壊するような変数名は避けて下さい。
+このユーザがセットできる特殊な変数の二つが :variable:`CMAKE_CXX_STANDARD` と :variable:`CMAKE_CXX_STANDARD_REQUIRED` です。
+これらを一緒に使用して、プロジェクトのビルドに必要なＣ++ 標準を指定できます。
 
-Goal
+目標
 ----
 
-Add a feature that requires C++11.
+C++11 を必要とする機能をプログラムに追加する。
 
-Helpful Resources
------------------
+参考情報
+--------
 
 * :variable:`CMAKE_CXX_STANDARD`
 * :variable:`CMAKE_CXX_STANDARD_REQUIRED`
 * :command:`set`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``CMakeLists.txt``
 * ``tutorial.cxx``
 
-Getting Started
----------------
+始める
+------
 
-Continue editing files in the ``Step1`` directory. Start with ``TODO 4`` and
-complete through ``TODO 6``.
+``Step1`` ディレクトリにあるファイルの編集の続きです。
+``TODO 4`` から始めて ``TODO 6`` まで進めて下さい。
 
-First, edit ``tutorial.cxx`` by adding a feature that requires C++11. Then
-update ``CMakeLists.txt`` to require C++11.
+まず、``tutorial.cxx`` を編集して、C++11 を必要とする機能を追加します。
+そして C++11 を要求するように ``CMakeLists.txt`` を更新して下さい。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Let's build our project again. Since we already created a build directory and
-ran CMake for Exercise 1, we can skip to the build step:
+プロジェクトを再ビルドしましょう。
+演習１で既にビルドツリーに相当するディレクトリを作成し CMake を起動しているので、このままビルドのステップに進んで下さい：
 
 .. code-block:: console
 
   cd Step1_build
   cmake --build .
 
-Now we can try to use the newly built ``Tutorial`` with same commands as
-before:
+ここで、演習１と同様のコマンドで、新しくビルドした ``Tutorial`` を実行できます：
 
 .. code-block:: console
 
@@ -214,16 +211,15 @@ before:
   Tutorial 10
   Tutorial
 
-Solution
+解決方法
 --------
 
-We start by adding some C++11 features to our project by replacing
-``atof`` with ``std::stod`` in ``tutorial.cxx``. This looks like
-the following:
+``tutorial.cxx`` の ``atof`` を ``std::atod`` で置き換え、C++11 の機能をプロジェクトに追加するところから始まります。
+これは、次のようになります：
 
 .. raw:: html
 
-  <details><summary>TODO 4: Click to show/hide answer</summary>
+  <details><summary>TODO 4: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/tutorial.cxx
   :caption: TODO 4: tutorial.cxx
@@ -236,19 +232,16 @@ the following:
 
   </details>
 
-To complete ``TODO 5``, simply remove ``#include <cstdlib>``.
+``TODO 5`` は単に ``#include <cstdlib>`` の文を削除するだけです。
 
-We will need to explicitly state in the CMake code that it should use the
-correct flags. One way to enable support for a specific C++ standard in CMake
-is by using the :variable:`CMAKE_CXX_STANDARD` variable. For this tutorial, set
-the :variable:`CMAKE_CXX_STANDARD` variable in the ``CMakeLists.txt`` file to
-``11`` and :variable:`CMAKE_CXX_STANDARD_REQUIRED` to ``True``. Make sure to
-add the :variable:`CMAKE_CXX_STANDARD` declarations above the call to
-:command:`add_executable`.
+プロエジェクト・コードの中で正しいコンパイル・フラグを使うよう CMake に明示的に指示する必要があります。
+特定の Ｃ++ 標準のサポートを有効にする方法の一つに :variable:`CMAKE_CXX_STANDARD` 変数を使うと云う方法があります。
+このチュートリアルでは、``CMakeLists.txt`` の中で変数 :variable:`CMAKE_CXX_STANDARD` に ``11`` をセットし、変数 :variable:`CMAKE_CXX_STANDARD_REQUIRED` に ``True`` をセットしています。
+必ず :command:`add_executable` コマンドの呼び出しよりも前で、変数 :variable:`CMAKE_CXX_STANDARD` をセットしているか確認して下さい。
 
 .. raw:: html
 
-  <details><summary>TODO 6: Click to show/hide answer</summary>
+  <details><summary>TODO 6: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 6: CMakeLists.txt
@@ -261,86 +254,76 @@ add the :variable:`CMAKE_CXX_STANDARD` declarations above the call to
 
   </details>
 
-Exercise 3 - Adding a Version Number and Configured Header File
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習３ - バージョン番号とヘッダファイルを追加する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes it may be useful to have a variable that is defined in your
-``CMakelists.txt`` file also be available in your source code. In this case, we
-would like to print the project version.
+プロジェクトの ``CMakeLists.txt`` の中で定義されている変数を、プログラムの中で参照できると便利な場合があります。
+ここではプロジェクトのバージョンをプログラムで出力させることにします。
 
-One way to accomplish this is by using a configured header file. We create an
-input file with one or more variables to replace. These variables have special
-syntax which looks like ``@VAR@``.
-Then, we use the :command:`configure_file` command to copy the input file to a
-given output file and replace these variables with the current value of ``VAR``
-in the ``CMakelists.txt`` file.
+これを実現する方法の一つにヘッダファイルを利用すると云う方法があります。
+まず置換を行う一個以上の変数を定義した入力用ファイルを用意します。
+これらの変数は ``@VAR@`` のような特殊な構文にします。
+そして :command:`configure_file` コマンドを使い、入力用のファイルを出力用ファイルにコピーして、その中にある変数を ``CMakeLists.txt`` ファイルでセットした変数 ``VAR`` の現在値で置き換えます。
 
-While we could edit the version directly in the source code, using this
-feature is preferred since it creates a single source of truth and avoids
-duplication.
+プログラムの中で直接バージョンを定義することは可能ですが、信頼できる単一の情報源から値を引用し、定義の重複を避けるためにも、この機能の使用を推奨します。
 
-Goal
+目標
 ----
 
-Define and report the project's version number.
+プロジェクトのバージョン番号を定義して報告させる。
 
-Helpful Resources
------------------
+参考情報
+--------
 
 * :variable:`<PROJECT-NAME>_VERSION_MAJOR`
 * :variable:`<PROJECT-NAME>_VERSION_MINOR`
 * :command:`configure_file`
 * :command:`target_include_directories`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``CMakeLists.txt``
 * ``tutorial.cxx``
 
-Getting Started
----------------
+始める
+------
 
-Continue to edit files from ``Step1``. Start on ``TODO 7`` and complete through
-``TODO 12``. In this exercise, we start by adding a project version number in
-``CMakeLists.txt``. In that same file, use :command:`configure_file` to copy a
-given input file to an output file and substitute some variable values in the
-input file content.
+``Step1`` からファイルの編集を続けます。
+``TODO 7`` から始めて ``TODO 12`` まで進めて下さい。
+この演習では、``CMakeLists.txt`` の中にプロジェクトのバージョン番号を定義するところから始めます。
+同じファイル内で、:command:`configure_file` コマンドを使って、指定した入力用ファイルを出力用ファイルにコピーし、入力用ファイルの中にあるいくつかの変数の値を置き換えます。
 
-Next, create an input header file ``TutorialConfig.h.in`` defining version
-numbers which will accept variables passed from :command:`configure_file`.
+次にバージョン番号を定義し、:command:`configure_file` コマンドから渡される変数の値を受け入れる入力用ヘッダファイルの ``TutorialConfig.h.in`` を作成します。
 
-Finally, update ``tutorial.cxx`` to print out its version number.
+最後に ``tutorial.cxx`` を変更し、バージョン番号を出力するコードを追加して下さい。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Let's build our project again. As before, we already created a build directory
-and ran CMake so we can skip to the build step:
+プロジェクトを再ビルドしましょう。
+演習２と同様に、既にビルドツリーに相当するディレクトリを作成し CMake を起動しているので、このままビルドのステップに進んで下さい：
 
 .. code-block:: console
 
   cd Step1_build
   cmake --build .
 
-Verify that the version number is now reported when running the executable
-without any arguments.
+実行形式を引数無しで実行するとバージョン番号が報告されることを確認して下さい。
 
-Solution
+
+解決方法
 --------
 
-In this exercise, we improve our executable by printing a version number.
-While we could do this exclusively in the source code, using ``CMakeLists.txt``
-lets us maintain a single source of data for the version number.
+この演習では、バージョン番号を出力するように実行形式を改良します。
+これをプログラムだけの変更で実現することは可能ですが、``CMakeLists.txt`` を使用すると、バージョン番号の定義を一意に管理できるようになります。
 
-First, we modify the ``CMakeLists.txt`` file to use the
-:command:`project` command to set both the project name and version number.
-When the :command:`project` command is called, CMake defines
-``Tutorial_VERSION_MAJOR`` and ``Tutorial_VERSION_MINOR`` behind the scenes.
+まず ``CMakeLists.txt`` ファイルを変更し、:command:`project` コマンドでプロジェクトの名前とバージョン番号の両方をセットします。
+:command:`project` コマンドを呼び出すと、CMake は内部で ``Tutorial_VERSION_MAJOR`` と ``Tutorial_VERSION_MINOR`` の変数を定義します。
 
 .. raw:: html
 
-  <details><summary>TODO 7: Click to show/hide answer</summary>
+  <details><summary>TODO 7: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 7: CMakeLists.txt
@@ -353,12 +336,11 @@ When the :command:`project` command is called, CMake defines
 
   </details>
 
-Then we used :command:`configure_file` to copy the input file with the
-specified CMake variables replaced:
+そして :command:`configure_file` コマンドを使い、CMake の変数を置き換えた入力用のファイルをコピーします：
 
 .. raw:: html
 
-  <details><summary>TODO 8: Click to show/hide answer</summary>
+  <details><summary>TODO 8: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 8: CMakeLists.txt
@@ -371,20 +353,16 @@ specified CMake variables replaced:
 
   </details>
 
-Since the configured file will be written into the project binary
-directory, we must add that directory to the list of paths to search for
-include files.
+ここでコピーした出力用ファイルは、プロジェクトのビルドツリーのディレクトリに保存されるため、そのディレクトリをインクルード・ファイルの検索パスに追加する必要があります。
 
-**Note:** Throughout this tutorial, we will refer to the project build and
-the project binary directory interchangeably. These are the same and are not
-meant to refer to a `bin/` directory.
+**注意:** このチュートリアルでは、プロジェクトのビルド・ディレクトリとビルドツリーのディレクトリは同義として扱います。
+これらは同じディレクトリであり、`bin/` ディレクトリを指しているのではありません。
 
-We used :command:`target_include_directories` to specify
-where the executable target should look for include files.
+ここでは :command:`target_include_directories` コマンドを使って、ビルドするターゲットがインクルードファイルを検索する場所を指定しています。
 
 .. raw:: html
 
-  <details><summary>TODO 9: Click to show/hide answer</summary>
+  <details><summary>TODO 9: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/CMakeLists.txt
   :caption: TODO 9: CMakeLists.txt
@@ -396,15 +374,12 @@ where the executable target should look for include files.
 
   </details>
 
-``TutorialConfig.h.in`` is the input header file to be configured.
-When :command:`configure_file` is called from our ``CMakeLists.txt``, the
-values for ``@Tutorial_VERSION_MAJOR@`` and ``@Tutorial_VERSION_MINOR@`` will
-be replaced with the corresponding version numbers from the project in
-``TutorialConfig.h``.
+``TutorialConfig.h.in`` ファイルはテンプレートに相当する入力用ヘッダファイルです。
+``CMakeLists.txt`` から :command:`configure_file` コマンドを呼び出すと、``@Tutorial_VERSION_MAJOR@`` と ``@Tutorial_VERSION_MINOR@`` は対応するプロジェクトのバージョン番号に置き換えられて、出力用ヘッダファイル ``TutorialConfig.h`` に書き込まれます。
 
 .. raw:: html
 
-  <details><summary>TODO 10: Click to show/hide answer</summary>
+  <details><summary>TODO 10: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/TutorialConfig.h.in
   :caption: TODO 10: TutorialConfig.h.in
@@ -415,12 +390,11 @@ be replaced with the corresponding version numbers from the project in
 
   </details>
 
-Next, we need to modify ``tutorial.cxx`` to include the configured header file,
-``TutorialConfig.h``.
+そして ``tutorial.cxx`` を変更し、出力用ヘッダファイルである ``TutorialConfig.h`` をインクルードして下さい。
 
 .. raw:: html
 
-  <details><summary>TODO 11: Click to show/hide answer</summary>
+  <details><summary>TODO 11: （クリックして答を見る／隠す）</summary>
 
 .. code-block:: c++
   :caption: TODO 11: tutorial.cxx
@@ -431,12 +405,11 @@ Next, we need to modify ``tutorial.cxx`` to include the configured header file,
 
   </details>
 
-Finally, we print out the executable name and version number by updating
-``tutorial.cxx`` as follows:
+最後に ``tutorial.cxx`` を次のように変更し、実行形式の名前とバージョン番号を出力するコードを追加して下さい：
 
 .. raw:: html
 
-  <details><summary>TODO 12: Click to show/hide answer</summary>
+  <details><summary>TODO 12: （クリックして答を見る／隠す）</summary>
 
 .. literalinclude:: Step2/tutorial.cxx
   :caption: TODO 12 : tutorial.cxx
