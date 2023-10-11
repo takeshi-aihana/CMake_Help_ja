@@ -1,56 +1,38 @@
-User Interaction Guide
-**********************
+ユーザ操作ガイド
+****************
 
 .. only:: html
 
    .. contents::
 
-Introduction
-============
+はじめに
+========
 
-Where a software package supplies a CMake-based buildsystem
-with the source of their software, the consumer of the
-software is required to run a CMake user interaction tool
-in order to build it.
+ソフトウェア・パッケージが、そのソースファイルとともに CMake ベースのビルドシステムを提供する場合、このソフトウェアを利用する開発者はそれをビルドするため CMake のユーザ向けツールを実行する必要があります。
 
-Well-behaved CMake-based buildsystems do not create any
-output in the source directory, so typically, the user
-performs an out-of-source build and performs the build
-there.  First, CMake must be instructed to generate a
-suitable buildsystem, then the user invokes a build tool
-to process that generated buildsystem.  The generated
-buildsystem is specific to the machine used to generate
-it and is not redistributable.  Each consumer of a provided
-source software package is required to use CMake to
-generate a buildsystem specific to their system.
+ある意味で「しつけの良い」CMake ベースのビルドシステムはビルドした結果をソースツリーに相当するディレクトリにはを作成するようなことはしないので、
 
-Generated buildsystems should generally be treated as
-read-only. The CMake files as a primary artifact should
-completely specify the buildsystem and there should be no
-reason to populate properties manually in an IDE for
-example after generating the buildsystem.  CMake will
-periodically rewrite the generated buildsystem, so
-modifications by users will be overwritten.
 
-The features and user interfaces described in this manual
-are available for all CMake-based build systems by virtue
-of providing CMake files.
+適切に動作する CMake ベースのビルドシステムは、ソース ディレクトリに出力を作成しないため、通常、ユーザーはソース外のビルドを実行し、そこでビルドを実行します。 まず、適切なビルドシステムを生成するように CMake に指示する必要があります。その後、ユーザーはビルド ツールを呼び出して、生成されたビルドシステムを処理します。 生成されたビルドシステムは、生成に使用されたマシンに固有のものであり、再配布できません。 提供されたソース ソフトウェア パッケージの各利用者は、CMake を使用してシステムに固有のビルドシステムを生成する必要があります。
 
-The CMake tooling may report errors to the user when
-processing provided CMake files, such as reporting that
-the compiler is not supported, or the compiler does not
-support a required compile option, or a dependency can
-not be found.  These errors must be resolved by the user
-by choosing a different compiler,
-:guide:`installing dependencies <Using Dependencies Guide>`,
-or instructing CMake where to find them, etc.
+Well-behaved CMake-based buildsystems do not create any output in the source directory, so typically, the user performs an out-of-source build and performs the build there.
+First, CMake must be instructed to generate a suitable buildsystem, then the user invokes a build tool to process that generated buildsystem.
+The generated buildsystem is specific to the machine used to generate it and is not redistributable.
+Each consumer of a provided source software package is required to use CMake to generate a buildsystem specific to their system.
 
-Command Line cmake tool
------------------------
+Generated buildsystems should generally be treated as read-only.
+The CMake files as a primary artifact should completely specify the buildsystem and there should be no reason to populate properties manually in an IDE for example after generating the buildsystem.
+CMake will periodically rewrite the generated buildsystem, so modifications by users will be overwritten.
 
-A simple but typical use of :manual:`cmake(1)` with a fresh
-copy of software source code is to create a build directory
-and invoke cmake there:
+The features and user interfaces described in this manual are available for all CMake-based build systems by virtue of providing CMake files.
+
+The CMake tooling may report errors to the user when processing provided CMake files, such as reporting that the compiler is not supported, or the compiler does not support a required compile option, or a dependency can not be found.
+These errors must be resolved by the user by choosing a different compiler, :guide:`installing dependencies <Using Dependencies Guide>`, or instructing CMake where to find them, etc.
+
+コマンドライン cmake ツール
+----------------------------
+
+A simple but typical use of :manual:`cmake(1)` with a fresh copy of software source code is to create a build directory and invoke cmake there:
 
 .. code-block:: console
 
@@ -61,133 +43,80 @@ and invoke cmake there:
   $ cmake --build .
   $ cmake --build . --target install
 
-It is recommended to build in a separate directory to the
-source because that keeps the source directory pristine,
-allows for building a single source with multiple
-toolchains, and allows easy clearing of build artifacts by
-simply deleting the build directory.
+It is recommended to build in a separate directory to the source because that keeps the source directory pristine, allows for building a single source with multiple toolchains, and allows easy clearing of build artifacts by simply deleting the build directory.
 
-The CMake tooling may report warnings which are intended
-for the provider of the software, not intended for the
-consumer of the software.  Such warnings end with "This
-warning is for project developers".  Users may disable
-such warnings by passing the :option:`-Wno-dev <cmake -Wno-dev>`
-flag to :manual:`cmake(1)`.
+The CMake tooling may report warnings which are intended for the provider of the software, not intended for the consumer of the software.
+Such warnings end with "This warning is for project developers".
+Users may disable such warnings by passing the :option:`-Wno-dev <cmake -Wno-dev>` flag to :manual:`cmake(1)`.
 
-cmake-gui tool
---------------
+cmake-gui ツール
+----------------
 
-Users more accustomed to GUI interfaces may use the
-:manual:`cmake-gui(1)` tool to invoke CMake and generate
-a buildsystem.
+Users more accustomed to GUI interfaces may use the :manual:`cmake-gui(1)` tool to invoke CMake and generate a buildsystem.
 
-The source and binary directories must first be
-populated.  It is always advised to use different
-directories for the source and the build.
+The source and binary directories must first be populated.
+It is always advised to use different directories for the source and the build.
 
 .. image:: GUI-Source-Binary.png
    :alt: Choosing source and binary directories
 
-Generating a Buildsystem
-========================
+ビルドシステムの生成
+====================
 
-There are several user interface tools which may be used
-to generate a buildsystem from CMake files.  The
-:manual:`ccmake(1)` and :manual:`cmake-gui(1)` tools guide
-the user through setting the various necessary options.
-The :manual:`cmake(1)` tool can be invoked to specify
-options on the command line.  This manual describes options
-which may be set using any of the user interface tools,
-though the mode of setting an option is different for each
-tool.
+There are several user interface tools which may be used to generate a buildsystem from CMake files.
+The :manual:`ccmake(1)` and :manual:`cmake-gui(1)` tools guide the user through setting the various necessary options.
+The :manual:`cmake(1)` tool can be invoked to specify options on the command line.
+This manual describes options which may be set using any of the user interface tools, though the mode of setting an option is different for each tool.
 
-Command line environment
-------------------------
+コマンドライン環境
+------------------
 
-When invoking :manual:`cmake(1)` with a command line
-buildsystem such as ``Makefiles`` or ``Ninja``, it is
-necessary to use the correct build environment to
-ensure that build tools are available. CMake must be
-able to find the appropriate
-:variable:`build tool <CMAKE_MAKE_PROGRAM>`,
-compiler, linker and other tools as needed.
+When invoking :manual:`cmake(1)` with a command line buildsystem such as ``Makefiles`` or ``Ninja``, it is necessary to use the correct build environment to ensure that build tools are available.
+CMake must be able to find the appropriate :variable:`build tool <CMAKE_MAKE_PROGRAM>`, compiler, linker and other tools as needed.
 
-On Linux systems, the appropriate tools are often
-provided in system-wide locations and may be readily
-installed through the system package manager. Other
-toolchains provided by the user or installed in
-non-default locations can also be used.
+On Linux systems, the appropriate tools are often provided in system-wide locations and may be readily installed through the system package manager.
+Other toolchains provided by the user or installed in non-default locations can also be used.
 
-When cross-compiling, some platforms may require
-environment variables to be set or may provide
-scripts to set the environment.
+When cross-compiling, some platforms may require environment variables to be set or may provide scripts to set the environment.
 
-Visual Studio ships multiple command prompts and
-``vcvarsall.bat`` scripts for setting up the
-correct environments for command line buildsystems. While
-not strictly necessary to use a corresponding
-command line environment when using a Visual Studio
-generator, doing so has no disadvantages.
+Visual Studio ships multiple command prompts and ``vcvarsall.bat`` scripts for setting up the correct environments for command line buildsystems.
+While not strictly necessary to use a corresponding command line environment when using a Visual Studio generator, doing so has no disadvantages.
 
-When using Xcode, there can be more than one Xcode
-version installed.  Which one to use can be selected
-in a number of different ways, but the most common
-methods are:
+When using Xcode, there can be more than one Xcode version installed.
+Which one to use can be selected in a number of different ways, but the most common methods are:
 
-* Setting the default version in the preferences
-  of the Xcode IDE.
-* Setting the default version via the ``xcode-select``
-  command line tool.
-* Overriding the default version by setting the
-  ``DEVELOPER_DIR`` environment variable when running
-  CMake and the build tool.
+* Setting the default version in the preferences   of the Xcode IDE.
+* Setting the default version via the ``xcode-select``   command line tool.
+* Overriding the default version by setting the ``DEVELOPER_DIR`` environment variable when running CMake and the build tool.
 
-For convenience, :manual:`cmake-gui(1)` provides an
-environment variable editor.
+For convenience, :manual:`cmake-gui(1)` provides an environment variable editor.
 
-Command line ``-G`` option
---------------------------
+コマンドラインの ``-G`` オプション
+----------------------------------
 
-CMake chooses a generator by default based on the
-platform.  Usually, the default generator is sufficient
-to allow the user to proceed to build the software.
+CMake chooses a generator by default based on the platform.
+Usually, the default generator is sufficient to allow the user to proceed to build the software.
 
-The user may override the default generator with
-the :option:`-G <cmake -G>` option:
+The user may override the default generator with the :option:`-G <cmake -G>` option:
 
 .. code-block:: console
 
   $ cmake .. -G Ninja
 
-The output of :option:`cmake --help` includes a list of
-:manual:`generators <cmake-generators(7)>` available
-for the user to choose from.  Note that generator
-names are case sensitive.
+The output of :option:`cmake --help` includes a list of :manual:`generators <cmake-generators(7)>` available for the user to choose from.
+Note that generator names are case sensitive.
 
-On Unix-like systems (including Mac OS X), the
-:generator:`Unix Makefiles` generator is used by
-default.  A variant of that generator can also be used
-on Windows in various environments, such as the
-:generator:`NMake Makefiles` and
-:generator:`MinGW Makefiles` generator.  These generators
-generate a ``Makefile`` variant which can be executed
-with ``make``, ``gmake``, ``nmake`` or similar tools.
-See the individual generator documentation for more
-information on targeted environments and tools.
+On Unix-like systems (including Mac OS X), the :generator:`Unix Makefiles` generator is used by default.
+A variant of that generator can also be used on Windows in various environments, such as the :generator:`NMake Makefiles` and :generator:`MinGW Makefiles` generator.
+These generators generate a ``Makefile`` variant which can be executed with ``make``, ``gmake``, ``nmake`` or similar tools.
+See the individual generator documentation for more information on targeted environments and tools.
 
-The :generator:`Ninja` generator is available on all
-major platforms. ``ninja`` is a build tool similar
-in use-cases to ``make``, but with a focus on
-performance and efficiency.
+The :generator:`Ninja` generator is available on all major platforms.
+``ninja`` is a build tool similar in use-cases to ``make``, but with a focus on performance and efficiency.
 
-On Windows, :manual:`cmake(1)` can be used to generate
-solutions for the Visual Studio IDE.  Visual Studio
-versions may be specified by the product name of the
-IDE, which includes a four-digit year.  Aliases are
-provided for other means by which Visual Studio
-versions are sometimes referred to, such as two
-digits which correspond to the product version of the
-VisualC++ compiler, or a combination of the two:
+On Windows, :manual:`cmake(1)` can be used to generate solutions for the Visual Studio IDE.
+Visual Studio versions may be specified by the product name of the IDE, which includes a four-digit year.
+Aliases are provided for other means by which Visual Studio versions are sometimes referred to, such as two digits which correspond to the product version of the VisualC++ compiler, or a combination of the two:
 
 .. code-block:: console
 
@@ -196,8 +125,7 @@ VisualC++ compiler, or a combination of the two:
   $ cmake .. -G "Visual Studio 16 2019"
 
 Visual Studio generators can target different architectures.
-One can specify the target architecture using the
-:option:`-A <cmake -A>` option:
+One can specify the target architecture using the :option:`-A <cmake -A>` option:
 
 .. code-block:: console
 
@@ -205,26 +133,17 @@ One can specify the target architecture using the
   cmake .. -G "Visual Studio 16" -A ARM
   cmake .. -G "Visual Studio 16 2019" -A ARM64
 
-On Apple, the :generator:`Xcode` generator may be used to
-generate project files for the Xcode IDE.
+On Apple, the :generator:`Xcode` generator may be used to generate project files for the Xcode IDE.
 
-Some IDEs such as KDevelop4, QtCreator and CLion have
-native support for CMake-based buildsystems.  Those IDEs
-provide user interface for selecting an underlying
-generator to use, typically a choice between a ``Makefile``
-or a ``Ninja`` based generator.
+Some IDEs such as KDevelop4, QtCreator and CLion have native support for CMake-based buildsystems.
+Those IDEs provide user interface for selecting an underlying generator to use, typically a choice between a ``Makefile`` or a ``Ninja`` based generator.
 
-Note that it is not possible to change the generator
-with :option:`-G <cmake -G>` after the first invocation of CMake.
-To change the generator, the build directory must be
-deleted and the build must be started from scratch.
+Note that it is not possible to change the generator with :option:`-G <cmake -G>` after the first invocation of CMake.
+To change the generator, the build directory must be deleted and the build must be started from scratch.
 
-When generating Visual Studio project and solutions
-files several other options are available to use when
-initially running :manual:`cmake(1)`.
+When generating Visual Studio project and solutions files several other options are available to use when initially running :manual:`cmake(1)`.
 
-The Visual Studio toolset can be specified with the
-:option:`cmake -T` option:
+The Visual Studio toolset can be specified with the :option:`cmake -T` option:
 
 .. code-block:: console
 
@@ -233,47 +152,39 @@ The Visual Studio toolset can be specified with the
     $ # Build targeting Windows XP
     $ cmake.exe .. -G "Visual Studio 16 2019" -A x64 -T v120_xp
 
-Whereas the :option:`-A <cmake -A>` option specifies the _target_
-architecture, the :option:`-T <cmake -T>` option can be used to specify
-details of the toolchain used.  For example, ``-Thost=x64``
-can be given to select the 64-bit version of the host
-tools.  The following demonstrates how to use 64-bit
-tools and also build for a 64-bit target architecture:
+Whereas the :option:`-A <cmake -A>` option specifies the _target_ architecture, the :option:`-T <cmake -T>` option can be used to specify details of the toolchain used.
+For example, ``-Thost=x64`` can be given to select the 64-bit version of the host tools.
+The following demonstrates how to use 64-bit tools and also build for a 64-bit target architecture:
 
 .. code-block:: console
 
     $ cmake .. -G "Visual Studio 16 2019" -A x64 -Thost=x64
 
-Choosing a generator in cmake-gui
----------------------------------
+cmake-gui でジェネレータを選択する
+----------------------------------
 
-The "Configure" button triggers a new dialog to
-select the CMake generator to use.
+The "Configure" button triggers a new dialog to select the CMake generator to use.
 
 .. image:: GUI-Configure-Dialog.png
    :alt: Configuring a generator
 
-All generators available on the command line are also
-available in :manual:`cmake-gui(1)`.
+All generators available on the command line are also available in :manual:`cmake-gui(1)`.
 
 .. image:: GUI-Choose-Generator.png
    :alt: Choosing a generator
 
-When choosing a Visual Studio generator, further options
-are available to set an architecture to generate for.
+When choosing a Visual Studio generator, further options are available to set an architecture to generate for.
 
 .. image:: VS-Choose-Arch.png
    :alt: Choosing an architecture for Visual Studio generators
 
 .. _`Setting Build Variables`:
 
-Setting Build Variables
-=======================
+ビルド用の変数をセットする
+==========================
 
-Software projects often require variables to be
-set on the command line when invoking CMake.  Some of
-the most commonly used CMake variables are listed in
-the table below:
+Software projects often require variables to be set on the command line when invoking CMake.
+Some of the most commonly used CMake variables are listed in the table below:
 
 ========================================== ============================================================
  Variable                                   Meaning
@@ -302,27 +213,16 @@ the table below:
                                             file for use with clang-based tools
 ========================================== ============================================================
 
-Other project-specific variables may be available
-to control builds, such as enabling or disabling
-components of the project.
+Other project-specific variables may be available to control builds, such as enabling or disabling components of the project.
 
-There is no convention provided by CMake for how
-such variables are named between different
-provided buildsystems, except that variables with
-the prefix ``CMAKE_`` usually refer to options
-provided by CMake itself and should not be used
-in third-party options, which should use
-their own prefix instead.  The
-:manual:`cmake-gui(1)` tool can display options
-in groups defined by their prefix, so it makes
-sense for third parties to ensure that they use a
-self-consistent prefix.
+There is no convention provided by CMake for how such variables are named between different provided buildsystems, except that variables with the prefix ``CMAKE_`` usually refer to options provided by CMake itself and should not be used in third-party options, which should use their own prefix instead.
+The :manual:`cmake-gui(1)` tool can display options in groups defined by their prefix, so it makes sense for third parties to ensure that they use a self-consistent prefix.
 
-Setting variables on the command line
--------------------------------------
 
-CMake variables can be set on the command line either
-when creating the initial build:
+コマンドラインから変数をセットする
+----------------------------------
+
+CMake variables can be set on the command line either when creating the initial build:
 
 .. code-block:: console
 
@@ -330,109 +230,71 @@ when creating the initial build:
     $ cd build
     $ cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
-or later on a subsequent invocation of
-:manual:`cmake(1)`:
+or later on a subsequent invocation of :manual:`cmake(1)`:
 
 .. code-block:: console
 
     $ cd build
     $ cmake . -DCMAKE_BUILD_TYPE=Debug
 
-The :option:`-U <cmake -U>` flag may be used to unset variables
-on the :manual:`cmake(1)` command line:
+The :option:`-U <cmake -U>` flag may be used to unset variables on the :manual:`cmake(1)` command line:
 
 .. code-block:: console
 
     $ cd build
     $ cmake . -UMyPackage_DIR
 
-A CMake buildsystem which was initially created
-on the command line can be modified using the
-:manual:`cmake-gui(1)` and vice-versa.
+A CMake buildsystem which was initially created on the command line can be modified using the :manual:`cmake-gui(1)` and vice-versa.
 
-The :manual:`cmake(1)` tool allows specifying a
-file to use to populate the initial cache using
-the :option:`-C <cmake -C>` option.  This can be useful to simplify
-commands and scripts which repeatedly require the
-same cache entries.
+The :manual:`cmake(1)` tool allows specifying a file to use to populate the initial cache using the :option:`-C <cmake -C>` option.
+This can be useful to simplify commands and scripts which repeatedly require the same cache entries.
 
-Setting variables with cmake-gui
---------------------------------
 
-Variables may be set in the cmake-gui using the "Add Entry"
-button.  This triggers a new dialog to set the value of
-the variable.
+cmake-gui で変数をセットする
+----------------------------
+
+Variables may be set in the cmake-gui using the "Add Entry" button.
+This triggers a new dialog to set the value of the variable.
 
 .. image:: GUI-Add-Entry.png
    :alt: Editing a cache entry
 
-The main view of the :manual:`cmake-gui(1)` user interface
-can be used to edit existing variables.
+The main view of the :manual:`cmake-gui(1)` user interface can be used to edit existing variables.
 
-The CMake Cache
----------------
+CMake キャッシュ
+----------------
 
-When CMake is executed, it needs to find the locations of
-compilers, tools and dependencies.  It also needs to be
-able to consistently re-generate a buildsystem to use the
-same compile/link flags and paths to dependencies.  Such
-parameters are also required to be configurable by the
-user because they are paths and options specific to the
-users system.
+When CMake is executed, it needs to find the locations of compilers, tools and dependencies.
+It also needs to be able to consistently re-generate a buildsystem to use the same compile/link flags and paths to dependencies.
+Such parameters are also required to be configurable by the user because they are paths and options specific to the users system.
 
-When it is first executed, CMake generates a
-``CMakeCache.txt`` file in the build directory containing
-key-value pairs for such artifacts.  The cache file can be
-viewed or edited by the user by running the
-:manual:`cmake-gui(1)` or :manual:`ccmake(1)` tool.  The
-tools provide an interactive interface for re-configuring
-the provided software and re-generating the buildsystem,
-as is needed after editing cached values.  Each cache
-entry may have an associated short help text which is
-displayed in the user interface tools.
+When it is first executed, CMake generates a ``CMakeCache.txt`` file in the build directory containing key-value pairs for such artifacts.
+The cache file can be viewed or edited by the user by running the :manual:`cmake-gui(1)` or :manual:`ccmake(1)` tool.
+The tools provide an interactive interface for re-configuring the provided software and re-generating the buildsystem, as is needed after editing cached values.
+Each cache entry may have an associated short help text which is displayed in the user interface tools.
 
-The cache entries may also have a type to signify how it
-should be presented in the user interface.  For example,
-a cache entry of type ``BOOL`` can be edited by a
-checkbox in a user interface, a ``STRING`` can be edited
-in a text field, and a ``FILEPATH`` while similar to a
-``STRING`` should also provide a way to locate filesystem
-paths using a file dialog.  An entry of type ``STRING``
-may provide a restricted list of allowed values which are
-then provided in a drop-down menu in the
-:manual:`cmake-gui(1)` user interface (see the
-:prop_cache:`STRINGS` cache property).
+The cache entries may also have a type to signify how it should be presented in the user interface.
+For example, a cache entry of type ``BOOL`` can be edited by a checkbox in a user interface, a ``STRING`` can be edited in a text field, and a ``FILEPATH`` while similar to a ``STRING`` should also provide a way to locate filesystem paths using a file dialog.
+An entry of type ``STRING`` may provide a restricted list of allowed values which are then provided in a drop-down menu in the :manual:`cmake-gui(1)` user interface (see the :prop_cache:`STRINGS` cache property).
 
-The CMake files shipped with a software package may also
-define boolean toggle options using the :command:`option`
-command.  The command creates a cache entry which has a
-help text and a default value.  Such cache entries are
-typically specific to the provided software and affect
-the configuration of the build, such as whether tests
-and examples are built, whether to build with exceptions
-enabled etc.
+The CMake files shipped with a software package may also define boolean toggle options using the :command:`option` command.
+The command creates a cache entry which has a help text and a default value.
+Such cache entries are typically specific to the provided software and affect the configuration of the build, such as whether tests and examples are built, whether to build with exceptions enabled etc.
 
-Presets
-=======
+プリセットを使う
+================
 
-CMake understands a file, ``CMakePresets.json``, and its
-user-specific counterpart, ``CMakeUserPresets.json``, for
-saving presets for commonly-used configure settings. These
-presets can set the build directory, generator, cache
-variables, environment variables, and other command-line
-options. All of these options can be overridden by the
-user. The full details of the ``CMakePresets.json`` format
-are listed in the :manual:`cmake-presets(7)` manual.
+CMake understands a file, ``CMakePresets.json``, and its user-specific counterpart, ``CMakeUserPresets.json``, for saving presets for commonly-used configure settings.
+These presets can set the build directory, generator, cache variables, environment variables, and other command-line options.
+All of these options can be overridden by the user.
+The full details of the ``CMakePresets.json`` format are listed in the :manual:`cmake-presets(7)` manual.
 
-Using presets on the command-line
----------------------------------
+コマンドラインからプリセットを使う
+----------------------------------
 
-When using the :manual:`cmake(1)` command line tool, a
-preset can be invoked by using the :option:`--preset <cmake --preset>`
-option. If :option:`--preset <cmake --preset>` is specified,
-the generator and build directory are not required, but can be
-specified to override them. For example, if you have the following
-``CMakePresets.json`` file:
+When using the :manual:`cmake(1)` command line tool, a preset can be invoked by using the :option:`--preset <cmake --preset>` option.
+If :option:`--preset <cmake --preset>` is specified, the generator and build directory are not required, but can be specified to override them.
+For example, if you have the following ``CMakePresets.json`` file:
 
 .. code-block:: json
 
@@ -456,65 +318,38 @@ and you run the following:
 
   cmake -S /path/to/source --preset=ninja-release
 
-This will generate a build directory in
-``/path/to/source/build/ninja-release`` with the
-:generator:`Ninja` generator, and with
-:variable:`CMAKE_BUILD_TYPE` set to ``Release``.
+This will generate a build directory in ``/path/to/source/build/ninja-release`` with the :generator:`Ninja` generator, and with :variable:`CMAKE_BUILD_TYPE` set to ``Release``.
 
-If you want to see the list of available presets, you can
-run:
+If you want to see the list of available presets, you can run:
 
 .. code-block:: console
 
   cmake -S /path/to/source --list-presets
 
-This will list the presets available in
-``/path/to/source/CMakePresets.json`` and
-``/path/to/source/CMakeUsersPresets.json`` without
-generating a build tree.
+This will list the presets available in ``/path/to/source/CMakePresets.json`` and ``/path/to/source/CMakeUsersPresets.json`` without generating a build tree.
 
-Using presets in cmake-gui
---------------------------
+cmake-gui でプリセットを使う
+----------------------------
 
-If a project has presets available, either through
-``CMakePresets.json`` or ``CMakeUserPresets.json``, the
-list of presets will appear in a drop-down menu in
-:manual:`cmake-gui(1)` between the source directory and
-the binary directory. Choosing a preset sets the binary
-directory, generator, environment variables, and cache
-variables, but all of these options can be overridden after
-a preset is selected.
+If a project has presets available, either through ``CMakePresets.json`` or ``CMakeUserPresets.json``, the list of presets will appear in a drop-down menu in :manual:`cmake-gui(1)` between the source directory and the binary directory.
+Choosing a preset sets the binary directory, generator, environment variables, and cache variables, but all of these options can be overridden after a preset is selected.
 
-Invoking the Buildsystem
+ビルドシステムを呼び出す
 ========================
 
-After generating the buildsystem, the software can be
-built by invoking the particular build tool.  In the
-case of the IDE generators, this can involve loading
-the generated project file into the IDE to invoke the
-build.
+After generating the buildsystem, the software can be built by invoking the particular build tool.
+In the case of the IDE generators, this can involve loading the generated project file into the IDE to invoke the build.
 
-CMake is aware of the specific build tool needed to invoke
-a build so in general, to build a buildsystem or project
-from the command line after generating, the following
-command may be invoked in the build directory:
+CMake is aware of the specific build tool needed to invoke a build so in general, to build a buildsystem or project from the command line after generating, the following command may be invoked in the build directory:
 
 .. code-block:: console
 
   $ cmake --build .
 
-The :option:`--build <cmake --build>` flag enables a
-particular mode of operation for the :manual:`cmake(1)`
-tool.  It invokes the  :variable:`CMAKE_MAKE_PROGRAM`
-command associated with the
-:manual:`generator <cmake-generators(7)>`, or
-the build tool configured by the user.
+The :option:`--build <cmake --build>` flag enables a particular mode of operation for the :manual:`cmake(1)` tool.
+It invokes the  :variable:`CMAKE_MAKE_PROGRAM` command associated with the :manual:`generator <cmake-generators(7)>`, or the build tool configured by the user.
 
-The :option:`--build <cmake --build>` mode also accepts
-the parameter :option:`--target <cmake--build --target>` to
-specify a particular target to build, for example a
-particular library, executable or custom target, or a
-particular special target like ``install``:
+The :option:`--build <cmake --build>` mode also accepts the parameter :option:`--target <cmake--build --target>` to specify a particular target to build, for example a particular library, executable or custom target, or a particular special target like ``install``:
 
 .. code-block:: console
 
@@ -558,8 +393,9 @@ generator etc.  The IDE buildsystems usually provide
 command line tooling for building a project which can
 also be invoked.
 
-Selecting a Target
-------------------
+
+ターゲットを選択する
+--------------------
 
 Each executable and library described in the CMake files
 is a build target, and the buildsystem may describe
@@ -591,12 +427,12 @@ providing CMake files.
 ``test``
   Runs tests.  This target is only automatically available
   if the CMake files provide CTest-based tests.  See also
-  `Running Tests`_.
+  `テストを実施する`_.
 ``install``
   Installs the software.  This target is only automatically
   available if the software defines install rules with the
   :command:`install` command.  See also
-  `Software Installation`_.
+  `ソフトウェアをインストールする`_.
 ``package``
   Creates a binary package.  This target is only
   automatically available if the CMake files provide
@@ -638,8 +474,8 @@ file extension are also provided.
 In buildsystems which contain ``foo.c`` and ``foo.cpp``,
 building the ``foo.i`` target will preprocess both files.
 
-Specifying a Build Program
---------------------------
+ビルド・ツールを指定する
+------------------------
 
 The program invoked by the :option:`--build <cmake --build>`
 mode is determined by the :variable:`CMAKE_MAKE_PROGRAM` variable.
@@ -677,8 +513,8 @@ can process the output of the
 :generator:`NMake Makefiles JOM` generator, but doing
 so would be a pessimization.
 
-Software Installation
-=====================
+ソフトウェアをインストールする
+==============================
 
 The :variable:`CMAKE_INSTALL_PREFIX` variable can be
 set in the CMake cache to specify where to install the
@@ -718,8 +554,9 @@ not affected.
 Some provided software may specify ``uninstall`` rules,
 but CMake does not generate such rules by default itself.
 
-Running Tests
-=============
+
+テストを実施する
+================
 
 The :manual:`ctest(1)` tool is shipped with the CMake
 distribution to execute provided tests and report
