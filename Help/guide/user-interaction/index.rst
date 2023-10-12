@@ -8,17 +8,12 @@
 はじめに
 ========
 
-ソフトウェア・パッケージが、そのソースファイルとともに CMake ベースのビルドシステムを提供する場合、このソフトウェアを利用する開発者はそれをビルドするため CMake のユーザ向けツールを実行する必要があります。
+あるソフトウェア・パッケージが、そのソースファイルとともに CMake ベースのビルドシステムを提供している場合、このソフトウェアを利用する開発者は、それをビルドするためユーザ向けに用意された CMake ツールを実行する必要があります。
 
-ある意味で「しつけの良い」CMake ベースのビルドシステムはビルドした結果をソースツリーに相当するディレクトリにはを作成するようなことはしないので、
-
-
-適切に動作する CMake ベースのビルドシステムは、ソース ディレクトリに出力を作成しないため、通常、ユーザーはソース外のビルドを実行し、そこでビルドを実行します。 まず、適切なビルドシステムを生成するように CMake に指示する必要があります。その後、ユーザーはビルド ツールを呼び出して、生成されたビルドシステムを処理します。 生成されたビルドシステムは、生成に使用されたマシンに固有のものであり、再配布できません。 提供されたソース ソフトウェア パッケージの各利用者は、CMake を使用してシステムに固有のビルドシステムを生成する必要があります。
-
-Well-behaved CMake-based buildsystems do not create any output in the source directory, so typically, the user performs an out-of-source build and performs the build there.
-First, CMake must be instructed to generate a suitable buildsystem, then the user invokes a build tool to process that generated buildsystem.
-The generated buildsystem is specific to the machine used to generate it and is not redistributable.
-Each consumer of a provided source software package is required to use CMake to generate a buildsystem specific to their system.
+「行儀の良い」CMake ベースのビルドシステムは、ビルドした結果をソースディレクトリに出力するようなことはしません。そのため通常ユーザはソースディレクトリの外でビルドを実行することになります。
+まず CMake に適切なビルドシステムを生成するよう指示し、ビルド・ツールを呼び出してそのビルドシステムを処理します。
+このビルドシステムはそれを生成したマシンに固有のものであり、再配布できるものではありません。
+ソフトウェア・パッケージを利用する開発者は、それぞれ自分たちのシステムに固有のビルドシステムを CMake を使って生成する必要があります。
 
 Generated buildsystems should generally be treated as read-only.
 The CMake files as a primary artifact should completely specify the buildsystem and there should be no reason to populate properties manually in an IDE for example after generating the buildsystem.
