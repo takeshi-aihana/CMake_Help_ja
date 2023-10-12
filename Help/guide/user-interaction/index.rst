@@ -8,26 +8,26 @@
 はじめに
 ========
 
-あるソフトウェア・パッケージが、そのソースファイルとともに CMake ベースのビルドシステムを提供している場合、このソフトウェアを利用する開発者は、それをビルドするためユーザ向けに用意された CMake ツールを実行する必要があります。
+あるソフトウェア・パッケージが、そのソースファイルと共に CMake ベースのビルドシステムを提供している場合、そのソフトウェアを利用する開発者はユーザ向けに用意された CMake ツールを実行してビルドする必要があります。
 
-「行儀の良い」CMake ベースのビルドシステムは、ビルドした結果をソースディレクトリに出力するようなことはしません。そのため通常ユーザはソースディレクトリの外でビルドを実行することになります。
+「行儀の良い」CMake ベースのビルドシステムは、ビルドした結果をソースディレクトリに出力するようなことはしません。そのため通常、ユーザはソースディレクトリの外でビルドを実行することになります。
 まず CMake に適切なビルドシステムを生成するよう指示し、ビルド・ツールを呼び出してそのビルドシステムを処理します。
 このビルドシステムはそれを生成したマシンに固有のものであり、再配布できるものではありません。
 ソフトウェア・パッケージを利用する開発者は、それぞれ自分たちのシステムに固有のビルドシステムを CMake を使って生成する必要があります。
 
-Generated buildsystems should generally be treated as read-only.
-The CMake files as a primary artifact should completely specify the buildsystem and there should be no reason to populate properties manually in an IDE for example after generating the buildsystem.
-CMake will periodically rewrite the generated buildsystem, so modifications by users will be overwritten.
+ここで生成したビルドシステムは、原則的に読み取り専用として扱って下さい。
+「一時生成物（Primary Artifacts）」として CMake が生成したファイルはビルドシステムを定義するプロパティであり、ビルドシステムを生成した後に、たとえば IDE でそのようなプロパティを手動で設定する必要はありません。
+CMake はビルドシステムを定期的に書き換えるので、ユーザがプロパティを変更しても上書きされてしまいます。
 
-The features and user interfaces described in this manual are available for all CMake-based build systems by virtue of providing CMake files.
+このマニュアルで説明している機能とユーザ・インタフェースは、すべての CMake ベースのビルドシステムで利用可能です。
 
-The CMake tooling may report errors to the user when processing provided CMake files, such as reporting that the compiler is not supported, or the compiler does not support a required compile option, or a dependency can not be found.
-These errors must be resolved by the user by choosing a different compiler, :guide:`installing dependencies <Using Dependencies Guide>`, or instructing CMake where to find them, etc.
+CMake のツールで CMake が生成したファイルを処理している時、例えばコンパイラがサポートされていないとか、コンパイラが必要なコンパイル・オプションをサポートしていないとか、あるいは依存関係が見つからなかったなどのエラーをユーザに報告する場合があります。
+これらのエラーは、別のコンパイラを選択するとか、:guide:`installing dependencies <Using Dependencies Guide>` とか、あるいは依存関係を見つける場所を CMake に指示するなどして、ユーザ自身で解決する必要があります。
 
 コマンドライン cmake ツール
 ----------------------------
 
-A simple but typical use of :manual:`cmake(1)` with a fresh copy of software source code is to create a build directory and invoke cmake there:
+単純ですが、ソフトウェアの新しいコピーに対する :manual:`cmake(1)` の典型的な使い方は、まずビルド・ディレクトリを作成し、そのデレクトリで ``cmake`` を呼び出します：
 
 .. code-block:: console
 
@@ -38,19 +38,19 @@ A simple but typical use of :manual:`cmake(1)` with a fresh copy of software sou
   $ cmake --build .
   $ cmake --build . --target install
 
-It is recommended to build in a separate directory to the source because that keeps the source directory pristine, allows for building a single source with multiple toolchains, and allows easy clearing of build artifacts by simply deleting the build directory.
+ソース・ディレクトリとは別のディレクトリでビルドすることが推奨されます。これによりソース・ディレクトリは初期の状態に保たれ、複数のツールチェインで同一のソースをビルドすることができ、ビルド・ディレクトリを削除するだけでビルド時の生成物を簡単にクリーンできます。
 
-The CMake tooling may report warnings which are intended for the provider of the software, not intended for the consumer of the software.
-Such warnings end with "This warning is for project developers".
-Users may disable such warnings by passing the :option:`-Wno-dev <cmake -Wno-dev>` flag to :manual:`cmake(1)`.
+CMake のツールは、ソフトウェアの利用者ではなく、ソフトウェアを提供する開発者向けの警告をいろいろ報告する場合があります。
+このような警告の多くは "This warning is for project developers" という注意書きが付いています。
+このような警告は :option:`-Wno-dev <cmake -Wno-dev>` というフラグを :manual:`cmake(1)` に渡すことで無効にできます。
 
 cmake-gui ツール
 ----------------
 
-Users more accustomed to GUI interfaces may use the :manual:`cmake-gui(1)` tool to invoke CMake and generate a buildsystem.
+GUI インタフェースに慣れているユーザであれば :manual:`cmake-gui(1)` ツールを使い、CMake を呼び出してビルドシステムを生成することができます。
 
-The source and binary directories must first be populated.
-It is always advised to use different directories for the source and the build.
+最初にソース・ディレクトリとビルド・ディレクトリを設定して下さい。
+ソースとビルドには異なるディレクトリを指定することが推奨されます。
 
 .. image:: GUI-Source-Binary.png
    :alt: Choosing source and binary directories
@@ -58,60 +58,60 @@ It is always advised to use different directories for the source and the build.
 ビルドシステムの生成
 ====================
 
-There are several user interface tools which may be used to generate a buildsystem from CMake files.
-The :manual:`ccmake(1)` and :manual:`cmake-gui(1)` tools guide the user through setting the various necessary options.
-The :manual:`cmake(1)` tool can be invoked to specify options on the command line.
-This manual describes options which may be set using any of the user interface tools, though the mode of setting an option is different for each tool.
+CMake のファイルから任意のビルドシステムを生成する時に、利用できるユーザ向けのツールがいくつかあります。
+:manual:`ccmake(1)` と :manual:`cmake-gui(1)` といったツールは、いろいろ必要なオプション設定をユーザに提示してくれます。
+:manual:`cmake(1)` は、コマンドラインからオプションを指定して呼び出せます。
+このマニュアルではどのツールからでも設定できる共通のオプションについて説明していますが、オプションを設定するモードはツールごとに異なるので注意して下さい。
 
 コマンドライン環境
 ------------------
 
-When invoking :manual:`cmake(1)` with a command line buildsystem such as ``Makefiles`` or ``Ninja``, it is necessary to use the correct build environment to ensure that build tools are available.
-CMake must be able to find the appropriate :variable:`build tool <CMAKE_MAKE_PROGRAM>`, compiler, linker and other tools as needed.
+``Makefiles`` または ``Ninja`` といったコマンドライン型のビルドシステムと一緒に :manual:`cmake(1)` を呼び出すときは、正しいビルド環境を指定して、正しいビルド・ツールが利用できることを保証する必要があります。
+CMake は、必要に応じて適切な :variable:`build tool <CMAKE_MAKE_PROGRAM>` やコンパイラやリンカ、その他のツールを見つけられなければなりません。
 
-On Linux systems, the appropriate tools are often provided in system-wide locations and may be readily installed through the system package manager.
-Other toolchains provided by the user or installed in non-default locations can also be used.
+Linux システムでは、大抵の場合、適切なツールが既にシステムにインストールされており、パッケージ・マネージャを使って簡単に追加することができるようになっています。
+ユーザが独自にインストールしたり、デフォルトの場所以外にインストールしたその他のツールチェインも利用できます。
 
-When cross-compiling, some platforms may require environment variables to be set or may provide scripts to set the environment.
+クロス・コンパイルする際、一部のプラットフォームでは環境変数を設定したり、環境を設定するためのスクリプトを用意する必要があるかもしれません。
 
-Visual Studio ships multiple command prompts and ``vcvarsall.bat`` scripts for setting up the correct environments for command line buildsystems.
-While not strictly necessary to use a corresponding command line environment when using a Visual Studio generator, doing so has no disadvantages.
+Visual Studio には、コマンドライン型のビルドシステム向けに正しい環境を設定する複数のコマンドライン・プロンプトと ``vcvarsall.bat`` というスクリプトが同梱されています。 
+Visual Studio のジェネレータを使う時に、必ず対応するコマンドライン環境を使用しなければならないわけではありませんが、そうすることにデメリットはありません。
 
-When using Xcode, there can be more than one Xcode version installed.
-Which one to use can be selected in a number of different ways, but the most common methods are:
+Xcode を使う際、複数のバージョンの Xcode がインストールされているかもしれません。
+どのバージョンを使うかはいろいろな方法で選択できますが、最も一般的な方法は次のとおりです：
 
-* Setting the default version in the preferences   of the Xcode IDE.
-* Setting the default version via the ``xcode-select``   command line tool.
-* Overriding the default version by setting the ``DEVELOPER_DIR`` environment variable when running CMake and the build tool.
+* Xcode の IDE にある設定画面でデフォルトのバージョンを指定する
+* コマンドライン・ツールである ``xcode-select`` を使ってデフォルトのバージョンを指定する
+* CMake とビルド・ツールを実行する際に、環境変数の ``DEVELOPER_DIR`` にセットした値でデフォルトのバージョンを上書きする
 
-For convenience, :manual:`cmake-gui(1)` provides an environment variable editor.
+なお :manual:`cmake-gui(1)` には環境変数の値を編集する機能があります。
 
 コマンドラインの ``-G`` オプション
 ----------------------------------
 
-CMake chooses a generator by default based on the platform.
-Usually, the default generator is sufficient to allow the user to proceed to build the software.
+CMake は、デフォルトでプラットフォームに基づくジェネレータを選択します。
+通常ユーザがソフトウェアをビルドする場合、デフォルトで選択されたジェネレータで十分です。
 
-The user may override the default generator with the :option:`-G <cmake -G>` option:
+ユーザは :option:`-G <cmake -G>` というオプションでデフォルトのジェネレータを上書き指定できます：
 
 .. code-block:: console
 
   $ cmake .. -G Ninja
 
-The output of :option:`cmake --help` includes a list of :manual:`generators <cmake-generators(7)>` available for the user to choose from.
-Note that generator names are case sensitive.
+:option:`cmake --help` を実行すると、ユーザが選択できる :manual:`generators <cmake-generators(7)>` の一覧が出力されます。
+これらのジェネレータの名前は大小文字を区別するので注意して下さい。
 
-On Unix-like systems (including Mac OS X), the :generator:`Unix Makefiles` generator is used by default.
-A variant of that generator can also be used on Windows in various environments, such as the :generator:`NMake Makefiles` and :generator:`MinGW Makefiles` generator.
-These generators generate a ``Makefile`` variant which can be executed with ``make``, ``gmake``, ``nmake`` or similar tools.
-See the individual generator documentation for more information on targeted environments and tools.
+Unix 系のシステム（含む Mac OS X）では :generator:`Unix Makefiles` がデフォルトのジェネレータです。
+:generator:`NMake Makefiles` や :generator:`MinGW Makefiles` など、いろいろな派生型のジェネレータを Windows のさまざまな環境で利用することもできます。
+これらのジェネレータは、``make`` や ``gmake`` や ``nmake``、あるいは同様のツールで解釈が可能な ``Makefile`` を生成します。
+ジェネレータが対象としている環境やツールについて詳細は、それぞれのドキュメントを参照して下さい。
 
-The :generator:`Ninja` generator is available on all major platforms.
-``ninja`` is a build tool similar in use-cases to ``make``, but with a focus on performance and efficiency.
+:generator:`Ninja` は主要なプラットフォームで利用可能なジェネレータの一つです。
+``ninja`` は ``make`` と似たユース・ケースを持つビルド・ツールですが、パフォーマンスと処理効率を重視したものになっています。
 
-On Windows, :manual:`cmake(1)` can be used to generate solutions for the Visual Studio IDE.
-Visual Studio versions may be specified by the product name of the IDE, which includes a four-digit year.
-Aliases are provided for other means by which Visual Studio versions are sometimes referred to, such as two digits which correspond to the product version of the VisualC++ compiler, or a combination of the two:
+Windows の場合、:manual:`cmake(1)` で Visual Studio IDE 向けのソリューションを生成できます。
+Visual Studio のバージョンは、4桁の年を含む IDE の製品名で指定します。
+エイリアスは、Visual C++ コンパイラの製品バージョンを表す2桁を指定する、あるいはそれらを組み合わせるなどして、Visual Studio のバージョンを参照する別の指定方として利用できます：
 
 .. code-block:: console
 
@@ -119,8 +119,8 @@ Aliases are provided for other means by which Visual Studio versions are sometim
   $ cmake .. -G "Visual Studio 16"
   $ cmake .. -G "Visual Studio 16 2019"
 
-Visual Studio generators can target different architectures.
-One can specify the target architecture using the :option:`-A <cmake -A>` option:
+Visual Studio のジェネレータはいろいろなアーキテクチャのターゲットをサポートしています。
+:option:`-A <cmake -A>` オプションでターゲットのアーキテクチャを指定できます：
 
 .. code-block:: console
 
@@ -128,9 +128,10 @@ One can specify the target architecture using the :option:`-A <cmake -A>` option
   cmake .. -G "Visual Studio 16" -A ARM
   cmake .. -G "Visual Studio 16 2019" -A ARM64
 
-On Apple, the :generator:`Xcode` generator may be used to generate project files for the Xcode IDE.
+Mac OS X の場合、:generator:`Xcode` というジェネレータを使って Xcode IDE 向けのプロジェクト・ファイルを生成します。
 
-Some IDEs such as KDevelop4, QtCreator and CLion have native support for CMake-based buildsystems.
+KDevelop4、QtCreator やd CLion  のような一部の IDE は CMake ベースのビルドシステムをネイティブでサポートしています。
+
 Those IDEs provide user interface for selecting an underlying generator to use, typically a choice between a ``Makefile`` or a ``Ninja`` based generator.
 
 Note that it is not possible to change the generator with :option:`-G <cmake -G>` after the first invocation of CMake.
