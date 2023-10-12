@@ -89,7 +89,7 @@ Xcode を使う際、複数のバージョンの Xcode がインストールさ�
 コマンドラインの ``-G`` オプション
 ----------------------------------
 
-CMake は、デフォルトでプラットフォームに基づくジェネレータを選択します。
+CMake は、デフォルトでプラットフォームに基づいたジェネレータを選択します。
 通常ユーザがソフトウェアをビルドする場合、デフォルトで選択されたジェネレータで十分です。
 
 ユーザは :option:`-G <cmake -G>` というオプションでデフォルトのジェネレータを上書き指定できます：
@@ -119,7 +119,7 @@ Visual Studio のバージョンは、4桁の年を含む IDE の製品名で指
   $ cmake .. -G "Visual Studio 16"
   $ cmake .. -G "Visual Studio 16 2019"
 
-Visual Studio のジェネレータはいろいろなアーキテクチャのターゲットをサポートしています。
+Visual Studio のジェネレータは、いろいろなアーキテクチャのターゲットをサポートしています。
 :option:`-A <cmake -A>` オプションでターゲットのアーキテクチャを指定できます：
 
 .. code-block:: console
@@ -130,27 +130,27 @@ Visual Studio のジェネレータはいろいろなアーキテクチャのタ
 
 Mac OS X の場合、:generator:`Xcode` というジェネレータを使って Xcode IDE 向けのプロジェクト・ファイルを生成します。
 
-KDevelop4、QtCreator やd CLion  のような一部の IDE は CMake ベースのビルドシステムをネイティブでサポートしています。
+KDevelop4、QtCreator や CLion  のような一部の IDE は CMake ベースのビルドシステムをネイティブでサポートしています。
 
-Those IDEs provide user interface for selecting an underlying generator to use, typically a choice between a ``Makefile`` or a ``Ninja`` based generator.
+これらの IDE はジェネレータを選択するためのユーザ・インタフェースを提供しており、通常は ``Makefile`` から ``Ninja`` 系のジェネレータを選択します。
 
-Note that it is not possible to change the generator with :option:`-G <cmake -G>` after the first invocation of CMake.
-To change the generator, the build directory must be deleted and the build must be started from scratch.
+CMake を一度呼び出した後に、:option:`-G <cmake -G>` でジェネレータを変更することはできないことに注意して下さい。
+ジェネレータを変更するには、まずビルド・ディレクトリを削除して、最初からビルドシステムを生成する必要があります。
 
-When generating Visual Studio project and solutions files several other options are available to use when initially running :manual:`cmake(1)`.
+Visual Studio のプロジェクトとソリューションのファイルを生成する場合、:manual:`cmake(1)` を初めて実行する時に他のオプションを指定できます。
 
-The Visual Studio toolset can be specified with the :option:`cmake -T` option:
+Visual Studio のツールセットは :option:`cmake -T` オプションで指定できます：
 
 .. code-block:: console
 
-    $ # Build with the clang-cl toolset
+    $ # clang-cl ツールセットでビルドする
     $ cmake.exe .. -G "Visual Studio 16 2019" -A x64 -T ClangCL
-    $ # Build targeting Windows XP
+    $ # Windows XP をターゲットにしてビルドする
     $ cmake.exe .. -G "Visual Studio 16 2019" -A x64 -T v120_xp
 
-Whereas the :option:`-A <cmake -A>` option specifies the _target_ architecture, the :option:`-T <cmake -T>` option can be used to specify details of the toolchain used.
-For example, ``-Thost=x64`` can be given to select the 64-bit version of the host tools.
-The following demonstrates how to use 64-bit tools and also build for a 64-bit target architecture:
+:option:`-A <cmake -A>` オプションでターゲット・アーキテクチャを指定し、:option:`-T <cmake -T>` オプションで使用するツールチェインの詳細を指定します。
+たとえば ``-Thost=x64`` はホスト・ツールの 64ビット版を選択するように CMake に指示しています。
+次の例は、64ビット版のツールを使い、64ビットのターゲット・アーキテクチャをビルドする方法を示しています：
 
 .. code-block:: console
 
