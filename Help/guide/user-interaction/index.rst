@@ -130,7 +130,7 @@ Visual Studio のジェネレータは、いろいろなアーキテクチャの
 
 Mac OS X の場合、:generator:`Xcode` というジェネレータを使って Xcode IDE 向けのプロジェクト・ファイルを生成します。
 
-KDevelop4、QtCreator や CLion  のような一部の IDE は CMake ベースのビルドシステムをネイティブでサポートしています。
+KDevelop4 や QtCreator や CLion のような一部の IDE は CMake ベースのビルドシステムをネイティブでサポートしています。
 
 これらの IDE はジェネレータを選択するためのユーザ・インタフェースを提供しており、通常は ``Makefile`` から ``Ninja`` 系のジェネレータを選択します。
 
@@ -159,17 +159,17 @@ Visual Studio のツールセットは :option:`cmake -T` オプションで指�
 cmake-gui でジェネレータを選択する
 ----------------------------------
 
-The "Configure" button triggers a new dialog to select the CMake generator to use.
+"Configure" ボタンを押すと、CMake で使用するジェネレータを選択するダイアログが表示されます。
 
 .. image:: GUI-Configure-Dialog.png
    :alt: Configuring a generator
 
-All generators available on the command line are also available in :manual:`cmake-gui(1)`.
+コマンドラインから指定できる全てのジェネレータが :manual:`cmake-gui(1)` でも利用できます。
 
 .. image:: GUI-Choose-Generator.png
    :alt: Choosing a generator
 
-When choosing a Visual Studio generator, further options are available to set an architecture to generate for.
+Visual Studio のジェネレータを選択する際は、生成するアーキテクチャを設定するための追加オプションが表示されます。
 
 .. image:: VS-Choose-Arch.png
    :alt: Choosing an architecture for Visual Studio generators
@@ -179,46 +179,41 @@ When choosing a Visual Studio generator, further options are available to set an
 ビルド用の変数をセットする
 ==========================
 
-Software projects often require variables to be set on the command line when invoking CMake.
-Some of the most commonly used CMake variables are listed in the table below:
+ソフトウェアのプロジェクトの中には CMake を呼び出す際にコマンドラインに渡す変数が必要になる場合がよくあります。
+以下の表に、もっともよく使用する CMake 変数の一部を示します：
 
 ========================================== ============================================================
- Variable                                   Meaning
+ 変数                                       意味
 ========================================== ============================================================
- :variable:`CMAKE_PREFIX_PATH`              Path to search for
-                                            :guide:`dependent packages <Using Dependencies Guide>`
- :variable:`CMAKE_MODULE_PATH`              Path to search for additional CMake modules
- :variable:`CMAKE_BUILD_TYPE`               Build configuration, such as
-                                            ``Debug`` or ``Release``, determining
-                                            debug/optimization flags.  This is only
-                                            relevant for single-configuration buildsystems such
-                                            as ``Makefile`` and ``Ninja``.  Multi-configuration
-                                            buildsystems such as those for Visual Studio and Xcode
-                                            ignore this setting.
- :variable:`CMAKE_INSTALL_PREFIX`           Location to install the
-                                            software to with the
-                                            ``install`` build target
- :variable:`CMAKE_TOOLCHAIN_FILE`           File containing cross-compiling
-                                            data such as
-                                            :manual:`toolchains and sysroots <cmake-toolchains(7)>`.
- :variable:`BUILD_SHARED_LIBS`              Whether to build shared
-                                            instead of static libraries
-                                            for :command:`add_library`
-                                            commands used without a type
- :variable:`CMAKE_EXPORT_COMPILE_COMMANDS`  Generate a ``compile_commands.json``
-                                            file for use with clang-based tools
+ :variable:`CMAKE_PREFIX_PATH`              :guide:`依存するパッケージ <Using Dependencies Guide>` を
+                                            探すパス
+ :variable:`CMAKE_MODULE_PATH`              CMake の追加モジュールを探すパス
+ :variable:`CMAKE_BUILD_TYPE`               デバッグ／最適化のフラグを決定するビルド構成の種類で、
+                                            ``Debug`` または ``Release`` 。
+                                            これは ``Makefile`` と ``Ninja`` などの単一構成の
+                                            ビルドシステムにのみ適用される。 
+                                            Visual Studio や Xcode などの複数構成をサポートする
+                                            ビルドシステムでは無視する。
+ :variable:`CMAKE_INSTALL_PREFIX`           ``install`` のビルド・ターゲットで、ソフトウェアを
+                                            インストールするパス
+ :variable:`CMAKE_TOOLCHAIN_FILE`           :manual:`ツールチェインと sysroot <cmake-toolchains(7)>`
+                                            で説明したクロス・コンパイル用のデータが格納されたファイル
+ :variable:`BUILD_SHARED_LIBS`              :command:`add_library` コマンドで値を指定しなかった場合、
+                                            静的ライブラリではなく共有ライブラリをビルドする
+ :variable:`CMAKE_EXPORT_COMPILE_COMMANDS`  clang 系のツールで使用する ``compile_commands.json`` を
+                                            生成する
 ========================================== ============================================================
 
-Other project-specific variables may be available to control builds, such as enabling or disabling components of the project.
+プロジェクトのコンポーネントを有効にしたり無効にするなど、プロジェクト固有のビルドを制御する変数が利用できる場合があります。
 
-There is no convention provided by CMake for how such variables are named between different provided buildsystems, except that variables with the prefix ``CMAKE_`` usually refer to options provided by CMake itself and should not be used in third-party options, which should use their own prefix instead.
-The :manual:`cmake-gui(1)` tool can display options in groups defined by their prefix, so it makes sense for third parties to ensure that they use a self-consistent prefix.
+さまざまなビルドシステムに対応した変数名の付け方を CMake で規定することはありません。ただし接頭子が ``CMAKE_`` の変数は、CMake が提供しているオプションを参照するため、独自の接頭子が必要なサードパーティのプロジェクトでは、これと同名のオプションを定義しないようにして下さい。
+:manual:`cmake-gui(1)` ツールは接頭子ごとにグループ化してオプションを表示できるので、サードパーティが定義する独自の接頭子の参照が保証されます。
 
 
 コマンドラインから変数をセットする
 ----------------------------------
 
-CMake variables can be set on the command line either when creating the initial build:
+CMake の変数をコマンドラインから指定できるのは、はじめてビルドシステムを生成する時：
 
 .. code-block:: console
 
@@ -226,36 +221,36 @@ CMake variables can be set on the command line either when creating the initial 
     $ cd build
     $ cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
-or later on a subsequent invocation of :manual:`cmake(1)`:
+または、ビルドシステムを生成したあとに :manual:`cmake(1)` を呼び出す時です：
 
 .. code-block:: console
 
     $ cd build
     $ cmake . -DCMAKE_BUILD_TYPE=Debug
 
-The :option:`-U <cmake -U>` flag may be used to unset variables on the :manual:`cmake(1)` command line:
+:option:`-U <cmake -U>` オプションは :manual:`cmake(1)` コマンドラインで指定した変数の値を解除する際に使用します：
 
 .. code-block:: console
 
     $ cd build
     $ cmake . -UMyPackage_DIR
 
-A CMake buildsystem which was initially created on the command line can be modified using the :manual:`cmake-gui(1)` and vice-versa.
+CMake のコマンドラインで生成したビルドシステムは、:manual:`cmake-gui(1)` を使用して変更することができます（その逆も可能）。
 
-The :manual:`cmake(1)` tool allows specifying a file to use to populate the initial cache using the :option:`-C <cmake -C>` option.
-This can be useful to simplify commands and scripts which repeatedly require the same cache entries.
+:manual:`cmake(1)` ツールで :option:`-C <cmake -C>` オプションを使い初期キャッシュを保存するファイルを指定できます。
+これは、同じキャッシュ・エントリを繰り返し必要とするコマンドとスクリプトを単純化する際に便利な機能です。
 
 
 cmake-gui で変数をセットする
 ----------------------------
 
-Variables may be set in the cmake-gui using the "Add Entry" button.
-This triggers a new dialog to set the value of the variable.
+変数の中には :manual:`cmake-gui(1)` の "Add Entry" ボタンでセットできる場合があります。
+これにより変数の値をセットするダイアログが表示されます。
 
 .. image:: GUI-Add-Entry.png
    :alt: Editing a cache entry
 
-The main view of the :manual:`cmake-gui(1)` user interface can be used to edit existing variables.
+:manual:`cmake-gui(1)` ユーザ・インタフェースを利用して、既存の編集を変更できます。
 
 CMake キャッシュ
 ----------------
