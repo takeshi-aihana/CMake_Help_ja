@@ -228,7 +228,7 @@ CMake の変数をコマンドラインから指定できるのは、はじめ�
     $ cd build
     $ cmake . -DCMAKE_BUILD_TYPE=Debug
 
-:option:`-U <cmake -U>` オプションは :manual:`cmake(1)` コマンドラインで指定した変数の値を解除する際に使用します：
+:option:`-U <cmake -U>` オプションは :manual:`cmake(1)` コマンドラインで指定した変数の値を解除する（エントリを削除する）際に使用します：
 
 .. code-block:: console
 
@@ -244,22 +244,23 @@ CMake のコマンドラインで生成したビルドシステムは、:manual:
 cmake-gui で変数をセットする
 ----------------------------
 
-変数の中には :manual:`cmake-gui(1)` の "Add Entry" ボタンでセットできる場合があります。
-これにより変数の値をセットするダイアログが表示されます。
+変数は :manual:`cmake-gui(1)` からセットできる場合があります。
+"Add Entry" ボタンをクリックすると変数の値をセットするダイアログが表示されます。
 
 .. image:: GUI-Add-Entry.png
    :alt: Editing a cache entry
 
-:manual:`cmake-gui(1)` ユーザ・インタフェースを利用して、既存の編集を変更できます。
+:manual:`cmake-gui(1)` ユーザ・インタフェースを利用して、既存の変数を編集できます。
 
 CMake キャッシュ
 ----------------
 
-When CMake is executed, it needs to find the locations of compilers, tools and dependencies.
-It also needs to be able to consistently re-generate a buildsystem to use the same compile/link flags and paths to dependencies.
-Such parameters are also required to be configurable by the user because they are paths and options specific to the users system.
+CMake を実行する時、コンパイラやツール、そして依存するライブラリなどの在り処を知っておく必要があります。
+さらにコンパイルとリンク時のフラグ、あるいは依存するライブラリへのパスは同じものを使い、常に一貫性のあるビルドシステムを再生成できるようにする必要があります。
+このような時に使用するパラメータはターゲットのシステムに固有の情報なので、ユーザによる修正や変更を可能にしておく必要もあります。
 
-When it is first executed, CMake generates a ``CMakeCache.txt`` file in the build directory containing key-value pairs for such artifacts.
+CMake を初めて実行すると、ビルド・ディレクトリの中に ``CMakeCache.txt`` というファイルを生成します。このファイルには Key /Value のペアが格納されています。
+
 The cache file can be viewed or edited by the user by running the :manual:`cmake-gui(1)` or :manual:`ccmake(1)` tool.
 The tools provide an interactive interface for re-configuring the provided software and re-generating the buildsystem, as is needed after editing cached values.
 Each cache entry may have an associated short help text which is displayed in the user interface tools.
