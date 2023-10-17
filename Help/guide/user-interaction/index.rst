@@ -255,23 +255,24 @@ cmake-gui で変数をセットする
 CMake キャッシュ
 ----------------
 
-CMake を実行する時、コンパイラやツール、そして依存するライブラリなどの在り処を知っておく必要があります。
-さらにコンパイルとリンク時のフラグ、あるいは依存するライブラリへのパスは同じものを使い、常に一貫性のあるビルドシステムを再生成できるようにする必要があります。
-このような時に使用するパラメータはターゲットのシステムに固有の情報なので、ユーザによる修正や変更を可能にしておく必要もあります。
+CMake を実行する時は、使用するコンパイラやその他のツール、そして依存するライブラリなどの在り処を見つける必要があります。
+さらにコンパイル時やリンク時のフラグ、あるいは依存するライブラリへのパスは同じものを使い、常に一貫性のあるビルドシステムを再生成できるようにする必要があります。
+そのようなパラメータはユーザの環境に固有の情報なので、ユーザによる修正や変更を可能にしておく必要もあります。
 
-CMake を初めて実行すると、ビルド・ディレクトリの中に ``CMakeCache.txt`` というファイルを生成します。このファイルには Key /Value のペアが格納されています。
+CMake を初めて実行すると、ビルド・ディレクトリの中に ``CMakeCache.txt`` というキャッシュ・ファイルが生成されます。このファイルには、そのようなパラメータが Key/Value ペアの形式で格納されています。
+ユーザは :manual:`cmake-gui(1)` または :manual:`ccmake(1)` ツールで、このキャッシュ・ファイルの情報を表示したり編集することができます。
+これらのツールは、キャシュ情報を編集した後に必要に応じてソフトウェアを再構成したり、ビルドシステムを再生成するための対話型インタフェースを提供しています。
+このツールの中では、キャッシュ情報に関連付けられた短い説明文（ヘルプ）も表示される場合があります。
 
-The cache file can be viewed or edited by the user by running the :manual:`cmake-gui(1)` or :manual:`ccmake(1)` tool.
-The tools provide an interactive interface for re-configuring the provided software and re-generating the buildsystem, as is needed after editing cached values.
-Each cache entry may have an associated short help text which is displayed in the user interface tools.
+また、それぞれのキャッシュ情報は型を持ち、その型に応じでツールの中で見え方や操作が異なる場合があります。
+たとえば ``BOOL`` 型のキャシュ情報はチェックボックスのユーザ・インタフェースで編集でき、``STRING`` 型はテキストボックス、``FILEPATH`` 型は ``STRING`` と同様にファイルシステム上のパスを特定するための手段としてファイル・ダイアログを提供しています。
+:manual:`cmake-gui(1)` ツールの場合、``STRING`` 型のキャッシュ情報には、選択可能な文字列が一覧になったドロップ・ダウン形式のリストが提供される場合があります
+（詳細はキャッシュ・プロパティの :prop_cache:`STRINGS` を参照して下さい）。
 
-The cache entries may also have a type to signify how it should be presented in the user interface.
-For example, a cache entry of type ``BOOL`` can be edited by a checkbox in a user interface, a ``STRING`` can be edited in a text field, and a ``FILEPATH`` while similar to a ``STRING`` should also provide a way to locate filesystem paths using a file dialog.
-An entry of type ``STRING`` may provide a restricted list of allowed values which are then provided in a drop-down menu in the :manual:`cmake-gui(1)` user interface (see the :prop_cache:`STRINGS` cache property).
+パラメータとして論理型の値については、ソフトウェア・パッケージに同梱されている CMake 関連のファイルの中で :command:`option` コマンドを使って定義できる場合があります。
+このコマンドは、パラメータを説明するヘルプとデフォルト値を含むキャッシュ情報を生成します。
+通常、このようなキャッシュ情報はソフトウェアに固有の情報であり、ビルド時にテストやサンプルをビルドするかどうか、あるいは例外を有効にしてビルドするかどうか等の設定に影響するものです。
 
-The CMake files shipped with a software package may also define boolean toggle options using the :command:`option` command.
-The command creates a cache entry which has a help text and a default value.
-Such cache entries are typically specific to the provided software and affect the configuration of the build, such as whether tests and examples are built, whether to build with exceptions enabled etc.
 
 プリセットを使う
 ================
