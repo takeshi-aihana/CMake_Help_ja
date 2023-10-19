@@ -342,7 +342,7 @@ CMake はビルドに必要な特定のビルド・ツールを理解してい�
 オプション :option:`--build <cmake --build>` は :manual:`cmake(1)` の特定の操作モードを有効にします。
 これは :manual:`generator <cmake-generators(7)>` に関連付けられた :variable:`CMAKE_MAKE_PROGRAM` コマンド、またはユーザが設定したビルド・ツールを呼び出します。
 
-さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。「ビルドするターゲット」とは、たとえば特定のライブラリや実行形式、または独自のターゲットの他に、``install`` のようなビルド・ツールに依存したターゲットのことです：
+さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。「ビルドするターゲット」とは、たとえば特定のライブラリや実行形式、または独自のターゲットの他に、``install`` のようなジェネレータに依存したターゲットのことです：
 
 .. code-block:: console
 
