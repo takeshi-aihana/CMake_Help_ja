@@ -330,45 +330,46 @@ cmake-gui でプリセットを使う
 ビルドシステムを呼び出す
 ========================
 
-After generating the buildsystem, the software can be built by invoking the particular build tool.
-In the case of the IDE generators, this can involve loading the generated project file into the IDE to invoke the build.
+ビルドシステムを生成した後に、特定のビルド・ツールを呼び出してソフトウェアをビルドすることができます。
+ジェネレータが IDE の場合、生成されたプロジェクト・ファイルを IDE にロードしてからビルドします。
 
-CMake is aware of the specific build tool needed to invoke a build so in general, to build a buildsystem or project from the command line after generating, the following command may be invoked in the build directory:
+一般に CMake はビルドに必要な特定のビルド・ツールを理解しているので、コマンドラインからビルドシステムやプロジェクトをビルドするために、次のコマンドをビルド・ディレクトリの中で実行します：
 
 .. code-block:: console
 
   $ cmake --build .
 
-The :option:`--build <cmake --build>` flag enables a particular mode of operation for the :manual:`cmake(1)` tool.
-It invokes the  :variable:`CMAKE_MAKE_PROGRAM` command associated with the :manual:`generator <cmake-generators(7)>`, or the build tool configured by the user.
+オプション :option:`--build <cmake --build>` は :manual:`cmake(1)` の特定の操作モードを有効にします。
+これは :manual:`generator <cmake-generators(7)>` に関連付けられた :variable:`CMAKE_MAKE_PROGRAM` コマンド、またはユーザが設定したビルド・ツールを呼び出します。
 
-The :option:`--build <cmake --build>` mode also accepts the parameter :option:`--target <cmake--build --target>` to specify a particular target to build, for example a particular library, executable or custom target, or a particular special target like ``install``:
+さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。ビルドするターゲットは、たとえば特定のライブラリや実行形式、または独自のターゲットや ``install`` のようなビルド・ツールに依存したターゲットがあります：
 
 .. code-block:: console
 
   $ cmake --build . --target myexe
 
-The :option:`--build <cmake --build>` mode also accepts a :option:`--config <cmake--build --config>` parameter in the case of multi-config generators to specify which particular configuration to build:
+さらに :option:`--build <cmake --build>` モードでは、マルチ設定対応のジェネレータを使用する場合に、どの設定を使ってビルドするかを指定するオプション :option:`--config <cmake--build --config>` も指定できます：
 
 .. code-block:: console
 
   $ cmake --build . --target myexe --config Release
 
-The :option:`--config <cmake--build --config>` option has no effect if the generator generates a buildsystem specific to a configuration which is chosen when invoking cmake with the :variable:`CMAKE_BUILD_TYPE` variable.
+この :option:`--config <cmake--build --config>` オプションは、変数の :variable:`CMAKE_BUILD_TYPE` を指定して :manual:`cmake(1)` を実行した時に選択された設定でビルドシステムを生成した場合は効果はありません。
 
-Some buildsystems omit details of command lines invoked during the build.
-The :option:`--verbose <cmake--build --verbose>` flag can be used to cause those command lines to be shown:
+一部のビルドシステムでは、ビルド中に呼び出されたコマンドラインの詳細なログが省略される場合があります。
+そのような場合は :option:`--verbose <cmake--build --verbose>` オプションを指定できます：
 
 .. code-block:: console
 
   $ cmake --build . --target myexe --verbose
 
-The :option:`--build <cmake --build>` mode can also pass particular command line options to the underlying build tool by listing them after ``--``.
-This can be useful to specify options to the build tool, such as to continue the build after a failed job, where CMake does not provide a high-level user interface.
+さらに :option:`--build <cmake --build>` モードでは ``--`` のうしろに特定のコマンドライン・オプションを並べると、ビルド時に呼び出されるビルド・ツールにそれらを渡すことができます。
+これは、たとえば CMake が提供していない高レベルなユーザ・インタフェースが必要な場面で、ビルド・ジョブが失敗したあとにビルドを続行するような場合に対応するオプションをビルド・ツールに渡したい場合に便利です。
 
-For all generators, it is possible to run the underlying build tool after invoking CMake.
-For example, ``make`` may be executed after generating with the :generator:`Unix Makefiles` generator to invoke the build, or ``ninja`` after generating with the :generator:`Ninja` generator etc.
-The IDE buildsystems usually provide command line tooling for building a project which can also be invoked.
+全てのジェネレータで、CMake を呼び出したあとにビルド・ツールを直接呼び出せます。
+たとえば、``make`` は :generator:`Unix Makefiles` というジェネレータで生成したビルドシステムの中で実行できます。
+あるいは :generator:`Ninja` というジェネレータであれば ``ninja`` コマンドを実行できます。
+IDE が生成したビルドシステムは通常はプロジェクトをビルドするための専用のコマンドライン・ツールを提供しています。
 
 
 ターゲットを選択する
