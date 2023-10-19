@@ -319,13 +319,13 @@ CMake は通常プリセットで使用する設定を保存するために ``CM
 
   cmake -S /path/to/source --list-presets
 
-このコマンドラインは ``/path/to/source/CMakePresets.json`` と ``/path/to/source/CMakeUsersPresets.json`` の中で利用できるプリセットの一覧を表示します（ただし、ビルド・ディレクトリは作成しません）。
+このコマンドラインは ``/path/to/source/CMakePresets.json`` と ``/path/to/source/CMakeUsersPresets.json`` の中で利用できるプリセットの一覧を表示します（表示するだけで、ビルド・ディレクトリは生成しません）。
 
 cmake-gui でプリセットを使う
 ----------------------------
 
 プロジェクトが ``CMakePresets.json`` または ``CMakeUserPresets.json`` ファイルを介してプリセットを利用できる場合、:manual:`cmake-gui(1)` の Source Directory と Binary Directory との間に、プリセットの一覧がドロップ・ダウンメニューの中に表示されます。
-プリセットを選択するとバイナリ・ディレクトリ、ジェネレータ、環境変数、そしてキャッシュ情報がセットされますが、これらのすべてはプリセットを選択したあとで上書きで再設定することも可能です。
+その中からプリセットを選択するとバイナリ・ディレクトリ、ジェネレータ、環境変数、そしてキャッシュ情報がセットされますが、これらのすべてはプリセットを選択したあとで上書きで再設定することも可能です。
 
 ビルドシステムを呼び出す
 ========================
@@ -333,7 +333,7 @@ cmake-gui でプリセットを使う
 ビルドシステムを生成した後に、特定のビルド・ツールを呼び出してソフトウェアをビルドすることができます。
 ジェネレータが IDE の場合、生成されたプロジェクト・ファイルを IDE にロードしてからビルドします。
 
-一般に CMake はビルドに必要な特定のビルド・ツールを理解しているので、コマンドラインからビルドシステムやプロジェクトをビルドするために、次のコマンドをビルド・ディレクトリの中で実行します：
+CMake はビルドに必要な特定のビルド・ツールを理解しているので、コマンドラインからビルドシステムやプロジェクトをビルドする際は、通常は次のコマンドをビルド・ディレクトリの中で実行します：
 
 .. code-block:: console
 
@@ -342,19 +342,19 @@ cmake-gui でプリセットを使う
 オプション :option:`--build <cmake --build>` は :manual:`cmake(1)` の特定の操作モードを有効にします。
 これは :manual:`generator <cmake-generators(7)>` に関連付けられた :variable:`CMAKE_MAKE_PROGRAM` コマンド、またはユーザが設定したビルド・ツールを呼び出します。
 
-さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。ビルドするターゲットは、たとえば特定のライブラリや実行形式、または独自のターゲットや ``install`` のようなビルド・ツールに依存したターゲットがあります：
+さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。「ビルドするターゲット」とは、たとえば特定のライブラリや実行形式、または独自のターゲットの他に、``install`` のようなビルド・ツールに依存したターゲットのことです：
 
 .. code-block:: console
 
   $ cmake --build . --target myexe
 
-さらに :option:`--build <cmake --build>` モードでは、マルチ設定対応のジェネレータを使用する場合に、どの設定を使ってビルドするかを指定するオプション :option:`--config <cmake--build --config>` も指定できます：
+さらに :option:`--build <cmake --build>` モードでは、複数の configuration に対応したジェネレータを使用する場合に、どの configuration を使ってビルドするかを指定するオプション :option:`--config <cmake--build --config>` も指定できます：
 
 .. code-block:: console
 
   $ cmake --build . --target myexe --config Release
 
-この :option:`--config <cmake--build --config>` オプションは、変数の :variable:`CMAKE_BUILD_TYPE` を指定して :manual:`cmake(1)` を実行した時に選択された設定でビルドシステムを生成した場合は効果はありません。
+この :option:`--config <cmake--build --config>` オプションは、変数の :variable:`CMAKE_BUILD_TYPE` を指定して :manual:`cmake(1)` を実行した時に選択された configuration でビルドシステムを生成した場合は効果はありません。
 
 一部のビルドシステムでは、ビルド中に呼び出されたコマンドラインの詳細なログが省略される場合があります。
 そのような場合は :option:`--verbose <cmake--build --verbose>` オプションを指定できます：
@@ -369,7 +369,7 @@ cmake-gui でプリセットを使う
 全てのジェネレータで、CMake を呼び出したあとにビルド・ツールを直接呼び出せます。
 たとえば、``make`` は :generator:`Unix Makefiles` というジェネレータで生成したビルドシステムの中で実行できます。
 あるいは :generator:`Ninja` というジェネレータであれば ``ninja`` コマンドを実行できます。
-IDE が生成したビルドシステムは通常はプロジェクトをビルドするための専用のコマンドライン・ツールを提供しています。
+通常 IDE が生成したビルドシステムではプロジェクトをビルドするための専用のコマンドライン・ツールを提供しています。
 
 
 ターゲットを選択する
