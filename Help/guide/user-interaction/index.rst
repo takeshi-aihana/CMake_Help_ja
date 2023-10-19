@@ -277,17 +277,17 @@ CMake を初めて実行すると、ビルド・ディレクトリの中に ``CM
 プリセットを使う
 ================
 
-CMake understands a file, ``CMakePresets.json``, and its user-specific counterpart, ``CMakeUserPresets.json``, for saving presets for commonly-used configure settings.
-These presets can set the build directory, generator, cache variables, environment variables, and other command-line options.
-All of these options can be overridden by the user.
-The full details of the ``CMakePresets.json`` format are listed in the :manual:`cmake-presets(7)` manual.
+CMake は通常プリセットで使用する設定を保存するために ``CMakePresets.json`` ファイルの他、ユーザが独自に設定した ``CMakeUserPresets.json`` ファイルを理解します。
+これらのプリセットにはビルド・ディレクトリやジェネレータ、キャシュ情報、環境変数、およびその他のコマンドライン・オプションをセットできます。
+これらの設定は全てユーザが上書きで再設定できます。
+``CMakePresets.json`` ファイルの書式について詳細はマニュアルの :manual:`cmake-presets(7)` を参照して下さい。
 
 コマンドラインからプリセットを使う
 ----------------------------------
 
-When using the :manual:`cmake(1)` command line tool, a preset can be invoked by using the :option:`--preset <cmake --preset>` option.
-If :option:`--preset <cmake --preset>` is specified, the generator and build directory are not required, but can be specified to override them.
-For example, if you have the following ``CMakePresets.json`` file:
+:manual:`cmake(1)` コマンドラインを使う際に :option:`--preset <cmake --preset>` オプションを使ってプリセットを呼び出すことができます。
+この :option:`--preset <cmake --preset>` を指定すると、コマンドラインからジェネレータとビルド・ディレクトリの指定は必須ではなくなりますが、指定した場合はこれらプリセットの値が上書きされます。
+例えば、次のような ``CMakePresets.json`` ファイルがあるとします：
 
 .. code-block:: json
 
@@ -305,27 +305,27 @@ For example, if you have the following ``CMakePresets.json`` file:
     ]
   }
 
-and you run the following:
+そして次のコマンドラインを実行します：
 
 .. code-block:: console
 
   cmake -S /path/to/source --preset=ninja-release
 
-This will generate a build directory in ``/path/to/source/build/ninja-release`` with the :generator:`Ninja` generator, and with :variable:`CMAKE_BUILD_TYPE` set to ``Release``.
+これにより :generator:`Ninja` というジェネレータを使って ``/path/to/source/build/ninja-release`` ディレクトリの下に、:variable:`CMAKE_BUILD_TYPE` が ``Release`` タイプであるビルド・ディレクトリを生成します。
 
-If you want to see the list of available presets, you can run:
+その一方で、利用可能なプリセットの一覧を表示したい場合は：
 
 .. code-block:: console
 
   cmake -S /path/to/source --list-presets
 
-This will list the presets available in ``/path/to/source/CMakePresets.json`` and ``/path/to/source/CMakeUsersPresets.json`` without generating a build tree.
+このコマンドラインは ``/path/to/source/CMakePresets.json`` と ``/path/to/source/CMakeUsersPresets.json`` の中で利用できるプリセットの一覧を表示します（ただし、ビルド・ディレクトリは作成しません）。
 
 cmake-gui でプリセットを使う
 ----------------------------
 
-If a project has presets available, either through ``CMakePresets.json`` or ``CMakeUserPresets.json``, the list of presets will appear in a drop-down menu in :manual:`cmake-gui(1)` between the source directory and the binary directory.
-Choosing a preset sets the binary directory, generator, environment variables, and cache variables, but all of these options can be overridden after a preset is selected.
+プロジェクトが ``CMakePresets.json`` または ``CMakeUserPresets.json`` ファイルを介してプリセットを利用できる場合、:manual:`cmake-gui(1)` の Source Directory と Binary Directory との間に、プリセットの一覧がドロップ・ダウンメニューの中に表示されます。
+プリセットを選択するとバイナリ・ディレクトリ、ジェネレータ、環境変数、そしてキャッシュ情報がセットされますが、これらのすべてはプリセットを選択したあとで上書きで再設定することも可能です。
 
 ビルドシステムを呼び出す
 ========================
@@ -348,104 +348,68 @@ The :option:`--build <cmake --build>` mode also accepts the parameter :option:`-
 
   $ cmake --build . --target myexe
 
-The :option:`--build <cmake --build>` mode also accepts a
-:option:`--config <cmake--build --config>` parameter
-in the case of multi-config generators to specify which
-particular configuration to build:
+The :option:`--build <cmake --build>` mode also accepts a :option:`--config <cmake--build --config>` parameter in the case of multi-config generators to specify which particular configuration to build:
 
 .. code-block:: console
 
   $ cmake --build . --target myexe --config Release
 
-The :option:`--config <cmake--build --config>` option has no
-effect if the generator generates a buildsystem specific
-to a configuration which is chosen when invoking cmake
-with the :variable:`CMAKE_BUILD_TYPE` variable.
+The :option:`--config <cmake--build --config>` option has no effect if the generator generates a buildsystem specific to a configuration which is chosen when invoking cmake with the :variable:`CMAKE_BUILD_TYPE` variable.
 
-Some buildsystems omit details of command lines invoked
-during the build.  The :option:`--verbose <cmake--build --verbose>`
-flag can be used to cause those command lines to be shown:
+Some buildsystems omit details of command lines invoked during the build.
+The :option:`--verbose <cmake--build --verbose>` flag can be used to cause those command lines to be shown:
 
 .. code-block:: console
 
   $ cmake --build . --target myexe --verbose
 
-The :option:`--build <cmake --build>` mode can also pass
-particular command line options to the underlying build
-tool by listing them after ``--``.  This can be useful
-to specify options to the build tool, such as to continue the
-build after a failed job, where CMake does not
-provide a high-level user interface.
+The :option:`--build <cmake --build>` mode can also pass particular command line options to the underlying build tool by listing them after ``--``.
+This can be useful to specify options to the build tool, such as to continue the build after a failed job, where CMake does not provide a high-level user interface.
 
-For all generators, it is possible to run the underlying
-build tool after invoking CMake.  For example, ``make``
-may be executed after generating with the
-:generator:`Unix Makefiles` generator to invoke the build,
-or ``ninja`` after generating with the :generator:`Ninja`
-generator etc.  The IDE buildsystems usually provide
-command line tooling for building a project which can
-also be invoked.
+For all generators, it is possible to run the underlying build tool after invoking CMake.
+For example, ``make`` may be executed after generating with the :generator:`Unix Makefiles` generator to invoke the build, or ``ninja`` after generating with the :generator:`Ninja` generator etc.
+The IDE buildsystems usually provide command line tooling for building a project which can also be invoked.
 
 
 ターゲットを選択する
 --------------------
 
-Each executable and library described in the CMake files
-is a build target, and the buildsystem may describe
-custom targets, either for internal use, or for user
-consumption, for example to create documentation.
+Each executable and library described in the CMake files is a build target, and the buildsystem may describe custom targets, either for internal use, or for user consumption, for example to create documentation.
 
-CMake provides some built-in targets for all buildsystems
-providing CMake files.
+CMake provides some built-in targets for all buildsystems providing CMake files.
 
 ``all``
-  The default target used by ``Makefile`` and ``Ninja``
-  generators.  Builds all targets in the buildsystem,
-  except those which are excluded by their
-  :prop_tgt:`EXCLUDE_FROM_ALL` target property or
-  :prop_dir:`EXCLUDE_FROM_ALL` directory property.  The
-  name ``ALL_BUILD`` is used for this purpose for the
-  Xcode and Visual Studio generators.
+  The default target used by ``Makefile`` and ``Ninja`` generators.
+  Builds all targets in the buildsystem, except those which are excluded by their :prop_tgt:`EXCLUDE_FROM_ALL` target property or :prop_dir:`EXCLUDE_FROM_ALL` directory property.
+  The name ``ALL_BUILD`` is used for this purpose for the Xcode and Visual Studio generators.
 ``help``
-  Lists the targets available for build.  This target is
-  available when using the :generator:`Unix Makefiles` or
-  :generator:`Ninja` generator, and the exact output is
-  tool-specific.
+  Lists the targets available for build.
+  This target is available when using the :generator:`Unix Makefiles` or :generator:`Ninja` generator, and the exact output is tool-specific.
 ``clean``
-  Delete built object files and other output files.  The
-  ``Makefile`` based generators create a ``clean`` target
-  per directory, so that an individual directory can be
-  cleaned.  The ``Ninja`` tool provides its own granular
-  ``-t clean`` system.
+  Delete built object files and other output files.
+  The ``Makefile`` based generators create a ``clean`` target per directory, so that an individual directory can be cleaned.
+  The ``Ninja`` tool provides its own granular ``-t clean`` system.
 ``test``
-  Runs tests.  This target is only automatically available
-  if the CMake files provide CTest-based tests.  See also
-  `テストを実施する`_.
+  Runs tests.
+  This target is only automatically available  if the CMake files provide CTest-based tests.
+  See also `テストを実施する`_.
 ``install``
-  Installs the software.  This target is only automatically
-  available if the software defines install rules with the
-  :command:`install` command.  See also
-  `ソフトウェアをインストールする`_.
+  Installs the software.
+  This target is only automatically available if the software defines install rules with the :command:`install` command.
+  See also `ソフトウェアをインストールする`_.
 ``package``
-  Creates a binary package.  This target is only
-  automatically available if the CMake files provide
-  CPack-based packages.
+  Creates a binary package.
+  This target is only  automatically available if the CMake files provide CPack-based packages.
 ``package_source``
-  Creates a source package.  This target is only
-  automatically available if the CMake files provide
-  CPack-based packages.
+  Creates a source package.
+  This target is only automatically available if the CMake files provide CPack-based packages.
 
-For ``Makefile`` based systems, ``/fast`` variants of binary
-build targets are provided. The ``/fast`` variants are used
-to build the specified target without regard for its
-dependencies.  The dependencies are not checked and
-are not rebuilt if out of date.  The :generator:`Ninja`
-generator is sufficiently fast at dependency checking that
-such targets are not provided for that generator.
+For ``Makefile`` based systems, ``/fast`` variants of binary build targets are provided.
+The ``/fast`` variants are used to build the specified target without regard for its dependencies.
+The dependencies are not checked and are not rebuilt if out of date.
+The :generator:`Ninja` generator is sufficiently fast at dependency checking that such targets are not provided for that generator.
 
-``Makefile`` based systems also provide build-targets to
-preprocess, assemble and compile individual files in a
-particular directory.
+``Makefile`` based systems also provide build-targets to preprocess, assemble and compile individual files in a particular directory.
 
 .. code-block:: console
 
@@ -453,10 +417,8 @@ particular directory.
   $ make foo.cpp.s
   $ make foo.cpp.o
 
-The file extension is built into the name of the target
-because another file with the same name but a different
-extension may exist.  However, build-targets without the
-file extension are also provided.
+The file extension is built into the name of the target because another file with the same name but a different extension may exist.
+However, build-targets without the file extension are also provided.
 
 .. code-block:: console
 
@@ -464,8 +426,7 @@ file extension are also provided.
   $ make foo.s
   $ make foo.o
 
-In buildsystems which contain ``foo.c`` and ``foo.cpp``,
-building the ``foo.i`` target will preprocess both files.
+In buildsystems which contain ``foo.c`` and ``foo.cpp``, building the ``foo.i`` target will preprocess both files.
 
 ビルド・ツールを指定する
 ------------------------
