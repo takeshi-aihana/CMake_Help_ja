@@ -342,7 +342,7 @@ CMake はビルドに必要な特定のビルド・ツールを理解してい�
 オプション :option:`--build <cmake --build>` は :manual:`cmake(1)` の特定の操作モードを有効にします。
 これは :manual:`generator <cmake-generators(7)>` に関連付けられた :variable:`CMAKE_MAKE_PROGRAM` コマンド、またはユーザが設定したビルド・ツールを呼び出します。
 
-さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。「ビルドするターゲット」とは、たとえば特定のライブラリや実行形式、または独自のターゲットの他に、``install`` のようなジェネレータに依存したターゲットのことです：
+さらに :option:`--build <cmake --build>` モードでは、ビルドするターゲットを指定する :option:`--target <cmake--build --target>` オプションも指定できます。「ビルドするターゲット」とは、たとえば特定のライブラリや実行形式、またはカスタム・ターゲットの他に、``install`` のようなジェネレータに依存したターゲットのことです：
 
 .. code-block:: console
 
@@ -364,7 +364,7 @@ CMake はビルドに必要な特定のビルド・ツールを理解してい�
   $ cmake --build . --target myexe --verbose
 
 さらに :option:`--build <cmake --build>` モードでは ``--`` のうしろに特定のコマンドライン・オプションを並べると、ビルド時に呼び出されるビルド・ツールにそれらを渡すことができます。
-これは、たとえば CMake が提供していない高レベルなユーザ・インタフェースが必要な場面でビルド・ジョブが失敗しても、そのままビルドを続行するようなオプションを渡したいような場合に便利です。
+これは、たとえば CMake が提供していない高レベルなユーザ・インタフェースが必要な場面で、ビルド・ジョブが失敗してもビルドを続行するようなオプションを渡したい場合に便利です。
 
 全てのジェネレータで、CMake を呼び出したあとにビルド・ツールを直接呼び出せます。
 たとえば、``make`` は :generator:`Unix Makefiles` というジェネレータで生成したビルドシステムの中で実行できます。
@@ -375,42 +375,42 @@ CMake はビルドに必要な特定のビルド・ツールを理解してい�
 ターゲットを選択する
 --------------------
 
-Each executable and library described in the CMake files is a build target, and the buildsystem may describe custom targets, either for internal use, or for user consumption, for example to create documentation.
+CKake のファイルに記述した実行形式とライブラリはそれぞれビルド・ターゲットであり、ビルドシステムによってはビルド途中の作業用、またはユーザが必要とするもの（たとえばドキュメントの生成）をカスタム・ターゲットとして記述する場合があります。
 
-CMake provides some built-in targets for all buildsystems providing CMake files.
+CMake は、CMake ファイルを持つ全てのビルドシステム対して共通で指定できるターゲットを予め定義してあります。
 
 ``all``
-  The default target used by ``Makefile`` and ``Ninja`` generators.
-  Builds all targets in the buildsystem, except those which are excluded by their :prop_tgt:`EXCLUDE_FROM_ALL` target property or :prop_dir:`EXCLUDE_FROM_ALL` directory property.
-  The name ``ALL_BUILD`` is used for this purpose for the Xcode and Visual Studio generators.
+  ジェネレータが ``Makefile`` と ``Ninja`` の時に指定できるデフォルトのターゲット。
+  ビルドシステムの中で、プロパティの :prop_tgt:`EXCLUDE_FROM_ALL` または :prop_dir:`EXCLUDE_FROM_ALL` で除外されたターゲットを除く、全てのターゲットをビルドする。
+  ジェネレータが Xcode と Visual Studio の場合は ``ALL_BUILD`` というターゲットに相当する。
 ``help``
-  Lists the targets available for build.
-  This target is available when using the :generator:`Unix Makefiles` or :generator:`Ninja` generator, and the exact output is tool-specific.
+  ビルド時に利用できる全てのターゲットの一覧を表示する。
+  このターゲットはジェネレータが :generator:`Unix Makefiles` または generator:`Ninja` の場合に指定でき、表示される内容はそのビルド・ツールに依存する。
 ``clean``
-  Delete built object files and other output files.
-  The ``Makefile`` based generators create a ``clean`` target per directory, so that an individual directory can be cleaned.
-  The ``Ninja`` tool provides its own granular ``-t clean`` system.
+  ビルド時に生成されたオブジェクト・ファイルとその他の生成物を削除する。
+  ``Makefile`` 系のジェネレータはディレクトリごとに ``clean`` ターゲットを生成するのでディレクトリを個別にクリーンできる。
+  ジェネレータが ``Ninja`` の場合は独自できめ細かい `-t clean`` システムが利用できる。
 ``test``
-  Runs tests.
-  This target is only automatically available  if the CMake files provide CTest-based tests.
-  See also `テストを実施する`_.
+  テストを実行する。
+  このターゲットは、CMake ファイルに CTest 系のテストを記述した場合にのみ自動的に利用できるにようになる。
+  詳細は `テストを実施する`_ を参照のこと。
 ``install``
-  Installs the software.
-  This target is only automatically available if the software defines install rules with the :command:`install` command.
-  See also `ソフトウェアをインストールする`_.
+  ビルドしたソフトウェアなどをインストールする。
+  このターゲットは、ソフトウェアが :command:`install` コマンドを使ってインストール手順を定義している場合にのみ自動的に利用できるにようになる。
+  詳細は `ソフトウェアをインストールする`_ を参照のこと。
 ``package``
-  Creates a binary package.
-  This target is only  automatically available if the CMake files provide CPack-based packages.
+  ビルドしたバイナリを格納したパッケージを作成する。
+  このターゲットは、CMake ファイルに CPack 系のパッケージ作成ルールを記述した場合にのみ自動的に利用できるにようになる。
 ``package_source``
-  Creates a source package.
-  This target is only automatically available if the CMake files provide CPack-based packages.
+  ソース・パッケージを生成する。
+  このターゲットは、CMake ファイルに CPack 系のパッケージ作成ルールを記述した場合にのみ自動的に利用できるにようになる。
 
-For ``Makefile`` based systems, ``/fast`` variants of binary build targets are provided.
-The ``/fast`` variants are used to build the specified target without regard for its dependencies.
-The dependencies are not checked and are not rebuilt if out of date.
-The :generator:`Ninja` generator is sufficiently fast at dependency checking that such targets are not provided for that generator.
+``Makefile`` 系のビルドシステムの場合、 バイナリのビルド・ターゲットの派生型である ``/fast`` というターゲットが提供されます。
+この ``/fast`` ターゲットは、依存関係を無視してターゲットをビルドする際に使用します。
+これを指定すると、ビルド時に依存関係をチェックせず、バイナリが古い場合は再ビルドは行いません。
+:generator:`Ninja` ジェネレータの場合、依存関係のチェックは十分に高速なので、このターゲットは提供されていません。
 
-``Makefile`` based systems also provide build-targets to preprocess, assemble and compile individual files in a particular directory.
+``Makefile`` 系ビルドシステムはさらに、特定のディレクトリの中にあるファイルを個別に前処理したり、アセンブルしたり、コンパイルするためのターゲットも提供しています。
 
 .. code-block:: console
 
@@ -418,8 +418,8 @@ The :generator:`Ninja` generator is sufficiently fast at dependency checking tha
   $ make foo.cpp.s
   $ make foo.cpp.o
 
-The file extension is built into the name of the target because another file with the same name but a different extension may exist.
-However, build-targets without the file extension are also provided.
+同じ名前で拡張子が異なる別のファイルが存在する場合があるので、拡張子もビルド・ターゲットの名前に含まれることに注意して下さい。
+ただし拡張子を持たないビルド・ターゲットも提供されます。
 
 .. code-block:: console
 
@@ -427,7 +427,7 @@ However, build-targets without the file extension are also provided.
   $ make foo.s
   $ make foo.o
 
-In buildsystems which contain ``foo.c`` and ``foo.cpp``, building the ``foo.i`` target will preprocess both files.
+この場合、``foo.c`` と ``foo.cpp`` を含むビルドシステムで、``foo.i`` というターゲットをビルドすると、両方のファイルが前処理されます。
 
 ビルド・ツールを指定する
 ------------------------
