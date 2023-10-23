@@ -396,14 +396,14 @@ CMake は、CMake ファイルを持つ全てのビルドシステム対して�
   詳細は `テストを実施する`_ を参照のこと。
 ``install``
   ビルドしたソフトウェアなどをインストールする。
-  このターゲットは、ソフトウェアが :command:`install` コマンドを使ってインストール手順を定義している場合にのみ自動的に利用できるにようになる。
+  このターゲットは、ソフトウェアが :command:`install` コマンドを使ってインストールのルールを定義している場合にのみ自動的に利用できるにようになる。
   詳細は `ソフトウェアをインストールする`_ を参照のこと。
 ``package``
   ビルドしたバイナリを格納したパッケージを作成する。
-  このターゲットは、CMake ファイルに CPack 系のパッケージ作成手順を記述した場合にのみ自動的に利用できるにようになる。
+  このターゲットは、CMake ファイルに CPack 系のパッケージ作成ルールを記述した場合にのみ自動的に利用できるにようになる。
 ``package_source``
   ソース・パッケージを生成する。
-  このターゲットは、CMake ファイルに CPack 系のパッケージ作成手順を記述した場合にのみ自動的に利用できるにようになる。
+  このターゲットは、CMake ファイルに CPack 系のパッケージ作成ルールを記述した場合にのみ自動的に利用できるにようになる。
 
 ``Makefile`` 系のビルドシステムの場合、 バイナリのビルド・ターゲットの派生型である ``/fast`` というターゲットが提供されます。
 この ``/fast`` ターゲットは、依存関係を無視してターゲットをビルドする際に使用します。
@@ -432,13 +432,11 @@ CMake は、CMake ファイルを持つ全てのビルドシステム対して�
 ビルド・ツールを指定する
 ------------------------
 
-The program invoked by the :option:`--build <cmake --build>`
-mode is determined by the :variable:`CMAKE_MAKE_PROGRAM` variable.
-For most generators, the particular program does not need to be
-configured.
+オプション :option:`--build <cmake --build>` で呼び出されるビルド・ツールは :variable:`CMAKE_MAKE_PROGRAM` 変数にセットしたコマンドで決まります。
+ただし、ほとんどのジェネレータで（デフォルトのビルド・ツールが決まっているので）特定のビルド・ツールを設定する必要はありません。
 
 ===================== =========================== ===========================
-      Generator           Default make program           Alternatives
+    ジェネレータ       デフォルトのビルド・ツール     代替のビルド・ツール
 ===================== =========================== ===========================
  XCode                 ``xcodebuild``
  Unix Makefiles        ``make``
@@ -451,47 +449,24 @@ configured.
  Watcom WMake          ``wmake``
 ===================== =========================== ===========================
 
-The ``jom`` tool is capable of reading makefiles of the
-``NMake`` flavor and building in parallel, while the
-``nmake`` tool always builds serially.  After generating
-with the :generator:`NMake Makefiles` generator a user
-can run ``jom`` instead of ``nmake``.  The
-:option:`--build <cmake --build>`
-mode would also use ``jom`` if the
-:variable:`CMAKE_MAKE_PROGRAM` was set to ``jom`` while
-using the :generator:`NMake Makefiles` generator, and
-as a convenience, the :generator:`NMake Makefiles JOM`
-generator is provided to find ``jom`` in the normal way
-and use it as the :variable:`CMAKE_MAKE_PROGRAM`. For
-completeness, ``nmake`` is an alternative tool which
-can process the output of the
-:generator:`NMake Makefiles JOM` generator, but doing
-so would be a pessimization.
+``jom`` は ``NMake`` 系の makefile を読み取って並列ビルドできる一方で、``nmake`` は常に順番にビルドします。
+:generator:`NMake Makefiles` ジェネレータでビルドシステムを生成した後に、ユーザは ``nmake`` の代わりに ``jom`` コマンドも実行できます。
+変数 :variable:`CMAKE_MAKE_PROGRAM` に ``jom`` がセットされている時に、:generator:`NMake Makefiles` ジェネレータを使用すると :option:`--build <cmake --build>` で ``jom`` コマンドも呼び出されますが、便宜上、通常の手順で ``jom`` ツールを見つけ出しから変数 :variable:`CMAKE_MAKE_PROGRAM` にセットされたツールとして使用するために、:generator:`NMake Makefiles JOM` ジェネレータが提供されています。
+念のため追記しておくと、``nmake`` は :generator:`NMake Makefiles JOM` ジェネレータのビルドシステムで処理できるもう一つ別のビルド・ツールですが、このツールの使用は推奨しません。
 
 ソフトウェアをインストールする
 ==============================
 
-The :variable:`CMAKE_INSTALL_PREFIX` variable can be
-set in the CMake cache to specify where to install the
-provided software.  If the provided software has install
-rules, specified using the :command:`install` command,
-they will install artifacts into that prefix.  On Windows,
-the default installation location corresponds to the
-``ProgramFiles`` system directory which may be
-architecture specific.  On Unix hosts, ``/usr/local`` is
-the default installation location.
+変数の :variable:`CMAKE_INSTALL_PREFIX` を `CMake キャッシュ`_ にセットしておくと、ソフトウェアのインストール先（*Prefix*）を指定できます。
+そのソフトウェアに ``install`` のルールがある場合にインストール先（*Prefix*）を :command:`install` コマンドで指定すると、そのルールに従ってインストール先にビルド結果をインストールします。
+Windows の場合のデフォルトのインストール先（*Prefix*）は、アーキテクチャ別の ``Programfiles`` というシステム・ディレクトリが該当します。
+Unix 系の場合は ``/usr/local`` がデフォルトのインストール先です。
 
-The :variable:`CMAKE_INSTALL_PREFIX` variable always
-refers to the installation prefix on the target
-filesystem.
+:variable:`CMAKE_INSTALL_PREFIX` 変数は常にターゲットのファイルシステムにあるインストール先（*Prefix*）を参照します。
 
-In cross-compiling or packaging scenarios where the
-sysroot is read-only or where the sysroot should otherwise
-remain pristine, the :variable:`CMAKE_STAGING_PREFIX`
-variable can be set to a location to actually install
-the files.
+したがってクロス・コンパイルやパッケージ作成といった作業で ``sysroot`` 以下には書き込みできない、もしくは ``sysroot`` に手を加えずにそのままの状態にしておきたい場合は、ファイルを「実際に」インストールする場所を :variable:`CMAKE_STAGING_PREFIX` 変数に指定して下さい。
 
-The commands:
+たとえば、次のコマンドを実行すると：
 
 .. code-block:: console
 
@@ -501,64 +476,46 @@ The commands:
   $ cmake --build .
   $ cmake --build . --target install
 
-result in files being installed to paths such
-as ``/tmp/package/lib/libfoo.so`` on the host machine.
-The ``/usr/local`` location on the host machine is
-not affected.
+ファイルはホスト・マシン上の ``/tmp/package/lib/libfoo.so`` というパス名にインストールされます。
+そのためホスト・マシン上の ``/usr/local`` というディレクトリは変更されません。
 
-Some provided software may specify ``uninstall`` rules,
-but CMake does not generate such rules by default itself.
+ソフトウェアの中には ``uninstall`` のルールを指定している場合がありますが、CMake はそのようなルールをデフォルトでは生成しません。
 
 
 テストを実施する
 ================
 
-The :manual:`ctest(1)` tool is shipped with the CMake
-distribution to execute provided tests and report
-results.  The ``test`` build-target is provided to run
-all available tests, but the :manual:`ctest(1)` tool
-allows granular control over which tests to run, how to
-run them, and how to report results.  Executing
-:manual:`ctest(1)` in the build directory is equivalent
-to running the ``test`` target:
+:manual:`ctest(1)` コマンドは CMake の配布物に同梱されており、提供されたテストを実施して結果を報告するツールです。
+利用可能な全てのテストを実行するために ``test`` というビルド・ターゲットが提供されていますが、この :manual:`ctest(1)` ツールはどのテストを、どのように実行し、その結果をどのように報告するかを細かく制御できます。
+ビルド・ディレクトリの中で :manual:`ctest(1)` コマンドを実行することは、``test`` というビルド・ターゲットを実行することと同じです：
 
 .. code-block:: console
 
   $ ctest
 
-A regular expression can be passed to run only tests
-which match the expression.  To run only tests with
-``Qt`` in their name:
+正規表現を渡すことで、その表現にマッチするテストだけ実行できます。
+たとえば ``Qt`` という文字が含まれているテストだけを実行する場合は：
 
 .. code-block:: console
 
   $ ctest -R Qt
 
-Tests can be excluded by regular expression too.  To
-run only tests without ``Qt`` in their name:
+同様に正規表現を使って実行するテストを除外することもできます。
+たとえば ``Qt`` という文字が含まれていないテストだけ実行する場合は：
 
 .. code-block:: console
 
   $ ctest -E Qt
 
-Tests can be run in parallel by passing :option:`-j <ctest -j>`
-arguments to :manual:`ctest(1)`:
+:manual:`ctest(1)` にオプションの :option:`-j <ctest -j>` を渡すと、テストを並列実行できます：
 
 .. code-block:: console
 
   $ ctest -R Qt -j8
 
-The environment variable :envvar:`CTEST_PARALLEL_LEVEL`
-can alternatively be set to avoid the need to pass
-:option:`-j <ctest -j>`.
+あるいは環境変数の :envvar:`CTEST_PARALLEL_LEVEL` を使えば、コマンドラインにこのオプション :option:`-j <ctest -j>` を渡すことを省略できます。
 
-By default :manual:`ctest(1)` does not print the output
-from the tests. The command line argument :option:`-V <ctest -V>`
-(or ``--verbose``) enables verbose mode to print the
-output from all tests.
-The :option:`--output-on-failure <ctest --output-on-failure>`
-option prints the test output for failing tests only.
-The environment variable :envvar:`CTEST_OUTPUT_ON_FAILURE`
-can be set to ``1`` as an alternative to passing the
-:option:`--output-on-failure <ctest --output-on-failure>`
-option to :manual:`ctest(1)`.
+デフォルトで :manual:`ctest(1)` はテストから受け取った出力は表示しません。
+オプション :option:`-V <ctest -V>` (or ``--verbose``) を指定すると、全てのテストからの出力を冗長モードにします。
+またオプション :option:`--output-on-failure <ctest --output-on-failure>` を指定すると、失敗したテストの出力だけを表示します。
+このオプション :option:`--output-on-failure <ctest --output-on-failure>` を :manual:`ctest(1)` コマンドに渡す代わりに、環境変数 :envvar:`CTEST_OUTPUT_ON_FAILURE` に ``1`` を指定しても同等の表示になります。
