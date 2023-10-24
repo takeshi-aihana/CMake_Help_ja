@@ -1,33 +1,29 @@
-Step 2: Adding a Library
-========================
+ステップ２: ライブラリを追加する
+================================
 
-At this point, we have seen how to create a basic project using CMake. In this
-step, we will learn how to create and use a library in our project. We will
-also see how to make the use of our library optional.
+ここまで CMake を使って基本的なプロジェクトを作成してビルドする方法をみてきました。
+このステップでは、プロジェクトでライブラリを作成し利用する方法について学習します。
+また、そのライブラリの利用をオプションにする方法についても説明します。
 
-Exercise 1 - Creating a Library
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - ライブラリを作成する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To add a library in CMake, use the :command:`add_library` command and specify
-which source files should make up the library.
+CMake でライブラリを追加するには、:command:`add_library` コマンドを使ってライブラリを構成しているソース・ファイルを指定します。
 
-Rather than placing all of the source files in one directory, we can organize
-our project with one or more subdirectories. In this case, we will create a
-subdirectory specifically for our library. Here, we can add a new
-``CMakeLists.txt`` file and one or more source files. In the top level
-``CMakeLists.txt`` file, we will use the :command:`add_subdirectory` command
-to add the subdirectory to the build.
+プロジェクトは一つのディレクトリにソース・ファイルをまとめて格納する他に、複数のサブディレクトリに分けて格納して構造化することができます。
+このような場合、ライブラリ専用のサブディレクトリを作成します。
+ここで、新しい ``CMakeLists.txt`` ファイルと、ソース・ファイルをいくつか追加してみます。
+プロジェクト最上位の ``CMakeLists.txt`` ファイルの中に、:command:`add_subdirectory` コマンドを使ってビルドするサブディレクトリを追加します。
 
-Once the library is created, it is connected to our executable target with
-:command:`target_include_directories` and :command:`target_link_libraries`.
+ライブラリを生成したら、:command:`target_include_directories` と :command:`target_link_libraries` のコマンドを使ってターゲットの実行形式にリンクします。
 
-Goal
+目標
 ----
 
-Add and use a library.
+ライブラリを一個追加してリンクする。
 
-Helpful Resources
------------------
+参考情報
+--------
 
 * :command:`add_library`
 * :command:`add_subdirectory`
@@ -35,48 +31,40 @@ Helpful Resources
 * :command:`target_link_libraries`
 * :variable:`PROJECT_SOURCE_DIR`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``CMakeLists.txt``
 * ``tutorial.cxx``
 * ``MathFunctions/CMakeLists.txt``
 
-Getting Started
----------------
+始める
+------
 
-In this exercise, we will add a library to our project that contains our own
-implementation for computing the square root of a number. The executable can
-then use this library instead of the standard square root function provided by
-the compiler.
+この演習では数値の平方根を計算する独自の実装を持たライブラリをプロジェクトに追加します。
+そして実行形式は、コンパイラが提供する標準関数ではなく、このライブラリを使うようにします。
 
-For this tutorial we will put the library into a subdirectory called
-``MathFunctions``. This directory already contains the header files
-``MathFunctions.h`` and ``mysqrt.h``. Their respective source files
-``MathFunctions.cxx`` and ``mysqrt.cxx`` are also provided. We will not need
-to modify any of these files. ``mysqrt.cxx`` has one function called
-``mysqrt`` that provides similar functionality to the compiler's ``sqrt``
-function. ``MathFunctions.cxx`` contains one function ``sqrt`` which serves
-to hide the implementation details of ``sqrt``.
+このチュートリアルでは ``MathFunctions`` というサブディレクトリの中にライブラリを配置します。
+このサブディレクトリには既にヘッダファイルの ``MathFunctions.h`` と ``mysqrt.h`` が格納されています。
+対応するソース・ファイルは、それぞれ ``MathFunctions.cxx`` と ``mysqrt.cxx`` です。
+ただし、これらのファイルは変更はしません。
+``mysqrt.cxx`` には ``mysqrt`` という関数があり、これはコンパイラが提供する標準の ``sqrt`` 関数と同様の機能が実装されています。
+``MathFunctions.cxx`` には ``squrt`` の実装の詳細を隠す役割を持つ ``sqrt`` という関数が実装されています。
 
-From the ``Help/guide/tutorial/Step2`` directory, start with ``TODO 1`` and
-complete through ``TODO 6``.
+``Help/guide/tutorial/Step2`` ディレクトリへ移動して、``TODO 1`` から始めて ``TODO 6`` まで進めて下さい。
 
-First, fill in the one line ``CMakeLists.txt`` in the ``MathFunctions``
-subdirectory.
+まず ``MathFunctions`` サブディレクトリにある ``CMakeLists.txt`` の一行を埋めます。
 
-Next, edit the top level ``CMakeLists.txt``.
+次にプロジェクト最上位にある ``CMakeLists.txt`` を編集します。
 
-Finally, use the newly created ``MathFunctions`` library in ``tutorial.cxx``
+最後に新しく用意した ``MathFunctions`` ライブラリを ``tutorial.cxx`` の中から利用する実装を追加します。
 
-Build and Run
+ビルドと実行
 -------------
 
-Run the :manual:`cmake  <cmake(1)>` executable or the
-:manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it
-with your chosen build tool.
+:manual:`cmake  <cmake(1)>` コマンドか、 :manual:`cmake-gui <cmake-gui(1)>` を起動してプロジェクトを構成し、それから指定したビルド・ツールでプロジェクトをビルドします。
 
-Below is a refresher of what that looks like from the command line:
+コマンドラインでは以下のようになります：
 
 .. code-block:: console
 
@@ -85,20 +73,18 @@ Below is a refresher of what that looks like from the command line:
   cmake ../Step2
   cmake --build .
 
-Try to use the newly built ``Tutorial`` and ensure that it is still
-producing accurate square root values.
+ビルドした実行形式の ``Tutorial`` を使い、正しく平方根が計算されることを確認してみて下さい。
 
-Solution
+解決方法
 --------
 
-In the ``CMakeLists.txt`` file in the ``MathFunctions`` directory, we create
-a library target called ``MathFunctions`` with :command:`add_library`. The
-source files for the library are passed as an argument to
-:command:`add_library`. This looks like the following line:
+``MathFunctions`` ディレクトリの``CMakeLists.txt`` ファイルの中で、:command:`add_library` コマンドを使って ``MathFunctions`` というライブラリのターゲットを作成します。
+ライブラリのソース・ファイルを :command:`add_library` コマンドの引数として渡します。
+たとえば次のようになります：
 
 .. raw:: html
 
-  <details><summary>TODO 1: Click to show/hide answer</summary>
+  <details><summary>TODO 1: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 1: MathFunctions/CMakeLists.txt
@@ -110,13 +96,11 @@ source files for the library are passed as an argument to
 
   </details>
 
-To make use of the new library we will add an :command:`add_subdirectory`
-call in the top-level ``CMakeLists.txt`` file so that the library will get
-built.
+プロジェクト最上位にある ``CMakeLists.txt`` ファイルの中で :command:`add_subdirectory` コマンドの呼び出しを追加すると、そのライブラリがビルドされるようになります。
 
 .. raw:: html
 
-  <details><summary>TODO 2: Click to show/hide answer</summary>
+  <details><summary>TODO 2: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 2: CMakeLists.txt
@@ -128,12 +112,11 @@ built.
 
   </details>
 
-Next, the new library target is linked to the executable target using
-:command:`target_link_libraries`.
+次に :command:`target_link_libraries` コマンドを使って、新しいライブラリ ``MathFunctions`` と実行形式 ``Tutorial`` をリンクします。
 
 .. raw:: html
 
-  <details><summary>TODO 3: Click to show/hide answer</summary>
+  <details><summary>TODO 3: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 3: CMakeLists.txt
@@ -145,14 +128,12 @@ Next, the new library target is linked to the executable target using
 
   </details>
 
-Finally we need to specify the library's header file location. Modify
-:command:`target_include_directories` to add the ``MathFunctions`` subdirectory
-as an include directory so that the ``MathFunctions.h`` header file can be
-found.
+さらにライブラリのヘッダ・ファイルが格納されている場所を教えてあげる必要があります。
+:command:`target_include_directories` コマンドを変更して、サブディレクトリの ``MathFunctions``  をインクルード・ディレクトリとして追加し、ヘッダ・ファイルの ``MathFunctions.h`` が見つかるようにします。
 
 .. raw:: html
 
-  <details><summary>TODO 4: Click to show/hide answer</summary>
+  <details><summary>TODO 4: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 4: CMakeLists.txt
@@ -167,11 +148,12 @@ found.
 
   </details>
 
-Now let's use our library. In ``tutorial.cxx``, include ``MathFunctions.h``:
+これでライブラリが使えるようになりました。
+ソース・ファイルの ``tutorial.cxx`` でヘッダ・ファイルの ``MathFunctions.h`` をインクルードして下さい：
 
 .. raw:: html
 
-  <details><summary>TODO 5: Click to show/hide answer</summary>
+  <details><summary>TODO 5: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/tutorial.cxx
   :caption: TODO 5: tutorial.cxx
@@ -184,11 +166,11 @@ Now let's use our library. In ``tutorial.cxx``, include ``MathFunctions.h``:
 
   </details>
 
-Lastly, replace ``sqrt`` with the wrapper function ``mathfunctions::sqrt``.
+最後に、``sqrt`` 関数をラッパー関数の ``mathfunctions::sqrt`` で置き換えます。
 
 .. raw:: html
 
-  <details><summary>TODO 6: Click to show/hide answer</summary>
+  <details><summary>TODO 6: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/tutorial.cxx
   :caption: TODO 6: tutorial.cxx
@@ -204,16 +186,11 @@ Lastly, replace ``sqrt`` with the wrapper function ``mathfunctions::sqrt``.
 Exercise 2 - Adding an Option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now let us add an option in the MathFunctions library to allow developers to
-select either the custom square root implementation or the built in standard
-implementation. While for the tutorial
-there really isn't any need to do so, for larger projects this is a common
-occurrence.
+Now let us add an option in the MathFunctions library to allow developers to select either the custom square root implementation or the built in standard implementation.
+While for the tutorial there really isn't any need to do so, for larger projects this is a common occurrence.
 
-CMake can do this using the :command:`option` command. This gives users a
-variable which they can change when configuring their cmake build. This
-setting will be stored in the cache so that the user does not need to set
-the value each time they run CMake on a build directory.
+CMake can do this using the :command:`option` command. This gives users a variable which they can change when configuring their cmake build.
+This setting will be stored in the cache so that the user does not need to set the value each time they run CMake on a build directory.
 
 Goal
 ----
@@ -237,38 +214,30 @@ Files to Edit
 Getting Started
 ---------------
 
-Start with the resulting files from Exercise 1. Complete ``TODO 7`` through
-``TODO 14``.
+Start with the resulting files from Exercise 1. Complete ``TODO 7`` through ``TODO 14``.
 
-First create a variable ``USE_MYMATH`` using the :command:`option` command
-in ``MathFunctions/CMakeLists.txt``. In that same file, use that option
-to pass a compile definition to the ``MathFunctions`` library.
+First create a variable ``USE_MYMATH`` using the :command:`option` command in ``MathFunctions/CMakeLists.txt``.
+In that same file, use that option to pass a compile definition to the ``MathFunctions`` library.
 
-Then, update ``MathFunctions.cxx`` to redirect compilation based on
-``USE_MYMATH``.
+Then, update ``MathFunctions.cxx`` to redirect compilation based on ``USE_MYMATH``.
 
-Lastly, prevent ``mysqrt.cxx`` from being compiled when ``USE_MYMATH`` is on
-by making it its own library inside of the ``USE_MYMATH`` block of
-``MathFunctions/CMakeLists.txt``.
+Lastly, prevent ``mysqrt.cxx`` from being compiled when ``USE_MYMATH`` is on by making it its own library inside of the ``USE_MYMATH`` block of ``MathFunctions/CMakeLists.txt``.
 
 Build and Run
 -------------
 
-Since we have our build directory already configured from Exercise 1, we can
-rebuild by simply calling the following:
+Since we have our build directory already configured from Exercise 1, we can rebuild by simply calling the following:
 
 .. code-block:: console
 
   cd ../Step2_build
   cmake --build .
 
-Next, run the ``Tutorial`` executable on a few numbers to verify that it's
-still correct.
+Next, run the ``Tutorial`` executable on a few numbers to verify that it's still correct.
 
-Now let's update the value of ``USE_MYMATH`` to ``OFF``. The easiest way is to
-use the :manual:`cmake-gui <cmake-gui(1)>` or  :manual:`ccmake <ccmake(1)>`
-if you're in the terminal. Or, alternatively, if you want to change the
-option from the command-line, try:
+Now let's update the value of ``USE_MYMATH`` to ``OFF``.
+The easiest way is to use the :manual:`cmake-gui <cmake-gui(1)>` or  :manual:`ccmake <ccmake(1)>` if you're in the terminal.
+Or, alternatively, if you want to change the option from the command-line, try:
 
 .. code-block:: console
 
@@ -280,21 +249,18 @@ Now, rebuild the code with the following:
 
   cmake --build .
 
-Then, run the executable again to ensure that it still works with
-``USE_MYMATH`` set to ``OFF``. Which function gives better results, ``sqrt``
-or ``mysqrt``?
+Then, run the executable again to ensure that it still works with ``USE_MYMATH`` set to ``OFF``.
+Which function gives better results, ``sqrt`` or ``mysqrt``?
 
 Solution
 --------
 
 The first step is to add an option to ``MathFunctions/CMakeLists.txt``.
-This option will be displayed in the :manual:`cmake-gui <cmake-gui(1)>` and
-:manual:`ccmake <ccmake(1)>` with a default value of ``ON`` that can be
-changed by the user.
+This option will be displayed in the :manual:`cmake-gui <cmake-gui(1)>` and :manual:`ccmake <ccmake(1)>` with a default value of ``ON`` that can be changed by the user.
 
 .. raw:: html
 
-  <details><summary>TODO 7: Click to show/hide answer</summary>
+  <details><summary>TODO 7: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/CMakeLists.txt
   :caption: TODO 7: MathFunctions/CMakeLists.txt
@@ -307,17 +273,14 @@ changed by the user.
 
   </details>
 
-Next, make building and linking our library with ``mysqrt`` function
-conditional using this new option.
+Next, make building and linking our library with ``mysqrt`` function conditional using this new option.
 
-Create an :command:`if` statement which checks the value of
-``USE_MYMATH``. Inside the :command:`if` block, put the
-:command:`target_compile_definitions` command with the compile
-definition ``USE_MYMATH``.
+Create an :command:`if` statement which checks the value of ``USE_MYMATH``.
+Inside the :command:`if` block, put the :command:`target_compile_definitions` command with the compile definition ``USE_MYMATH``.
 
 .. raw:: html
 
-  <details><summary>TODO 8: Click to show/hide answer</summary>
+  <details><summary>TODO 8: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 8: MathFunctions/CMakeLists.txt
@@ -331,17 +294,15 @@ definition ``USE_MYMATH``.
 
   </details>
 
-When ``USE_MYMATH`` is ``ON``, the compile definition ``USE_MYMATH`` will
-be set. We can then use this compile definition to enable or disable
-sections of our source code.
+When ``USE_MYMATH`` is ``ON``, the compile definition ``USE_MYMATH`` will be set.
+We can then use this compile definition to enable or disable sections of our source code.
 
 The corresponding changes to the source code are fairly straightforward.
-In ``MathFunctions.cxx``, we make ``USE_MYMATH`` control which square root
-function is used:
+In ``MathFunctions.cxx``, we make ``USE_MYMATH`` control which square root function is used:
 
 .. raw:: html
 
-  <details><summary>TODO 9: Click to show/hide answer</summary>
+  <details><summary>TODO 9: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/MathFunctions.cxx
   :caption: TODO 9: MathFunctions/MathFunctions.cxx
@@ -358,7 +319,7 @@ Next, we need to include ``mysqrt.h`` if ``USE_MYMATH`` is defined.
 
 .. raw:: html
 
-  <details><summary>TODO 10: Click to show/hide answer</summary>
+  <details><summary>TODO 10: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/MathFunctions.cxx
   :caption: TODO 10: MathFunctions/MathFunctions.cxx
@@ -375,7 +336,7 @@ Finally, we need to include ``cmath`` now that we are using ``std::sqrt``.
 
 .. raw:: html
 
-  <details><summary>TODO 11: Click to show/hide answer</summary>
+  <details><summary>TODO 11: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: c++
   :caption: TODO 11 : MathFunctions/MathFunctions.cxx
@@ -387,22 +348,18 @@ Finally, we need to include ``cmath`` now that we are using ``std::sqrt``.
 
   </details>
 
-At this point, if ``USE_MYMATH`` is ``OFF``, ``mysqrt.cxx`` would not be used
-but it will still be compiled because the ``MathFunctions`` target has
-``mysqrt.cxx`` listed under sources.
+At this point, if ``USE_MYMATH`` is ``OFF``, ``mysqrt.cxx`` would not be used but it will still be compiled because the ``MathFunctions`` target has ``mysqrt.cxx`` listed under sources.
 
-There are a few ways to fix this. The first option is to use
-:command:`target_sources` to add ``mysqrt.cxx`` from within the ``USE_MYMATH``
-block. Another option is to create an additional library within the
-``USE_MYMATH`` block which is responsible for compiling ``mysqrt.cxx``. For
-the sake of this tutorial, we are going to create an additional library.
+There are a few ways to fix this.
+The first option is to use :command:`target_sources` to add ``mysqrt.cxx`` from within the ``USE_MYMATH`` block.
+Another option is to create an additional library within the ``USE_MYMATH`` block which is responsible for compiling ``mysqrt.cxx``.
+For the sake of this tutorial, we are going to create an additional library.
 
-First, from within ``USE_MYMATH`` create a library called ``SqrtLibrary``
-that has sources ``mysqrt.cxx``.
+First, from within ``USE_MYMATH`` create a library called ``SqrtLibrary`` that has sources ``mysqrt.cxx``.
 
 .. raw:: html
 
-  <details><summary>TODO 12: Click to show/hide answer</summary>
+  <details><summary>TODO 12: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/CMakeLists.txt
   :caption: TODO 12 : MathFunctions/CMakeLists.txt
@@ -415,12 +372,11 @@ that has sources ``mysqrt.cxx``.
 
   </details>
 
-Next, we link ``SqrtLibrary`` onto ``MathFunctions`` when ``USE_MYMATH`` is
-enabled.
+Next, we link ``SqrtLibrary`` onto ``MathFunctions`` when ``USE_MYMATH`` is enabled.
 
 .. raw:: html
 
-  <details><summary>TODO 13: Click to show/hide answer</summary>
+  <details><summary>TODO 13: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/CMakeLists.txt
   :caption: TODO 13 : MathFunctions/CMakeLists.txt
@@ -433,12 +389,11 @@ enabled.
 
   </details>
 
-Finally, we can remove ``mysqrt.cxx`` from our ``MathFunctions`` library
-source list because it will be pulled in when ``SqrtLibrary`` is included.
+Finally, we can remove ``mysqrt.cxx`` from our ``MathFunctions`` library source list because it will be pulled in when ``SqrtLibrary`` is included.
 
 .. raw:: html
 
-  <details><summary>TODO 14: Click to show/hide answer</summary>
+  <details><summary>TODO 14: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step3/MathFunctions/CMakeLists.txt
   :caption: TODO 14 : MathFunctions/CMakeLists.txt
@@ -450,6 +405,5 @@ source list because it will be pulled in when ``SqrtLibrary`` is included.
 
   </details>
 
-With these changes, the ``mysqrt`` function is now completely optional to
-whoever is building and using the ``MathFunctions`` library. Users can toggle
-``USE_MYMATH`` to manipulate what library is used in the build.
+With these changes, the ``mysqrt`` function is now completely optional to whoever is building and using the ``MathFunctions`` library.
+Users can toggle ``USE_MYMATH`` to manipulate what library is used in the build.
