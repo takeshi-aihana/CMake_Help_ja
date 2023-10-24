@@ -183,7 +183,7 @@ CMake でライブラリを追加するには、:command:`add_library` コマン
 
   </details>
 
-Exercise 2 - Adding an Option
+演習２ - オプションを追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now let us add an option in the MathFunctions library to allow developers to select either the custom square root implementation or the built in standard implementation.
