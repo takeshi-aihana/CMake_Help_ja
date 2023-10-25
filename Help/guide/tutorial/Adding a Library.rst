@@ -78,7 +78,7 @@ CMake でライブラリを追加するには、:command:`add_library` コマン
 解決方法
 --------
 
-``MathFunctions`` ディレクトリの``CMakeLists.txt`` ファイルの中で、:command:`add_library` コマンドを使って ``MathFunctions`` というライブラリのターゲットを作成します。
+``MathFunctions`` ディレクトリの ``CMakeLists.txt`` ファイルの中で、:command:`add_library` コマンドを使って ``MathFunctions`` というライブラリのターゲットを作成します。
 ライブラリのソース・ファイルを :command:`add_library` コマンドの引数として渡します。
 たとえば次のようになります：
 
@@ -186,73 +186,74 @@ CMake でライブラリを追加するには、:command:`add_library` コマン
 演習２ - オプションを追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now let us add an option in the MathFunctions library to allow developers to select either the custom square root implementation or the built in standard implementation.
-While for the tutorial there really isn't any need to do so, for larger projects this is a common occurrence.
+ここでは ``MathFunctions`` ライブラリの中にオプションを追加して平方根の算出に独自の実装（``mathfuntions::sqrt``）を使用するか、またはコンパイラが提供する標準の実装（``std::sqrt``）を使用するかを開発者が選択できるようにします。
+実際のところ、このような機能はチュートリアルの規模だと必要になりませんが、大規模なプロジェクトではよくあることです。
 
-CMake can do this using the :command:`option` command. This gives users a variable which they can change when configuring their cmake build.
-This setting will be stored in the cache so that the user does not need to set the value each time they run CMake on a build directory.
+CMake では、これを :command:`option` コマンドを使って実現できます。
+これにより、:manual:`cmake  <cmake(1)>` ビルドで構成する際に、ユーザが変更できる変数（設定）を渡せるようにします。
+この設定はキャッシュに保存させるようにして、ユーザがビルド・ディレクトリで CMake を実行するたびに指定する必要がないようにします。
 
-Goal
+目標
 ----
 
-Add the option to build without ``MathFunctions``.
+``MathFunctions`` ライブラリなしでビルドするオプションを追加する。
 
-
-Helpful Resources
------------------
+参考情報
+--------
 
 * :command:`if`
 * :command:`option`
 * :command:`target_compile_definitions`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``MathFunctions/CMakeLists.txt``
 * ``MathFunctions/MathFunctions.cxx``
 
-Getting Started
----------------
+始める
+------
 
-Start with the resulting files from Exercise 1. Complete ``TODO 7`` through ``TODO 14``.
+このチュートリアルの演習１で得られた結果から始めて下さい。
+``TODO 7`` から始めて ``TODO 14`` まで進めて下さい。
 
-First create a variable ``USE_MYMATH`` using the :command:`option` command in ``MathFunctions/CMakeLists.txt``.
-In that same file, use that option to pass a compile definition to the ``MathFunctions`` library.
+まず ``MathFunctions/CMakeLists.txt`` で、:command:`option` コマンドを使って ``USE_MYMATH`` という変数を追加します。
+次も同じファイルで、そのオプションを使ってコンパイル時の定義を ``MathFunctions`` ライブラリに渡します。
 
-Then, update ``MathFunctions.cxx`` to redirect compilation based on ``USE_MYMATH``.
+それから変数の ``USE_MYMATH`` の値に応じてコンパイルをリダイレクトするために ``MathFunctions.cxx`` を変更します。
 
-Lastly, prevent ``mysqrt.cxx`` from being compiled when ``USE_MYMATH`` is on by making it its own library inside of the ``USE_MYMATH`` block of ``MathFunctions/CMakeLists.txt``.
+最後に ``MathFunctions/CMakeLists.txt`` の ``USE_MYMATH`` のブロック内で独自のライブラリを作成することで、``USE_MYMATH`` が ON の時には ``mysqrt.cxx`` がコンパイルされないようにします。
 
-Build and Run
+ビルドと実行
 -------------
 
-Since we have our build directory already configured from Exercise 1, we can rebuild by simply calling the following:
+既に演習１で構成したビルド・ディレクトリがあるので、単に次のコマンドでリビルドするだけです：
 
 .. code-block:: console
 
   cd ../Step2_build
   cmake --build .
 
-Next, run the ``Tutorial`` executable on a few numbers to verify that it's still correct.
+そして ``Tutorial`` の実行形式にいろいろな数値を引数にして実行し、依然として結果が正しいことを確認して下さい。
 
-Now let's update the value of ``USE_MYMATH`` to ``OFF``.
-The easiest way is to use the :manual:`cmake-gui <cmake-gui(1)>` or  :manual:`ccmake <ccmake(1)>` if you're in the terminal.
-Or, alternatively, if you want to change the option from the command-line, try:
+今度は ``USE_MYMATH`` 変数の値を ``OFF`` にしてみましょう。
+端末を使用しているのであれば :manual:`cmake-gui <cmake-gui(1)>` または  :manual:`ccmake <ccmake(1)>`コマンドを使うのが最も簡単な方法でしょう。
+あるいは、かわりにコマンドラインからオプソションを変更してい見て下さい：
 
 .. code-block:: console
 
   cmake ../Step2 -DUSE_MYMATH=OFF
 
-Now, rebuild the code with the following:
+そして次のコマンドラインでコードをリビルドします：
 
 .. code-block:: console
 
   cmake --build .
 
-Then, run the executable again to ensure that it still works with ``USE_MYMATH`` set to ``OFF``.
-Which function gives better results, ``sqrt`` or ``mysqrt``?
+それから、もう一度実行形式を実行し、変数の ``USE_MYMATH`` を ``OFF`` にしても依然として動作することを確認します。
+``sqrt`` と ``mysqrt`` のどちらの関数の方が良い結果になりましたか？
 
-Solution
+解決方法
 --------
 
 The first step is to add an option to ``MathFunctions/CMakeLists.txt``.
