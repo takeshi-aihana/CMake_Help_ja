@@ -218,7 +218,7 @@ CMake では、これを :command:`option` コマンドを使って実現でき�
 ``TODO 7`` から始めて ``TODO 14`` まで進めて下さい。
 
 まず ``MathFunctions/CMakeLists.txt`` で、:command:`option` コマンドを使って ``USE_MYMATH`` という変数を追加します。
-次も同じファイルで、そのオプションを使ってコンパイル時の定義を ``MathFunctions`` ライブラリに渡します。
+さらに同じファイルで、そのオプションを使ってコンパイル時の定義を ``MathFunctions`` ライブラリに渡すようにします。
 
 それから変数の ``USE_MYMATH`` の値に応じてコンパイルをリダイレクトするために ``MathFunctions.cxx`` を変更します。
 
@@ -256,8 +256,8 @@ CMake では、これを :command:`option` コマンドを使って実現でき�
 解決方法
 --------
 
-The first step is to add an option to ``MathFunctions/CMakeLists.txt``.
-This option will be displayed in the :manual:`cmake-gui <cmake-gui(1)>` and :manual:`ccmake <ccmake(1)>` with a default value of ``ON`` that can be changed by the user.
+最初のステップは ``MathFunctions/CMakeLists.txt`` にオプションを追加することです。
+このオプションは :manual:`cmake-gui <cmake-gui(1)>` や :manual:`ccmake <ccmake(1)>` の中でデフォルト値が ``ON`` として表示されますが、ユーザはこれを変更できます。
 
 .. raw:: html
 
@@ -274,10 +274,10 @@ This option will be displayed in the :manual:`cmake-gui <cmake-gui(1)>` and :man
 
   </details>
 
-Next, make building and linking our library with ``mysqrt`` function conditional using this new option.
+次に、この新しいオプションを使い、``mysqrt`` 関数を持つライブラリのビルドとリンクを条件付きにします。
 
-Create an :command:`if` statement which checks the value of ``USE_MYMATH``.
-Inside the :command:`if` block, put the :command:`target_compile_definitions` command with the compile definition ``USE_MYMATH``.
+オプションの値が格納される ``USE_MYMATH`` の値をチェックする :command:`if` 文を作成します。
+この :command:`if` 文のブロックに :command:`target_compile_definitions` コマンドを追加して、コンパイル時の定義として利用する ``USE_MYMATH`` を渡します。
 
 .. raw:: html
 
@@ -295,11 +295,11 @@ Inside the :command:`if` block, put the :command:`target_compile_definitions` co
 
   </details>
 
-When ``USE_MYMATH`` is ``ON``, the compile definition ``USE_MYMATH`` will be set.
-We can then use this compile definition to enable or disable sections of our source code.
+``USE_MYMATH`` が ``ON`` の時は、コンパイル時の定義に ``USE_MYMATH`` がセットされます。
+この定義を使うと、ソースコードの一部をコンパイルするかしないかを選択ができるようになります。
 
-The corresponding changes to the source code are fairly straightforward.
-In ``MathFunctions.cxx``, we make ``USE_MYMATH`` control which square root function is used:
+ソースコードで対応すべき変更は非常にシンプルです。
+``MathFunctions.cxx`` で平方根を計算する際に、どちらの関数を使用するかを ``USE_MYMATH`` で制御するようにします：
 
 .. raw:: html
 
@@ -316,7 +316,7 @@ In ``MathFunctions.cxx``, we make ``USE_MYMATH`` control which square root funct
 
   </details>
 
-Next, we need to include ``mysqrt.h`` if ``USE_MYMATH`` is defined.
+次に ``USE_MYMATH`` がセットされた場合は、ヘッダ・ファイルの ``mysqrt.h`` をインクルードするようにします。
 
 .. raw:: html
 
@@ -333,7 +333,7 @@ Next, we need to include ``mysqrt.h`` if ``USE_MYMATH`` is defined.
 
   </details>
 
-Finally, we need to include ``cmath`` now that we are using ``std::sqrt``.
+最後に ``std::sqrt`` を使うので ``cmath`` をインクルードします。
 
 .. raw:: html
 
@@ -349,14 +349,14 @@ Finally, we need to include ``cmath`` now that we are using ``std::sqrt``.
 
   </details>
 
-At this point, if ``USE_MYMATH`` is ``OFF``, ``mysqrt.cxx`` would not be used but it will still be compiled because the ``MathFunctions`` target has ``mysqrt.cxx`` listed under sources.
+この時点で、``USE_MYMATH`` が ``OFF`` の場合は ``mysqrt.cxx`` は使用しませんが、ターゲットの ``MathFunctions`` をビルドする際のソースとしてリストされているのでコンパイルは行われてしまいます。
 
-There are a few ways to fix this.
-The first option is to use :command:`target_sources` to add ``mysqrt.cxx`` from within the ``USE_MYMATH`` block.
-Another option is to create an additional library within the ``USE_MYMATH`` block which is responsible for compiling ``mysqrt.cxx``.
-For the sake of this tutorial, we are going to create an additional library.
+これを修正する方法がいくつかあります。
+その一つは、:command:`target_sources` コマンドを使用して ``USE_MYMATH`` の :command:`if` ブロックの中から ``mysqrt.cxx`` をソース・リストに追加する方法です。
+これ以外には、ソース・ファイルの ``mysqrt.cxx`` をコンパイルする ``USE_MYMATH`` の :command:`if` ブロックの中で、追加のライブラリを作成するという方法です。
+このチュートリアルでは、後者の方法（追加のライブラリを作成する）にします。
 
-First, from within ``USE_MYMATH`` create a library called ``SqrtLibrary`` that has sources ``mysqrt.cxx``.
+まず最初に、``USE_MYMATH`` の :command:`if` ブロックの中から ``mysqrt.cxx`` をソース・ファイルとする ``SqrtLibrary`` ライブラリを作成します。
 
 .. raw:: html
 
@@ -373,7 +373,7 @@ First, from within ``USE_MYMATH`` create a library called ``SqrtLibrary`` that h
 
   </details>
 
-Next, we link ``SqrtLibrary`` onto ``MathFunctions`` when ``USE_MYMATH`` is enabled.
+次に ``USE_MYMATH`` の :command:`if` ブロックで（すなわち ``USE_MYMATH`` が ``ON`` の時に）ライブラリ ``SqrtLibrary`` を ``MathFunctions`` にリンクします。
 
 .. raw:: html
 
@@ -390,7 +390,7 @@ Next, we link ``SqrtLibrary`` onto ``MathFunctions`` when ``USE_MYMATH`` is enab
 
   </details>
 
-Finally, we can remove ``mysqrt.cxx`` from our ``MathFunctions`` library source list because it will be pulled in when ``SqrtLibrary`` is included.
+最後に、ライブラリの ``SqrtLibrary`` を利用する時にだけ ``mysqrt.cxx`` がコンパイルされるように、もう一方のライブラリ ``MathFunctions`` のソース・リストから ``mysqrt.cxx`` を削除しておきます。
 
 .. raw:: html
 
@@ -406,5 +406,5 @@ Finally, we can remove ``mysqrt.cxx`` from our ``MathFunctions`` library source 
 
   </details>
 
-With these changes, the ``mysqrt`` function is now completely optional to whoever is building and using the ``MathFunctions`` library.
-Users can toggle ``USE_MYMATH`` to manipulate what library is used in the build.
+以上の変更で ``mysqrt`` 関数は、``MathFunctions`` ライブラリを利用するユーザにはオプション扱いになりました。
+ユーザは ``USE_MYMATH`` を切り替えて、利用するライブラリのビルドを制御できるようになります。
