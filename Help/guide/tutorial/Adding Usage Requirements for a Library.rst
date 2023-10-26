@@ -4,8 +4,8 @@
 演習１ - ライブラリの使用要件を追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ターゲット・パラメータの「:ref:`使用要件 <Target Usage Requirements>`」（*Usage Requirements*） を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、CMake 内で変化するターゲットのプロパティをより細かく制御できるようになります。
-この使用要件を活用する主なコマンドは：
+ターゲット・パラメータの「:ref:`使用要件 <Target Usage Requirements>`」（*Usage Requirements*） を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、CMake 内で「遷移する」ターゲットのプロパティをより細かく制御できるようになります。
+これを活用する主なコマンドは：
 
 * :command:`target_compile_definitions`
 * :command:`target_compile_options`
@@ -66,7 +66,7 @@
 解決方法
 --------
 
-Let's update the code from the previous step to use the modern CMake approach of usage requirements.
+前のステップのコードを修正して、CMake の最新のアプローチである「使用要件」を使ってみることにしましょう。
 
 We want to state that anybody linking to ``MathFunctions`` needs to include the current source directory, while ``MathFunctions`` itself doesn't.
 This can be expressed with an ``INTERFACE`` usage requirement.
