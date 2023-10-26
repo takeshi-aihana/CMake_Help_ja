@@ -4,8 +4,8 @@
 演習１ - ライブラリの使用要件を追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ターゲット・パラメタの「:ref:`使用要件 <Target Usage Requirements>`」 を使うとライブラリや実行形式のリンクと include 行をより適切に制御できると共に、CMake 内で変化するターゲットのプロパティをより細かく制御できるようになります。
-使用要件を活用する主なコマンドは：
+ターゲット・パラメータの「:ref:`使用要件 <Target Usage Requirements>`」（*Usage Requirements*） を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、CMake 内で変化するターゲットのプロパティをより細かく制御できるようになります。
+この使用要件を活用する主なコマンドは：
 
 * :command:`target_compile_definitions`
 * :command:`target_compile_options`
@@ -35,25 +35,24 @@
 始める
 ------
 
-この演習では、最新の「:guide:`tutorial/Adding a Library`」のコードをリファクタリングします。
-In this exercise, we will refactor our code from :guide:`tutorial/Adding a Library` to use the modern CMake approach.
-We will let our library define its own usage requirements so they are passed transitively to other targets as necessary.
-In this case, ``MathFunctions`` will specify any needed include directories itself.
-Then, the consuming target ``Tutorial`` simply needs to link to ``MathFunctions`` and not worry about any additional include directories.
+この演習では、CMake の最新のアプローチを利用するために 「:guide:`tutorial/Adding a Library`」で演習したコードをリファクタリングします。
+ライブラリに独自の「使用要件」を定義させて、必要に応じて他のターゲットに渡せるようにします。
+この時 ``MathFunctions`` は必要な include ディレクトリそのものを指定します。
+次に、使用するターゲットの ``Tutorial`` は ``MathFunctions`` にリンクするだけで、追加の include ディレクトリについて心配する必要はありません。
 
-The starting source code is provided in the ``Step3`` directory.
-In this exercise, complete ``TODO 1`` through ``TODO 3``.
+出発点は ``Step3`` ディレクトリにあるソース・ファイルです。
+この演習では ``TODO 1`` から始めて ``TODO 3`` まで進めて下さい。
 
-First, add a call to :command:`target_include_directories` in ``MathFunctions/CMakeLists``.
-Remember that :variable:`CMAKE_CURRENT_SOURCE_DIR` is the path to the source directory currently being processed.
+まず ``MathFunctions/CMakeLists`` に :command:`target_include_directories` コマンドを追加します。
+変数の :variable:`CMAKE_CURRENT_SOURCE_DIR` は、現在作業しているソース・ファイルがあるパス名です。
 
-Then, update (and simplify!) the call to :command:`target_include_directories` in the top-level ``CMakeLists.txt``.
+それからプロジェクト最上位の ``CMakeLists.txt`` にある :command:`target_include_directories` コマンドの呼び出しを修正して短くします。
 
 ビルドと実行
 -------------
 
-Make a new directory called ``Step3_build``, run the :manual:`cmake <cmake(1)>` executable or the :manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it with your chosen build tool or by using :option:`cmake --build . <cmake --build>` from the build directory.
-Here's a refresher of what that looks like from the command line:
+あらたに ``Step3_build`` ディレクトリを作成し、:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使う、またはビルド・ディレクトリから :option:`cmake --build . <cmake --build>` を実行してプロジェクトをビルドします。
+この一連のコマンドライン操作は次のようになります：
 
 .. code-block:: console
 
@@ -62,7 +61,7 @@ Here's a refresher of what that looks like from the command line:
   cmake ../Step3
   cmake --build .
 
-Next, use the newly built ``Tutorial`` and verify that it is working as expected.
+次に、新しくビルドした実行形式の ``Tutorial`` を使って期待通り動作するか確認して下さい。
 
 解決方法
 --------
