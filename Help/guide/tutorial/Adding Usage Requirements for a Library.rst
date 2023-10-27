@@ -1,10 +1,10 @@
-ステップ３: ライブラリの使用要件を追加する
+ステップ３: ライブラリの利用要件を追加する
 ==========================================
 
-演習１ - ライブラリの使用要件を追加する
+演習１ - ライブラリの利用要件を追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ターゲット・パラメータの「:ref:`使用要件 <Target Usage Requirements>`」（*Usage Requirements*） を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、CMake 内で「遷移する」ターゲットのプロパティをより細かく制御できるようになります。
+ターゲット・プロパティの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、「対象が変化する」プロパティを CMake 内でより細かく制御できるようになります。
 これを活用する主なコマンドは：
 
 * :command:`target_compile_definitions`
@@ -19,7 +19,7 @@
 目標
 ----
 
-ライブラリに「使用要件」を追加する。
+ライブラリに「利用要件」を追加する。
 
 参考情報
 --------
@@ -36,9 +36,9 @@
 ------
 
 この演習では、CMake の最新のアプローチを利用するために 「:guide:`tutorial/Adding a Library`」で演習したコードをリファクタリングします。
-ライブラリに独自の「使用要件」を定義させて、必要に応じて他のターゲットに渡せるようにします。
-この時 ``MathFunctions`` は必要な include ディレクトリそのものを指定します。
-次に、使用するターゲットの ``Tutorial`` は ``MathFunctions`` にリンクするだけで、追加の include ディレクトリについて心配する必要はありません。
+ライブラリに独自の「利用要件」を定義させて、必要に応じて他のターゲットにプロパティを渡せるようにします。
+この時、``MathFunctions`` にはビルドに必要な include ディレクトリを指定します。
+次に、使用するターゲットである ``Tutorial`` は ``MathFunctions`` にリンクするだけで、追加の include ディレクトリについて心配する必要はありません。
 
 出発点は ``Step3`` ディレクトリにあるソース・ファイルです。
 この演習では ``TODO 1`` から始めて ``TODO 3`` まで進めて下さい。
@@ -51,7 +51,7 @@
 ビルドと実行
 -------------
 
-あらたに ``Step3_build`` ディレクトリを作成し、:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使う、またはビルド・ディレクトリから :option:`cmake --build . <cmake --build>` を実行してプロジェクトをビルドします。
+あらたに ``Step3_build`` ディレクトリを作成し、:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使うか、またはビルド・ディレクトリから :option:`cmake --build . <cmake --build>` を実行してプロジェクトをビルドします。
 この一連のコマンドライン操作は次のようになります：
 
 .. code-block:: console
@@ -61,18 +61,18 @@
   cmake ../Step3
   cmake --build .
 
-次に、新しくビルドした実行形式の ``Tutorial`` を使って期待通り動作するか確認して下さい。
+次に、新しくビルドした実行形式の ``Tutorial`` が期待通り動作するか確認して下さい。
 
 解決方法
 --------
 
-前のステップのコードを修正して、CMake の最新のアプローチである「使用要件」を使ってみることにしましょう。
+前のステップのコードを修正して、CMake の最新のアプローチである「利用要件」を使ってみることにしましょう。
 
-We want to state that anybody linking to ``MathFunctions`` needs to include the current source directory, while ``MathFunctions`` itself doesn't.
-This can be expressed with an ``INTERFACE`` usage requirement.
-Remember ``INTERFACE`` means things that consumers require but the producer doesn't.
+まず、``MathFunctions`` ライブラリを利用する（リンクする）場合は :variable:`CMAKE_CURRENT_SOURCE_DIR` を include する必要がありますが、``Mathfunctions`` ライブラリそのものをビルドする際は必要ないことについて説明しておきたいと思います。
+これは、``INTERFACE`` という利用要件で表現します。
+``INTERFACE`` はライブラリを利用するユーザに必要なものですが、ライブラリをビルドしてユーザに提供する開発者には必要ないということを覚えておいて下さい。
 
-At the end of ``MathFunctions/CMakeLists.txt``, use :command:`target_include_directories` with the ``INTERFACE`` keyword, as follows:
+``MathFunctions/CMakeLists.txt`` の最後で、次のように ``INTERFACE`` キーワードを指定して :command:`target_include_directories` コマンドを呼び出します：
 
 .. raw:: html
 
@@ -89,9 +89,9 @@ At the end of ``MathFunctions/CMakeLists.txt``, use :command:`target_include_dir
 
   </details>
 
-Now that we've specified usage requirements for ``MathFunctions`` we can safely remove our uses of the ``EXTRA_INCLUDES`` variable from the top-level ``CMakeLists.txt``.
+ここでは、``MathFunctions`` ライブラリの利用要件を指定したので、プロジェクト最上位の ``CMakeLists.txt`` から  ``EXTRA_INCLUDES`` 変数を安全に削除できます。
 
-Remove this line:
+この行を削除して下さい：
 
 .. raw:: html
 
@@ -108,7 +108,7 @@ Remove this line:
 
   </details>
 
-And remove ``EXTRA_INCLUDES`` from ``target_include_directories``:
+そして ``target_include_directories`` から ``EXTRA_INCLUDES`` 変数のエントリを削除します：
 
 .. raw:: html
 
@@ -124,21 +124,21 @@ And remove ``EXTRA_INCLUDES`` from ``target_include_directories``:
 
   </details>
 
-Notice that with this technique, the only thing our executable target does to use our library is call :command:`target_link_libraries` with the name of the library target.
-In larger projects, the classic method of specifying library dependencies manually becomes very complicated very quickly.
+この手法だと、ターゲットである実行形式がライブラリを利用するために行うことは、ライブラリのターゲット名を指定して :command:`target_link_libraries` コマンドを呼び出すだけです。
+もっと大規模なプロジェクトだと、ライブラリの依存関係を手動で指定する従来の方法だと、すぐに複雑化して混乱を引き起こすことになるでしょう。
 
 演習２ - インタフェース・ライブラリに C++ 標準を適用する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now that we have switched our code to a more modern approach, let's demonstrate a modern technique to set properties to multiple targets.
+ここでコードを新しいアプローチに切り替えたので、プロパティを複数のターゲットにセットする最新の手法について確認してみましょう。
 
-Let's refactor our existing code to use an ``INTERFACE`` library.
-We will use that library in the next step to demonstrate a common use for :manual:`generator expressions <cmake-generator-expressions(7)>`.
+ライブラリの ``INTERFACE`` を使用するように既存のコードをリファクタリングしてみましょう。
+次のステップで、このライブラリを使って「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」の一般的な使用方法を示します。
 
 目標
 ----
 
-Add an ``INTERFACE`` library target to specify the required C++ standard.
+ターゲットに ``INTERFACE`` ライブラリを追加して、必要な C++ 標準を指定する。
 
 参考情報
 --------
@@ -267,3 +267,7 @@ and this:
 With this, all of our code still requires C++ 11 to build.
 Notice  though that with this method, it gives us the ability to be specific about which targets get specific requirements.
 In addition, we create a single source of truth in our interface library.
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_usage_requirements] `CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_ 参照。
