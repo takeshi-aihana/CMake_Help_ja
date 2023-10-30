@@ -4,28 +4,28 @@
 :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` はビルドシステムの生成中に評価され、構成したビルドごとに固有の情報を生成します。
 
 :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` は :prop_tgt:`LINK_LIBRARIES`、:prop_tgt:`INCLUDE_DIRECTORIES`、:prop_tgt:`COMPILE_DEFINITIONS` などいろいろなターゲット・プロパティのコンテキストで使用できます。
-さらに :command:`target_link_libraries`、:command:`target_include_directories`、 :command:`target_compile_definitions` などのコマンドを使用して、これらのプロパティ
-They may also be used when using commands to populate those properties, such as :command:`target_link_libraries`, :command:`target_include_directories`, :command:`target_compile_definitions` and others.
+さらに :command:`target_link_libraries`、:command:`target_include_directories`、:command:`target_compile_definitions` などのコマンドを使用して、これらのプロパティを設定できます。
 
-:manual:`Generator expressions <cmake-generator-expressions(7)>`  may be used to enable conditional linking, conditional definitions used when compiling, conditional include directories and more.
-The conditions may be based on the build configuration, target properties, platform information or any other queryable information.
+:manual:`ジェネレータ式 <cmake-generator-expressions(7)>` は条件付きリンク、コンパイル時に使用する条件、条件付きインクルード・ディレクトリなどを有効にする際にも使えます。
+これらの「条件」はビルド構成やターゲットのプロパティ、プラットフォームの情報、あるいはその他、コンパイラ等に問い合わせが可能な情報のことです。
 
-There are different types of :manual:`generator expressions <cmake-generator-expressions(7)>` including Logical, Informational, and Output expressions.
+:manual:`ジェネレータ式 <cmake-generator-expressions(7)>` には論理式、データ式、そして出力式など、さまざまな種類があります。
 
-Logical expressions are used to create conditional output.
-The basic expressions are the ``0`` and ``1`` expressions. A ``$<0:...>`` results in the empty string, and ``<1:...>`` results in the content of ``...``.
-They can also be nested.
+たとえば論理式は条件付き出力を生成する際に使用します。
+もっとも基本的な論理式は ``0`` と ``1`` です。
+他に、式 ``$<0:...>`` は空文字を返し、式 ``<1:...>`` は ``...`` の内容を返します。
+これら二つの式はネストさせることもできます。
 
-演習１ - ジェネレータ式を使ってコンパイラのワーニング抑制フラグを追加する
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - ジェネレータ式を使ってコンパイラのワーニング・フラグを追加する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A common usage of :manual:`generator expressions <cmake-generator-expressions(7)>` is to conditionally add compiler flags, such as those for language levels or warnings.
-A nice pattern is to associate this information to an ``INTERFACE`` target allowing this information to propagate.
+:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`  のもっとも典型的な使い方は、プログラミング言語の最適化やワーニングのようなコンパイラ・フラグを条件付きで追加するというものです。
+この方法のメリットは、コンパイラ・フラグを ``INTERFACE`` 型のライブラリなどのターゲットに関連付けることで、フラグを伝搬させることができるようになることです。
 
 目標
 ----
 
-Add compiler warning flags when building but not for installed versions.
+ビルド時にワーニング・フラグ [#hint_for_warninig_flags]_ を追加する。ただしリリース版には追加しない。
 
 参考情報
 --------
@@ -131,7 +131,7 @@ The resulting full code looks like the following:
 
   <details><summary>TODO 4: Click to show/hide answer</summary>
 
-.. literalinclude:: Step5/CMakeLists.txt
+.. literalinclude:: Step5/CMakeLists.txt 
   :caption: TODO 4: CMakeLists.txt
   :name: CMakeLists.txt-target_compile_options-genex
   :language: cmake
@@ -141,3 +141,7 @@ The resulting full code looks like the following:
 .. raw:: html
 
   </details>
+
+.. rubric:: 日本語訳注記
+
+..  [#hint_for_warninig_flags]  ワーニングレベルをエラーとして扱うフラグのこと。
