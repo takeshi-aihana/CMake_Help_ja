@@ -36,7 +36,7 @@
 ------
 
 この演習では、CMake の最新のアプローチを利用するために 「:guide:`tutorial/Adding a Library`」で演習したコードをリファクタリングします。
-ライブラリに独自の「利用要件」を定義させて、必要に応じて他のターゲットにプロパティを渡せるようにします。
+ライブラリに独自の「利用要件」を定義させて、必要に応じて別のターゲットにプロパティを渡せるようにします。
 この時、``MathFunctions`` ライブラリにはビルドに必要なインクルード・ディレクトリを指定します。
 次に、ターゲットである実行形式の ``Tutorial`` は ``MathFunctions`` ライブラリにリンクするだけで、追加のインクルード・ディレクトリについては特に気にする必要はありません。
 
@@ -156,7 +156,7 @@
 始める
 ------
 
-この演習では、``INTERFACE`` 型のライブラリを使って C++ 標準を指定するようにコードをリファクタリングします。
+この演習では、``INTERFACE`` 型のライブラリを使って C++11 標準を要求するようにコードをリファクタリングします。
 
 演習１の ``STEP3`` の最後に残っていた部分から始めます。
 そして ``TODO 4`` から ``TODO 7`` まで完了して下さい。
@@ -169,22 +169,22 @@
 ビルドと実行
 ------------
 
-Since we have our build directory already configured from Exercise 1, simply rebuild our code by calling the following:
+演習１で既にビルド・ディレクトリを構成しているので、次のコマンドラインを実行してコードを再ビルドするだけです：
 
 .. code-block:: console
 
   cd Step3_build
   cmake --build .
 
-Next, use the newly built ``Tutorial`` and verify that it is working as expected.
+次に、新しくビルドした実行形式の ``Tutorial`` が期待通り動作するか確認して下さい。
 
 解決方法
 --------
 
-Let's update our code from the previous step to use interface libraries to set our C++ requirements.
+演習１からのコードを、INTERFACE 型のライブラリを使って C++11 標準を要求するように更新しましょう。
 
-To start, we need to remove the two :command:`set` calls on the variables :variable:`CMAKE_CXX_STANDARD` and :variable:`CMAKE_CXX_STANDARD_REQUIRED`.
-The specific lines to remove are as follows:
+まず、変数の :variable:`CMAKE_CXX_STANDARD` と :variable:`CMAKE_CXX_STANDARD_REQUIRED` に対する :command:`set` コマンド二つの呼び出しを削除する必要があります。
+削除の対象となる行は次のとおりです：
 
 .. literalinclude:: Step3/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -193,8 +193,8 @@ The specific lines to remove are as follows:
   :start-after: # specify the C++ standard
   :end-before: # configure a header file
 
-Next, we need to create an interface library, ``tutorial_compiler_flags``.
-And then use :command:`target_compile_features` to add the compiler feature ``cxx_std_11``.
+さらに ``tutorial_compiler_flags`` という INTERFACE 型のライブラリを作成する必要があります。
+そして :command:`target_compile_features` コマンドを使って、コンパイラ・フラグである ``cxx_std_11`` を指定します。
 
 
 .. raw:: html
@@ -212,8 +212,8 @@ And then use :command:`target_compile_features` to add the compiler feature ``cx
 
   </details>
 
-Finally, with our interface library set up, we need to link our executable ``Tutorial``, our ``SqrtLibrary`` library and our ``MathFunctions`` library to our new ``tutorial_compiler_flags`` library.
-Respectively, the code will look like this:
+最後に INTERFACE 型のライブラリを設定したら、実行形式の``Tutorial``、``SqrtLibrary`` ライブラリ、そして``MathFunctions`` ライブラリをそれぞれ新しい ``tutorial_compiler_flags`` ライブラリにリンクして下さい。
+それぞれ次のようになります：
 
 .. raw:: html
 
@@ -230,7 +230,7 @@ Respectively, the code will look like this:
 
   </details>
 
-this:
+これと：
 
 .. raw:: html
 
@@ -247,7 +247,7 @@ this:
 
   </details>
 
-and this:
+そしてこれ：
 
 .. raw:: html
 
@@ -263,11 +263,12 @@ and this:
 
   </details>
 
+以上の変更で、すべてのコードのビルドで C++11 の標準が要求されます。
+この手法であれば、どのターゲットが C++11 の標準に準拠しているかを具体的に指定できるという点に留意しておいて下さい。
+さらに、この INTERFASE 型のライブラリの中に唯一のソースコードを生成します [#comment_for_translation_01]_ 。
 
-With this, all of our code still requires C++ 11 to build.
-Notice  though that with this method, it gives us the ability to be specific about which targets get specific requirements.
-In addition, we create a single source of truth in our interface library.
 
 .. rubric:: 日本語訳注記
 
 .. [#hint_for_usage_requirements] `CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_ 参照。
+.. [#comment_for_translation_01] 意味不明。原文は In addition, we create a single source of truth in our interface library.
