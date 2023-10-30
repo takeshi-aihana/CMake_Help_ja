@@ -4,7 +4,7 @@
 演習１ - ライブラリの利用要件を追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ターゲット・プロパティの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）を使うと、ライブラリや実行形式のリンクと include 行をより適切に制御できると共に、「対象が変化する」プロパティを CMake 内でより細かく制御できるようになります。
+ターゲット・プロパティの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）を使うと、ライブラリや実行形式のリンクと #include 行をより適切に制御できると共に、「ターゲットが変化する」プロパティを CMake 内でより細かく制御できるようになります。
 これを活用する主なコマンドは：
 
 * :command:`target_compile_definitions`
@@ -37,8 +37,8 @@
 
 この演習では、CMake の最新のアプローチを利用するために 「:guide:`tutorial/Adding a Library`」で演習したコードをリファクタリングします。
 ライブラリに独自の「利用要件」を定義させて、必要に応じて他のターゲットにプロパティを渡せるようにします。
-この時、``MathFunctions`` にはビルドに必要な include ディレクトリを指定します。
-次に、使用するターゲットである ``Tutorial`` は ``MathFunctions`` にリンクするだけで、追加の include ディレクトリについて心配する必要はありません。
+この時、``MathFunctions`` ライブラリにはビルドに必要なインクルード・ディレクトリを指定します。
+次に、ターゲットである実行形式の ``Tutorial`` は ``MathFunctions`` ライブラリにリンクするだけで、追加のインクルード・ディレクトリについては特に気にする必要はありません。
 
 出発点は ``Step3`` ディレクトリにあるソース・ファイルです。
 この演習では ``TODO 1`` から始めて ``TODO 3`` まで進めて下さい。
@@ -68,7 +68,7 @@
 
 前のステップのコードを修正して、CMake の最新のアプローチである「利用要件」を使ってみることにしましょう。
 
-まず、``MathFunctions`` ライブラリを利用する（リンクする）場合は :variable:`CMAKE_CURRENT_SOURCE_DIR` を include する必要がありますが、``Mathfunctions`` ライブラリそのものをビルドする際は必要ないことについて説明しておきたいと思います。
+まず、``MathFunctions`` ライブラリを利用する（リンクする）場合は :variable:`CMAKE_CURRENT_SOURCE_DIR` を #include する必要がありますが、``Mathfunctions`` ライブラリそのものをビルドする際は必要ないことについて説明しておきたいと思います。
 これは、``INTERFACE`` という利用要件で表現します。
 ``INTERFACE`` はライブラリを利用するユーザに必要なものですが、ライブラリをビルドしてユーザに提供する開発者には必要ないということを覚えておいて下さい。
 
@@ -132,13 +132,13 @@
 
 ここでコードを新しいアプローチに切り替えたので、プロパティを複数のターゲットにセットする最新の手法について確認してみましょう。
 
-ライブラリの ``INTERFACE`` を使用するように既存のコードをリファクタリングしてみましょう。
+ライブラリの ``INTERFACE`` を使用するように既存のコードをリファクタリングしましょう。
 次のステップで、このライブラリを使って「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」の一般的な使用方法を示します。
 
 目標
 ----
 
-ターゲットに ``INTERFACE`` ライブラリを追加して、必要な C++ 標準を指定する。
+ターゲットに ``INTERFACE`` 型のライブラリを追加して、必要な C++ 標準を指定する。
 
 参考情報
 --------
@@ -156,15 +156,15 @@
 始める
 ------
 
-In this exercise, we will refactor our code to use an ``INTERFACE`` library to specify the C++ standard.
+この演習では、``INTERFACE`` 型のライブラリを使って C++ 標準を指定するようにコードをリファクタリングします。
 
-Start this exercise from what we left at the end of Step3 exercise 1.
-You will have to complete ``TODO 4`` through ``TODO 7``.
+演習１の ``STEP3`` の最後に残っていた部分から始めます。
+そして ``TODO 4`` から ``TODO 7`` まで完了して下さい。
 
-Start by editing the top level ``CMakeLists.txt`` file.
-Construct an ``INTERFACE`` library target called ``tutorial_compiler_flags`` and specify ``cxx_std_11`` as a target compiler feature.
+まずプロジェクト最上位の ``CMakeLists.txt`` ファイルを編集します。
+``tutorial_compiler_flags`` という ``INTERFACE`` 型のライブラリをターゲットとしてビルドし、ターゲットのコンパイラ機能として ``cxx_std_11`` を指定します。
 
-Modify ``CMakeLists.txt`` and ``MathFunctions/CMakeLists.txt`` so that all targets have a :command:`target_link_libraries` call to ``tutorial_compiler_flags``.
+``CMakeLists.txt`` と ``MathFunctions/CMakeLists.txt`` を変更して、全てのターゲットで ``tutorial_compiler_flags`` を引数に :command:`target_link_libraries`  コマンドを呼び出すようにします。
 
 ビルドと実行
 ------------
