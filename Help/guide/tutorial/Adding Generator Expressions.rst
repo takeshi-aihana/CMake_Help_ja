@@ -43,13 +43,14 @@
 始める
 ------
 
-Open the file ``Step4/CMakeLists.txt`` and complete ``TODO 1`` through ``TODO 4``.
+``Step4/CMakeLists.txt`` を開いて ``TODO 1`` からh ``TODO 4`` まで進めて下さい。
 
-First, in the top level ``CMakeLists.txt`` file, we need to set the :command:`cmake_minimum_required` to ``3.15``.
-In this exercise we are going to use a generator expression which was introduced in CMake 3.15.
+まず、このプロジェクト最上位の ``CMakeLists.txt`` では :command:`cmake_minimum_required` コマンド呼び出して、CMake の最低バージョンを ``3.15`` にセットします。
+この演習では CMake バージョン 3.15 で導入されたジェネレータ式を使う予定です。
 
-Next we add the desired compiler warning flags that we want for our project.
-As warning flags vary based on the compiler, we use the ``COMPILE_LANG_AND_ID`` generator expression to control which flags to apply given a language and a set of compiler ids.
+次に、このプロジェクト向けにコンパイラのワーニング・フラグ [#hint_for_warninig_flags]_ を追加します。
+このワーニング・フラグはコンパイラに依存するため、``COMPILE_LANG_AND_ID`` というジェネレータ式を使って、どのフラグをどのプログラミング言語とコンパイラに適用させるかを調節します。
+
 
 ビルドと実行
 ------------
@@ -70,7 +71,7 @@ Update the :command:`cmake_minimum_required` to require at least CMake version `
 
 .. raw:: html
 
-  <details><summary>TODO 1: Click to show/hide answer</summary>
+  <details><summary>TODO 1: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step5/CMakeLists.txt
   :caption: TODO 1: CMakeLists.txt
@@ -88,7 +89,7 @@ We set the result in the variables ``gcc_like_cxx`` and ``msvc_cxx`` as follows:
 
 .. raw:: html
 
-  <details><summary>TODO 2: Click to show/hide answer</summary>
+  <details><summary>TODO 2: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step5/CMakeLists.txt
   :caption: TODO 2: CMakeLists.txt
@@ -107,7 +108,7 @@ We use :command:`target_compile_options` to apply these flags to our interface l
 
 .. raw:: html
 
-  <details><summary>TODO 3: Click to show/hide answer</summary>
+  <details><summary>TODO 3: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 3: CMakeLists.txt
@@ -129,7 +130,7 @@ The resulting full code looks like the following:
 
 .. raw:: html
 
-  <details><summary>TODO 4: Click to show/hide answer</summary>
+  <details><summary>TODO 4: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step5/CMakeLists.txt 
   :caption: TODO 4: CMakeLists.txt
