@@ -16,8 +16,8 @@
 他に、式 ``$<0:...>`` は空文字を返し、式 ``<1:...>`` は ``...`` の内容を返します。
 これら二つの式はネストさせることもできます。
 
-演習１ - ジェネレータ式を使ってコンパイラのワーニング・フラグを追加する
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - ジェネレータ式を使ってコンパイラのワーニング・フラグを条件付きで追加する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :manual:`ジェネレータ式 <cmake-generator-expressions(7)>`  のもっとも典型的な使い方は、プログラミング言語の最適化やワーニングのようなコンパイラ・フラグを条件付きで追加するというものです。
 この方法のメリットは、コンパイラ・フラグを ``INTERFACE`` 型のライブラリなどのターゲットに関連付けることで、フラグを伝搬させることができるようになることです。
@@ -25,7 +25,7 @@
 目標
 ----
 
-ビルド時にワーニング・フラグ [#hint_for_warninig_flags]_ を追加する。ただしリリース版には追加しない。
+ビルド時にコンパイラのワーニング・フラグ [#hint_for_warninig_flags]_ を追加する。ただしリリース版 [#hint_for_releasing]_ には追加しない。
 
 参考情報
 --------
@@ -45,17 +45,17 @@
 
 ``Step4/CMakeLists.txt`` を開いて ``TODO 1`` からh ``TODO 4`` まで進めて下さい。
 
-まず、このプロジェクト最上位の ``CMakeLists.txt`` では :command:`cmake_minimum_required` コマンド呼び出して、CMake の最低バージョンを ``3.15`` にセットします。
+まず、このプロジェクト最上位の ``CMakeLists.txt`` で :command:`cmake_minimum_required` コマンドを呼び出して、CMake の最低バージョンを ``3.15`` にセットします。
 この演習では CMake バージョン 3.15 で導入されたジェネレータ式を使う予定です。
 
-次に、このプロジェクト向けにコンパイラのワーニング・フラグ [#hint_for_warninig_flags]_ を追加します。
+次に、このプロジェクト向けにコンパイラのワーニング・フラグを追加します。
 このワーニング・フラグはコンパイラに依存するため、``COMPILE_LANG_AND_ID`` というジェネレータ式を使って、どのフラグをどのプログラミング言語とコンパイラに適用させるかを調節します。
 
 
 ビルドと実行
 ------------
 
-Make a new directory called ``Step4_build``, run the :manual:`cmake <cmake(1)>` executable or the :manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it with your chosen build tool or by using ``cmake --build .`` from the build directory.
+``Step4_build`` というディレクトリを新たに作成し、:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使うか、またはビルド・ディレクトリから ``cmake --build .`` を実行してプロジェクトをビルドします。
 
 .. code-block:: console
 
@@ -67,7 +67,7 @@ Make a new directory called ``Step4_build``, run the :manual:`cmake <cmake(1)>` 
 解決方法
 --------
 
-Update the :command:`cmake_minimum_required` to require at least CMake version ``3.15``:
+少なくとも CMake のバージョン ``3.15`` が必要であることを :command:`cmake_minimum_required` コマンドで指定します：
 
 .. raw:: html
 
@@ -83,9 +83,9 @@ Update the :command:`cmake_minimum_required` to require at least CMake version `
 
   </details>
 
-Next we determine which compiler our system is currently using to build since warning flags vary based on the compiler we use.
-This is done with the ``COMPILE_LANG_AND_ID`` generator expression.
-We set the result in the variables ``gcc_like_cxx`` and ``msvc_cxx`` as follows:
+次に、ワーニング・フラグは使用するコンパイラに依存するので、ビルドシステムでどのコンパイラを使用するのか確認します。
+これはジェネレータ式の ``COMPILE_LANG_AND_ID`` を使います。
+次のように、この式を評価した結果を格納する変数 ``gcc_like_cxx`` と ``msvc_cxx`` を用意します：
 
 .. raw:: html
 
@@ -102,9 +102,9 @@ We set the result in the variables ``gcc_like_cxx`` and ``msvc_cxx`` as follows:
 
   </details>
 
-Next we add the desired compiler warning flags that we want for our project.
-Using our variables ``gcc_like_cxx`` and ``msvc_cxx``, we can use another generator expression to apply the respective flags only when the variables are true.
-We use :command:`target_compile_options` to apply these flags to our interface library.
+そして、このプロジェクトで使用するコンパイラのワーニング・フラグを追加します。
+変数 ``gcc_like_cxx`` と ``msvc_cxx`` を使って、別のジェネレータ式を使い、これらの変数が TRUE の場合にのみ、それぞれのフラグを適用することもできます。
+:command:`target_compile_options` コマンドを使い、これらのフラグを INTERFACE 型のライブラリに適用します。
 
 .. raw:: html
 
@@ -123,10 +123,10 @@ We use :command:`target_compile_options` to apply these flags to our interface l
 
   </details>
 
-Lastly, we only want these warning flags to be used during builds.
-Consumers of our installed project should not inherit our warning flags.
-To specify this, we wrap our flags from TODO 3 in a generator expression using the ``BUILD_INTERFACE`` condition.
-The resulting full code looks like the following:
+最後に、これらのワーニング・フラグはビルドでのみ使用したいと考えています。
+プロジェクトをインストールしたユーザには、これらのフラグを継承すべきではありません。
+そのため、``TODO3`` で適用したフラグを ``BUILD_INTERFACE`` という条件を評価するジェネレータ式でラップします。
+以上の変更はつぎのようになります：
 
 .. raw:: html
 
@@ -145,4 +145,5 @@ The resulting full code looks like the following:
 
 .. rubric:: 日本語訳注記
 
-..  [#hint_for_warninig_flags]  ワーニングレベルをエラーとして扱うフラグのこと。
+.. [#hint_for_warninig_flags] 警告を表すメッセージを有効にするフラグなど。
+.. [#hint_for_releasing] ビルドしたライブラリを利用する（リンクする）際にはフラグを追加しない。
