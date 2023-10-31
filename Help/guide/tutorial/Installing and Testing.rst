@@ -1,108 +1,94 @@
-Step 5: Installing and Testing
-==============================
+ステップ５: インストールとテスト
+================================
 
-Exercise 1 - Install Rules
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - インストールのルール
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Often, it is not enough to only build an executable, it should also be
-installable. With CMake, we can specify install rules using the
-:command:`install` command. Supporting local installations for your builds in
-CMake is often as simple as specifying an install location and the targets and
-files to be installed.
+多くの場合、実行形式をビルドするだけではなく、それをインストールしなければならないケースがあります。
+CMake では :command:`install` コマンドでインストールのルールを指定できます。
+ビルドしたものをローカルにインストールする処理を CMake に追加することは、インストール先とインストールするターゲットやファイルを指定することと同じくらい簡単です。
 
-Goal
+目標
 ----
 
-Install the ``Tutorial`` executable and the ``MathFunctions`` library.
+ビルドした実行形式の ``Tutorial`` とライブラリの ``MathFunctions`` をインストールする。
 
-Helpful Materials
------------------
+参考情報
+--------
 
 * :command:`install`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``MathFunctions/CMakeLists.txt``
 * ``CMakeLists.txt``
 
-Getting Started
----------------
+始める
+------
 
-The starting code is provided in the ``Step5`` directory. In this
-exercise, complete ``TODO 1`` through ``TODO 4``.
+``Step5`` のディレクトリにあるソース・コードから始めます。
+この演習では ``TODO 1`` から ``TODO 4`` まで進めて下さい。
 
-First, update ``MathFunctions/CMakeLists.txt`` to install the
-``MathFunctions`` and ``tutorial_compiler_flags`` libraries to the ``lib``
-directory. In that same file, specify the install rules needed to install
-``MathFunctions.h`` to the ``include`` directory.
+まず、``MathFunctions/CMakeLists.txt`` を更新して二つのライブラリ ``MathFunctions`` と ``tutorial_compiler_flags`` を ``lib`` というディレクトリにインストールします。
+同様にヘッダ・ファイルの ``MathFunctions.h`` を ``include`` というディレクトリにインストールするためのルールを追加します。
 
-Then, update the top level ``CMakeLists.txt`` to install
-the ``Tutorial`` executable to the ``bin`` directory. Lastly, any header files
-should be installed to the ``include`` directory. Remember that
-``TutorialConfig.h`` is in the :variable:`PROJECT_BINARY_DIR`.
+次にプロジェクト最上位の ``CMakeLists.txt`` を更新して実行形式の ``Tutorial`` を ``bin`` というディレクトリにインストールします。
+最後に、全てのヘッダ・ファイルを ``include`` というディレクトリにインストールして下さい。
+ここで ``TutorialConfig.h`` というヘッダ・ファイルは :variable:`PROJECT_BINARY_DIR` にあることに注意して下さい。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Make a new directory called ``Step5_build``. Run the
-:manual:`cmake <cmake(1)>` executable or the
-:manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it
-with your chosen build tool.
+``Step5_build`` というディレクトリを新たに作成して下さい。
+:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使ってプロジェクトをビルドします。
 
-Then, run the install step by using the :option:`--install <cmake --install>`
-option of the :manual:`cmake  <cmake(1)>` command (introduced in 3.15, older
-versions of CMake must use ``make install``) from the command line. This step
-will install the appropriate header files, libraries, and executables.
-For example:
+それから :manual:`cmake  <cmake(1)>` コマンドに :option:`--install <cmake --install>` オプションを付けてインストールを実行します
+（CMake バージョン 3.15 から。これより古いバージョンの CMake では ``make install`` を実行する必要あり）。
+このステップは適切なヘッダ・ファイルとライブラリ、そして実行形式をインストールします。
+たとえば：
 
 .. code-block:: console
 
   cmake --install .
 
-For multi-configuration tools, don't forget to use the
-:option:`--config <cmake--build --config>` argument to specify the configuration.
+複数ある configuration ツールを使用している場合（たとえば Visual Studio など）は、:option:`--config <cmake--build --config>` オプションを使って使用する configuration を指定することを忘れないで下さい。
 
 .. code-block:: console
 
   cmake --install . --config Release
 
-If using an IDE, simply build the ``INSTALL`` target. You can build the same
-install target from the command line like the following:
+IDE を使っている場合は ``INSTALL`` ターゲットをビルドするだけです。
+次のようにコマンドラインからも同じ ``install`` ターゲットをビルドできます：
 
 .. code-block:: console
 
   cmake --build . --target install --config Debug
 
-The CMake variable :variable:`CMAKE_INSTALL_PREFIX` is used to determine the
-root of where the files will be installed. If using the :option:`cmake --install`
-command, the installation prefix can be overridden via the
-:option:`--prefix <cmake--install --prefix>` argument. For example:
+CMake の変数 :variable:`CMAKE_INSTALL_PREFIX` はファイルをインストール先の Prefix を決定するために使用します。
+:option:`cmake --install` を実行する場合、この変数の値は :option:`--prefix <cmake--install --prefix>`  オプションで上書きできます。
+たとえば：
 
 .. code-block:: console
 
   cmake --install . --prefix "/home/myuser/installdir"
 
-Navigate to the install directory and verify that the installed ``Tutorial``
-runs.
+インストール先のディレクトリへ移動して、インストールされた ``Tutorial`` が実行できることを確認して下さい。
 
-Solution
+解決方法
 --------
 
-The install rules for our project are fairly simple:
+このプロジェクトのインストール・ルールは非常に簡単なものです：
 
-* For ``MathFunctions``, we want to install the libraries and header file to
-  the ``lib`` and ``include`` directories respectively.
+* ライブラリの ``MathFunctions`` は、二つのライブラリ・ファイルとヘッダ・ファイルをそれぞれ ``lib`` と ``include`` ディレクトリにインストールする
 
-* For the ``Tutorial`` executable, we want to install the executable and
-  configured header file to the ``bin`` and ``include`` directories
-  respectively.
+* 実行形式の ``Tutorial`` は、実行形式のファイルと設定済みのヘッダ・ファイルをそれぞれ ``bin`` と ``include`` ディレクトリにインストールする
 
-So to the end of ``MathFunctions/CMakeLists.txt`` we add:
+そのため ``MathFunctions/CMakeLists.txt`` の最後に以下を追加します：
 
 .. raw:: html
 
-  <details><summary>TODO 1: Click to show/hide answer</summary>
+  <details><summary>TODO 1: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/MathFunctions/CMakeLists.txt
   :caption: TODO 1: MathFunctions/CMakeLists.txt
@@ -115,11 +101,11 @@ So to the end of ``MathFunctions/CMakeLists.txt`` we add:
 
   </details>
 
-and
+そして：
 
 .. raw:: html
 
-  <details><summary>TODO 2: Click to show/hide answer</summary>
+  <details><summary>TODO 2: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/MathFunctions/CMakeLists.txt
   :caption: TODO 2: MathFunctions/CMakeLists.txt
@@ -131,12 +117,12 @@ and
 
   </details>
 
-The install rules for the ``Tutorial`` executable and configured header file
-are similar. To the end of the top-level ``CMakeLists.txt`` we add:
+実行形式 ``Tutorial`` と設定済みのヘッダ・ファイルをインストールするルールはにています。
+このプロジェクト最上位の ``CMakeLists.txt`` の最後に以下を追加します：
 
 .. raw:: html
 
-  <details><summary>TODO 3,4: Click to show/hide answer</summary>
+  <details><summary>TODO 3,4: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -149,26 +135,24 @@ are similar. To the end of the top-level ``CMakeLists.txt`` we add:
 
   </details>
 
-That is all that is needed to create a basic local
-install of the tutorial.
+基本的なローカル・インストールを行うために必要なことはこれだけです。
 
 .. _`Tutorial Testing Support`:
 
-Exercise 2 - Testing Support
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習２ - テストのサポート
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CTest offers a way to easily manage tests for your project. Tests can be
-added through the :command:`add_test` command. Although it is not
-explicitly covered in this tutorial, there is a lot of compatibility
-between CTest and other testing frameworks such as :module:`GoogleTest`.
+CTest はいろいろなテストをプロジェクトで簡単に管理する方法を提供しています。
+テストは :command:`add_test` コマンドで追加することができます。
+このチュートリアルでは詳しく説明していませんが、CTest と :module:`GoogleTest` のようなその他のテスト用フレームワークとの間には多くの互換性があります。
 
-Goal
+目標
 ----
 
-Create unit tests for our executable using CTest.
+CTest を使ってプロジェクトの実行形式の Unit テストを作成する。
 
-Helpful Materials
------------------
+参考情報
+--------
 
 * :command:`enable_testing`
 * :command:`add_test`
@@ -176,43 +160,41 @@ Helpful Materials
 * :command:`set_tests_properties`
 * :manual:`ctest <ctest(1)>`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``CMakeLists.txt``
 
-Getting Started
----------------
+始める
+------
 
-The starting source code is provided in the ``Step5`` directory. In this
-exercise, complete ``TODO 5`` through ``TODO 9``.
+``Step5`` のディレクトリにあるソース・コードから始めます。
+この演習では ``TODO 5`` から ``TODO 9`` まで進めて下さい。
 
-First, we need to enable testing. Next, begin adding tests to our project
-using :command:`add_test`. We will work through adding 3 simple tests and
-then you can add additional testing as you see fit.
+まず、テストを有効にうする必要があります。
+それから :command:`add_test` コマンドを使ってプロジェクトにテストを追加していきます。
+このプロジェクトには3つの簡単なテストを追加します。
+必要であればご自身でテストを追加することも可能です。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Navigate to the build directory and rebuild the application. Then, run the
-:program:`ctest` executable: :option:`ctest -N` and :option:`ctest -VV`. For
-multi-config generators (e.g. Visual Studio), the configuration type must be
-specified with the :option:`-C \<mode\> <ctest -C>` flag.  For example, to run tests in Debug
-mode use ``ctest -C Debug -VV`` from the build directory
-(not the Debug subdirectory!). Release mode would be executed from the same
-location but with a ``-C Release``. Alternatively, build the ``RUN_TESTS``
-target from the IDE.
+ビルド・ディレクトリに移動して、プロジェクトをリビルドします。
+それから :manual:`ctest(1)` コマンドを次のようにして実行します： :option:`ctest -N` と :option:`ctest -VV` 。
+複数ある configuration ツールを使用している場合（たとえば Visual Studio など）は、:option:`-C \<mode\> <ctest -C>` オプションを使ってテストする構成を指定して下さい。
+たとえばデバッグ・モードでテストを実行する場合は、（デバッグ用のサブディレクトリではなく）ビルド・ディレクトリから ``ctest -C Debug -VV`` を実行します。
+対してリリース・モードも同じビルド・ディレクトリから実行しますが、``-C Release`` として実行します。
+あるいは IDE の場合は ``RUN_TESTS`` というターゲットをビルドして下さい。
 
-Solution
+解決方法
 --------
 
-Let's test our application. At the end of the top-level ``CMakeLists.txt``
-file we first need to enable testing with the
-:command:`enable_testing` command.
+このプロジェクトをテストしましょう。
+まずプロジェクト最上位の ``CMakeLists.txt`` の最後で、:command:`enable_testing` を呼び出してテストを有効にします。
 
 .. raw:: html
 
-  <details><summary>TODO 5: Click to show/hide answer</summary>
+  <details><summary>TODO 5: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/CMakeLists.txt
   :caption: TODO 5: CMakeLists.txt
@@ -225,17 +207,15 @@ file we first need to enable testing with the
 
   </details>
 
-With testing enabled, we will add a number of basic tests to verify
-that the application is working correctly. First, we create a test using
-:command:`add_test` which runs the ``Tutorial`` executable with the
-parameter 25 passed in. For this test, we are not going to check the
-executable's computed answer. This test will verify that
-application runs, does not segfault or otherwise crash, and has a zero
-return value. This is the basic form of a CTest test.
+テストを有効にしたら、プロジェクトのアプリケーションが正しく動作していることを確認するために、基本的なテストをいくつか追加します。
+まず最初に、実行形式の ``Tutorial`` に引数として 25 を渡して実行するテストを :command:`add_test` コマンドで追加します。
+このテストでは、``Tutorial`` の実際の計算結果はチェックしません。
+このテストではアプリケーションが実行され、SIGSEGV などでクラッシュせずに、返り値が 0 であることを確認します。
+これが CTest によるテストの基本形です。
 
 .. raw:: html
 
-  <details><summary>TODO 6: Click to show/hide answer</summary>
+  <details><summary>TODO 6: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/CMakeLists.txt
   :caption: TODO 6: CMakeLists.txt
@@ -248,14 +228,12 @@ return value. This is the basic form of a CTest test.
 
   </details>
 
-Next, let's use the :prop_test:`PASS_REGULAR_EXPRESSION` test property to
-verify that the output of the test contains certain strings. In this case,
-verifying that the usage message is printed when an incorrect number of
-arguments are provided.
+次に :prop_test:`PASS_REGULAR_EXPRESSION` というテスト用プロパティを使って、テストの結果に特定の文字列が含まれていることを確認してみましょう。
+この場合、間違った引数を渡して実行した時に用法（*Usage*）のメッセージが出力されることを確認します。
 
 .. raw:: html
 
-  <details><summary>TODO 7: Click to show/hide answer</summary>
+  <details><summary>TODO 7: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/CMakeLists.txt
   :caption: TODO 7: CMakeLists.txt
@@ -268,12 +246,11 @@ arguments are provided.
 
   </details>
 
-The next test we will add verifies the computed value is truly the
-square root.
+次に追加するテストは、計算結果が正しい平方根であるかを確認します。
 
 .. raw:: html
 
-  <details><summary>TODO 8: Click to show/hide answer</summary>
+  <details><summary>TODO 8: （クリックして答えを見る／隠す）</summary>
 
 .. code-block:: cmake
   :caption: TODO 8: CMakeLists.txt
@@ -288,17 +265,14 @@ square root.
 
   </details>
 
-This one test is not enough to give us confidence that it will
-work for all values passed in. We should add more tests to verify this.
-To easily add more tests, we make a function called ``do_test`` that runs the
-application and verifies that the computed square root is correct for
-given input. For each invocation of ``do_test``, another test is added to
-the project with a name, input, and expected results based on the passed
-arguments.
+この1個のテストだけで、あらゆる引数に対して正しく計算しているかを判定するには不十分です。
+これを検証するために、もっとテストを追加する必要があります。
+複数のテストを簡単に追加するに、アプリケーションを実行して、引数に対して計算された平方根の値が正しいかどうかを顕彰する ``do_test`` という関数を作成します。
+この ``do_test`` を呼び出すたびに、関数に渡した引数からテスト名、テストに渡す入力パラメータ、そして期待する結果を持つテストが自動的にプロジェクトに追加されます。
 
 .. raw:: html
 
-  <details><summary>TODO 9: Click to show/hide answer</summary>
+  <details><summary>TODO 9: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step6/CMakeLists.txt
   :caption: TODO 9: CMakeLists.txt

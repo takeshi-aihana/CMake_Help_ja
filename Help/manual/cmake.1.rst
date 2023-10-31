@@ -250,13 +250,13 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debug-output
 
- CMake をデバッグモードで実行する。
+ CMake をデバッグ・モードで実行する。
 
  CMake 実行中に、 :command:`message(SEND_ERROR)` コマンドを使ってスタックトレースなどの追加情報を出力する。
 
 .. option:: --debug-find
 
- CMake の `find` コマンドをデバッグモードで実行する。
+ CMake の `find` コマンドをデバッグ・モードで実行する。
 
  CMake 実行中に `find` コマンドの追加情報を標準エラー出力に出力する。
  この出力は可読なフォーマットであり、出力結果の解析に向いた出力ではないので注意すること。
@@ -264,14 +264,14 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
 
 .. option:: --debug-find-pkg=<pkg>[,...]
 
- CMake の :command:`find_package(\<pkg\>) <find_package>` （ ``<pkg>`` はパッケージ名を表す（大小文字を区別する）文字列をカンマで区切って並べたもの）コマンドをデバッグモードで実行する。
+ CMake の :command:`find_package(\<pkg\>) <find_package>` （ ``<pkg>`` はパッケージ名を表す（大小文字を区別する）文字列をカンマで区切って並べたもの）コマンドをデバッグ・モードで実行する。
 
  :option:`--debug-find <cmake --debug-find>` オプションと違う点は、指定したパッケージについてのみ検索すること。
 
 .. option:: --debug-find-var=<var>[,...]
 
 
- 変数 ``<var>`` （変数を表す文字列をカンマで区切って並べたもの）を検索する CMake の `find` コマンドをデバッグモードで実行する。
+ 変数 ``<var>`` （変数を表す文字列をカンマで区切って並べたもの）を検索する CMake の `find` コマンドをデバッグ・モードで実行する。
 
  :option:`--debug-find <cmake --debug-find>` オプションと違う点は、指定した変数についてのみ検索すること。
 
