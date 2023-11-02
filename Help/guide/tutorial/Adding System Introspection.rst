@@ -1,57 +1,51 @@
-Step 7: Adding System Introspection
-===================================
+ステップ７: システムのイントロスペクションを追加する
+====================================================
 
-Let us consider adding some code to our project that depends on features the
-target platform may not have. For this example, we will add some code that
-depends on whether or not the target platform has the ``log`` and ``exp``
-functions. Of course almost every platform has these functions but for this
-tutorial assume that they are not common.
+ターゲットのプラットフォームには無い機能に依存したコードを、プロジェクトに追加することを考えてみましょう。
+たとえば、ターゲットのプラットフォームに ``log`` 関数と ``exp`` 関数があるかどうかを調べて、それに依存するコードを追加します。
+もちろん、ほとんどすべてのプラットフォームでこれらの関数は提供されていますが、このチュートリアルでは、それが一般的ではないことを前提とします。
 
-Exercise 1 - Assessing Dependency Availability
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+演習１ - 利用可否を評価する
+===========================
 
-Goal
+目標
 ----
 
-Change implementation based on available system dependencies.
+システムの依存関係に応じて実装を変更する。
 
-Helpful Resources
------------------
+参考情報
+--------
 
 * :module:`CheckCXXSourceCompiles`
 * :command:`target_compile_definitions`
 
-Files to Edit
--------------
+編集するファイル
+----------------
 
 * ``MathFunctions/CMakeLists.txt``
 * ``MathFunctions/mysqrt.cxx``
 
-Getting Started
----------------
+始める
+------
 
-The starting source code is provided in the ``Step7`` directory. In this
-exercise, complete ``TODO 1`` through ``TODO 5``.
+``Step7`` のディレクトリにあるソース・コードから始めます。
+この演習では ``TODO 1`` から ``TODO 5`` まで進めて下さい。
 
-Start by editing ``MathFunctions/CMakeLists.txt``. Include the
-:module:`CheckCXXSourceCompiles` module. Then, use
-``check_cxx_source_compiles`` to determine whether ``log`` and ``exp`` are
-available from ``cmath``. If they are available, use
-:command:`target_compile_definitions` to specify ``HAVE_LOG`` and ``HAVE_EXP``
-as compile definitions.
+まず、``MathFunctions/CMakeLists.txt`` を編集します。
+:module:`CheckCXXSourceCompiles` というモジュールを :command:`include` コマンドでロードします。
+それから、``check_cxx_source_compiles`` を使って関数の ``log`` と ``exp`` が ``cmath`` から利用できるかどうかをチェックします。
+これらの関数が利用できる場合は :command:`target_compile_definitions` コマンドを使い、コンパイル時の定義フラグとして ``HAVE_LOG`` と ``HAVE_EXP`` を指定します。
 
-In the ``MathFunctions/mysqrt.cxx``, include ``cmath``. Then, if the system has
-``log`` and ``exp``, use them to compute the square root.
+``MathFunctions/mysqrt.cxx`` の中で ``cmath`` をインクルードします。
+それから ``log`` と ``exp`` の関数が利用できることが判明したら、平方根を計算する際にそれらの関数を使うことにします。
 
-Build and Run
--------------
+ビルドと実行
+------------
 
-Make a new directory called ``Step7_build``. Run the
-:manual:`cmake  <cmake(1)>` executable or the
-:manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it
-with your chosen build tool and run the ``Tutorial`` executable.
+``Step7_build`` というディレクトリを新たに作成して下さい。
+:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使ってプロジェクトをビルドして 実行形式の ``Tutoriral`` を実行して下さい。
 
-This can look like the following:
+この一連のコマンドライン操作は次のようになります：
 
 .. code-block:: console
 
@@ -60,18 +54,16 @@ This can look like the following:
   cmake ../Step7
   cmake --build .
 
-Which function gives better results now, ``sqrt`` or ``mysqrt``?
+``sqrt`` と ``mysqrt`` のどちらの関数が良い結果になりましたか？
 
-Solution
+解決方法
 --------
 
-In this exercise we will use functions from the
-:module:`CheckCXXSourceCompiles` module so first we must include it in
-``MathFunctions/CMakeLists.txt``.
+この演習では :module:`CheckCXXSourceCompiles` モジュールの関数を利用するため、まずそれを ``MathFunctions/CMakeLists.txt`` の中でロードしておく必要があります。
 
 .. raw:: html
 
-  <details><summary>TODO 1: Click to show/hide answer</summary>
+  <details><summary>TODO 1: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step8/MathFunctions/CMakeLists.txt
   :caption: TODO 1: MathFunctions/CMakeLists.txt
@@ -84,15 +76,13 @@ In this exercise we will use functions from the
 
   </details>
 
-Then test for the availability of
-``log`` and ``exp`` using ``check_cxx_compiles_source``. This function
-lets us try compiling simple code with the required dependency prior to
-the true source code compilation. The resulting variables ``HAVE_LOG``
-and ``HAVE_EXP`` represent whether those dependencies are available.
+次に、``log`` と ``exp`` 関数が利用できるかどうかを ``check_cxx_compiles_source`` という関数でそれぞれテストします。
+この関数は、実際にソース・コードをコンパイルする前に、必要となる依存関係を含む簡単なテスト・コードを作成してコンパイルします。
+このテスト・コードを実行し、結果として得られる二つの CMake 変数 ``HAVE_LOG`` と ``HAVE_EXP`` は、ソース・コードでそれらの関数を利用できるかどうかを表します。
 
 .. raw:: html
 
-  <details><summary>TODO 2: Click to show/hide answer</summary>
+  <details><summary>TODO 2: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step8/MathFunctions/CMakeLists.txt
   :caption: TODO 2: MathFunctions/CMakeLists.txt
@@ -105,14 +95,13 @@ and ``HAVE_EXP`` represent whether those dependencies are available.
 
   </details>
 
-Next, we need to pass these CMake variables to our source code. This way,
-our source code can tell what resources are available. If both ``log`` and
-``exp`` are available, use :command:`target_compile_definitions` to specify
-``HAVE_LOG`` and ``HAVE_EXP`` as ``PRIVATE`` compile definitions.
+次に、これらの CMake 変数をプロジェクトのソース・コードに渡す必要があります。
+このようにして、プロジェクトのソース・コードは必要なリソースが利用できることを知ることができるのです。
+``log`` と ``exp`` の両方の関数が利用できるならば :command:`target_compile_definitions` コマンドを使って、``HAVE_LOG`` と ``HAVE_EXP`` を ``PRIVATE`` なコンパイル時の定義フラグとして指定します。
 
 .. raw:: html
 
-  <details><summary>TODO 3: Click to show/hide answer</summary>
+  <details><summary>TODO 3: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step8/MathFunctions/CMakeLists.txt
   :caption: TODO 3: MathFunctions/CMakeLists.txt
@@ -125,12 +114,11 @@ our source code can tell what resources are available. If both ``log`` and
 
   </details>
 
-Since we may be using ``log`` and ``exp``, we need to modify
-``mysqrt.cxx`` to include ``cmath``.
+``log`` と ``exp`` の関数を使っている ``mysqrt.cxx`` を変更して ``cmath`` をインクルードする必要があります。
 
 .. raw:: html
 
-  <details><summary>TODO 4: Click to show/hide answer</summary>
+  <details><summary>TODO 4: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step8/MathFunctions/mysqrt.cxx
   :caption: TODO 4: MathFunctions/mysqrt.cxx
@@ -143,13 +131,12 @@ Since we may be using ``log`` and ``exp``, we need to modify
 
   </details>
 
-If ``log`` and ``exp`` are available on the system, then use them to
-compute the square root in the ``mysqrt`` function. The ``mysqrt`` function in
-``MathFunctions/mysqrt.cxx`` will look as follows:
+``log`` と ``exp`` の関数が利用できる場合は ``mysqrt`` 関数でそれらを使って平方根を計算します。
+``MathFunctions/mysqrt.cxx`` にある ``mysqrt`` 関数は次のようになります：
 
 .. raw:: html
 
-  <details><summary>TODO 5: Click to show/hide answer</summary>
+  <details><summary>TODO 5: （クリックして答えを見る／隠す）</summary>
 
 .. literalinclude:: Step8/MathFunctions/mysqrt.cxx
   :caption: TODO 5: MathFunctions/mysqrt.cxx
