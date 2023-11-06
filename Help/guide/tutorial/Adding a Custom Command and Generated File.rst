@@ -1,29 +1,22 @@
-Step 8: Adding a Custom Command and Generated File
-==================================================
+ステップ８: カスタム・コマンドと一時ファイルを追加する
+======================================================
 
-Suppose, for the purpose of this tutorial, we decide that we never want to use
-the platform ``log`` and ``exp`` functions and instead would like to
-generate a table of precomputed values to use in the ``mysqrt`` function.
-In this section, we will create the table as part of the build process,
-and then compile that table into our application.
+このチュートリアルでは、プラットフォームで提供している ``log`` や ``exp`` 関数を使わず、代わりに ``mysqrt`` 関数で使用する計算値テーブルをビルドする時に生成しておくものとします。
+このステップでは、ビルドの過程でテーブルを生成し、そのテーブルをチュートリアルのアプリケーションの中に取り込んでコンパイルします。
 
-First, let's remove the check for the ``log`` and ``exp`` functions in
-``MathFunctions/CMakeLists.txt``. Then remove the check for ``HAVE_LOG`` and
-``HAVE_EXP`` from ``mysqrt.cxx``. At the same time, we can remove
-:code:`#include <cmath>`.
+まず、``MathFunctions/CMakeLists.txt`` の中にある ``log`` と ``exp`` の関数に対する確認を削除しましょう。
+それからソース・ファイルの ``mysqrt.cxx`` から ``HAVE_LOG`` と ``HAVE_EXP`` のチェックも削除します。
+同時に :code:`#include <cmath>` のインクルードも削除できます。
 
-In the ``MathFunctions`` subdirectory, a new source file named
-``MakeTable.cxx`` has been provided to generate the table.
+``MathFunctions`` サブディレクトリには、計算値のテーブルを生成するために新しく ``MakeTable.cxx`` というファイルが提供されています。
 
-After reviewing the file, we can see that the table is produced as valid C++
-code and that the output filename is passed in as an argument.
+このファイルを見てみると計算値のテーブルを生成する C++ の関数があり、引数として渡された名前のファイルに出力しているのがわかります。
 
-The next step is to create ``MathFunctions/MakeTable.cmake``. Then, add the
-appropriate commands to the file to build the ``MakeTable`` executable and
-then run it as part of the build process. A few commands are needed to
-accomplish this.
+次のステップで ``MathFunctions/MakeTable.cmake`` を生成します。
+そして ``MakeTabke`` という実行形式をビルドするための CMake コマンドを追加して、ビルドの過程でそれを実行するようにします。
+これを実現するには、いくつかのコマンドが必要です。
 
-First, we add an executable for ``MakeTable``.
+まず ``MakeTable`` という実行形式の生成を CMake に指示します。
 
 .. literalinclude:: Step9/MathFunctions/MakeTable.cmake
   :caption: MathFunctions/MakeTable.cmake
@@ -32,8 +25,7 @@ First, we add an executable for ``MakeTable``.
   :start-after: # first we add the executable that generates the table
   :end-before: target_link_libraries
 
-After creating the executable, we add the ``tutorial_compiler_flags`` to our
-executable using :command:`target_link_libraries`.
+実行形式をビルドしたら、:command:`target_link_libraries` コマンドを使って実行形式に ``tutorial_compiler_flags`` ライブラリをリンクします。
 
 .. literalinclude:: Step9/MathFunctions/MakeTable.cmake
   :caption: MathFunctions/MakeTable.cmake
@@ -42,8 +34,7 @@ executable using :command:`target_link_libraries`.
   :start-after: add_executable
   :end-before: # add the command to generate
 
-Then we add a custom command that specifies how to produce ``Table.h``
-by running MakeTable.
+そして、``MakeTable`` を実行して ``Table.h`` というファイルを生成する方法を指定する CMake のカスタム・コマンドを追加します。
 
 .. literalinclude:: Step9/MathFunctions/MakeTable.cmake
   :caption: MathFunctions/MakeTable.cmake
@@ -51,9 +42,8 @@ by running MakeTable.
   :language: cmake
   :start-after: # add the command to generate the source code
 
-Next we have to let CMake know that ``mysqrt.cxx`` depends on the generated
-file ``Table.h``. This is done by adding the generated ``Table.h`` to the list
-of sources for the library ``SqrtLibrary``.
+なお、ソース・ファイルの ``mysqrt.cxx`` が、ここで生成した ``Table.h`` に依存していることを CMake に知らせる必要があります。
+これは ``Sqrtlibrary`` ライブラリに対するソースのリストに ``Table.h`` を追加することで実現できます。
 
 .. literalinclude:: Step9/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -62,8 +52,8 @@ of sources for the library ``SqrtLibrary``.
   :start-after:   # library that just does sqrt
   :end-before: # state that we depend on
 
-We also have to add the current binary directory to the list of include
-directories so that ``Table.h`` can be found and included by ``mysqrt.cxx``.
+また、インクルード・ディレクトリのリストに、プロジェクトのビルド・ディレクトリを追加する必要があります。
+これにより、ビルド時に ``Table.h`` を見つけることができ、``mysqrt.cxx`` からインクルードできるようになります。
 
 .. literalinclude:: Step9/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -72,8 +62,7 @@ directories so that ``Table.h`` can be found and included by ``mysqrt.cxx``.
   :start-after: # state that we depend on our bin
   :end-before: target_link_libraries
 
-As the last step, we need to include
-``MakeTable.cmake`` at the top of the ``MathFunctions/CMakeLists.txt``.
+最後のステップとして、``MathFunctions/CMakeLists.txt`` の先頭で ``MakeTable.cmake`` をインクルードして下さい。
 
 .. literalinclude:: Step9/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -82,8 +71,9 @@ As the last step, we need to include
   :start-after: # generate Table.h
   :end-before: # library that just does sqrt
 
-Now let's use the generated table. First, modify ``mysqrt.cxx`` to include
-``Table.h``. Next, we can rewrite the ``mysqrt`` function to use the table:
+これで生成したテーブルを利用する準備が整ったので、実際に使ってみましょう。
+まず ``mysqrt.cxx`` を修正して ``Table.h`` をインクルードして下さい。
+次にテーブルを利用するように ``mysqrt`` 関数を書き換えて下さい：
 
 .. literalinclude:: Step9/MathFunctions/mysqrt.cxx
   :caption: MathFunctions/mysqrt.cxx
@@ -91,13 +81,9 @@ Now let's use the generated table. First, modify ``mysqrt.cxx`` to include
   :language: c++
   :start-after: // a hack square root calculation using simple operations
 
-Run the :manual:`cmake  <cmake(1)>` executable or the
-:manual:`cmake-gui <cmake-gui(1)>` to configure the project and then build it
-with your chosen build tool.
+:manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使ってプロジェクトをビルドして下さい。
 
-When this project is built it will first build the ``MakeTable`` executable.
-It will then run ``MakeTable`` to produce ``Table.h``. Finally, it will
-compile ``mysqrt.cxx`` which includes ``Table.h`` to produce the
-``MathFunctions`` library.
-
-Run the Tutorial executable and verify that it is using the table.
+このプロジェクトのビルドが始まると、まず実行形式の ``MakeTable`` を生成します。
+それから ``MakeTable`` を実行して ``Table.h`` を生成します。
+最後に、``Table.h`` をインクルードした ``mysqrt.cxx`` をコンパイルして、``MathFunctions`` ライブラリを生成します。
+実行形式の ``Tutorial`` を実行して、テーブルが使用されていることを確認してみて下さい。
