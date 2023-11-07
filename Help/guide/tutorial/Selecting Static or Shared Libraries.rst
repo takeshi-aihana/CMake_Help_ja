@@ -39,7 +39,7 @@
   :start-at: # state that SqrtLibrary need PIC when the default is shared libraries
   :end-at:  )
 
-Windows でビルドするときは ``declspec(dllexport)``  を使用することを示す ``EXPORTING_MYMATH`` を定義して下さい。
+Windows でビルドするときは ``declspec(dllexport)``  を使用することを示す ``EXPORTING_MYMATH`` を定義して下さい [#hint_for_dllexport]_ 。
 
 .. literalinclude:: Step11/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
