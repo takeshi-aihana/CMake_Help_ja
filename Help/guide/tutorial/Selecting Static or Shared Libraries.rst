@@ -1,14 +1,10 @@
-Step 10: Selecting Static or Shared Libraries
-=============================================
+ステップ１０: 静的ライブラリや共有ライブラリを選択する
+======================================================
 
-In this section we will show how the :variable:`BUILD_SHARED_LIBS` variable can
-be used to control the default behavior of :command:`add_library`,
-and allow control over how libraries without an explicit type (``STATIC``,
-``SHARED``, ``MODULE`` or ``OBJECT``) are built.
+このチュートリアルでは、:variable:`BUILD_SHARED_LIBS` という変数を利用して :command:`add_library` コマンドのデフォルトの挙動を制御する方法を確認して、明示的に種類（``STATIC``、``SHARED``、``MODULE`` 、または ``OBJECT``）が指定されていないライブラリのビルド方法を制御できるようにします。
 
-To accomplish this we need to add :variable:`BUILD_SHARED_LIBS` to the
-top-level ``CMakeLists.txt``. We use the :command:`option` command as it allows
-users to optionally select if the value should be ``ON`` or ``OFF``.
+これを実現するには、このプロジェクト最上位の ``CMakeLists.txt`` に変数 :variable:`BUILD_SHARED_LIBS` を追加する必要があります。
+:command:`option` コマンドを使用して、ユーザがオプションとして値を ``ON`` / ``OFF`` できるようにします。
 
 .. literalinclude:: Step11/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -17,8 +13,7 @@ users to optionally select if the value should be ``ON`` or ``OFF``.
   :start-after: set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
   :end-before: # configure a header file to pass the version number only
 
-Next, we need to specify output directories for our static and shared
-libraries.
+次に、静的ライブラリと共有ライブラリを出力するディレクトリを指定します。
 
 .. literalinclude:: Step11/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -27,18 +22,15 @@ libraries.
   :start-after: # we don't need to tinker with the path to run the executable
   :end-before: # configure a header file to pass the version number only
 
-Finally, update ``MathFunctions/MathFunctions.h`` to use dll export defines:
+最後に ``MathFunctions/MathFunctions.h`` を修正して DLL の EXPORT 定義 [#hint_for_dllexport]_ を使用するようにします：
 
 .. literalinclude:: Step11/MathFunctions/MathFunctions.h
   :caption: MathFunctions/MathFunctions.h
   :name: MathFunctions/MathFunctions.h
   :language: c++
 
-At this point, if you build everything, you may notice that linking fails
-as we are combining a static library without position independent code with a
-library that has position independent code. The solution to this is to
-explicitly set the :prop_tgt:`POSITION_INDEPENDENT_CODE` target property of
-SqrtLibrary to be ``True`` when building shared libraries.
+この時点で、すべてをビルドすると PIC（*Position Independent Code* ：位置独立コード）を持たない静的ライブラリと PIC を持つ共有ライブラリをリンクしてエラーになることに気づくことでしょう。
+これを解決するために、共有ライブラリの ``SqrtLibrary`` をビルドする際に :prop_tgt:`POSITION_INDEPENDENT_CODE` というターゲット・プロパティを明示的に ``True`` にしておきます。
 
 .. literalinclude:: Step11/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -47,8 +39,7 @@ SqrtLibrary to be ``True`` when building shared libraries.
   :start-at: # state that SqrtLibrary need PIC when the default is shared libraries
   :end-at:  )
 
-Define ``EXPORTING_MYMATH`` stating we are using ``declspec(dllexport)`` when
-building on Windows.
+Windows でビルドするときは ``declspec(dllexport)``  を使用することを示す ``EXPORTING_MYMATH`` を定義して下さい。
 
 .. literalinclude:: Step11/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -57,5 +48,10 @@ building on Windows.
   :start-at: # define the symbol stating we are using the declspec(dllexport) when
   :end-at: target_compile_definitions(MathFunctions PRIVATE "EXPORTING_MYMATH")
 
-**Exercise**: We modified ``MathFunctions.h`` to use dll export defines.
-Using CMake documentation can you find a helper module to simplify this?
+**演習**:
+上で、DLL の EXPORT 定義を利用するために ``MathFunctions.h`` ファイルを修正しました。
+CMake のドキュメントを参照して、これを簡単に実現するヘルパー・モジュールを見つけてみて下さい。
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_dllexport] `__declspec(dllexport) を使った DLL からのエクスポート <https://learn.microsoft.com/ja-jp/cpp/build/exporting-from-a-dll-using-declspec-dllexport?view=msvc-170>`_ 参照。
