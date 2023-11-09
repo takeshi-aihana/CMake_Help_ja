@@ -1,21 +1,14 @@
-Step 11: Adding Export Configuration
-====================================
+ステップ11: プロジェクトの構成をエキスポートする
+================================================
 
-During :guide:`tutorial/Installing and Testing` of the tutorial we added the
-ability for CMake to install the library and headers of the project. During
-:guide:`tutorial/Packaging an Installer` we added the ability to package up
-this information so it could be distributed to other people.
+チュートリアルにあった「:guide:`tutorial/Installing and Testing`」では、CMake がプロジェクトのライブラリとヘッダ・ファイルをローカルにインストールする機能を追加しました。
+また「:guide:`tutorial/Packaging an Installer`」のチュートリアルでは、これらのファイルをパッケージ化して他の人たちに配布できるようにする機能を追加しました。
 
-The next step is to add the necessary information so that other CMake projects
-can use our project, be it from a build directory, a local install or when
-packaged.
+この次のステップでは、他の CMake のプロジェクトで我々のプロジェクトをいろいろな場面 [#hint_for_using_our_project]_ で利用するために必要な情報を追加することにします。
 
-The first step is to update our :command:`install(TARGETS)` commands to not
-only specify a ``DESTINATION`` but also an ``EXPORT``. The ``EXPORT`` keyword
-generates a CMake file containing code to import all targets listed in the
-install command from the installation tree. So let's go ahead and explicitly
-``EXPORT`` the ``MathFunctions`` library by updating the ``install`` command
-in ``MathFunctions/CMakeLists.txt`` to look like:
+最初のステップは :command:`install(TARGETS)` コマンドを変更して、``DESTINATION`` だけではなく ``EXPORT`` も指定するようにします。
+``EXPORT`` というキーワードは、インストール・コマンドの対象となる全てのファイルをインストール先から取得するコードを CMake ファイルを出力します。
+それでは、``MathFunctions/CMakeLists.txt`` の ``install`` コマンドを次のように変更して、``MathFunctions`` ライブラリを明示歴に ``EXPORT`` してみましょう：
 
 .. literalinclude:: Complete/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -23,9 +16,8 @@ in ``MathFunctions/CMakeLists.txt`` to look like:
   :language: cmake
   :start-after: # install libs
 
-Now that we have ``MathFunctions`` being exported, we also need to explicitly
-install the generated ``MathFunctionsTargets.cmake`` file. This is done by
-adding the following to the bottom of the top-level ``CMakeLists.txt``:
+ここで ``MathFunctions`` ライブラリをエキスポートして生成された ``MathFunctionsTargets.cmake`` という CMake ファイルを明示的にインストールする必要があります。
+これはプロジェクト最上位にある ``CMakeLists.txt`` の最後に次のコマンドを追加することで実現できます：
 
 .. literalinclude:: Complete/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -34,8 +26,8 @@ adding the following to the bottom of the top-level ``CMakeLists.txt``:
   :start-after: # install the configuration targets
   :end-before: include(CMakePackageConfigHelpers)
 
-At this point you should try and run CMake. If everything is setup properly
-you will see that CMake will generate an error that looks like:
+この時点で、CMake を実行して確認してみて下さい。
+もし全ての設定が正しければ、CMake が次のようなエラーを出力するはずです：
 
 .. code-block:: console
 
@@ -46,13 +38,9 @@ you will see that CMake will generate an error that looks like:
 
   which is prefixed in the source directory.
 
-What CMake is trying to say is that during generating the export information
-it will export a path that is intrinsically tied to the current machine and
-will not be valid on other machines. The solution to this is to update the
-``MathFunctions`` :command:`target_include_directories` to understand that it
-needs different ``INTERFACE`` locations when being used from within the build
-directory and from an install / package. This means converting the
-:command:`target_include_directories` call for ``MathFunctions`` to look like:
+このエラーで CMake が言おうとしていることは、エキスポートする情報にはそれを生成したマシンに固有の情報が含まれている、すなわち他のマシンには存在しないパス名もエキスポートしようとしたということです。
+これを解決するには、``MathFunctions`` ライブラリの :command:`target_include_directories` コマンドを変更して、ビルド・ディレクトリの中からファイルを参照する場合と、インストール先（またはパッケージの中）からファイルを参照する場合とで、``INTERFACE`` が指す場所が違うということを CMake に理解させる必要があります。
+これは、``MathFunctions`` ライブラリの :command:`target_include_directories` コマンド呼び出しを次のように変更するということです：
 
 .. literalinclude:: Step12/MathFunctions/CMakeLists.txt
   :caption: MathFunctions/CMakeLists.txt
@@ -61,21 +49,16 @@ directory and from an install / package. This means converting the
   :start-after: # to find MathFunctions.h, while we don't.
   :end-before: # should we use our own math functions
 
-Once this has been updated, we can re-run CMake and verify that it doesn't
-warn anymore.
+これを変更したら、もう一度 CMake を実行して、エラーが表示されなくなったことを確認して下さい。
 
-At this point, we have CMake properly packaging the target information that is
-required but we will still need to generate a ``MathFunctionsConfig.cmake`` so
-that the CMake :command:`find_package` command can find our project. So let's go
-ahead and add a new file to the top-level of the project called
-``Config.cmake.in`` with the following contents:
+この時点で、CMake はインストールするファイルの情報を正しくエキスポートするようになりますが、他のプロジェクトからそれらを :command:`find_package` コマンドで見つけられるようにするために、依然として ``MathFunctionsConfig.cmake`` の生成が必要です。
+それではプロジェクト最上位に、次の内容を含む ``Config.cmake.in`` という新しいファイルを追加してみて下さい：
 
 .. literalinclude:: Step12/Config.cmake.in
   :caption: Config.cmake.in
   :name: Config.cmake.in
 
-Then, to properly configure and install that file, add the following to the
-bottom of the top-level ``CMakeLists.txt``:
+それからプロジェクトを適切に構成し、ファイルをインストールすために、次のコマンドをプロジェクト最上位にある ``CMakeLists.txt`` の最後に追加して下さい：
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -84,15 +67,11 @@ bottom of the top-level ``CMakeLists.txt``:
   :start-after: # install the configuration targets
   :end-before: # generate the config file
 
-
-Next, we execute the :command:`configure_package_config_file`.  This command
-will configure a provided file but with a few specific differences from the
-standard :command:`configure_file` way.
-To properly utilize this function, the input file should have a single line
-with the text ``@PACKAGE_INIT@`` in addition to the content that is desired.
-That variable will be replaced with a block of code which turns set values into
-relative paths.  These values which are new can be referenced by the same name
-but prepended with a ``PACKAGE_`` prefix.
+そして :command:`configure_package_config_file` コマンドを呼び出します。
+このコマンドは標準の :command:`configure_file` と同様に、指定されたファイルを設定しますがいくつか違いがあります。
+このコマンドを適切に利用するには、そのファイルに必要な情報に加えて、``@PACKAGE_INIT@`` というキーワードだけを含んだ単一行が必要です。
+このキーワードは、設定値を相対バスに変換するコードで置き換えられます。
+ここで置き換えられた値は同じ名前で参照できますが、``PACKAGE_`` という接頭詞が付加されます。
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -101,12 +80,10 @@ but prepended with a ``PACKAGE_`` prefix.
   :start-after: # install the configuration targets
   :end-before: # generate the version file
 
-The :command:`write_basic_package_version_file` is next.  This command writes
-a file which is used by :command:`find_package`, documenting the version and
-compatibility of the desired package.  Here, we use the ``Tutorial_VERSION_*``
-variables and say that it is compatible with ``AnyNewerVersion``, which
-denotes that this version or any higher one are compatible with the requested
-version.
+次は :command:`write_basic_package_version_file` コマンドです。
+このコマンドは :command:`find_package` コマンドで使用されるファイルを作成し、必要なパッケージのバージョンと互換性を記録します。
+ここでは ``Tutorial_VERSION_*`` という変数を使って ``AnyNewerVersion`` と互換性があることを宣言します。
+これは、このバージョンまたはこれ以降のバージョンは、要求されたバージョンと互換性があることを意味します。
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -115,7 +92,7 @@ version.
   :start-after: # generate the version file
   :end-before: # install the generated configuration files
 
-Finally, set both generated files to be installed:
+最後に、生成された両方のファイルがインストールされるように設定します：
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -124,10 +101,8 @@ Finally, set both generated files to be installed:
   :start-after: # install the generated configuration files
   :end-before: # generate the export
 
-At this point, we have generated a relocatable CMake Configuration for our
-project that can be used after the project has been installed or packaged. If
-we want our project to also be used from a build directory we only have to add
-the following to the bottom of the top level ``CMakeLists.txt``:
+この時点で、他のプロジェクトをインストールまたはパッケージ化したあとで利用することが可能な、我々のプロジェクト向けの（再配置が可能な）CMake の構成情報が生成されるようになりました。
+他のプロジェクトで、我々のプロジェクトをビルド・ディレクトリから利用したい場合は、そのプロジェクト最上位にある ``CMakeLists.txt`` の最後に次のコマンドを追加するだけです：
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -135,6 +110,9 @@ the following to the bottom of the top level ``CMakeLists.txt``:
   :language: cmake
   :start-after: # needs to be after the install(TARGETS) command
 
-With this export call we now generate a ``MathFunctionsTargets.cmake``, allowing the
-configured ``MathFunctionsConfig.cmake`` in the build directory to be used by
-other projects, without needing it to be installed.
+
+:command:`export` コマンド呼び出しで ``MathFunctionsTargets.cmake`` が生成され、ビルド・ディレクトリにある構成済みの ``MathFunctionsConfig.cmake`` ファイルをインストールすることなしに、他のプロジェクトで利用できるようになります。
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_using_our_project] たとえばビルド時とか、ローカルにインストールする時とか、あるいはパッケージされた時に利用するなど。
