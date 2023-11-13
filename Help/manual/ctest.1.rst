@@ -116,7 +116,7 @@ ctest(1)
  このオプションは、指定したジョブ数でテストを並列実行するように CTest に指示するだけ（必ずしも指定したとおりになるとは限らない）。
  このオプションは環境変数 :envvar:`CTEST_PARALLEL_LEVEL` を使って有効にすることもできる。
 
- このオプションは、テスト・プロパティの :prop_test:`PROCESSORS` と一緒に使用できる。
+ このオプションは、テスト用プロパティの :prop_test:`PROCESSORS` と一緒に使用できる。
 
  詳細は `Label and Subproject Summary`_ を参照のこと。
 
@@ -358,7 +358,7 @@ ctest(1)
 
  デフォルトのタイムアウトをセットする。
 
- このオプションは プロパティの :prop_test:`TIMEOUT` を介して、まだタイムアウトが有効になっていない全てのテストに適用する。
+ このオプションはテスト用プロパティの :prop_test:`TIMEOUT` を介して、まだタイムアウトが有効になっていない全てのテストに適用する。
 
 .. option:: --stop-time <time>
 
@@ -424,50 +424,37 @@ CMake のドキュメントからバージョン情報や特定のページを�
 
 .. _`Label and Subproject Summary`:
 
-Label and Subproject Summary
-============================
+ラベルとサブプロジェクトのサマリ
+================================
 
-CTest prints timing summary information for each ``LABEL`` and subproject
-associated with the tests run. The label time summary will not include labels
-that are mapped to subprojects.
+CTest は、実行するテストに関連付けられたラベル（``LABEL``）とサブプロジェクトに対して時間を計測してその結果をサマリ（*Timing Summary Information*）として出力します。
+ラベルごとの時間計測とそのサマリには、サブプロジェクトに含まれるラベルは含まれません。
 
 .. versionadded:: 3.22
-  Labels added dynamically during test execution are also reported in the
-  timing summary.  See :ref:`Additional Labels`.
+  テスト中にランタイムで追加されたラベルも計測結果のサマリに出力されます。
+  詳細は「:ref:`Additional Labels`」を参照して下さい。
 
-When the :prop_test:`PROCESSORS` test property is set, CTest will display a
-weighted test timing result in label and subproject summaries. The time is
-reported with `sec*proc` instead of just `sec`.
+:prop_test:`PROCESSORS` というテスト用プロパティをセットすると、CTest はラベルとサブプロジェクトのサマリで重み付けされた時間の計測結果を出力します。
+処理時間は `sec` ではなく `sec@proc` で出力します。
 
-The weighted time summary reported for each label or subproject ``j``
-is computed as::
+ラベルまたはサブプロジェクトで重み付けされた時間 "``j``" は、次のように計算されます::
 
   Weighted Time Summary for Label/Subproject j =
       sum(raw_test_time[j,i] * num_processors[j,i], i=1...num_tests[j])
 
   for labels/subprojects j=1...total
 
-where:
+変数の意味はそれぞれ：
 
-* ``raw_test_time[j,i]``: Wall-clock time for the ``i`` test
-  for the ``j`` label or subproject
-* ``num_processors[j,i]``: Value of the CTest :prop_test:`PROCESSORS` property
-  for the ``i`` test for the ``j`` label or subproject
-* ``num_tests[j]``: Number of tests associated with the ``j`` label or subproject
-* ``total``: Total number of labels or subprojects that have at least one test run
+* ``raw_test_time[j,i]``：ラベルまたはサブプロジェクト（"``j``"）のテスト（"``i``"） の実時間
+* ``num_processors[j,i]``：ラベルまたはサブプロジェクト（"``j``"）のテスト（"``i``"）のテスト用プロパティ :prop_test:`PROCESSORS` の値
+* ``num_tests[j]``：ラベルまたはサブプロジェクト（"``j``"）に関連付けられたテストの総数
+* ``total``：少なくとも1回実行するラベルまたはサブプロジェクトの総数
 
-Therefore, the weighted time summary for each label or subproject represents
-the amount of time that CTest gave to run the tests for each label or
-subproject and gives a good representation of the total expense of the tests
-for each label or subproject when compared to other labels or subprojects.
+したがって、ラベルまたはサブプロジェクトで重み付けされた時間の計測結果は、各ラベルまたはサブプロジェクトのテストの実行に費やした時間を表し、他のラベルやサブプロジェクトの結果と比較した際に、各ラベルまたはサブプロジェクトのテストの合計時間を適切に表します。
 
-For example, if ``SubprojectA`` showed ``100 sec*proc`` and ``SubprojectB`` showed
-``10 sec*proc``, then CTest allocated approximately 10 times the CPU/core time
-to run the tests for ``SubprojectA`` than for ``SubprojectB`` (e.g. so if effort
-is going to be expended to reduce the cost of the test suite for the whole
-project, then reducing the cost of the test suite for ``SubprojectA`` would
-likely have a larger impact than effort to reduce the cost of the test suite
-for ``SubprojectB``).
+たとえば ``SubprojectA`` の時間が ``100 sec*proc`` で、``SubprojectB`` の時間が ``10 sec*proc`` だった場合、CTest は ``SubprojectA`` のテストを実行するために、``SubprojectB`` よりも約10倍の CPU（または Core）時間を割り当てることになります
+（そのためコストを削減するために CPU 使用量を費やすケースだと、プロジェクト全体のテストに費やす CPU 使用量を削減する場合、``SubprojectA`` のテストを減らす方が、 ``SubprojectB`` のテストを減らすよりも大きく変化する可能性があります）。
 
 .. _`Build and Test Mode`:
 
