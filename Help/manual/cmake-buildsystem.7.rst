@@ -10,17 +10,16 @@ cmake-buildsystem(7)
 はじめに
 ========
 
-
-CMake 系のビルドシステムは、論理的なターゲットのいくつかの集まりから構成されている。
-Each target corresponds to an executable or library, or is a custom target containing custom commands.
-Dependencies between the targets are expressed in the buildsystem to determine the build order and the rules for regeneration in response to change.
+CMake 系のビルドシステムは論理的な「ターゲット」の集まりとして構成されます。
+このターゲットはそれぞれ、一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
+ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や修正に応じた再構成のルールを決定します。
 
 バイナリのターゲット
 ====================
 
-Executables and libraries are defined using the :command:`add_executable` and :command:`add_library` commands.
-The resulting binary files have appropriate :prop_tgt:`PREFIX`, :prop_tgt:`SUFFIX` and extensions for the platform targeted.
-Dependencies between binary targets are expressed using the :command:`target_link_libraries` command:
+実行形式とライブラリは  :command:`add_executable` と :command:`add_library` のコマンドを使ってそれぞれ定義されます。
+このコマンドを実行した結果として得られたバイナリ・ファイルには、ターゲットであるプラットフォームに対応した適切な :prop_tgt:`PREFIX` と :prop_tgt:`SUFFIX` と拡張子が付与されます。
+バイナリのターゲット間にある依存関係は :command:`target_link_libraries` というコマンドを使用して構築されます：
 
 .. code-block:: cmake
 
@@ -28,23 +27,23 @@ Dependencies between binary targets are expressed using the :command:`target_lin
   add_executable(zipapp zipapp.cpp)
   target_link_libraries(zipapp archive)
 
-``archive`` is defined as a ``STATIC`` library -- an archive containing objects compiled from ``archive.cpp``, ``zip.cpp``, and ``lzma.cpp``.
-``zipapp`` is defined as an executable formed by compiling and linking ``zipapp.cpp``.
-When linking the ``zipapp`` executable, the ``archive`` static library is linked in.
+上の例で ``archive`` は ``STATIC`` ライブラリ（その実体は ``archive.cpp``、``zip.cpp``、そして ``lzma.cpp`` をコンパイルしたオブジェクトを格納したアーカイブ）として定義されています。
+そして ``zipapp`` は ``zipapp.cpp`` をコンパイル・リンクすることで生成される実行形式として定義されています。
+実行形式の ``zipapp`` をリンクする際は、``archive`` という ``STATIC`` ライブラリをリンクします。
 
 .. _`Binary Executables`:
 
 実行形式
 --------
 
-The :command:`add_executable` command defines an executable target:
+:command:`add_executable` コマンドは一個の実行形式をターゲットとして定義します：
 
 .. code-block:: cmake
 
   add_executable(mytool mytool.cpp)
 
-Commands such as :command:`add_custom_command`, which generates rules to be run at build time can transparently use an :prop_tgt:`EXECUTABLE <TYPE>` target as a ``COMMAND`` executable.
-The buildsystem rules will ensure that the executable is built before attempting to run the command.
+ビルド時に任意のコマンド列を実行するルールを生成する :command:`add_custom_command` などは、定数の ``COMMAND`` を「実行形式」、:prop_tgt:`EXECUTABLE <TYPE>` を「ターゲット」として汎用的に利用できます。
+この時、生成されるビルドシステムのルールは、任意のコマンドを実行する前に ``COMMAND`` が指す実行形式を先にビルドすることを保証します。
 
 ライブラリの種類
 ----------------
@@ -54,8 +53,8 @@ The buildsystem rules will ensure that the executable is built before attempting
 通常のライブラリ
 ^^^^^^^^^^^^^^^^
 
-By default, the :command:`add_library` command defines a ``STATIC`` library, unless a type is specified.
-A type may be specified when using the command:
+:command:`add_library` コマンドはライブラリの種類を指定しないと、デフォルトの ``STATIC`` ライブラリを定義します。
+このライブラリの種類は、次のようにコマンドを実行することで指定できます：
 
 .. code-block:: cmake
 
@@ -65,12 +64,12 @@ A type may be specified when using the command:
 
   add_library(archive STATIC archive.cpp zip.cpp lzma.cpp)
 
-The :variable:`BUILD_SHARED_LIBS` variable may be enabled to change the behavior of :command:`add_library` to build shared libraries by default.
+あるいは :variable:`BUILD_SHARED_LIBS` という変数を有効にすると :command:`add_library` コマンドの挙動を変更して、デフォルトで共有ライブラリをビルドさせることができます。
 
-In the context of the buildsystem definition as a whole, it is largely irrelevant whether particular libraries are ``SHARED`` or ``STATIC`` -- the commands, dependency specifications and other APIs work similarly regardless of the library type.
-The ``MODULE`` library type is dissimilar in that it is generally not linked to -- it is not used in the right-hand-side of the :command:`target_link_libraries` command.
-It is a type which is loaded as a plugin using runtime techniques.
-If the library does not export any unmanaged symbols (e.g. Windows resource DLL, C++/CLI DLL), it is required that the library not be a ``SHARED`` library because CMake expects ``SHARED`` libraries to export at least one symbol.
+総じて、ビルドシステムが定義するコンテキストの中では、ライブラリが ``SHARED`` であるか ``STATIC`` であるかはほとんど関係ありません（CMake のコマンド、依存関係の仕様、そしてその他の CMake の API はライブラリの種類を問わず平等に機能します）。
+``MODULE`` という種類のライブラリは一般的に実行形式とリンクされないという点で他の種類のライブラリとは異なります。すなわち :command:`target_link_libraries` コマンドの引数には入りません。
+これはランタイム技術を使用して、プラグインとして読み込まれるライブラリです。
+ライブラリがアンマネージドなシンボル（たとえば Windows のリソース DLL、C++/CLI の DLL）をエキスポートしていない場合、CMake は ``SHARED`` ライブラリが一個以上のシンボルをエキスポートしていることを期待するので、ライブラリが ``SHARED`` でないことが要求されます。
 
 .. code-block:: cmake
 
