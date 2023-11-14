@@ -1,4 +1,4 @@
-.. cmake-manual-description: CMake Buildsystem Reference
+.. cmake-manual-description: CMake ビルドシステム・リファレンス
 
 cmake-buildsystem(7)
 ********************
@@ -7,23 +7,20 @@ cmake-buildsystem(7)
 
    .. contents::
 
-Introduction
-============
+はじめに
+========
 
-A CMake-based buildsystem is organized as a set of high-level logical
-targets.  Each target corresponds to an executable or library, or
-is a custom target containing custom commands.  Dependencies between the
-targets are expressed in the buildsystem to determine the build order
-and the rules for regeneration in response to change.
 
-Binary Targets
-==============
+CMake 系のビルドシステムは、論理的なターゲットのいくつかの集まりから構成されている。
+Each target corresponds to an executable or library, or is a custom target containing custom commands.
+Dependencies between the targets are expressed in the buildsystem to determine the build order and the rules for regeneration in response to change.
 
-Executables and libraries are defined using the :command:`add_executable`
-and :command:`add_library` commands.  The resulting binary files have
-appropriate :prop_tgt:`PREFIX`, :prop_tgt:`SUFFIX` and extensions for the
-platform targeted. Dependencies between binary targets are expressed using
-the :command:`target_link_libraries` command:
+バイナリのターゲット
+====================
+
+Executables and libraries are defined using the :command:`add_executable` and :command:`add_library` commands.
+The resulting binary files have appropriate :prop_tgt:`PREFIX`, :prop_tgt:`SUFFIX` and extensions for the platform targeted.
+Dependencies between binary targets are expressed using the :command:`target_link_libraries` command:
 
 .. code-block:: cmake
 
@@ -31,16 +28,14 @@ the :command:`target_link_libraries` command:
   add_executable(zipapp zipapp.cpp)
   target_link_libraries(zipapp archive)
 
-``archive`` is defined as a ``STATIC`` library -- an archive containing objects
-compiled from ``archive.cpp``, ``zip.cpp``, and ``lzma.cpp``.  ``zipapp``
-is defined as an executable formed by compiling and linking ``zipapp.cpp``.
-When linking the ``zipapp`` executable, the ``archive`` static library is
-linked in.
+``archive`` is defined as a ``STATIC`` library -- an archive containing objects compiled from ``archive.cpp``, ``zip.cpp``, and ``lzma.cpp``.
+``zipapp`` is defined as an executable formed by compiling and linking ``zipapp.cpp``.
+When linking the ``zipapp`` executable, the ``archive`` static library is linked in.
 
 .. _`Binary Executables`:
 
-Binary Executables
-------------------
+実行形式
+--------
 
 The :command:`add_executable` command defines an executable target:
 
@@ -48,21 +43,19 @@ The :command:`add_executable` command defines an executable target:
 
   add_executable(mytool mytool.cpp)
 
-Commands such as :command:`add_custom_command`, which generates rules to be
-run at build time can transparently use an :prop_tgt:`EXECUTABLE <TYPE>`
-target as a ``COMMAND`` executable.  The buildsystem rules will ensure that
-the executable is built before attempting to run the command.
+Commands such as :command:`add_custom_command`, which generates rules to be run at build time can transparently use an :prop_tgt:`EXECUTABLE <TYPE>` target as a ``COMMAND`` executable.
+The buildsystem rules will ensure that the executable is built before attempting to run the command.
 
-Binary Library Types
---------------------
+ライブラリの種類
+----------------
 
 .. _`Normal Libraries`:
 
-Normal Libraries
+通常のライブラリ
 ^^^^^^^^^^^^^^^^
 
-By default, the :command:`add_library` command defines a ``STATIC`` library,
-unless a type is specified.  A type may be specified when using the command:
+By default, the :command:`add_library` command defines a ``STATIC`` library, unless a type is specified.
+A type may be specified when using the command:
 
 .. code-block:: cmake
 
@@ -72,20 +65,12 @@ unless a type is specified.  A type may be specified when using the command:
 
   add_library(archive STATIC archive.cpp zip.cpp lzma.cpp)
 
-The :variable:`BUILD_SHARED_LIBS` variable may be enabled to change the
-behavior of :command:`add_library` to build shared libraries by default.
+The :variable:`BUILD_SHARED_LIBS` variable may be enabled to change the behavior of :command:`add_library` to build shared libraries by default.
 
-In the context of the buildsystem definition as a whole, it is largely
-irrelevant whether particular libraries are ``SHARED`` or ``STATIC`` --
-the commands, dependency specifications and other APIs work similarly
-regardless of the library type.  The ``MODULE`` library type is
-dissimilar in that it is generally not linked to -- it is not used in
-the right-hand-side of the :command:`target_link_libraries` command.
+In the context of the buildsystem definition as a whole, it is largely irrelevant whether particular libraries are ``SHARED`` or ``STATIC`` -- the commands, dependency specifications and other APIs work similarly regardless of the library type.
+The ``MODULE`` library type is dissimilar in that it is generally not linked to -- it is not used in the right-hand-side of the :command:`target_link_libraries` command.
 It is a type which is loaded as a plugin using runtime techniques.
-If the library does not export any unmanaged symbols (e.g. Windows
-resource DLL, C++/CLI DLL), it is required that the library not be a
-``SHARED`` library because CMake expects ``SHARED`` libraries to export
-at least one symbol.
+If the library does not export any unmanaged symbols (e.g. Windows resource DLL, C++/CLI DLL), it is required that the library not be a ``SHARED`` library because CMake expects ``SHARED`` libraries to export at least one symbol.
 
 .. code-block:: cmake
 
@@ -93,16 +78,13 @@ at least one symbol.
 
 .. _`Apple Frameworks`:
 
-Apple Frameworks
-""""""""""""""""
+Apple のフレームワーク
+""""""""""""""""""""""
 
-A ``SHARED`` library may be marked with the :prop_tgt:`FRAMEWORK`
-target property to create an macOS or iOS Framework Bundle.
-A library with the ``FRAMEWORK`` target property should also set the
-:prop_tgt:`FRAMEWORK_VERSION` target property.  This property is typically
-set to the value of "A" by macOS conventions.
-The ``MACOSX_FRAMEWORK_IDENTIFIER`` sets the ``CFBundleIdentifier`` key
-and it uniquely identifies the bundle.
+A ``SHARED`` library may be marked with the :prop_tgt:`FRAMEWORK` target property to create an macOS or iOS Framework Bundle.
+A library with the ``FRAMEWORK`` target property should also set the :prop_tgt:`FRAMEWORK_VERSION` target property.
+This property is typically set to the value of "A" by macOS conventions.
+The ``MACOSX_FRAMEWORK_IDENTIFIER`` sets the ``CFBundleIdentifier`` key and it uniquely identifies the bundle.
 
 .. code-block:: cmake
 
@@ -115,15 +97,12 @@ and it uniquely identifies the bundle.
 
 .. _`Object Libraries`:
 
-Object Libraries
-^^^^^^^^^^^^^^^^
+オブジェクトのライブラリ
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``OBJECT`` library type defines a non-archival collection of object files
-resulting from compiling the given source files.  The object files collection
-may be used as source inputs to other targets by using the syntax
-:genex:`$<TARGET_OBJECTS:name>`.  This is a
-:manual:`generator expression <cmake-generator-expressions(7)>` that can be
-used to supply the ``OBJECT`` library content to other targets:
+The ``OBJECT`` library type defines a non-archival collection of object files resulting from compiling the given source files.
+The object files collection may be used as source inputs to other targets by using the syntax :genex:`$<TARGET_OBJECTS:name>`.
+This is a :manual:`generator expression <cmake-generator-expressions(7)>` that can be used to supply the ``OBJECT`` library content to other targets:
 
 .. code-block:: cmake
 
@@ -133,8 +112,7 @@ used to supply the ``OBJECT`` library content to other targets:
 
   add_executable(test_exe $<TARGET_OBJECTS:archive> test.cpp)
 
-The link (or archiving) step of those other targets will use the object
-files collection in addition to those from their own sources.
+The link (or archiving) step of those other targets will use the object files collection in addition to those from their own sources.
 
 Alternatively, object libraries may be linked into other targets:
 
@@ -148,31 +126,21 @@ Alternatively, object libraries may be linked into other targets:
   add_executable(test_exe test.cpp)
   target_link_libraries(test_exe archive)
 
-The link (or archiving) step of those other targets will use the object
-files from ``OBJECT`` libraries that are *directly* linked.  Additionally,
-usage requirements of the ``OBJECT`` libraries will be honored when compiling
-sources in those other targets.  Furthermore, those usage requirements
-will propagate transitively to dependents of those other targets.
+The link (or archiving) step of those other targets will use the object files from ``OBJECT`` libraries that are *directly* linked.
+Additionally, usage requirements of the ``OBJECT`` libraries will be honored when compiling sources in those other targets.
+Furthermore, those usage requirements will propagate transitively to dependents of those other targets.
 
-Object libraries may not be used as the ``TARGET`` in a use of the
-:command:`add_custom_command(TARGET)` command signature.  However,
-the list of objects can be used by :command:`add_custom_command(OUTPUT)`
-or :command:`file(GENERATE)` by using ``$<TARGET_OBJECTS:objlib>``.
+Object libraries may not be used as the ``TARGET`` in a use of the :command:`add_custom_command(TARGET)` command signature.
+However, the list of objects can be used by :command:`add_custom_command(OUTPUT)` or :command:`file(GENERATE)` by using ``$<TARGET_OBJECTS:objlib>``.
 
 Build Specification and Usage Requirements
 ==========================================
 
-The :command:`target_include_directories`, :command:`target_compile_definitions`
-and :command:`target_compile_options` commands specify the build specifications
-and the usage requirements of binary targets.  The commands populate the
-:prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and
-:prop_tgt:`COMPILE_OPTIONS` target properties respectively, and/or the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`
-and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties.
+The :command:`target_include_directories`, :command:`target_compile_definitions` and :command:`target_compile_options` commands specify the build specifications and the usage requirements of binary targets.
+The commands populate the :prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target properties respectively, and/or the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties.
 
-Each of the commands has a ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` mode.  The
-``PRIVATE`` mode populates only the non-``INTERFACE_`` variant of the target
-property and the ``INTERFACE`` mode populates only the ``INTERFACE_`` variants.
+Each of the commands has a ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` mode.
+The ``PRIVATE`` mode populates only the non-``INTERFACE_`` variant of the target property and the ``INTERFACE`` mode populates only the ``INTERFACE_`` variants.
 The ``PUBLIC`` mode populates both variants of the respective target property.
 Each command may be invoked with multiple uses of each keyword:
 
@@ -183,47 +151,26 @@ Each command may be invoked with multiple uses of each keyword:
     INTERFACE USING_ARCHIVE_LIB
   )
 
-Note that usage requirements are not designed as a way to make downstreams
-use particular :prop_tgt:`COMPILE_OPTIONS` or
-:prop_tgt:`COMPILE_DEFINITIONS` etc for convenience only.  The contents of
-the properties must be **requirements**, not merely recommendations or
-convenience.
+Note that usage requirements are not designed as a way to make downstreams use particular :prop_tgt:`COMPILE_OPTIONS` or :prop_tgt:`COMPILE_DEFINITIONS` etc for convenience only.
+The contents of the properties must be **requirements**, not merely recommendations or convenience.
 
-See the :ref:`Creating Relocatable Packages` section of the
-:manual:`cmake-packages(7)` manual for discussion of additional care
-that must be taken when specifying usage requirements while creating
-packages for redistribution.
+See the :ref:`Creating Relocatable Packages` section of the :manual:`cmake-packages(7)` manual for discussion of additional care that must be taken when specifying usage requirements while creating packages for redistribution.
 
 Target Properties
 -----------------
 
-The contents of the :prop_tgt:`INCLUDE_DIRECTORIES`,
-:prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target
-properties are used appropriately when compiling the source files of a
-binary target.
+The contents of the :prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target properties are used appropriately when compiling the source files of a binary target.
 
-Entries in the :prop_tgt:`INCLUDE_DIRECTORIES` are added to the compile line
-with ``-I`` or ``-isystem`` prefixes and in the order of appearance in the
-property value.
+Entries in the :prop_tgt:`INCLUDE_DIRECTORIES` are added to the compile line with ``-I`` or ``-isystem`` prefixes and in the order of appearance in the property value.
 
-Entries in the :prop_tgt:`COMPILE_DEFINITIONS` are prefixed with ``-D`` or
-``/D`` and added to the compile line in an unspecified order.  The
-:prop_tgt:`DEFINE_SYMBOL` target property is also added as a compile
-definition as a special convenience case for ``SHARED`` and ``MODULE``
-library targets.
+Entries in the :prop_tgt:`COMPILE_DEFINITIONS` are prefixed with ``-D`` or ``/D`` and added to the compile line in an unspecified order.
+The :prop_tgt:`DEFINE_SYMBOL` target property is also added as a compile definition as a special convenience case for ``SHARED`` and ``MODULE`` library targets.
 
-Entries in the :prop_tgt:`COMPILE_OPTIONS` are escaped for the shell and added
-in the order of appearance in the property value.  Several compile options have
-special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
+Entries in the :prop_tgt:`COMPILE_OPTIONS` are escaped for the shell and added in the order of appearance in the property value.
+Several compile options have special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
 
-The contents of the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
-:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and
-:prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties are
-*Usage Requirements* -- they specify content which consumers
-must use to correctly compile and link with the target they appear on.
-For any binary target, the contents of each ``INTERFACE_`` property on
-each target specified in a :command:`target_link_libraries` command is
-consumed:
+The contents of the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties are *Usage Requirements* -- they specify content which consumers must use to correctly compile and link with the target they appear on.
+For any binary target, the contents of each ``INTERFACE_`` property on each target specified in a :command:`target_link_libraries` command is consumed:
 
 .. code-block:: cmake
 
@@ -243,15 +190,9 @@ consumed:
   # executable sources are compiled with -DUSING_ARCHIVE_LIB.
   target_link_libraries(consumer archive)
 
-Because it is common to require that the source directory and corresponding
-build directory are added to the :prop_tgt:`INCLUDE_DIRECTORIES`, the
-:variable:`CMAKE_INCLUDE_CURRENT_DIR` variable can be enabled to conveniently
-add the corresponding directories to the :prop_tgt:`INCLUDE_DIRECTORIES` of
-all targets.  The variable :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE`
-can be enabled to add the corresponding directories to the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of all targets.  This makes use of
-targets in multiple different directories convenient through use of the
-:command:`target_link_libraries` command.
+Because it is common to require that the source directory and corresponding build directory are added to the :prop_tgt:`INCLUDE_DIRECTORIES`, the :variable:`CMAKE_INCLUDE_CURRENT_DIR` variable can be enabled to conveniently add the corresponding directories to the :prop_tgt:`INCLUDE_DIRECTORIES` of all targets.
+The variable :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` can be enabled to add the corresponding directories to the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of all targets.
+This makes use of targets in multiple different directories convenient through use of the :command:`target_link_libraries` command.
 
 
 .. _`Target Usage Requirements`:
@@ -260,8 +201,7 @@ Transitive Usage Requirements
 -----------------------------
 
 The usage requirements of a target can transitively propagate to the dependents.
-The :command:`target_link_libraries` command has ``PRIVATE``,
-``INTERFACE`` and ``PUBLIC`` keywords to control the propagation.
+The :command:`target_link_libraries` command has ``PRIVATE``, ``INTERFACE`` and ``PUBLIC`` keywords to control the propagation.
 
 .. code-block:: cmake
 
@@ -281,22 +221,14 @@ The :command:`target_link_libraries` command has ``PRIVATE``,
   # consumer is compiled with -DUSING_ARCHIVE_LIB
   target_link_libraries(consumer archiveExtras)
 
-Because the ``archive`` is a ``PUBLIC`` dependency of ``archiveExtras``, the
-usage requirements of it are propagated to ``consumer`` too.
+Because the ``archive`` is a ``PUBLIC`` dependency of ``archiveExtras``, the usage requirements of it are propagated to ``consumer`` too.
 
-Because
-``serialization`` is a ``PRIVATE`` dependency of ``archiveExtras``, the usage
-requirements of it are not propagated to ``consumer``.
+Because ``serialization`` is a ``PRIVATE`` dependency of ``archiveExtras``, the usage requirements of it are not propagated to ``consumer``.
 
-Generally, a dependency should be specified in a use of
-:command:`target_link_libraries` with the ``PRIVATE`` keyword if it is used by
-only the implementation of a library, and not in the header files.  If a
-dependency is additionally used in the header files of a library (e.g. for
-class inheritance), then it should be specified as a ``PUBLIC`` dependency.
-A dependency which is not used by the implementation of a library, but only by
-its headers should be specified as an ``INTERFACE`` dependency.  The
-:command:`target_link_libraries` command may be invoked with multiple uses of
-each keyword:
+Generally, a dependency should be specified in a use of :command:`target_link_libraries` with the ``PRIVATE`` keyword if it is used by only the implementation of a library, and not in the header files.
+If a dependency is additionally used in the header files of a library (e.g. for class inheritance), then it should be specified as a ``PUBLIC`` dependency.
+A dependency which is not used by the implementation of a library, but only by its headers should be specified as an ``INTERFACE`` dependency.
+The :command:`target_link_libraries` command may be invoked with multiple uses of each keyword:
 
 .. code-block:: cmake
 
