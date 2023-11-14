@@ -1,8 +1,7 @@
 .. cmake-manual-description: CTest コマンドライン・リファレンス
 
-==========
- ctest(1)
-==========
+ctest(1)
+********
 
 .. contents::
 

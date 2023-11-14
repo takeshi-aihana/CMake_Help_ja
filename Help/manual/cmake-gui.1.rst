@@ -1,10 +1,10 @@
-.. cmake-manual-description: CMake GUI Command-Line Reference
+.. cmake-manual-description: CMake GUI コマンドライン・リファレンス
 
 cmake-gui(1)
 ************
 
-Synopsis
-========
+概要
+====
 
 .. parsed-literal::
 
@@ -13,21 +13,19 @@ Synopsis
  cmake-gui [<options>] <path-to-source | path-to-existing-build>
  cmake-gui [<options>] --browse-manual [<filename>]
 
-Description
-===========
+説明
+====
 
-The :program:`cmake-gui` executable is the CMake GUI.  Project configuration
-settings may be specified interactively.  Brief instructions are
-provided at the bottom of the window when the program is running.
+The :program:`cmake-gui` executable is the CMake GUI.
+Project configuration settings may be specified interactively.
+Brief instructions are provided at the bottom of the window when the program is running.
 
-CMake is a cross-platform build system generator.  Projects specify
-their build process with platform-independent CMake listfiles included
-in each directory of a source tree with the name ``CMakeLists.txt``.
-Users build a project by using CMake to generate a build system for a
-native tool on their platform.
+CMake is a cross-platform build system generator.
+Projects specify their build process with platform-independent CMake listfiles included in each directory of a source tree with the name ``CMakeLists.txt``.
+Users build a project by using CMake to generate a build system for a native tool on their platform.
 
-Options
-=======
+オプション
+==========
 
 .. program:: cmake-gui
 
@@ -54,7 +52,7 @@ Options
 
 .. include:: OPTIONS_HELP.txt
 
-See Also
+関連項目
 ========
 
 .. include:: LINKS.txt
