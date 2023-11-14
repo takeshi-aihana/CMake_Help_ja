@@ -16,13 +16,13 @@ cmake-gui(1)
 説明
 ====
 
-The :program:`cmake-gui` executable is the CMake GUI.
-Project configuration settings may be specified interactively.
-Brief instructions are provided at the bottom of the window when the program is running.
+:program:`cmake-gui` は CMake のグラフィカル・ユーザ・インタフェース（GUI）です。
+プロジェクトの構成に含まれる各種設定を対話的に指定できます。
+このインタフェースを実行しているときは、ウィンドウの下部に簡単な説明が表示されます。
 
-CMake is a cross-platform build system generator.
-Projects specify their build process with platform-independent CMake listfiles included in each directory of a source tree with the name ``CMakeLists.txt``.
-Users build a project by using CMake to generate a build system for a native tool on their platform.
+CMake はクロス・プラットフォーム対応のビルドシステムのジェネレータ（Generator）です。
+プロジェクトは、ソースツリーの各ディレクトリにある ``CMakeLists.txt`` という名前の、プラットフォームに依存しないリストファイルを使用してビルド方法や手順を指定します。
+ユーザは CMake でプロジェクトをビルドして、実行するプラットフォームに対応したビルドシステムを生成します。
 
 オプション
 ==========
@@ -31,24 +31,22 @@ Users build a project by using CMake to generate a build system for a native too
 
 .. option:: -S <path-to-source>
 
- Path to root directory of the CMake project to build.
+ CMake プロジェクトの root ディレクトリ（ソースツリー）を指定する。
 
 .. option:: -B <path-to-build>
 
- Path to directory which CMake will use as the root of build directory.
+ CMake がビルド・ツリーとして使用するディレクトリを指定する。
 
- If the directory doesn't already exist CMake will make it.
+ もしディレクトリがまだ存在していなかったら、CMake が作成する。
 
 .. option:: --preset=<preset-name>
 
- Name of the preset to use from the project's
- :manual:`presets <cmake-presets(7)>` files, if it has them.
+ 使用する :manual:`presets <cmake-presets(7)>` の名前を指定する（プロジェクトにプリセットファイルが存在する場合）。
 
 .. option:: --browse-manual [<filename>]
 
- Open the CMake reference manual in a browser and immediately exit. If
- ``<filename>`` is specified, open that file within the reference manual
- instead of ``index.html``.
+ ブラウザで CMake のリファレンス・マニュアルを開いて終了する。
+ もし ``<filename>`` が指定された場合は、そのファイルを開く。
 
 .. include:: OPTIONS_HELP.txt
 

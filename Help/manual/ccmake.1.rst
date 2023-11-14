@@ -1,32 +1,29 @@
-.. cmake-manual-description: CMake Curses Dialog Command-Line Reference
+.. cmake-manual-description: CMake（Curses Dialog）コマンド・リファレンス
 
 ccmake(1)
 *********
 
-Synopsis
-========
+概要
+====
 
 .. parsed-literal::
 
  ccmake [<options>] -B <path-to-build> [-S <path-to-source>]
  ccmake [<options>] <path-to-source | path-to-existing-build>
 
-Description
-===========
+説明
+====
 
-The :program:`ccmake` executable is the CMake curses interface.  Project
-configuration settings may be specified interactively through this
-GUI.  Brief instructions are provided at the bottom of the terminal
-when the program is running.
+:program:`ccmake` は CMake の Curses 対応のユーザ・インタフェースです。
+プロジェクトの構成に含まれる各種設定を Curses を使って対話的に指定できます
+このインタフェース実行しているときは、端末の下部に簡単な説明が表示されます
 
-CMake is a cross-platform build system generator.  Projects specify
-their build process with platform-independent CMake listfiles included
-in each directory of a source tree with the name ``CMakeLists.txt``.
-Users build a project by using CMake to generate a build system for a
-native tool on their platform.
+CMake はクロス・プラットフォーム対応のビルドシステムのジェネレータ（Generator）です。
+プロジェクトは、ソースツリーの各ディレクトリにある ``CMakeLists.txt`` という名前の、プラットフォームに依存しないリストファイルを使用してビルド方法や手順を指定します。
+ユーザは CMake でプロジェクトをビルドして、実行するプラットフォームに対応したビルドシステムを生成します。
 
-Options
-=======
+オプション
+==========
 
 .. program:: ccmake
 
@@ -34,7 +31,7 @@ Options
 
 .. include:: OPTIONS_HELP.txt
 
-See Also
+関連項目
 ========
 
 .. include:: LINKS.txt
