@@ -1,7 +1,8 @@
 .. cmake-manual-description: CTest コマンドライン・リファレンス
 
-ctest(1)
-********
+==========
+ ctest(1)
+==========
 
 .. contents::
 
@@ -434,26 +435,26 @@ CTest は、実行するテストに関連付けられたラベル（``LABEL``�
   テスト中にランタイムで追加されたラベルも計測結果のサマリに出力されます。
   詳細は「:ref:`Additional Labels`」を参照して下さい。
 
-:prop_test:`PROCESSORS` というテスト用プロパティをセットすると、CTest はラベルとサブプロジェクトのサマリで重み付けされた時間の計測結果を出力します。
-処理時間は `sec` ではなく `sec@proc` で出力します。
+:prop_test:`PROCESSORS` というテスト用プロパティをセットすると、CTest はラベルとサブプロジェクトのサマリに、重み付けされた時間の計測結果を出力します。
+処理時間は単なる `sec` ではなく `sec*proc` [#hint_for_sec_for_processors]_ で出力します。
 
-ラベルまたはサブプロジェクトで重み付けされた時間 "``j``" は、次のように計算されます::
+ラベルまたはサブプロジェクト（"``j``"）で重み付けされた時間は、次のように計算されます::
 
   Weighted Time Summary for Label/Subproject j =
       sum(raw_test_time[j,i] * num_processors[j,i], i=1...num_tests[j])
 
   for labels/subprojects j=1...total
 
-変数の意味はそれぞれ：
+ここで使っている変数の意味はそれぞれ：
 
 * ``raw_test_time[j,i]``：ラベルまたはサブプロジェクト（"``j``"）のテスト（"``i``"） の実時間
-* ``num_processors[j,i]``：ラベルまたはサブプロジェクト（"``j``"）のテスト（"``i``"）のテスト用プロパティ :prop_test:`PROCESSORS` の値
+* ``num_processors[j,i]``：ラベルまたはサブプロジェクト（"``j``"）のテスト（"``i``"）に適用した :prop_test:`PROCESSORS` の値
 * ``num_tests[j]``：ラベルまたはサブプロジェクト（"``j``"）に関連付けられたテストの総数
 * ``total``：少なくとも1回実行するラベルまたはサブプロジェクトの総数
 
-したがって、ラベルまたはサブプロジェクトで重み付けされた時間の計測結果は、各ラベルまたはサブプロジェクトのテストの実行に費やした時間を表し、他のラベルやサブプロジェクトの結果と比較した際に、各ラベルまたはサブプロジェクトのテストの合計時間を適切に表します。
+したがって、ラベルまたはサブプロジェクトで重み付けされた時間の計測結果は、各ラベルまたは各サブプロジェクトのテストを実行する際に費やした時間となり、他のラベルやサブプロジェクトの結果と比較した際に、各ラベルまたは各サブプロジェクトのテストの正しい合計時間を表します。
 
-たとえば ``SubprojectA`` の時間が ``100 sec*proc`` で、``SubprojectB`` の時間が ``10 sec*proc`` だった場合、CTest は ``SubprojectA`` のテストを実行するために、``SubprojectB`` よりも約10倍の CPU（または Core）時間を割り当てることになります
+たとえば ``SubprojectA`` の時間が ``100 sec*proc`` で、``SubprojectB`` の時間が ``10 sec*proc`` だった場合、CTest は ``SubprojectA`` のテストを実行するために、``SubprojectB`` よりも約10倍の CPU（または Core）を割り当てることになります
 （そのためコストを削減するために CPU 使用量を費やすケースだと、プロジェクト全体のテストに費やす CPU 使用量を削減する場合、``SubprojectA`` のテストを減らす方が、 ``SubprojectB`` のテストを減らすよりも大きく変化する可能性があります）。
 
 .. _`Build and Test Mode`:
@@ -1757,3 +1758,8 @@ not be specified with the ``--resource-spec-file`` argument or the
 .. include:: LINKS.txt
 
 _`CDash`: https://cdash.org
+
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_sec_for_processors] 使用したプロセッサ分の処理時間を意味する。
