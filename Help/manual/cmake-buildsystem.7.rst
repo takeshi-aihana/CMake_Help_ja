@@ -11,14 +11,14 @@ cmake-buildsystem(7)
 ========
 
 CMake 系のビルドシステムは論理的な「ターゲット」の集まりとして構成されます。
-このターゲットはそれぞれ、一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
+これらのターゲットは、それぞれ一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
 ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や修正に応じた再構成のルールを決定します。
 
 バイナリのターゲット
 ====================
 
-実行形式とライブラリは  :command:`add_executable` と :command:`add_library` のコマンドを使ってそれぞれ定義されます。
-このコマンドを実行した結果として得られたバイナリ・ファイルには、ターゲットであるプラットフォームに対応した適切な :prop_tgt:`PREFIX` と :prop_tgt:`SUFFIX` と拡張子が付与されます。
+実行形式とライブラリは それぞれ :command:`add_executable` と :command:`add_library` のコマンドを使って定義されます。
+このコマンドの実行結果として得られたバイナリ・ファイルには、ターゲットのプラットフォームに対応した適切な :prop_tgt:`PREFIX` と :prop_tgt:`SUFFIX` と拡張子が付与されます。
 バイナリのターゲット間にある依存関係は :command:`target_link_libraries` というコマンドを使用して構築されます：
 
 .. code-block:: cmake
@@ -27,14 +27,14 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
   add_executable(zipapp zipapp.cpp)
   target_link_libraries(zipapp archive)
 
-上の例で ``archive`` は ``STATIC`` ライブラリ（その実体は ``archive.cpp``、``zip.cpp``、そして ``lzma.cpp`` をコンパイルしたオブジェクトを格納したアーカイブ）として定義されています。
+上の例で、``archive`` は ``STATIC`` ライブラリ（その実体は ``archive.cpp``、``zip.cpp``、そして ``lzma.cpp`` をコンパイルしたオブジェクトを格納したアーカイブ）として定義されています。
 そして ``zipapp`` は ``zipapp.cpp`` をコンパイル・リンクすることで生成される実行形式として定義されています。
 実行形式の ``zipapp`` をリンクする際は、``archive`` という ``STATIC`` ライブラリをリンクします。
 
 .. _`Binary Executables`:
 
-実行形式
---------
+バイナリの実行形式
+------------------
 
 :command:`add_executable` コマンドは一個の実行形式をターゲットとして定義します：
 
@@ -43,7 +43,7 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
   add_executable(mytool mytool.cpp)
 
 ビルド時に任意のコマンド列を実行するルールを生成する :command:`add_custom_command` などは、定数の ``COMMAND`` を「実行形式」、:prop_tgt:`EXECUTABLE <TYPE>` を「ターゲット」として汎用的に利用できます。
-この時、生成されるビルドシステムのルールは、任意のコマンドを実行する前に ``COMMAND`` が指す実行形式を先にビルドすることを保証します。
+この時、生成されるビルドシステムのルールは、任意のコマンド列を実行する前に ``COMMAND`` が指す実行形式を先にビルドすることを保証します。
 
 ライブラリの種類
 ----------------
@@ -54,7 +54,7 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
 ^^^^^^^^^^^^^^^^
 
 :command:`add_library` コマンドはライブラリの種類を指定しないと、デフォルトの ``STATIC`` ライブラリを定義します。
-このライブラリの種類は、次のようにコマンドを実行することで指定できます：
+このライブラリの種類は、次のようにコマンドを実行することで直接指定できます：
 
 .. code-block:: cmake
 
@@ -64,9 +64,9 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
 
   add_library(archive STATIC archive.cpp zip.cpp lzma.cpp)
 
-あるいは :variable:`BUILD_SHARED_LIBS` という変数を有効にすると :command:`add_library` コマンドの挙動を変更して、デフォルトで共有ライブラリをビルドさせることができます。
+あるいは :variable:`BUILD_SHARED_LIBS` という変数を有効にすると :command:`add_library` コマンドの挙動を変更して、デフォルトで ``SHARED`` ライブラリをビルドさせることができます。
 
-総じて、ビルドシステムが定義するコンテキストの中では、ライブラリが ``SHARED`` であるか ``STATIC`` であるかはほとんど関係ありません（CMake のコマンド、依存関係の仕様、そしてその他の CMake の API はライブラリの種類を問わず平等に機能します）。
+総じて、ビルドシステムが定義するコンテキストの中では、ライブラリが ``SHARED`` であるか ``STATIC`` であるかはほとんど関係ありません（CMake のコマンド、依存関係の仕様、そしてその他の CMake の API はライブラリの種類を問わず「平等」に機能します）。
 ``MODULE`` という種類のライブラリは一般的に実行形式とリンクされないという点で他の種類のライブラリとは異なります。すなわち :command:`target_link_libraries` コマンドの引数には入りません。
 これはランタイム技術を使用して、プラグインとして読み込まれるライブラリです。
 ライブラリがアンマネージドなシンボル（たとえば Windows のリソース DLL、C++/CLI の DLL）をエキスポートしていない場合、CMake は ``SHARED`` ライブラリが一個以上のシンボルをエキスポートしていることを期待するので、ライブラリが ``SHARED`` でないことが要求されます。
@@ -80,10 +80,10 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
 Apple のフレームワーク
 """"""""""""""""""""""
 
-A ``SHARED`` library may be marked with the :prop_tgt:`FRAMEWORK` target property to create an macOS or iOS Framework Bundle.
-A library with the ``FRAMEWORK`` target property should also set the :prop_tgt:`FRAMEWORK_VERSION` target property.
-This property is typically set to the value of "A" by macOS conventions.
-The ``MACOSX_FRAMEWORK_IDENTIFIER`` sets the ``CFBundleIdentifier`` key and it uniquely identifies the bundle.
+MacOS や iOS のフレームワーク・バンドルを生成する際、``SHARED`` ライブラリに :prop_tgt:`FRAMEWORK` というターゲット・プロパティが有効（ ``TRUE`` ）になっている場合があります。
+一般的に、このターゲット・プロパティ ``FRAMEWORK`` が有効になったライブラリは、さらに :prop_tgt:`FRAMEWORK_VERSION` というターゲット・プロパティも有効になっているはずです。
+このプロパティは通常、MacOS の慣例に倣って "A" の値がセットされます。
+``MACOSX_FRAMEWORK_IDENTIFIER`` には  ``CFBundleIdentifier`` キーの値をセットして、バンドルを一意に識別します。
 
 .. code-block:: cmake
 
@@ -96,12 +96,13 @@ The ``MACOSX_FRAMEWORK_IDENTIFIER`` sets the ``CFBundleIdentifier`` key and it u
 
 .. _`Object Libraries`:
 
-オブジェクトのライブラリ
+オブジェクト・ライブラリ
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``OBJECT`` library type defines a non-archival collection of object files resulting from compiling the given source files.
-The object files collection may be used as source inputs to other targets by using the syntax :genex:`$<TARGET_OBJECTS:name>`.
-This is a :manual:`generator expression <cmake-generator-expressions(7)>` that can be used to supply the ``OBJECT`` library content to other targets:
+``OBJECT`` ライブラリという種類は、指定したソース・ファイルをコンパイルして生成したブジェクト・ファイルをアーカイブ化せずに集めたものです。
+これらのオブジェクト・ファイルは :genex:`$<TARGET_OBJECTS:name>` という文法で、別のターゲットの入力ソースとして利用することができます。
+
+これは ``OBJECT`` ライブラリの中身を別のターゲットに提供する際に使用できる :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` の一つです：
 
 .. code-block:: cmake
 
@@ -111,9 +112,9 @@ This is a :manual:`generator expression <cmake-generator-expressions(7)>` that c
 
   add_executable(test_exe $<TARGET_OBJECTS:archive> test.cpp)
 
-The link (or archiving) step of those other targets will use the object files collection in addition to those from their own sources.
+この例では、ターゲットをビルドする際にそのソースファイルに加え ``OBJECT`` ライブラリのオブジェクト・ファイルを利用しています。
 
-Alternatively, object libraries may be linked into other targets:
+そうではなく ``OBJECT`` ライブラリが別のターゲットとリンクされる場合があります：
 
 .. code-block:: cmake
 
@@ -125,23 +126,24 @@ Alternatively, object libraries may be linked into other targets:
   add_executable(test_exe test.cpp)
   target_link_libraries(test_exe archive)
 
-The link (or archiving) step of those other targets will use the object files from ``OBJECT`` libraries that are *directly* linked.
-Additionally, usage requirements of the ``OBJECT`` libraries will be honored when compiling sources in those other targets.
-Furthermore, those usage requirements will propagate transitively to dependents of those other targets.
+この例では、別のターゲットをビルドする際に *直接*  リンクされている ``OBJECT`` ライブラリからオブジェクト・ファイルを利用しています。
+なお ``OBJECT`` ライブラリの 「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）は別のターゲットをビルドする際に優先されます。
+その上、「利用要件」は別のターゲットに依存するものに推移的（*Transive* [#hint_for_transitive]_）に伝搬していきます。
 
-Object libraries may not be used as the ``TARGET`` in a use of the :command:`add_custom_command(TARGET)` command signature.
-However, the list of objects can be used by :command:`add_custom_command(OUTPUT)` or :command:`file(GENERATE)` by using ``$<TARGET_OBJECTS:objlib>``.
+``OBJECT`` ライブラリは :command:`add_custom_command(TARGET)` のような使い方で ``TARGET`` には指定することはできません。
+ただしオブジェクト・ファイルのリストは、``$<TARGET_OBJECTS:objlib>`` を使用して :command:`add_custom_command(OUTPUT)` とか :command:`file(GENERATE)` のコマンドで利用することはできます。
 
-Build Specification and Usage Requirements
-==========================================
+ビルドの仕様と利用要件
+======================
 
-The :command:`target_include_directories`, :command:`target_compile_definitions` and :command:`target_compile_options` commands specify the build specifications and the usage requirements of binary targets.
-The commands populate the :prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target properties respectively, and/or the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties.
+:command:`target_include_directories` や :command:`target_compile_definitions` や :command:`target_compile_options` コマンドは、バイナリのターゲットに対する「ビルドの仕様」と「利用要件」を使用して指定します。
+これらのコマンドは順に、:prop_tgt:`INCLUDE_DIRECTORIES` 、:prop_tgt:`COMPILE_DEFINITIONS` 、そして :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティおよび / または :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` というターゲット・プロパティをセットします。
 
-Each of the commands has a ``PRIVATE``, ``PUBLIC`` and ``INTERFACE`` mode.
-The ``PRIVATE`` mode populates only the non-``INTERFACE_`` variant of the target property and the ``INTERFACE`` mode populates only the ``INTERFACE_`` variants.
-The ``PUBLIC`` mode populates both variants of the respective target property.
-Each command may be invoked with multiple uses of each keyword:
+各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` というモードがあります。
+``PRIVATE`` モードは ``INTERFACE_`` モード以外のターゲット・プロパティだけセットし、
+``INTERFACE`` モードは ``INTERFACE_`` モードのターゲット・プロパティだけをセットし、
+``PUBLIC`` モードはそれぞれのターゲット・プロパティの両方をセットします。
+各コマンドは各モードを複数回使用して呼び出すことができます。
 
 .. code-block:: cmake
 
@@ -1044,3 +1046,8 @@ default header set along with the target:
 Here, the headers defined in the header set are installed to ``include/Eigen``.
 The install destination automatically becomes an include directory that is a
 usage requirement for consumers.
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_usage_requirements] `CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_ 参照。
+.. [#hint_for_transitive] 次々に移って行くこと。「等号の―性」（たとえば a = b で b = c ならば必ず a = c という性質）。
