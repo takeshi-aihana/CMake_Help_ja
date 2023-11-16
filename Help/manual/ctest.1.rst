@@ -122,7 +122,7 @@ ctest(1)
 
 .. option:: --resource-spec-file <file>
 
- ``<file>`` に指定した :ref:`リソース仕様ファイル <ctest-resource-specification-file>` を使用し、:ref:`リソースの確保 <ctest-resource-allocation>` を有効にして CTest を実行する。
+ ``<file>`` に指定した「:ref:`リソース仕様ファイル <ctest-resource-specification-file>`」を使用し、「:ref:`リソースの確保 <ctest-resource-allocation>`」を有効にして CTest を実行する。
 
  :program:`ctest` を `Dashboard Client`_ として実行すると、これにより `CTest Test Step`_ の ``ResourceSpecFile`` オプションがセットされる。
 
@@ -180,7 +180,7 @@ ctest(1)
 
 .. option:: -L <regex>, --label-regex <regex>
 
- 正規表現にマッチするラベルが付いたテストを実行する。利用可能な正規表現については :ref:`string(REGEX) <Regex Specification>` を参照のこと。
+ 正規表現にマッチするラベルが付いたテストを実行する。利用可能な正規表現については「:ref:`string(REGEX) <Regex Specification>`」を参照のこと。
 
  このオプションは CTest に、指定した正規表現にマッチするラベルを持つテストだけ実行するよう指示する。
  このオプション ``-L`` を複数指定すると、複数ある正規表現のいずれかがテストに付いているラベルに少なくとも一つマッチした場合にだけ、そのテストを実行する（すなわち複数の ``-L`` で指定したラベルを ``AND`` で連結した条件を形成する）。

@@ -80,7 +80,7 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
 Apple のフレームワーク
 """"""""""""""""""""""
 
-MacOS や iOS のフレームワーク・バンドルを生成する際、``SHARED`` ライブラリに :prop_tgt:`FRAMEWORK` というターゲット・プロパティが有効（ ``TRUE`` ）になっている場合があります。
+MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ とそのバンドル [#hint_for_framework_and_bundle_of_ios]_ を生成する際、``SHARED`` ライブラリに :prop_tgt:`FRAMEWORK` というターゲット・プロパティが有効（ ``TRUE`` ）になっている場合があります。
 一般的に、このターゲット・プロパティ ``FRAMEWORK`` が有効になったライブラリは、さらに :prop_tgt:`FRAMEWORK_VERSION` というターゲット・プロパティも有効になっているはずです。
 このプロパティは通常、MacOS の慣例に倣って "A" の値がセットされます。
 ``MACOSX_FRAMEWORK_IDENTIFIER`` には  ``CFBundleIdentifier`` キーの値をセットして、バンドルを一意に識別します。
@@ -102,7 +102,7 @@ MacOS や iOS のフレームワーク・バンドルを生成する際、``SHAR
 ``OBJECT`` ライブラリという種類は、指定したソース・ファイルをコンパイルして生成したブジェクト・ファイルをアーカイブ化せずに集めたものです。
 これらのオブジェクト・ファイルは :genex:`$<TARGET_OBJECTS:name>` という文法で、別のターゲットの入力ソースとして利用することができます。
 
-これは ``OBJECT`` ライブラリの中身を別のターゲットに提供する際に使用できる :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` の一つです：
+これは ``OBJECT`` ライブラリの中身（オブジェクト・ファイル）を別のターゲットに提供する際に使用できる :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` の一つです：
 
 .. code-block:: cmake
 
@@ -112,9 +112,9 @@ MacOS や iOS のフレームワーク・バンドルを生成する際、``SHAR
 
   add_executable(test_exe $<TARGET_OBJECTS:archive> test.cpp)
 
-この例では、ターゲットをビルドする際にそのソースファイルに加え ``OBJECT`` ライブラリのオブジェクト・ファイルを利用しています。
+この例では、別のターゲットをビルドする際にそのソースファイルに加え ``OBJECT`` ライブラリのオブジェクト・ファイルを利用しています。
 
-そうではなく ``OBJECT`` ライブラリが別のターゲットとリンクされる場合があります：
+それ以外には、``OBJECT`` ライブラリが別のターゲットとリンクされる場合があります：
 
 .. code-block:: cmake
 
@@ -127,8 +127,8 @@ MacOS や iOS のフレームワーク・バンドルを生成する際、``SHAR
   target_link_libraries(test_exe archive)
 
 この例では、別のターゲットをビルドする際に *直接*  リンクされている ``OBJECT`` ライブラリからオブジェクト・ファイルを利用しています。
-なお ``OBJECT`` ライブラリの 「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）は別のターゲットをビルドする際に優先されます。
-その上、「利用要件」は別のターゲットに依存するものに推移的（*Transive* [#hint_for_transitive]_）に伝搬していきます。
+なお ``OBJECT`` ライブラリの 「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ は別のターゲットをビルドする際に優先されます。
+その上、「利用要件」は別のターゲットに依存するものに推移的（*Transitive*） [#hint_for_transitive]_ に伝搬していきます。
 
 ``OBJECT`` ライブラリは :command:`add_custom_command(TARGET)` のような使い方で ``TARGET`` には指定することはできません。
 ただしオブジェクト・ファイルのリストは、``$<TARGET_OBJECTS:objlib>`` を使用して :command:`add_custom_command(OUTPUT)` とか :command:`file(GENERATE)` のコマンドで利用することはできます。
@@ -136,14 +136,12 @@ MacOS や iOS のフレームワーク・バンドルを生成する際、``SHAR
 ビルドの仕様と利用要件
 ======================
 
-:command:`target_include_directories` や :command:`target_compile_definitions` や :command:`target_compile_options` コマンドは、バイナリのターゲットに対する「ビルドの仕様」と「利用要件」を使用して指定します。
-これらのコマンドは順に、:prop_tgt:`INCLUDE_DIRECTORIES` 、:prop_tgt:`COMPILE_DEFINITIONS` 、そして :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティおよび / または :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` というターゲット・プロパティをセットします。
+:command:`target_include_directories` や :command:`target_compile_definitions` や :command:`target_compile_options` といったコマンドは、バイナリのターゲットに対する「ビルドの仕様」（*Build Specification*） [#hint_for_build_specification]_ と「利用要件」（*Usage Requirements*） [#hint_for_build_specification]_ を指定します。
+これらのコマンドは、順に :prop_tgt:`INCLUDE_DIRECTORIES` 、:prop_tgt:`COMPILE_DEFINITIONS` 、そして :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティおよび / または :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` というターゲット・プロパティをセットします。
 
 各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` というモードがあります。
-``PRIVATE`` モードは ``INTERFACE_`` モード以外のターゲット・プロパティだけセットし、
-``INTERFACE`` モードは ``INTERFACE_`` モードのターゲット・プロパティだけをセットし、
-``PUBLIC`` モードはそれぞれのターゲット・プロパティの両方をセットします。
-各コマンドは各モードを複数回使用して呼び出すことができます。
+``PRIVATE`` モードは ``INTERFACE_`` 系以外のターゲット・プロパティだけセットし、``INTERFACE`` モードは ``INTERFACE_`` 系のターゲット・プロパティだけをセットし、``PUBLIC`` モードはその両方の系のターゲット・プロパティをセットします。
+各コマンドは各モードを複数回使用して呼び出すことができます：
 
 .. code-block:: cmake
 
@@ -152,26 +150,27 @@ MacOS や iOS のフレームワーク・バンドルを生成する際、``SHAR
     INTERFACE USING_ARCHIVE_LIB
   )
 
-Note that usage requirements are not designed as a way to make downstreams use particular :prop_tgt:`COMPILE_OPTIONS` or :prop_tgt:`COMPILE_DEFINITIONS` etc for convenience only.
-The contents of the properties must be **requirements**, not merely recommendations or convenience.
+利用要件は、ダウンストリームで特定のターゲット・プロパティ、たとえば :prop_tgt:`COMPILE_OPTIONS` や :prop_tgt:`COMPILE_DEFINITIONS` などを利便性のみを目的として使用されることを意図したものではないことに注意して下さい。
+これらのプロパティの値は単に使うことが推奨されるとか、使うと便利だとかではなく、**使うことが必須** でなければなりません。
 
-See the :ref:`Creating Relocatable Packages` section of the :manual:`cmake-packages(7)` manual for discussion of additional care that must be taken when specifying usage requirements while creating packages for redistribution.
+再配布用のパッケージを作成する際に利用要件を指定する場合の追加の留意点については :manual:`cmake-packages(7)` のマニュアルにある 「:ref:`Creating Relocatable Packages` 」というセクションを参照して下さい。
 
-Target Properties
------------------
+ターゲット・プロパティ
+----------------------
 
-The contents of the :prop_tgt:`INCLUDE_DIRECTORIES`, :prop_tgt:`COMPILE_DEFINITIONS` and :prop_tgt:`COMPILE_OPTIONS` target properties are used appropriately when compiling the source files of a binary target.
+:prop_tgt:`INCLUDE_DIRECTORIES` や :prop_tgt:`COMPILE_DEFINITIONS` や :prop_tgt:`COMPILE_OPTIONS` といったターゲット・プロパティの値は、バイナリのターゲットのソース・ファイルをコンパイルする時に適切に使用されます。
 
-Entries in the :prop_tgt:`INCLUDE_DIRECTORIES` are added to the compile line with ``-I`` or ``-isystem`` prefixes and in the order of appearance in the property value.
+この中で :prop_tgt:`INCLUDE_DIRECTORIES` にセットされたエントリは、``-I`` や ``-isystem`` という接頭子を付け、セットされたエントリの出現順にコンパイル行に追加されます。
 
-Entries in the :prop_tgt:`COMPILE_DEFINITIONS` are prefixed with ``-D`` or ``/D`` and added to the compile line in an unspecified order.
-The :prop_tgt:`DEFINE_SYMBOL` target property is also added as a compile definition as a special convenience case for ``SHARED`` and ``MODULE`` library targets.
+:prop_tgt:`COMPILE_DEFINITIONS` にセットされたエントリは ``-D`` や ``/D`` という接頭子を付け、順不同でコンパイル行に追加されます。
+また :prop_tgt:`DEFINE_SYMBOL` というターゲット・プロパティは ``SHARED`` と ``STATIC`` ライブラリをターゲットとした特別な場合のコンパイル定義として追加されます。
 
-Entries in the :prop_tgt:`COMPILE_OPTIONS` are escaped for the shell and added in the order of appearance in the property value.
-Several compile options have special separate handling, such as :prop_tgt:`POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティのエントリは SHELL 用にエスケープされ、セットされたエントリの出現順に追加されます。
+その他に、コンパイル・オプションには :prop_tgt:`POSITION_INDEPENDENT_CODE` といった特殊な処理もあります。
 
-The contents of the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS` and :prop_tgt:`INTERFACE_COMPILE_OPTIONS` target properties are *Usage Requirements* -- they specify content which consumers must use to correctly compile and link with the target they appear on.
-For any binary target, the contents of each ``INTERFACE_`` property on each target specified in a :command:`target_link_libraries` command is consumed:
+ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` や :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` の値は「利用要件」（*Usage Requirements* ） [#hint_for_build_specification]_ です
+（これらのプロパティには、利用者が正しくコンパイルしターゲットとリンクするために必要な値を指定します）。
+バイナリのターゲットの場合は :command:`target_link_libraries` コマンドに指定した各ターゲットで、接頭子 ``INTERFACE_`` が付いたプロパティの値をそれぞれ使います：
 
 .. code-block:: cmake
 
@@ -191,18 +190,17 @@ For any binary target, the contents of each ``INTERFACE_`` property on each targ
   # executable sources are compiled with -DUSING_ARCHIVE_LIB.
   target_link_libraries(consumer archive)
 
-Because it is common to require that the source directory and corresponding build directory are added to the :prop_tgt:`INCLUDE_DIRECTORIES`, the :variable:`CMAKE_INCLUDE_CURRENT_DIR` variable can be enabled to conveniently add the corresponding directories to the :prop_tgt:`INCLUDE_DIRECTORIES` of all targets.
-The variable :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` can be enabled to add the corresponding directories to the :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of all targets.
-This makes use of targets in multiple different directories convenient through use of the :command:`target_link_libraries` command.
-
+ソース・ディレクトリとそれに対応するビルド・ディレクトリが :prop_tgt:`INCLUDE_DIRECTORIES` というターゲット・プロパティに追加されるのが一般的な使い方なので、CMake 変数である :variable:`CMAKE_INCLUDE_CURRENT_DIR` を ``TRUE`` にすると、これらのディレクトリがすべてのターゲットの :prop_tgt:`INCLUDE_DIRECTORIES` プロパティに簡単に追加できます。
+CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` にすると、対応するディレクトリを全てのターゲットの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` プロパティに追加できます。
+これにより、:command:`target_link_libraries` コマンドを使って（ビルド・ディレクトリがそれぞれ異なる）複数のターゲットを簡単に扱えるようになります。
 
 .. _`Target Usage Requirements`:
 
-Transitive Usage Requirements
------------------------------
+推移的な利用要件
+----------------
 
-The usage requirements of a target can transitively propagate to the dependents.
-The :command:`target_link_libraries` command has ``PRIVATE``, ``INTERFACE`` and ``PUBLIC`` keywords to control the propagation.
+ターゲットの「利用要件」は依存先に推移的（*Transitive*） [#hint_for_transitive]_ に伝搬していきます。
+:command:`target_link_libraries` コマンドには、この伝搬を制御するために ``PRIVATE``、``INTERFACE``、そして ``PUBLIC`` モードがあります。
 
 .. code-block:: cmake
 
@@ -222,14 +220,13 @@ The :command:`target_link_libraries` command has ``PRIVATE``, ``INTERFACE`` and 
   # consumer is compiled with -DUSING_ARCHIVE_LIB
   target_link_libraries(consumer archiveExtras)
 
-Because the ``archive`` is a ``PUBLIC`` dependency of ``archiveExtras``, the usage requirements of it are propagated to ``consumer`` too.
+この例では、``archive`` ライブラリは ``archiveExtras`` ライブラリと ``PUBLIC`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` にも伝搬します。
+また、``serialization`` ライブラリは ``archiveExtras`` ライブラリと ``PRIVATE`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` には伝搬しません。
 
-Because ``serialization`` is a ``PRIVATE`` dependency of ``archiveExtras``, the usage requirements of it are not propagated to ``consumer``.
-
-Generally, a dependency should be specified in a use of :command:`target_link_libraries` with the ``PRIVATE`` keyword if it is used by only the implementation of a library, and not in the header files.
-If a dependency is additionally used in the header files of a library (e.g. for class inheritance), then it should be specified as a ``PUBLIC`` dependency.
-A dependency which is not used by the implementation of a library, but only by its headers should be specified as an ``INTERFACE`` dependency.
-The :command:`target_link_libraries` command may be invoked with multiple uses of each keyword:
+一般に、依存関係がライブラリのビルドのみで利用され、ヘッダ・ファイルには影響しないような場合は ``PRIVATE`` モードで :command:`target_link_libraries` コマンドを呼び出す時にその依存関係を指定するようにして下さい。
+もし依存関係がライブラリのヘッダ・ファイルの中で追加で利用される場合（たとえばクラスの継承など）は ``PUBLIC`` モードで依存関係を指定して下さい。
+ライブラリの実装で利用されず、ヘッダ・ファイルのみ利用される依存関係の場合は ``INTERFACE`` モードで依存関係を指定して下さい。
+:command:`target_link_libraries` コマンドは各モードを複数回指定して呼び出すことも可能です：
 
 .. code-block:: cmake
 
@@ -238,19 +235,11 @@ The :command:`target_link_libraries` command may be invoked with multiple uses o
     PRIVATE serialization
   )
 
-Usage requirements are propagated by reading the ``INTERFACE_`` variants
-of target properties from dependencies and appending the values to the
-non-``INTERFACE_`` variants of the operand.  For example, the
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` of dependencies is read and
-appended to the :prop_tgt:`INCLUDE_DIRECTORIES` of the operand.  In cases
-where order is relevant and maintained, and the order resulting from the
-:command:`target_link_libraries` calls does not allow correct compilation,
-use of an appropriate command to set the property directly may update the
-order.
+利用要件は、依存関係から ``INTERFACE_`` 系のターゲット・プロパティを読み取り、その値を依存先の ``INTERFACE_`` 系プロパティの最後に追加することによって伝搬していきます。
+たとえば、依存元のプロパティである :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` を読み取って、その値を依存先のプロパティの :prop_tgt:`INCLUDE_DIRECTORIES` に追加していくというものです。
 
-For example, if the linked libraries for a target must be specified
-in the order ``lib1`` ``lib2`` ``lib3`` , but the include directories must
-be specified in the order ``lib3`` ``lib1`` ``lib2``:
+この時、追加した順番が適切なのに :command:`target_link_libraries` コマンドの呼び出し結果ではくコンパイルが失敗する場合、妥当なコマンドを使ってプロパティを直接セットして順番を更新できる場合があります。
+たとえば、ターゲットにライブラリをリンクする際に ``lib1`` ``lib2`` ``lib3`` の順番でリンクし、:prop_tgt:`INCLUDE_DIRECTORIES` プロパティでは ``lib3`` ``lib1`` ``lib2`` の順番で指定したい場合は、次のようになります：
 
 .. code-block:: cmake
 
@@ -258,23 +247,17 @@ be specified in the order ``lib3`` ``lib1`` ``lib2``:
   target_include_directories(myExe
     PRIVATE $<TARGET_PROPERTY:lib3,INTERFACE_INCLUDE_DIRECTORIES>)
 
-Note that care must be taken when specifying usage requirements for targets
-which will be exported for installation using the :command:`install(EXPORT)`
-command.  See :ref:`Creating Packages` for more.
+ただし :command:`install(EXPORT)` コマンドでインストールして、外部に公開するターゲットの利用要件を指定する場合は注意が必要です。
+詳細は「:ref:`Creating Packages`」を参照して下さい。
 
 .. _`Compatible Interface Properties`:
 
-Compatible Interface Properties
--------------------------------
+互換性のあるインタフェースのプロパティ
+--------------------------------------
 
-Some target properties are required to be compatible between a target and
-the interface of each dependency.  For example, the
-:prop_tgt:`POSITION_INDEPENDENT_CODE` target property may specify a
-boolean value of whether a target should be compiled as
-position-independent-code, which has platform-specific consequences.
-A target may also specify the usage requirement
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` to communicate that
-consumers must be compiled as position-independent-code.
+一部のターゲット・プロパティは、ターゲットと依存関係のインタフェースとの間で互換性を持つものがあります。
+たとえば :prop_tgt:`POSITION_INDEPENDENT_CODE` というターゲット・プロパティは、ターゲットが PIC（*Position Independent Code* ：位置独立コード）としてコンパイルすべきかどうかを表す論理値を指定します（つまり、このプロパティはプラットフォーム依存です）。
+一方、ターゲット側は利用要件のプロパティである :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` を使って、利用者に PIC としてコンパイルすべきであることを伝えることができます。
 
 .. code-block:: cmake
 
@@ -287,10 +270,9 @@ consumers must be compiled as position-independent-code.
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1)
 
-Here, both ``exe1`` and ``exe2`` will be compiled as position-independent-code.
-``lib1`` will also be compiled as position-independent-code because that is the
-default setting for ``SHARED`` libraries.  If dependencies have conflicting,
-non-compatible requirements :manual:`cmake(1)` issues a diagnostic:
+この例では ``exe1`` と ``exe2`` の両方の実行形式が PIC としてコンパイルされます。
+一方 ``lib1`` ライブラリも PIC としてコンパイルされます。なぜなら、このライブラリはデフォルトで ``SHARED`` ライブラリだからです。
+もし依存関係が競合して互換性がない場合は :manual:`cmake(1)` はエラーを出力します：
 
 .. code-block:: cmake
 
@@ -307,32 +289,20 @@ non-compatible requirements :manual:`cmake(1)` issues a diagnostic:
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1 lib2)
 
-The ``lib1`` requirement ``INTERFACE_POSITION_INDEPENDENT_CODE`` is not
-"compatible" with the :prop_tgt:`POSITION_INDEPENDENT_CODE` property of
-the ``exe1`` target.  The library requires that consumers are built as
-position-independent-code, while the executable specifies to not built as
-position-independent-code, so a diagnostic is issued.
+この例で、``lib1`` ライブラリの利用要件である ``INTERFACE_POSITION_INDEPENDENT_CODE`` プロパティはターゲットである ``exe1`` の :prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティとは「互換性」はありません。
+ライブラリは、その利用者が PIC としてビルドすることが期待されますが、その一方で実行形式は PIC としてビルドされないことが期待されるためエラーとなります。
 
-The ``lib1`` and ``lib2`` requirements are not "compatible".  One of them
-requires that consumers are built as position-independent-code, while
-the other requires that consumers are not built as position-independent-code.
-Because ``exe2`` links to both and they are in conflict, a CMake error message
-is issued::
+The ``lib1`` and ``lib2`` requirements are not "compatible".  One of them requires that consumers are built as position-independent-code, while the other requires that consumers are not built as position-independent-code.
+Because ``exe2`` links to both and they are in conflict, a CMake error message is issued::
 
   CMake Error: The INTERFACE_POSITION_INDEPENDENT_CODE property of "lib2" does
   not agree with the value of POSITION_INDEPENDENT_CODE already determined
   for "exe2".
 
-To be "compatible", the :prop_tgt:`POSITION_INDEPENDENT_CODE` property,
-if set must be either the same, in a boolean sense, as the
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` property of all transitively
-specified dependencies on which that property is set.
+To be "compatible", the :prop_tgt:`POSITION_INDEPENDENT_CODE` property, if set must be either the same, in a boolean sense, as the :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` property of all transitively specified dependencies on which that property is set.
 
-This property of "compatible interface requirement" may be extended to other
-properties by specifying the property in the content of the
-:prop_tgt:`COMPATIBLE_INTERFACE_BOOL` target property.  Each specified property
-must be compatible between the consuming target and the corresponding property
-with an ``INTERFACE_`` prefix from each dependency:
+This property of "compatible interface requirement" may be extended to other properties by specifying the property in the content of the :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` target property.
+Each specified property  must be compatible between the consuming target and the corresponding property with an ``INTERFACE_`` prefix from each dependency:
 
 .. code-block:: cmake
 
@@ -351,13 +321,9 @@ with an ``INTERFACE_`` prefix from each dependency:
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1Version2 lib1Version3) # Diagnostic
 
-Non-boolean properties may also participate in "compatible interface"
-computations.  Properties specified in the
-:prop_tgt:`COMPATIBLE_INTERFACE_STRING`
-property must be either unspecified or compare to the same string among
-all transitively specified dependencies. This can be useful to ensure
-that multiple incompatible versions of a library are not linked together
-through transitive requirements of a target:
+Non-boolean properties may also participate in "compatible interface" computations.
+Properties specified in the :prop_tgt:`COMPATIBLE_INTERFACE_STRING` property must be either unspecified or compare to the same string among all transitively specified dependencies.
+This can be useful to ensure that multiple incompatible versions of a library are not linked together through transitive requirements of a target:
 
 .. code-block:: cmake
 
@@ -376,9 +342,7 @@ through transitive requirements of a target:
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1Version2 lib1Version3) # Diagnostic
 
-The :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` target property specifies
-that content will be evaluated numerically and the maximum number among all
-specified will be calculated:
+The :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` target property specifies that content will be evaluated numerically and the maximum number among all specified will be calculated:
 
 .. code-block:: cmake
 
@@ -399,15 +363,11 @@ specified will be calculated:
   # CONTAINER_SIZE_REQUIRED will be "1000"
   target_link_libraries(exe2 lib1Version2 lib1Version3)
 
-Similarly, the :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` may be used to
-calculate the numeric minimum value for a property from dependencies.
+Similarly, the :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` may be used to calculate the numeric minimum value for a property from dependencies.
 
-Each calculated "compatible" property value may be read in the consumer at
-generate-time using generator expressions.
+Each calculated "compatible" property value may be read in the consumer at generate-time using generator expressions.
 
-Note that for each dependee, the set of properties specified in each
-compatible interface property must not intersect with the set specified in
-any of the other properties.
+Note that for each dependee, the set of properties specified in each compatible interface property must not intersect with the set specified in any of the other properties.
 
 Property Origin Debugging
 -------------------------
@@ -1049,5 +1009,7 @@ usage requirement for consumers.
 
 .. rubric:: 日本語訳注記
 
-.. [#hint_for_usage_requirements] `CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_ 参照。
+.. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
+.. [#hint_for_usage_requirements] 「`CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_」参照。
 .. [#hint_for_transitive] 次々に移って行くこと。「等号の―性」（たとえば a = b で b = c ならば必ず a = c という性質）。
+.. [#hint_for_build_specification] 「ビルドの仕様」とはターゲットAのビルドに必要な設定情報（ターゲット・プロパティ）、「利用要件」とはそのターゲットAを利用するターゲットB側で必要な設定情報（ターゲット・プロパティ）。利用要件のターゲット・プロパティはビルドの仕様のターゲット・プロパティに ``INTERFACE_`` という接頭辞を付けたもの。

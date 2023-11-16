@@ -77,8 +77,8 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
   :option:`cmake --help` を実行した場合も、実際に利用可能なジェネレータの一覧が表示されます。
   オプションの :option:`-G <cmake -G>` を使ってジェネレータを指定する、あるいは現在のプラットフォーム向けのデフォルトのジェネレータを CMake に選択させる方法があります。
 
-  :ref:`Command-Line Build Tool Generators` の中から選択すると、CMake はコンパイラなどツールチェインに必要な環境がすでに Shell の中で構築されているものとみなします。
-  あるいは :ref:`IDE Build Tool Generators` の中から選択すると特定の環境は必要ありません。
+  「:ref:`Command-Line Build Tool Generators`」の中から選択すると、CMake はコンパイラなどツールチェインに必要な環境がすでに Shell の中で構築されているものとみなします。
+  あるいは「:ref:`IDE Build Tool Generators`」の中から選択すると特定の環境は必要ありません。
 
 
 .. _`プロジェクトのビルドシステムを生成する`:
@@ -222,7 +222,7 @@ CMake でビルドシステムを生成する場合、以下を選択する必�
  後方互換性の理由から、``--loglevel`` オプションも同義として扱われる。
 
  .. versionadded:: 3.25
-   :ref:`現在のログ・レベルを問い合わせる <query_message_log_level>` 方法については、:command:`cmake_language` コマンドの説明を参照のこと。
+   「:ref:`現在のログ・レベルを問い合わせる <query_message_log_level>`」方法については、:command:`cmake_language` コマンドの説明を参照のこと。
 
 .. option:: --log-context
 
@@ -726,7 +726,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
       このキーはオプションで、このジェネレータが変数 :variable:`CMAKE_GENERATOR_PLATFORM` （オプション :option:`-A ... <cmake -A>` ）経由で指定されたプラットフォーム仕様（ *Platform Specification* ）をサポートしている時に出力される場合がある。
       その値は、サポートしているプラットフォームを要素とするリスト。
     ``extraGenerators``
-      このジェネレータと互換性がある全ての :ref:`Extra Generators` を表す文字列。
+      このジェネレータと互換性がある全ての「:ref:`Extra Generators`」を表す文字列。
 
   ``fileApi``
     :manual:`cmake-file-api(7)` が利用可能な場合に追加される。
@@ -737,7 +737,7 @@ CMake は、組み込みのコマンド・ツールを利用するためのコ�
       各リクエストは次のメンバを持つ JSON オブジェクトである：
 
       ``kind``
-        サポートしている :ref:`file-api object kinds` の一つを指定する。
+        サポートしている「:ref:`file-api object kinds`」の一つを指定する。
 
       ``version``
         コンポーネントのバージョン（負ではない整数値）を表す ``major`` と ``minor`` を格納した JSON オブジェクトを要素とする JSON 配列。
@@ -1211,13 +1211,13 @@ CMake は Makefile を使うプロジェクト向けに pkg-config に似たヘ�
 
 .. option:: --workflow
 
-  このあとのオプションのいずれかを使って :ref:`Workflow Preset` を選択する。
+  このあとのオプションのいずれかを使って「:ref:`Workflow Preset`」を選択する。
 
 .. program:: cmake--workflow
 
 .. option:: --preset <preset>, --preset=<preset>
 
-  :ref:`Workflow Preset` を使ってワークフローを指定する。
+  「:ref:`Workflow Preset`」を使ってワークフローを指定する。
   プロジェクトのビルドツリー（バイナリツリー）は、初期の設定プリセットから推測する。
   必ず、現在の作業ディレクトリ（cwd）に CMake のプリセットファイルを格納しておくこと。
   詳細は :manual:`preset <cmake-presets(7)>` を参照のこと。

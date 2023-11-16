@@ -4,7 +4,7 @@
 演習１ - ライブラリの利用要件を追加する
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-ターゲット・プロパティの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements* [#hint_for_usage_requirements]_ ）を使うと、ライブラリや実行形式のリンクと #include 行をより適切に制御できると共に、「ターゲットが変化する」プロパティを CMake 内でより細かく制御できるようになります。
+ターゲット・プロパティの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_usage_requirements]_ を使うと、ライブラリや実行形式のリンクと #include 行をより適切に制御できると共に、「ターゲットが変化する」プロパティを CMake 内でより細かく制御できるようになります。
 これを活用する主なコマンドは：
 
 * :command:`target_compile_definitions`
