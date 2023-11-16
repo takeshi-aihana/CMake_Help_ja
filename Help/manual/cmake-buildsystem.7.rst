@@ -10,14 +10,14 @@ cmake-buildsystem(7)
 はじめに
 ========
 
-CMake 系のビルドシステムは論理的な「ターゲット」の集まりとして構成されます。
+CMake 系のビルドシステムは論理的な「**ターゲット**」の集まりとして構成されます。
 これらのターゲットは、それぞれ一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
 ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や修正に応じた再構成のルールを決定します。
 
 バイナリのターゲット
 ====================
 
-実行形式とライブラリは それぞれ :command:`add_executable` と :command:`add_library` のコマンドを使って定義されます。
+実行形式とライブラリは、それぞれ :command:`add_executable` と :command:`add_library` のコマンドを使って定義されます。
 このコマンドの実行結果として得られたバイナリ・ファイルには、ターゲットのプラットフォームに対応した適切な :prop_tgt:`PREFIX` と :prop_tgt:`SUFFIX` と拡張子が付与されます。
 バイナリのターゲット間にある依存関係は :command:`target_link_libraries` というコマンドを使用して構築されます：
 
@@ -27,7 +27,7 @@ CMake 系のビルドシステムは論理的な「ターゲット」の集ま�
   add_executable(zipapp zipapp.cpp)
   target_link_libraries(zipapp archive)
 
-上の例で、``archive`` は ``STATIC`` ライブラリ（その実体は ``archive.cpp``、``zip.cpp``、そして ``lzma.cpp`` をコンパイルしたオブジェクトを格納したアーカイブ）として定義されています。
+この例で、``archive`` は ``STATIC`` ライブラリ（その実体は ``archive.cpp``、``zip.cpp``、そして ``lzma.cpp`` をコンパイルしたオブジェクトを格納したアーカイブ）として定義されています。
 そして ``zipapp`` は ``zipapp.cpp`` をコンパイル・リンクすることで生成される実行形式として定義されています。
 実行形式の ``zipapp`` をリンクする際は、``archive`` という ``STATIC`` ライブラリをリンクします。
 
@@ -81,7 +81,7 @@ Apple のフレームワーク
 """"""""""""""""""""""
 
 MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ とそのバンドル [#hint_for_framework_and_bundle_of_ios]_ を生成する際、``SHARED`` ライブラリに :prop_tgt:`FRAMEWORK` というターゲット・プロパティが有効（ ``TRUE`` ）になっている場合があります。
-一般的に、このターゲット・プロパティ ``FRAMEWORK`` が有効になったライブラリは、さらに :prop_tgt:`FRAMEWORK_VERSION` というターゲット・プロパティも有効になっているはずです。
+一般的に、この ``FRAMEWORK`` というターゲット・プロパティが有効になったライブラリは、さらに :prop_tgt:`FRAMEWORK_VERSION` というターゲット・プロパティも有効になっているはずです。
 このプロパティは通常、MacOS の慣例に倣って "A" の値がセットされます。
 ``MACOSX_FRAMEWORK_IDENTIFIER`` には  ``CFBundleIdentifier`` キーの値をセットして、バンドルを一意に識別します。
 
@@ -158,19 +158,19 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 ターゲット・プロパティ
 ----------------------
 
-:prop_tgt:`INCLUDE_DIRECTORIES` や :prop_tgt:`COMPILE_DEFINITIONS` や :prop_tgt:`COMPILE_OPTIONS` といったターゲット・プロパティの値は、バイナリのターゲットのソース・ファイルをコンパイルする時に適切に使用されます。
+:prop_tgt:`INCLUDE_DIRECTORIES` や :prop_tgt:`COMPILE_DEFINITIONS` や :prop_tgt:`COMPILE_OPTIONS` といったターゲット・プロパティのエントリは、バイナリのソース・ファイルをコンパイルする時に適切に使用されます。
 
 この中で :prop_tgt:`INCLUDE_DIRECTORIES` にセットされたエントリは、``-I`` や ``-isystem`` という接頭子を付け、セットされたエントリの出現順にコンパイル行に追加されます。
 
 :prop_tgt:`COMPILE_DEFINITIONS` にセットされたエントリは ``-D`` や ``/D`` という接頭子を付け、順不同でコンパイル行に追加されます。
 また :prop_tgt:`DEFINE_SYMBOL` というターゲット・プロパティは ``SHARED`` と ``STATIC`` ライブラリをターゲットとした特別な場合のコンパイル定義として追加されます。
 
-:prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティのエントリは SHELL 用にエスケープされ、セットされたエントリの出現順に追加されます。
+:prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティのエントリは SHELL 用にエスケープされ、セットされたエントリの出現順に追加されていきます。
 その他に、コンパイル・オプションには :prop_tgt:`POSITION_INDEPENDENT_CODE` といった特殊な処理もあります。
 
-ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` や :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` の値は「利用要件」（*Usage Requirements* ） [#hint_for_build_specification]_ です
-（これらのプロパティには、利用者が正しくコンパイルしターゲットとリンクするために必要な値を指定します）。
-バイナリのターゲットの場合は :command:`target_link_libraries` コマンドに指定した各ターゲットで、接頭子 ``INTERFACE_`` が付いたプロパティの値をそれぞれ使います：
+ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` や :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` のエントリは「利用要件」（*Usage Requirements* ） [#hint_for_build_specification]_ です
+（これらのプロパティには、利用者が正しくコンパイルしターゲットとリンクするために必要なエントリを指定します）。
+バイナリのターゲットの場合は :command:`target_link_libraries` コマンドに指定した各ターゲットで、接頭子 ``INTERFACE_`` が付いたプロパティのエントリをそれぞれ使います：
 
 .. code-block:: cmake
 
@@ -196,7 +196,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
 
 .. _`Target Usage Requirements`:
 
-推移的な利用要件
+伝搬する利用要件
 ----------------
 
 ターゲットの「利用要件」は依存先に推移的（*Transitive*） [#hint_for_transitive]_ に伝搬していきます。
@@ -224,7 +224,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
 また、``serialization`` ライブラリは ``archiveExtras`` ライブラリと ``PRIVATE`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` には伝搬しません。
 
 一般に、依存関係がライブラリのビルドのみで利用され、ヘッダ・ファイルには影響しないような場合は ``PRIVATE`` モードで :command:`target_link_libraries` コマンドを呼び出す時にその依存関係を指定するようにして下さい。
-もし依存関係がライブラリのヘッダ・ファイルの中で追加で利用される場合（たとえばクラスの継承など）は ``PUBLIC`` モードで依存関係を指定して下さい。
+もし依存関係がライブラリのヘッダ・ファイルの中で追加でインクルードされる場合（たとえばクラスの継承）は ``PUBLIC`` モードで依存関係を指定して下さい。
 ライブラリの実装で利用されず、ヘッダ・ファイルのみ利用される依存関係の場合は ``INTERFACE`` モードで依存関係を指定して下さい。
 :command:`target_link_libraries` コマンドは各モードを複数回指定して呼び出すことも可能です：
 
@@ -235,10 +235,10 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
     PRIVATE serialization
   )
 
-利用要件は、依存関係から ``INTERFACE_`` 系のターゲット・プロパティを読み取り、その値を依存先の ``INTERFACE_`` 系プロパティの最後に追加することによって伝搬していきます。
-たとえば、依存元のプロパティである :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` を読み取って、その値を依存先のプロパティの :prop_tgt:`INCLUDE_DIRECTORIES` に追加していくというものです。
+利用要件は、依存関係から ``INTERFACE_`` 系のターゲット・プロパティを読み取り、そのエントリを依存先の ``INTERFACE_`` 系プロパティの最後に追加することによって伝搬していきます。
+たとえば、依存元のプロパティである :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` を読み取って、そのエントリを依存先のプロパティの :prop_tgt:`INCLUDE_DIRECTORIES` に追加していきます。
 
-この時、追加した順番が適切なのに :command:`target_link_libraries` コマンドの呼び出し結果ではくコンパイルが失敗する場合、妥当なコマンドを使ってプロパティを直接セットして順番を更新できる場合があります。
+この時、追加した順番が適切なのに :command:`target_link_libraries` コマンドの呼び出し結果だとコンパイルが失敗する場合、妥当なコマンドを使ってプロパティを直接セットして順番を更新できる場合があります。
 たとえば、ターゲットにライブラリをリンクする際に ``lib1`` ``lib2`` ``lib3`` の順番でリンクし、:prop_tgt:`INCLUDE_DIRECTORIES` プロパティでは ``lib3`` ``lib1`` ``lib2`` の順番で指定したい場合は、次のようになります：
 
 .. code-block:: cmake
@@ -257,7 +257,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
 
 一部のターゲット・プロパティは、ターゲットと依存関係のインタフェースとの間で互換性を持つものがあります。
 たとえば :prop_tgt:`POSITION_INDEPENDENT_CODE` というターゲット・プロパティは、ターゲットが PIC（*Position Independent Code* ：位置独立コード）としてコンパイルすべきかどうかを表す論理値を指定します（つまり、このプロパティはプラットフォーム依存です）。
-一方、ターゲット側は利用要件のプロパティである :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` を使って、利用者に PIC としてコンパイルすべきであることを伝えることができます。
+一方、ターゲット側は利用要件のプロパティである :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` を使って、利用者に PIC としてコンパイルすべきかどうかを伝えることができます。
 
 .. code-block:: cmake
 
@@ -290,7 +290,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   target_link_libraries(exe2 lib1 lib2)
 
 この例で、``lib1`` ライブラリの利用要件である ``INTERFACE_POSITION_INDEPENDENT_CODE`` プロパティはターゲットである ``exe1`` の :prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティとは「互換性」はありません。
-ライブラリは、その利用者が PIC としてビルドすることが期待されますが、その一方で実行形式は PIC としてビルドされないことが期待されるためエラーとなります。
+ライブラリは、その利用者が PIC としてビルドすることが期待されますが、その一方で実行形式は PIC としてビルドされないことが期待されるためエラーになります。
 
 The ``lib1`` and ``lib2`` requirements are not "compatible".  One of them requires that consumers are built as position-independent-code, while the other requires that consumers are not built as position-independent-code.
 Because ``exe2`` links to both and they are in conflict, a CMake error message is issued::
@@ -1009,7 +1009,7 @@ usage requirement for consumers.
 
 .. rubric:: 日本語訳注記
 
-.. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
+.. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
 .. [#hint_for_usage_requirements] 「`CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_」参照。
 .. [#hint_for_transitive] 次々に移って行くこと。「等号の―性」（たとえば a = b で b = c ならば必ず a = c という性質）。
 .. [#hint_for_build_specification] 「ビルドの仕様」とはターゲットAのビルドに必要な設定情報（ターゲット・プロパティ）、「利用要件」とはそのターゲットAを利用するターゲットB側で必要な設定情報（ターゲット・プロパティ）。利用要件のターゲット・プロパティはビルドの仕様のターゲット・プロパティに ``INTERFACE_`` という接頭辞を付けたもの。
