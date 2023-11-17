@@ -12,12 +12,12 @@ cmake-buildsystem(7)
 
 CMake 系のビルドシステムは論理的な「**ターゲット**」の集まりとして構成されます。
 これらのターゲットは、それぞれ一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
-ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や修正に応じた再構成のルールを決定します。
+ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や（``CMakeLists.txt`` の）変更に応じた再構成のルールを決定します。
 
 バイナリのターゲット
 ====================
 
-実行形式とライブラリは、それぞれ :command:`add_executable` と :command:`add_library` のコマンドを使って定義されます。
+実行形式とライブラリは、それぞれ :command:`add_executable` と :command:`add_library` のコマンドを使ってターゲットが定義されます。
 このコマンドの実行結果として得られたバイナリ・ファイルには、ターゲットのプラットフォームに対応した適切な :prop_tgt:`PREFIX` と :prop_tgt:`SUFFIX` と拡張子が付与されます。
 バイナリのターゲット間にある依存関係は :command:`target_link_libraries` というコマンドを使用して構築されます：
 
@@ -168,7 +168,7 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティのエントリは SHELL 用にエスケープされ、セットされたエントリの出現順に追加されていきます。
 その他に、コンパイル・オプションには :prop_tgt:`POSITION_INDEPENDENT_CODE` といった特殊な処理もあります。
 
-ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` や :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` のエントリは「利用要件」（*Usage Requirements* ） [#hint_for_build_specification]_ です
+ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` や :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` のエントリは「利用要件」（*Usage Requirements* ） [#hint_for_build_specification]_ のプロパティです
 （これらのプロパティには、利用者が正しくコンパイルしターゲットとリンクするために必要なエントリを指定します）。
 バイナリのターゲットの場合は :command:`target_link_libraries` コマンドに指定した各ターゲットで、接頭子 ``INTERFACE_`` が付いたプロパティのエントリをそれぞれ使います：
 
@@ -235,7 +235,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
     PRIVATE serialization
   )
 
-利用要件は、依存関係から ``INTERFACE_`` 系のターゲット・プロパティを読み取り、そのエントリを依存先の ``INTERFACE_`` 系プロパティの最後に追加することによって伝搬していきます。
+利用要件は、依存関係から ``INTERFACE_`` 系のターゲット・プロパティを読み取り、そのエントリを依存先の ``INTERFACE_`` 系 **ではない** プロパティの最後に追加することによって伝搬していきます。
 たとえば、依存元のプロパティである :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES` を読み取って、そのエントリを依存先のプロパティの :prop_tgt:`INCLUDE_DIRECTORIES` に追加していきます。
 
 この時、追加した順番が適切なのに :command:`target_link_libraries` コマンドの呼び出し結果だとコンパイルが失敗する場合、妥当なコマンドを使ってプロパティを直接セットして順番を更新できる場合があります。
@@ -290,19 +290,20 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   target_link_libraries(exe2 lib1 lib2)
 
 この例で、``lib1`` ライブラリの利用要件である ``INTERFACE_POSITION_INDEPENDENT_CODE`` プロパティはターゲットである ``exe1`` の :prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティとは「互換性」はありません。
-ライブラリは、その利用者が PIC としてビルドすることが期待されますが、その一方で実行形式は PIC としてビルドされないことが期待されるためエラーになります。
+ライブラリは、その利用者が PIC としてビルドされることが期待されますが、その一方で実行形式は PIC としてビルドされないことが期待されるためエラーになります。
 
-The ``lib1`` and ``lib2`` requirements are not "compatible".  One of them requires that consumers are built as position-independent-code, while the other requires that consumers are not built as position-independent-code.
-Because ``exe2`` links to both and they are in conflict, a CMake error message is issued::
+``lib1`` と ``lib2`` ライブラリの利用要件は「互換性」はありません。
+一方は、その利用者が PIC としてビルドされることが期待されますが、もう一方は、その利用者が PIC としてビルドされないことが期待されています。
+``exe2`` が両方のライブラリにリンクし利用要件が衝突しているため、CMake はエラーを出力します::
 
   CMake Error: The INTERFACE_POSITION_INDEPENDENT_CODE property of "lib2" does
   not agree with the value of POSITION_INDEPENDENT_CODE already determined
   for "exe2".
 
-To be "compatible", the :prop_tgt:`POSITION_INDEPENDENT_CODE` property, if set must be either the same, in a boolean sense, as the :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` property of all transitively specified dependencies on which that property is set.
+両ライブラリで「互換性」を保つには、:prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティに伝搬する全ての依存関係上の伝搬元でセットしている :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` プロパティの値（論理型）を同じにする必要があります。
 
-This property of "compatible interface requirement" may be extended to other properties by specifying the property in the content of the :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` target property.
-Each specified property  must be compatible between the consuming target and the corresponding property with an ``INTERFACE_`` prefix from each dependency:
+この「互換性のあるインタフェース」の利用要件（プロパティ）を、ターゲット・プロパティの :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` のエントリとして指定しておけば、他のターゲット・プロパティにも拡張できます。
+ここで指定したプロパティはそれぞれ、利用者側のターゲットと、依存関係として伝搬する利用要件のプロパティ（``INTERFACE_`` の接頭子を持つプロパティ）との間で互換性があるようにして下さい。
 
 .. code-block:: cmake
 
