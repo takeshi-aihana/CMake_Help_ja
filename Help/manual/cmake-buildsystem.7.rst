@@ -14,6 +14,8 @@ CMake 系のビルドシステムは論理的な「**ターゲット**」の集�
 これらのターゲットは、それぞれ一個の実行形式またはライブラリ、あるいは独自のコマンド列を実行するカスタム・ターゲットに相当します。
 ターゲット間の依存関係はビルドシステムの中で構築されて、ビルドする順番や（``CMakeLists.txt`` の）変更に応じた再構成のルールを決定します。
 
+.. _`Binary Targets`:
+
 バイナリのターゲット
 ====================
 
@@ -102,7 +104,7 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 ``OBJECT`` ライブラリという種類は、指定したソース・ファイルをコンパイルして生成したブジェクト・ファイルをアーカイブ化せずに集めたものです。
 これらのオブジェクト・ファイルは :genex:`$<TARGET_OBJECTS:name>` という文法で、別のターゲットの入力ソースとして利用することができます。
 
-これは ``OBJECT`` ライブラリの中身（オブジェクト・ファイル）を別のターゲットに提供する際に使用できる :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` の一つです：
+これは ``OBJECT`` ライブラリの中身（オブジェクト・ファイル）を別のターゲットに提供する際に使用できる「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」の一つです：
 
 .. code-block:: cmake
 
@@ -300,9 +302,9 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   not agree with the value of POSITION_INDEPENDENT_CODE already determined
   for "exe2".
 
-両ライブラリで「互換性」を保つには、:prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティに伝搬する全ての依存関係上の伝搬元でセットしている :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` プロパティの値（論理型）を同じにする必要があります。
+両ライブラリで「互換性」を保つには、:prop_tgt:`POSITION_INDEPENDENT_CODE` プロパティに伝搬する全ての依存関係上の伝搬元でセットした :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` プロパティの値（論理型）を同じにする必要があります。
 
-この「互換性のあるインタフェース」の利用要件（プロパティ）を、ターゲット・プロパティの :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` のエントリとして指定しておけば、他のターゲット・プロパティにも拡張できます。
+この「互換性のあるインタフェース」のプロパティ（利用要件）を、ターゲット・プロパティの :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` のエントリ（論理型）として指定しておけば、他のターゲット・プロパティにも拡張できます。
 ここで指定したプロパティはそれぞれ、利用者側のターゲットと、依存関係として伝搬する利用要件のプロパティ（``INTERFACE_`` の接頭子を持つプロパティ）との間で互換性があるようにして下さい。
 
 .. code-block:: cmake
@@ -322,9 +324,9 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1Version2 lib1Version3) # Diagnostic
 
-Non-boolean properties may also participate in "compatible interface" computations.
-Properties specified in the :prop_tgt:`COMPATIBLE_INTERFACE_STRING` property must be either unspecified or compare to the same string among all transitively specified dependencies.
-This can be useful to ensure that multiple incompatible versions of a library are not linked together through transitive requirements of a target:
+論理型ではないプロパティも「互換性のあるインタフェース」の算出に加えることが可能です。
+たとえば :prop_tgt:`COMPATIBLE_INTERFACE_STRING` プロパティに指定したエントリは「何も指定しない」にするか、またはすべての依存関係の間で同じ文字列と比較するかのどちらかにする必要があります。
+これは、たとえばターゲットの利用要件によって複数ある互換性のないバージョンのライブラリがリンクしたくない場合に利用できます：
 
 .. code-block:: cmake
 
@@ -343,7 +345,7 @@ This can be useful to ensure that multiple incompatible versions of a library ar
   add_executable(exe2 exe2.cpp)
   target_link_libraries(exe2 lib1Version2 lib1Version3) # Diagnostic
 
-The :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` target property specifies that content will be evaluated numerically and the maximum number among all specified will be calculated:
+:prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` というターゲット・プロパティのエントリは数値型として評価され、エントリの中で最大値を計算します：
 
 .. code-block:: cmake
 
@@ -364,22 +366,18 @@ The :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` target property specifies that c
   # CONTAINER_SIZE_REQUIRED will be "1000"
   target_link_libraries(exe2 lib1Version2 lib1Version3)
 
-Similarly, the :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` may be used to calculate the numeric minimum value for a property from dependencies.
+同様に :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` というターゲット・プロパティは依存関係から伝搬してきたプロパティの最小値を計算する際に使用できます。
 
-Each calculated "compatible" property value may be read in the consumer at generate-time using generator expressions.
+このように計算された「互換性のあるインタフェース」のプロパティは「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使って依存先の利用者側で参照することが可能です。
 
-Note that for each dependee, the set of properties specified in each compatible interface property must not intersect with the set specified in any of the other properties.
+ここで、依存先の利用者側に対し「互換性のあるインタフェース」のプロパティに指定したプロパティのリストは他のプロパティにセットしたリストと重複しないようにして下さい。
 
-Property Origin Debugging
--------------------------
+プロパティのデバッグ
+--------------------
 
-Because build specifications can be determined by dependencies, the lack of
-locality of code which creates a target and code which is responsible for
-setting build specifications may make the code more difficult to reason about.
-:manual:`cmake(1)` provides a debugging facility to print the origin of the
-contents of properties which may be determined by dependencies.  The properties
-which can be debugged are listed in the
-:variable:`CMAKE_DEBUG_TARGET_PROPERTIES` variable documentation:
+「ビルドの仕様」が依存関係で定義される場合があるため、ターゲットのソース・コードやビルドの仕様を設定する際に必要なコードが部分的に欠落していると、コードの推論が困難になることがあります。
+:manual:`cmake(1)` コマンドは依存関係で定義されるようなプロパティの内容を詳しく出力するデバッグ機能を提供しています。
+CMake 変数である :variable:`CMAKE_DEBUG_TARGET_PROPERTIES` のドキュメントにデバッグが可能なプロパティの一覧があります：
 
 .. code-block:: cmake
 
@@ -392,23 +390,15 @@ which can be debugged are listed in the
   )
   add_executable(exe1 exe1.cpp)
 
-In the case of properties listed in :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` or
-:prop_tgt:`COMPATIBLE_INTERFACE_STRING`, the debug output shows which target
-was responsible for setting the property, and which other dependencies also
-defined the property.  In the case of
-:prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` and
-:prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN`, the debug output shows the
-value of the property from each dependency, and whether the value determines
-the new extreme.
+ターゲット・プロパティの  :prop_tgt:`COMPATIBLE_INTERFACE_BOOL` や :prop_tgt:`COMPATIBLE_INTERFACE_STRING` にセットされたエントリの場合のデバッグ出力には、どのターゲットがプロパティをセットしたか、そしてプロパティを定義した他の依存関係が含まれています。
+また :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MAX` と :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` のターゲット・プロパティの場合だと、依存関係から伝搬してきたプロパティの値や、その値が新しい依存を決定するのかどうかがデバッグ出力として表示されます。
 
-Build Specification with Generator Expressions
-----------------------------------------------
 
-Build specifications may use
-:manual:`generator expressions <cmake-generator-expressions(7)>` containing
-content which may be conditional or known only at generate-time.  For example,
-the calculated "compatible" value of a property may be read with the
-``TARGET_PROPERTY`` expression:
+ジェネレータ式を使用したビルドの仕様
+------------------------------------
+
+ビルドの仕様を生成する際には「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使う場合があります。
+たとえば「互換性のある」プロパティの値を計算する時に ``TARGET_PROPERTY`` の式を使って参照できます：
 
 .. code-block:: cmake
 
@@ -425,13 +415,10 @@ the calculated "compatible" value of a property may be read with the
       CONTAINER_SIZE=$<TARGET_PROPERTY:CONTAINER_SIZE_REQUIRED>
   )
 
-In this case, the ``exe1`` source files will be compiled with
-``-DCONTAINER_SIZE=200``.
+この例では、``exe1`` のソース・ファイルは ``-DCONTAINER_SIZE=200`` でコンパイルされます。
 
-The unary ``TARGET_PROPERTY`` generator expression and the ``TARGET_POLICY``
-generator expression are evaluated with the consuming target context.  This
-means that a usage requirement specification may be evaluated differently based
-on the consumer:
+ジェネレータ式の ``TARGET_PROPERTY`` と ``TARGET_POLICY`` はライブラリを利用するターゲット ``exe1`` のコンテキストで評価されます。
+これは、すなわち利用要件の仕様がライブラリを利用する側に基づいて異なる評価を受ける可能性があることを意味します： **※ 2023/11/17 翻訳停止（何を云っているのか全く分からない）**
 
 .. code-block:: cmake
 
@@ -450,17 +437,10 @@ on the consumer:
   add_library(shared_lib shared_lib.cpp)
   target_link_libraries(shared_lib lib1)
 
-The ``exe1`` executable will be compiled with ``-DLIB1_WITH_EXE``, while the
-``shared_lib`` shared library will be compiled with ``-DLIB1_WITH_SHARED_LIB``
-and ``-DCONSUMER_CMP0041_NEW``, because policy :policy:`CMP0041` is
-``NEW`` at the point where the ``shared_lib`` target is created.
+The ``exe1`` executable will be compiled with ``-DLIB1_WITH_EXE``, while the ``shared_lib`` shared library will be compiled with ``-DLIB1_WITH_SHARED_LIB`` and ``-DCONSUMER_CMP0041_NEW``, because policy :policy:`CMP0041` is ``NEW`` at the point where the ``shared_lib`` target is created.
 
-The ``BUILD_INTERFACE`` expression wraps requirements which are only used when
-consumed from a target in the same buildsystem, or when consumed from a target
-exported to the build directory using the :command:`export` command.  The
-``INSTALL_INTERFACE`` expression wraps requirements which are only used when
-consumed from a target which has been installed and exported with the
-:command:`install(EXPORT)` command:
+The ``BUILD_INTERFACE`` expression wraps requirements which are only used when consumed from a target in the same buildsystem, or when consumed from a target exported to the build directory using the :command:`export` command.
+The ``INSTALL_INTERFACE`` expression wraps requirements which are only used when consumed from a target which has been installed and exported with the :command:`install(EXPORT)` command:
 
 .. code-block:: cmake
 
@@ -477,10 +457,8 @@ consumed from a target which has been installed and exported with the
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 ClimbingStats)
 
-In this case, the ``exe1`` executable will be compiled with
-``-DClimbingStats_FROM_BUILD_LOCATION``.  The exporting commands generate
-:prop_tgt:`IMPORTED` targets with either the ``INSTALL_INTERFACE`` or the
-``BUILD_INTERFACE`` omitted, and the ``*_INTERFACE`` marker stripped away.
+In this case, the ``exe1`` executable will be compiled with ``-DClimbingStats_FROM_BUILD_LOCATION``.
+The exporting commands generate  :prop_tgt:`IMPORTED` targets with either the ``INSTALL_INTERFACE`` or the ``BUILD_INTERFACE`` omitted, and the ``*_INTERFACE`` marker stripped away.
 A separate project consuming the ``ClimbingStats`` package would contain:
 
 .. code-block:: cmake
@@ -490,11 +468,8 @@ A separate project consuming the ``ClimbingStats`` package would contain:
   add_executable(Downstream main.cpp)
   target_link_libraries(Downstream Upstream::ClimbingStats)
 
-Depending on whether the ``ClimbingStats`` package was used from the build
-location or the install location, the ``Downstream`` target would be compiled
-with either ``-DClimbingStats_FROM_BUILD_LOCATION`` or
-``-DClimbingStats_FROM_INSTALL_LOCATION``.  For more about packages and
-exporting see the :manual:`cmake-packages(7)` manual.
+Depending on whether the ``ClimbingStats`` package was used from the build location or the install location, the ``Downstream`` target would be compiled with either ``-DClimbingStats_FROM_BUILD_LOCATION`` or ``-DClimbingStats_FROM_INSTALL_LOCATION``.
+For more about packages and exporting see the :manual:`cmake-packages(7)` manual.
 
 .. _`Include Directories and Usage Requirements`:
 
@@ -614,92 +589,62 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 
 .. _`Output Artifacts`:
 
-Output Artifacts
-----------------
+成果物の出力
+------------
 
-The buildsystem targets created by the :command:`add_library` and
-:command:`add_executable` commands create rules to create binary outputs.
-The exact output location of the binaries can only be determined at
-generate-time because it can depend on the build-configuration and the
-link-language of linked dependencies etc.  ``TARGET_FILE``,
-``TARGET_LINKER_FILE`` and related expressions can be used to access the
-name and location of generated binaries.  These expressions do not work
-for ``OBJECT`` libraries however, as there is no single file generated
-by such libraries which is relevant to the expressions.
+:command:`add_library` と :command:`add_executable` コマンドが生成したビルドシステムのターゲットは「:ref:`バイナリのターゲット <Binary Targets>`」をビルドするルールを生成します。
+生成するバイナリの正確な出力場所は、ビルド構成やリンクする際の依存関係などのルールに依存する場合があるので、実際に生成する時にのみ決まります。
+なお ``TARGET_FILE`` と ``TARGET_LINKER_FILE`` 、および関連する式を使って生成したバイナリの名前や出力場所を参照することは可能です。
+ただし、これらの式は「:ref:`オブジェクト・ライブラリ <Object Libraries>`」では機能しません。これは、そのようなライブラリによって生成される式に関連するファイルが一つも存在しないからです。
 
-There are three kinds of output artifacts that may be build by targets
-as detailed in the following sections.  Their classification differs
-between DLL platforms and non-DLL platforms.  All Windows-based
-systems including Cygwin are DLL platforms.
+次のセクションで詳しく説明するように、ターゲットがビルドした成果物（*Artifacts*）は三種類あります。
+これらの分類は DLL ベースのプラットフォームとそうではないプラットフォームの間では異なります。
+ちなみに Cygwin を含む全ての Windows 系システムは DLL ベースのプラットフォームです。
 
 .. _`Runtime Output Artifacts`:
 
-Runtime Output Artifacts
-^^^^^^^^^^^^^^^^^^^^^^^^
+ランタイムで出力される成果物
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A *runtime* output artifact of a buildsystem target may be:
+ビルドシステムのターゲットが *ランタイム* で出力する成果物は次のとおりです：
 
-* The executable file (e.g. ``.exe``) of an executable target
-  created by the :command:`add_executable` command.
+* :command:`add_executable` コマンドによって生成された実行可能なターゲットの実行形式のファイル（たとえば ``.exe``）
 
-* On DLL platforms: the executable file (e.g. ``.dll``) of a shared
-  library target created by the :command:`add_library` command
-  with the ``SHARED`` option.
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットの実行形式のファイル（たとえば ``.dll``）
 
-The :prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` and :prop_tgt:`RUNTIME_OUTPUT_NAME`
-target properties may be used to control runtime output artifact locations
-and names in the build tree.
+:prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルド・ツリー内にランタイムで出力される成果物の場所や成果物の名前を変更できます。
 
 .. _`Library Output Artifacts`:
 
-Library Output Artifacts
-^^^^^^^^^^^^^^^^^^^^^^^^
+ライブラリ出力の成果物
+^^^^^^^^^^^^^^^^^^^^^^
 
 A *library* output artifact of a buildsystem target may be:
 
-* The loadable module file (e.g. ``.dll`` or ``.so``) of a module
-  library target created by the :command:`add_library` command
-  with the ``MODULE`` option.
+* The loadable module file (e.g. ``.dll`` or ``.so``) of a module library target created by the :command:`add_library` command with the ``MODULE`` option.
 
-* On non-DLL platforms: the shared library file (e.g. ``.so`` or ``.dylib``)
-  of a shared library target created by the :command:`add_library`
-  command with the ``SHARED`` option.
+* On non-DLL platforms: the shared library file (e.g. ``.so`` or ``.dylib``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option.
 
-The :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` and :prop_tgt:`LIBRARY_OUTPUT_NAME`
-target properties may be used to control library output artifact locations
-and names in the build tree.
+The :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` and :prop_tgt:`LIBRARY_OUTPUT_NAME` target properties may be used to control library output artifact locations and names in the build tree.
 
 .. _`Archive Output Artifacts`:
 
-Archive Output Artifacts
-^^^^^^^^^^^^^^^^^^^^^^^^
+アーカイブ出力の成果物
+^^^^^^^^^^^^^^^^^^^^^^
 
-An *archive* output artifact of a buildsystem target may be:
+An *archive* output artifact of a buildsystem target may be: 
 
-* The static library file (e.g. ``.lib`` or ``.a``) of a static
-  library target created by the :command:`add_library` command
-  with the ``STATIC`` option.
+* The static library file (e.g. ``.lib`` or ``.a``) of a static library target created by the :command:`add_library` command with the ``STATIC`` option.
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of a shared
-  library target created by the :command:`add_library` command
-  with the ``SHARED`` option.  This file is only guaranteed to exist if
-  the library exports at least one unmanaged symbol.
+* On DLL platforms: the import library file (e.g. ``.lib``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option. This file is only guaranteed to exist if the library exports at least one unmanaged symbol.
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of an
-  executable target created by the :command:`add_executable` command
-  when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* On DLL platforms: the import library file (e.g. ``.lib``) of an executable target created by the :command:`add_executable` command when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
 
-* On AIX: the linker import file (e.g. ``.imp``) of an executable target
-  created by the :command:`add_executable` command when its
-  :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* On AIX: the linker import file (e.g. ``.imp``) of an executable target created by the :command:`add_executable` command when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
 
-* On macOS: the linker import file (e.g. ``.tbd``) of a shared library target
-  created by the :command:`add_library` command with the ``SHARED`` option and
-  when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* On macOS: the linker import file (e.g. ``.tbd``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option and when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
 
-The :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME`
-target properties may be used to control archive output artifact locations
-and names in the build tree.
+The :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME` target properties may be used to control archive output artifact locations and names in the build tree.
 
 Directory-Scoped Commands
 -------------------------
