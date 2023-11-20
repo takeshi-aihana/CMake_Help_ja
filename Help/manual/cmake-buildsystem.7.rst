@@ -1,7 +1,8 @@
 .. cmake-manual-description: CMake ビルドシステム・リファレンス
 
-cmake-buildsystem(7)
-********************
+======================
+ cmake-buildsystem(7)
+======================
 
 .. only:: html
 
@@ -53,7 +54,7 @@ CMake 系のビルドシステムは論理的な「**ターゲット**」の集�
 .. _`Normal Libraries`:
 
 通常のライブラリ
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 :command:`add_library` コマンドはライブラリの種類を指定しないと、デフォルトの ``STATIC`` ライブラリを定義します。
 このライブラリの種類は、次のようにコマンドを実行することで直接指定できます：
@@ -80,7 +81,7 @@ CMake 系のビルドシステムは論理的な「**ターゲット**」の集�
 .. _`Apple Frameworks`:
 
 Apple のフレームワーク
-""""""""""""""""""""""
+++++++++++++++++++++++
 
 MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ とそのバンドル [#hint_for_framework_and_bundle_of_ios]_ を生成する際、``SHARED`` ライブラリに :prop_tgt:`FRAMEWORK` というターゲット・プロパティが有効（ ``TRUE`` ）になっている場合があります。
 一般的に、この ``FRAMEWORK`` というターゲット・プロパティが有効になったライブラリは、さらに :prop_tgt:`FRAMEWORK_VERSION` というターゲット・プロパティも有効になっているはずです。
@@ -99,7 +100,7 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 .. _`Object Libraries`:
 
 オブジェクト・ライブラリ
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``OBJECT`` ライブラリという種類は、指定したソース・ファイルをコンパイルして生成したブジェクト・ファイルをアーカイブ化せずに集めたものです。
 これらのオブジェクト・ファイルは :genex:`$<TARGET_OBJECTS:name>` という文法で、別のターゲットの入力ソースとして利用することができます。
@@ -474,7 +475,7 @@ For more about packages and exporting see the :manual:`cmake-packages(7)` manual
 .. _`Include Directories and Usage Requirements`:
 
 Include Directories and Usage Requirements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Include directories require some special consideration when specified as usage
 requirements and when used with generator expressions.  The
@@ -593,50 +594,50 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 ------------
 
 :command:`add_library` と :command:`add_executable` コマンドが生成したビルドシステムのターゲットは「:ref:`バイナリのターゲット <Binary Targets>`」をビルドするルールを生成します。
-生成するバイナリの正確な出力場所は、ビルド構成やリンクする際の依存関係などにより実際に生成する時に決まります。
+ビルドするバイナリの正確な出力場所は、ビルド構成やリンクする際の依存関係などにより、実際にビルドする際に決まります。
 なお、ビルドしたバイナリの名前や出力場所は ``TARGET_FILE`` と ``TARGET_LINKER_FILE`` とそれらに関連する式を使って参照することは可能です。
-ただし、これらの式は「:ref:`オブジェクト・ライブラリ <Object Libraries>`」では機能しません。これは、そのようなライブラリによって生成される式に関連するファイルが一つも存在しないからです。
+ただし、これらの式は「:ref:`オブジェクト・ライブラリ <Object Libraries>`」では機能しません。これは、このライブラリをビルドする際に生成されるファイルが一つだけでないからです。
 
-次のセクションで詳しく説明するように、ターゲットがビルドした成果物（*Artifacts*）は三種類あります。
+次のセクションで詳しく説明するように、ターゲットがビルドする成果物（*Artifacts*）は三種類あります。
 これらの分類は DLL ベースのプラットフォームとそうではないプラットフォームの間では異なります。
 ちなみに Cygwin を含む全ての Windows 系システムは DLL ベースのプラットフォームです。
 
 .. _`Runtime Output Artifacts`:
 
-ランタイムで出力される成果物
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ランタイム形式の成果物
+~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドシステムのターゲットが *ランタイム* で出力する成果物は次のとおりです：
+ビルドシステムのターゲットが *ランタイム* 形式の成果物は次のとおりです：
 
-* :command:`add_executable` コマンドによって生成された実行可能なターゲットの実行形式のファイル（たとえば ``.exe``）
+* :command:`add_executable` コマンドで生成される実行可能なターゲットは、実行形式のファイル（たとえば ``.exe``）
 
-* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットの実行形式のファイル（たとえば ``.dll``）
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドで生成される共有ライブラリのターゲットは、実行形式のファイル（たとえば ``.dll``）
 
-:prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルド・ツリー内にランタイムで出力される成果物の場所や成果物の名前を変更できます。
+:prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にランタイム形式の成果物が格納される場所や成果物の名前を変更できます。
 
 .. _`Library Output Artifacts`:
 
-ライブラリ出力の成果物
-^^^^^^^^^^^^^^^^^^^^^^
+ライブラリ形式の成果物
+~~~~~~~~~~~~~~~~~~~~~~
 
-A *library* output artifact of a buildsystem target may be:
+ビルドシステムのターゲットで *ライブラリ* 形式の成果物は次のとおりです:
 
-* The loadable module file (e.g. ``.dll`` or ``.so``) of a module library target created by the :command:`add_library` command with the ``MODULE`` option.
+* ``MODULE`` オプションを指定した :command:`add_library` コマンドで生成されたライブラリのターゲットは、ロード可能なモジュール・ファイル（たとえば、``.dll`` とか ``.so``）
 
-* On non-DLL platforms: the shared library file (e.g. ``.so`` or ``.dylib``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option.
+* DLL ベースではないプラットフォームの場合： ``SHARED``  オプションを指定した :command:`add_library` コマンドで生成された共有ライブラリのターゲットは、共有ライブラリのファイル（たとえば、``.so`` とか ``.dylib``）
 
-The :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` and :prop_tgt:`LIBRARY_OUTPUT_NAME` target properties may be used to control library output artifact locations and names in the build tree.
+:prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にライブラリ形式の成果物が格納される場所や成果物の名前を変更できま。
 
 .. _`Archive Output Artifacts`:
 
-アーカイブ出力の成果物
-^^^^^^^^^^^^^^^^^^^^^^
+アーカイブ形式の成果物
+~~~~~~~~~~~~~~~~~~~~~~
 
-An *archive* output artifact of a buildsystem target may be: 
+ビルドシステムのターゲットで *アーカイブ* 形式の成果物は次のとおりです：
 
-* The static library file (e.g. ``.lib`` or ``.a``) of a static library target created by the :command:`add_library` command with the ``STATIC`` option.
+*  ``STATIC`` オプションを指定した :command:`add_library` コマンドによって生成された静的ライブラリのターゲットは、静的ライブラリのファイル（たとえば  ``.lib`` とか ``.a``）
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option. This file is only guaranteed to exist if the library exports at least one unmanaged symbol.
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドで生成された共有ライブラリのターゲットは、インポート・ライブラリのファイル（たとえば、``.lib``）。このファイルは、生成されたライブラリが少なくと一個のアンマネージドなシンボルを外部に公開している場合にのみ生成される。
 
 * On DLL platforms: the import library file (e.g. ``.lib``) of an executable target created by the :command:`add_executable` command when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
 
