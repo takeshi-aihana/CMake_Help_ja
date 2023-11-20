@@ -1,8 +1,7 @@
 .. cmake-manual-description: CMake ビルドシステム・リファレンス
 
-======================
- cmake-buildsystem(7)
-======================
+cmake-buildsystem(7)
+********************
 
 .. only:: html
 
@@ -611,7 +610,7 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 
 * :command:`add_executable` コマンドで生成される実行可能なターゲットは、実行形式のファイル（たとえば ``.exe``）
 
-* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドで生成される共有ライブラリのターゲットは、実行形式のファイル（たとえば ``.dll``）
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットは、実行形式のファイル（たとえば ``.dll``）
 
 :prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にランタイム形式の成果物が格納される場所や成果物の名前を変更できます。
 
@@ -622,11 +621,11 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 
 ビルドシステムのターゲットで *ライブラリ* 形式の成果物は次のとおりです:
 
-* ``MODULE`` オプションを指定した :command:`add_library` コマンドで生成されたライブラリのターゲットは、ロード可能なモジュール・ファイル（たとえば、``.dll`` とか ``.so``）
+* ``MODULE`` オプションを指定した :command:`add_library` コマンドによって生成されたライブラリのターゲットは、ロード可能なモジュール・ファイル（たとえば、``.dll`` とか ``.so``）
 
-* DLL ベースではないプラットフォームの場合： ``SHARED``  オプションを指定した :command:`add_library` コマンドで生成された共有ライブラリのターゲットは、共有ライブラリのファイル（たとえば、``.so`` とか ``.dylib``）
+* DLL ベースではないプラットフォームの場合： ``SHARED``  オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、共有ライブラリのファイル（たとえば、``.so`` とか ``.dylib``）
 
-:prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にライブラリ形式の成果物が格納される場所や成果物の名前を変更できま。
+:prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にライブラリ形式の成果物が格納される場所や成果物の名前を変更できます。
 
 .. _`Archive Output Artifacts`:
 
@@ -637,46 +636,33 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 
 *  ``STATIC`` オプションを指定した :command:`add_library` コマンドによって生成された静的ライブラリのターゲットは、静的ライブラリのファイル（たとえば  ``.lib`` とか ``.a``）
 
-* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドで生成された共有ライブラリのターゲットは、インポート・ライブラリのファイル（たとえば、``.lib``）。このファイルは、生成されたライブラリが少なくと一個のアンマネージドなシンボルを外部に公開している場合にのみ生成される。
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、インポート・ライブラリのファイル（たとえば、``.lib``）。このファイルは、生成されたライブラリが少なくと一個のアンマネージドなシンボルを外部に公開している場合にのみ生成される。
 
-* On DLL platforms: the import library file (e.g. ``.lib``) of an executable target created by the :command:`add_executable` command when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* DLL ベースのプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成された実行形式のターゲットは、インポート・ライブラリのファイル（たとえば ``.lib``）
 
-* On AIX: the linker import file (e.g. ``.imp``) of an executable target created by the :command:`add_executable` command when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* AIX 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成された実行形式のターゲットは、リンカ・インポートのファイル（たとえば  ``.imp``）
 
-* On macOS: the linker import file (e.g. ``.tbd``) of a shared library target created by the :command:`add_library` command with the ``SHARED`` option and when its :prop_tgt:`ENABLE_EXPORTS` target property is set.
+* macOS 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に、``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、リンカ・インポートのファル（たとえば  ``.tbd``） 
 
-The :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` and :prop_tgt:`ARCHIVE_OUTPUT_NAME` target properties may be used to control archive output artifact locations and names in the build tree.
+:prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` や :prop_tgt:`ARCHIVE_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にアーカイブ形式の成果物が格納される場所や成果物の名前を変更できます。
 
-Directory-Scoped Commands
--------------------------
+ディレクトリを特定するコマンド
+------------------------------
 
-The :command:`target_include_directories`,
-:command:`target_compile_definitions` and
-:command:`target_compile_options` commands have an effect on only one
-target at a time.  The commands :command:`add_compile_definitions`,
-:command:`add_compile_options` and :command:`include_directories` have
-a similar function, but operate at directory scope instead of target
-scope for convenience.
+:command:`target_include_directories`、:command:`target_compile_definitions`、そして :command:`target_compile_options` といったコマンドは、一度に１個のターゲットにだけ作用します。
+これに対して :command:`add_compile_definitions`、:command:`add_compile_options`、そして :command:`include_directories` といったコマンドにも同様の機能がありますが、ターゲットではなくディレクトリが対象です。
 
 .. _`Build Configurations`:
 
-Build Configurations
-====================
+ビルドの構成
+============
 
-Configurations determine specifications for a certain type of build, such
-as ``Release`` or ``Debug``.  The way this is specified depends on the type
-of :manual:`generator <cmake-generators(7)>` being used.  For single
-configuration generators like  :ref:`Makefile Generators` and
-:generator:`Ninja`, the configuration is specified at configure time by the
-:variable:`CMAKE_BUILD_TYPE` variable. For multi-configuration generators
-like :ref:`Visual Studio <Visual Studio Generators>`, :generator:`Xcode`, and
-:generator:`Ninja Multi-Config`, the configuration is chosen by the user at
-build time and :variable:`CMAKE_BUILD_TYPE` is ignored.  In the
-multi-configuration case, the set of *available* configurations is specified
-at configure time by the :variable:`CMAKE_CONFIGURATION_TYPES` variable,
-but the actual configuration used cannot be known until the build stage.
-This difference is often misunderstood, leading to problematic code like the
-following:
+生成した「**ビルドの構成** （Build Configurations）」により、``Release`` や ``Debug`` といった特定の種類のビルドの仕様が決まります。
+ビルドの構成を指定する方法は、生成時に使用した :manual:`ジェネレータ <cmake-generators(7)>` に依存します。
+たとえば :ref:`Makefile Generators` や :generator:`Ninja` のような一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まります。
+あるいは :ref:`Visual Studio <Visual Studio Generators>` や :generator:`Xcode`、そして :generator:`Ninja Multi-Config` のような複数の構成を扱うジェネレータの場合、ユーザがビルド時に構成を選択するので、:variable:`CMAKE_BUILD_TYPE` の値は無視されます。
+後者のジェネレータでは、CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` で *利用可能な* 設定一式を指定できますが、実際に使用する設定はビルド時までわかりません。
+この違いは誤解されることが多く、次のような問題のあるコードにつながります：
 
 .. code-block:: cmake
 
@@ -687,9 +673,8 @@ following:
     target_compile_definitions(exe1 PRIVATE DEBUG_BUILD)
   endif()
 
-:manual:`Generator expressions <cmake-generator-expressions(7)>` should be
-used instead to handle configuration-specific logic correctly, regardless of
-the generator used.  For example:
+このような場合、使用するジェネレータに依らず、構成に固有の仕様を正しく処理するために代わりに :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使用するようにして下さい
+たとえば：
 
 .. code-block:: cmake
 
@@ -698,87 +683,67 @@ the generator used.  For example:
     $<$<CONFIG:Debug>:DEBUG_BUILD>
   )
 
-In the presence of :prop_tgt:`IMPORTED` targets, the content of
-:prop_tgt:`MAP_IMPORTED_CONFIG_DEBUG <MAP_IMPORTED_CONFIG_<CONFIG>>` is also
-accounted for by the above :genex:`$<CONFIG:Debug>` expression.
+:prop_tgt:`IMPORTED` なターゲットが存在する場合、:prop_tgt:`MAP_IMPORTED_CONFIG_DEBUG <MAP_IMPORTED_CONFIG_<CONFIG>>` というターゲット・プロパティはジェネレータ式の :genex:`$<CONFIG:Debug>`  の評価も考慮されます。
 
+大小文字を区別する
+------------------
 
-Case Sensitivity
-----------------
-
-:variable:`CMAKE_BUILD_TYPE` and :variable:`CMAKE_CONFIGURATION_TYPES` are
-just like other variables in that any string comparisons made with their
-values will be case-sensitive.  The :genex:`$<CONFIG>` generator expression also
-preserves the casing of the configuration as set by the user or CMake defaults.
-For example:
+CMake 変数の :variable:`CMAKE_BUILD_TYPE` と :variable:`CMAKE_CONFIGURATION_TYPES` は、これらの値を使った文字列比較では大文字と小文字が区別されるという点で、扱いは他の変数と同じです。
+ジェネレータ式の :genex:`$<CONFIG>` は、ユーザまたは CMake のデフォルトによって指定されたビルドの構成での大文字/小文字も保持します。
+たとえば：
 
 .. code-block:: cmake
 
-  # NOTE: Don't use these patterns, they are for illustration purposes only.
+  # 注意：実際に以下のような使い方はしないこと（これは便宜上、問題を説明するために使用している）
 
   set(CMAKE_BUILD_TYPE Debug)
   if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
-    # ... will never get here, "Debug" != "DEBUG"
+    # ... "Debug" != "DEBUG" なのでマッチしない
   endif()
   add_custom_target(print_config ALL
-    # Prints "Config is Debug" in this single-config case
-    COMMAND ${CMAKE_COMMAND} -E echo "Config is $<CONFIG>"
+    # "Config is Debug" と出力するカスタム・ターゲット
+  COMMAND ${CMAKE_COMMAND} -E echo "Config is $<CONFIG>"
     VERBATIM
   )
 
   set(CMAKE_CONFIGURATION_TYPES Debug Release)
   if(DEBUG IN_LIST CMAKE_CONFIGURATION_TYPES)
-    # ... will never get here, "Debug" != "DEBUG"
+    # ... "Debug" != "DEBUG" なのでマッチしない
   endif()
 
-In contrast, CMake treats the configuration type case-insensitively when
-using it internally in places that modify behavior based on the configuration.
-For example, the :genex:`$<CONFIG:Debug>` generator expression will evaluate to 1
-for a configuration of not only ``Debug``, but also ``DEBUG``, ``debug`` or
-even ``DeBuG``.  Therefore, you can specify configuration types in
-:variable:`CMAKE_BUILD_TYPE` and :variable:`CMAKE_CONFIGURATION_TYPES` with
-any mixture of upper and lowercase, although there are strong conventions
-(see the next section).  If you must test the value in string comparisons,
-always convert the value to upper or lowercase first and adjust the test
-accordingly.
+それに対して、CMake はビルドの構成に応じて処理を変更させる場所で、構成の種類を内部で参照する際は大文字/小文字を区別せずに扱います。
+たとえば、ジェネレータ式の :genex:`$<CONFIG:Debug>` は ``Debug`` だけでなく ``DEBUG`` や ``debug``、さらには ``DeBuG`` であっても同じ様に 1 と評価します。
+そのため、CMake としては「厳格なルール」（次のセクションを参考のこと）はあるものの、CMake 変数の :variable:`CMAKE_BUILD_TYPE` と :variable:`CMAKE_CONFIGURATION_TYPES` では大文字と小文字を任意に混ぜて指定することも可能になっています。
+もし文字列比較で変数の値をテストする場合は、必ず最初に値を大文字または小文字に変換し、それに応じてテストの方法も調整してから行うようにして下さい。
 
-Default And Custom Configurations
----------------------------------
+デフォルトの構成とカスタマイズした構成
+--------------------------------------
 
-By default, CMake defines a number of standard configurations:
+CMake はデフォルトで標準的なビルド構成をいくつか定義しています：
 
 * ``Debug``
 * ``Release``
 * ``RelWithDebInfo``
 * ``MinSizeRel``
 
-In multi-config generators, the :variable:`CMAKE_CONFIGURATION_TYPES` variable
-will be populated with (potentially a subset of) the above list by default,
-unless overridden by the project or user.  The actual configuration used is
-selected by the user at build time.
+複数のビルドの構成を扱うジェネレータでは、ユーザやプロジェクトによって上書きされない限り、デフォルトで CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` の値に上記の定義（実際にはそのサブセット）がセットされます。
+実際に使用するビルドの構成はビルド時にユーザが指定します。
 
-For single-config generators, the configuration is specified with the
-:variable:`CMAKE_BUILD_TYPE` variable at configure time and cannot be changed
-at build time.  The default value will often be none of the above standard
-configurations and will instead be an empty string.  A common misunderstanding
-is that this is the same as ``Debug``, but that is not the case.  Users should
-always explicitly specify the build type instead to avoid this common problem.
+一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まり、ビルド時に構成を変更することはできません。
+デフォルトで、このCMake 変数には、上記の標準的な構成ではなく、空の文字列がセットされます。
+よくある誤解として、これが ``Debug`` と同じであるとするものですが、それは間違いです。
+この問題を回避するため、ユーザは常にビルドの構成を明治的に指定する必要があります。
 
-The above standard configuration types provide reasonable behavior on most
-platforms, but they can be extended to provide other types.  Each configuration
-defines a set of compiler and linker flag variables for the language in use.
-These variables follow the convention :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>`,
-where ``<CONFIG>`` is always the uppercase configuration name.  When defining
-a custom configuration type, make sure these variables are set appropriately,
-typically as cache variables.
+上記の標準的なビルドの構成は、ほとんどのプラットフォームで適切に動作しますが、他の構成を提供するように変更することが可能です。
+各構成は、使用しているプログラミング言語に対するコンパイラ・フラグとリンカ・フラグを変数として定義します。
+これらの変数は :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>` というスタイルを持ちます（構成の名前を表す ``<CONFIG>`` は常に大文字にすること）。
+独自にカスタマイズした構成を定義する際は、これらの変数が（通常はキャッシュ変数として） 適切に設定されていることを確認して下さい。
 
-
-Pseudo Targets
+疑似ターゲット
 ==============
 
-Some target types do not represent outputs of the buildsystem, but only inputs
-such as external dependencies, aliases or other non-build artifacts.  Pseudo
-targets are not represented in the generated buildsystem.
+ビルドの構成の中には、ビルドシステムのログを表示しないで、代わりに外部との依存関係、別名（エイリアス）、またはその他、ビルドの対象外の成果物の情報だけ表示するものがあります。
+疑似ターゲットは、ビルドシステムの生成中は何も表示されません。
 
 .. _`Imported Targets`:
 
