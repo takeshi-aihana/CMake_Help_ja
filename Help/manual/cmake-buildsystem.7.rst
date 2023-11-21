@@ -812,7 +812,7 @@ INTERFACE ライブラリなターゲット
 ``INTERFACE`` ライブラリなターゲットはソースをコンパイルせず成果物となるファイルを出力しないため、:prop_tgt:`LOCATION` プロパティは持ちません。
 
 ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_SOURCES`、そして :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` などの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ を指定する場合があります。
-It may specify usage requirements such as :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`, :prop_tgt:`INTERFACE_COMPILE_OPTIONS`, :prop_tgt:`INTERFACE_LINK_LIBRARIES`, :prop_tgt:`INTERFACE_SOURCES`, and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+
 Only the ``INTERFACE`` modes of the :command:`target_include_directories`, :command:`target_compile_definitions`, :command:`target_compile_options`, :command:`target_sources`, and :command:`target_link_libraries` commands may be used with ``INTERFACE`` libraries.
 
 Since CMake 3.19, an ``INTERFACE`` library target may optionally contain source files.
