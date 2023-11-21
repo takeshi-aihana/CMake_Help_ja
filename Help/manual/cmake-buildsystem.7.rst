@@ -754,7 +754,7 @@ IMPORTED なターゲット
 通常、このようなターゲットは上流のパッケージによって定義され変更不可として扱われる必要があります。
 :prop_tgt:`IMPORTED` なターゲットは、他の通常のターゲットと同様に、:command:`target_compile_definitions`、:command:`target_include_directories`、:command:`target_compile_options`、あるいは :command:`target_link_libraries` といったコマンドを使って、そのターゲット・プロパティを変更できます。
 
-:prop_tgt:`IMPORTED` なターゲットには、:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` など、「:ref:`バイナリのターゲット <Binary Targets>`」と同じ利用要件のプロパティが設定されている場合があります。
+:prop_tgt:`IMPORTED` なターゲットには、:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` など、「:ref:`バイナリのターゲット <Binary Targets>`」と同じ「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ のプロパティが設定されている場合があります。
 
 ターゲット・プロパティの :prop_tgt:`LOCATION` も :prop_tgt:`IMPORTED` なターゲットから読みとられる場合がありますが、必ず読み取らなければならないという訳ではありません。
 :command:`add_custom_command` などのコマンドでは、:prop_tgt:`IMPORTED` で :prop_tgt:`EXECUTABLE <TYPE>` なターゲットを実行形式 ``COMMAND`` として透過的に利用できます。
@@ -806,34 +806,22 @@ ALIAS ターゲット
 
 .. _`Interface Libraries`:
 
-インタフェースのライブラリ
---------------------------
+INTERFACE ライブラリなターゲット
+--------------------------------
 
-An ``INTERFACE`` library target does not compile sources and does not
-produce a library artifact on disk, so it has no :prop_tgt:`LOCATION`.
+``INTERFACE`` ライブラリなターゲットはソースをコンパイルせず成果物となるファイルを出力しないため、:prop_tgt:`LOCATION` プロパティは持ちません。
 
-It may specify usage requirements such as
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
-:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`,
-:prop_tgt:`INTERFACE_COMPILE_OPTIONS`,
-:prop_tgt:`INTERFACE_LINK_LIBRARIES`,
-:prop_tgt:`INTERFACE_SOURCES`,
-and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
-Only the ``INTERFACE`` modes of the :command:`target_include_directories`,
-:command:`target_compile_definitions`, :command:`target_compile_options`,
-:command:`target_sources`, and :command:`target_link_libraries` commands
-may be used with ``INTERFACE`` libraries.
+ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_SOURCES`、そして :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` などの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ を指定する場合があります。
+It may specify usage requirements such as :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`, :prop_tgt:`INTERFACE_COMPILE_OPTIONS`, :prop_tgt:`INTERFACE_LINK_LIBRARIES`, :prop_tgt:`INTERFACE_SOURCES`, and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+Only the ``INTERFACE`` modes of the :command:`target_include_directories`, :command:`target_compile_definitions`, :command:`target_compile_options`, :command:`target_sources`, and :command:`target_link_libraries` commands may be used with ``INTERFACE`` libraries.
 
-Since CMake 3.19, an ``INTERFACE`` library target may optionally contain
-source files.  An interface library that contains source files will be
-included as a build target in the generated buildsystem.  It does not
-compile sources, but may contain custom commands to generate other sources.
-Additionally, IDEs will show the source files as part of the target for
-interactive reading and editing.
+Since CMake 3.19, an ``INTERFACE`` library target may optionally contain source files.
+An interface library that contains source files will be included as a build target in the generated buildsystem.
+It does not compile sources, but may contain custom commands to generate other sources.
+Additionally, IDEs will show the source files as part of the target for interactive reading and editing.
 
 A primary use-case for ``INTERFACE`` libraries is header-only libraries.
-Since CMake 3.23, header files may be associated with a library by adding
-them to a header set using the :command:`target_sources` command:
+Since CMake 3.23, header files may be associated with a library by adding them to a header set using the :command:`target_sources` command:
 
 .. code-block:: cmake
 
@@ -848,13 +836,10 @@ them to a header set using the :command:`target_sources` command:
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 Eigen)
 
-When we specify the ``FILE_SET`` here, the ``BASE_DIRS`` we define automatically
-become include directories in the usage requirements for the target ``Eigen``.
-The usage requirements from the target are consumed and used when compiling, but
-have no effect on linking.
+When we specify the ``FILE_SET`` here, the ``BASE_DIRS`` we define automatically become include directories in the usage requirements for the target ``Eigen``.
+The usage requirements from the target are consumed and used when compiling, but have no effect on linking.
 
-Another use-case is to employ an entirely target-focussed design for usage
-requirements:
+Another use-case is to employ an entirely target-focussed design for usage requirements:
 
 .. code-block:: cmake
 
@@ -871,12 +856,10 @@ requirements:
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 pic_on enable_rtti)
 
-This way, the build specification of ``exe1`` is expressed entirely as linked
-targets, and the complexity of compiler-specific flags is encapsulated in an
-``INTERFACE`` library target.
+This way, the build specification of ``exe1`` is expressed entirely as linked targets, and the complexity of compiler-specific flags is encapsulated in an ``INTERFACE`` library target.
 
-``INTERFACE`` libraries may be installed and exported. We can install the
-default header set along with the target:
+``INTERFACE`` libraries may be installed and exported.
+We can install the default header set along with the target:
 
 .. code-block:: cmake
 
@@ -895,8 +878,7 @@ default header set along with the target:
   )
 
 Here, the headers defined in the header set are installed to ``include/Eigen``.
-The install destination automatically becomes an include directory that is a
-usage requirement for consumers.
+The install destination automatically becomes an include directory that is a usage requirement for consumers.
 
 .. rubric:: 日本語訳注記
 
