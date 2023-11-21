@@ -747,37 +747,33 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 
 .. _`Imported Targets`:
 
-ターゲットをインポートする
---------------------------
+IMPORTED なターゲット
+---------------------
 
-:prop_tgt:`IMPORTED` というターゲット・プロパティは既存の依存関係
-          target represents a pre-existing dependency.
-Usually such targets are defined by an upstream package and should be treated as immutable.
-After declaring an :prop_tgt:`IMPORTED` target one can adjust its target properties by using the customary commands such as :command:`target_compile_definitions`, :command:`target_include_directories`, :command:`target_compile_options` or :command:`target_link_libraries` just like with any other regular target.
+:prop_tgt:`IMPORTED` なターゲットは既存の依存関係を表します（？）。
+通常、このようなターゲットは上流のパッケージによって定義され変更不可として扱われる必要があります。
+:prop_tgt:`IMPORTED` なターゲットは、他の通常のターゲットと同様に、:command:`target_compile_definitions`、:command:`target_include_directories`、:command:`target_compile_options`、あるいは :command:`target_link_libraries` といったコマンドを使って、そのターゲット・プロパティを変更できます。
 
-:prop_tgt:`IMPORTED` targets may have the same usage requirement properties populated as binary targets, such as :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`, :prop_tgt:`INTERFACE_COMPILE_OPTIONS`, :prop_tgt:`INTERFACE_LINK_LIBRARIES`, and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`IMPORTED` なターゲットには、:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` など、「:ref:`バイナリのターゲット <Binary Targets>`」と同じ利用要件のプロパティが設定されている場合があります。
 
-The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there is rarely reason to do so.
-Commands such as :command:`add_custom_command` can transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target as a ``COMMAND`` executable.
+ターゲット・プロパティの :prop_tgt:`LOCATION` も :prop_tgt:`IMPORTED` なターゲットから読みとられる場合がありますが、必ず読み取らなければならないという訳ではありません。
+:command:`add_custom_command` などのコマンドでは、:prop_tgt:`IMPORTED` で :prop_tgt:`EXECUTABLE <TYPE>` なターゲットを実行形式 ``COMMAND`` として透過的に利用できます。
 
-The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory where it was defined.
-It may be accessed and used from subdirectories, but not from parent directories or sibling directories.
-The scope is similar to the scope of a cmake variable.
+:prop_tgt:`IMPORTED` なターゲットの定義は、それが定義されたディレクトリが有効なスコープです。
+スコープのサブディレクトリからアクセスしたり利用することも可能ですが、スコープの親ディレクトリや兄弟ディレクトリからはアクセスできません。
+このスコープは CMake 変数のスコープと似ています。
 
-It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is accessible globally in the buildsystem.
+さらに、ビルドシステムからグローバルにアクセスが可能な ``GLOBAL`` で :prop_tgt:`IMPORTED` なターゲットを定義することも可能です。
 
-See the :manual:`cmake-packages(7)` manual for more on creating packages with :prop_tgt:`IMPORTED` targets.
+:prop_tgt:`IMPORTED` なターゲットからパッケージを作成する方法について詳細は :manual:`cmake-packages(7)` のマニュアルを参照して下さい。
 
 .. _`Alias Targets`:
 
-Alias Targets
--------------
+ALIAS ターゲット
+----------------
 
-An ``ALIAS`` target is a name which may be used interchangeably with 
-a binary target name in read-only contexts.  A primary use-case for ``ALIAS``
-targets is for example or unit test executables accompanying a library, which
-may be part of the same buildsystem or built separately based on user
-configuration.
+``ALIAS`` ターゲットは、読み取り専用のコンテキストで「:ref:`バイナリのターゲット <Binary Targets>`」の名前と同じように扱うことができる別の名前です。
+この ``ALIAS`` ターゲットの主な使い途としては、たとえばライブラリと一緒に行う実行形式の単体テストがあります。このテストは、同じビルドシステムの一部であったり、あるいはユーザが生成した構成に基づいて別々にビルドされる場合があります。
 
 .. code-block:: cmake
 
@@ -787,9 +783,7 @@ configuration.
 
   add_library(Upstream::lib1 ALIAS lib1)
 
-In another directory, we can link unconditionally to the ``Upstream::lib1``
-target, which may be an :prop_tgt:`IMPORTED` target from a package, or an
-``ALIAS`` target if built as part of the same buildsystem.
+この例では、別のディレクトリで ``Upstream::lib1`` というターゲットに無条件でリンクできます。これは、任意のパッケージからの :prop_tgt:`IMPORTED` なターゲットであるかもしれないし、あるいは同じビルドシステムの一部としてビルドされた場合の ``ALIAS`` ターゲットの可能性があります。
 
 .. code-block:: cmake
 
@@ -799,10 +793,9 @@ target, which may be an :prop_tgt:`IMPORTED` target from a package, or an
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 Upstream::lib1)
 
-``ALIAS`` targets are not mutable, installable or exportable.  They are
-entirely local to the buildsystem description.  A name can be tested for
-whether it is an ``ALIAS`` name by reading the :prop_tgt:`ALIASED_TARGET`
-property from it:
+``ALIAS`` ターゲットは変更不可で、インストールもエキスポートもできません。
+これらのターゲットはビルドシステムの記述に対して完全にローカルな扱いです。
+:prop_tgt:`ALIASED_TARGET` というターゲット・プロパティの値から、ターゲット名が ``ALIAS`` であるかテストできます：
 
 .. code-block:: cmake
 
@@ -813,8 +806,8 @@ property from it:
 
 .. _`Interface Libraries`:
 
-Interface Libraries
--------------------
+インタフェースのライブラリ
+--------------------------
 
 An ``INTERFACE`` library target does not compile sources and does not
 produce a library artifact on disk, so it has no :prop_tgt:`LOCATION`.
