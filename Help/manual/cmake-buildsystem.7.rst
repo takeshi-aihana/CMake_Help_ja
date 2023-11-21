@@ -750,7 +750,8 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 ターゲットをインポートする
 --------------------------
 
-An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.
+:prop_tgt:`IMPORTED` というターゲット・プロパティは既存の依存関係
+          target represents a pre-existing dependency.
 Usually such targets are defined by an upstream package and should be treated as immutable.
 After declaring an :prop_tgt:`IMPORTED` target one can adjust its target properties by using the customary commands such as :command:`target_compile_definitions`, :command:`target_include_directories`, :command:`target_compile_options` or :command:`target_link_libraries` just like with any other regular target.
 
@@ -772,7 +773,7 @@ See the :manual:`cmake-packages(7)` manual for more on creating packages with :p
 Alias Targets
 -------------
 
-An ``ALIAS`` target is a name which may be used interchangeably with
+An ``ALIAS`` target is a name which may be used interchangeably with 
 a binary target name in read-only contexts.  A primary use-case for ``ALIAS``
 targets is for example or unit test executables accompanying a library, which
 may be part of the same buildsystem or built separately based on user
