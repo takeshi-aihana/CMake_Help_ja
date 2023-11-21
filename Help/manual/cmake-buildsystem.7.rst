@@ -747,40 +747,25 @@ CMake はデフォルトで標準的なビルド構成をいくつか定義し�
 
 .. _`Imported Targets`:
 
-Imported Targets
-----------------
+ターゲットをインポートする
+--------------------------
 
-An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.  Usually
-such targets are defined by an upstream package and should be treated as
-immutable. After declaring an :prop_tgt:`IMPORTED` target one can adjust its
-target properties by using the customary commands such as
-:command:`target_compile_definitions`, :command:`target_include_directories`,
-:command:`target_compile_options` or :command:`target_link_libraries` just like
-with any other regular target.
+An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.
+Usually such targets are defined by an upstream package and should be treated as immutable.
+After declaring an :prop_tgt:`IMPORTED` target one can adjust its target properties by using the customary commands such as :command:`target_compile_definitions`, :command:`target_include_directories`, :command:`target_compile_options` or :command:`target_link_libraries` just like with any other regular target.
 
-:prop_tgt:`IMPORTED` targets may have the same usage requirement properties
-populated as binary targets, such as
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
-:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`,
-:prop_tgt:`INTERFACE_COMPILE_OPTIONS`,
-:prop_tgt:`INTERFACE_LINK_LIBRARIES`, and
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`IMPORTED` targets may have the same usage requirement properties populated as binary targets, such as :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`, :prop_tgt:`INTERFACE_COMPILE_OPTIONS`, :prop_tgt:`INTERFACE_LINK_LIBRARIES`, and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
 
-The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there
-is rarely reason to do so.  Commands such as :command:`add_custom_command` can
-transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target
-as a ``COMMAND`` executable.
+The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there is rarely reason to do so.
+Commands such as :command:`add_custom_command` can transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target as a ``COMMAND`` executable.
 
-The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory
-where it was defined.  It may be accessed and used from subdirectories, but
-not from parent directories or sibling directories.  The scope is similar to
-the scope of a cmake variable.
+The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory where it was defined.
+It may be accessed and used from subdirectories, but not from parent directories or sibling directories.
+The scope is similar to the scope of a cmake variable.
 
-It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is
-accessible globally in the buildsystem.
+It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is accessible globally in the buildsystem.
 
-See the :manual:`cmake-packages(7)` manual for more on creating packages
-with :prop_tgt:`IMPORTED` targets.
+See the :manual:`cmake-packages(7)` manual for more on creating packages with :prop_tgt:`IMPORTED` targets.
 
 .. _`Alias Targets`:
 
