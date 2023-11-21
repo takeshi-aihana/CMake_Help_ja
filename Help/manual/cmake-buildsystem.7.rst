@@ -92,7 +92,7 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
   add_library(MyFramework SHARED MyFramework.cpp)
   set_target_properties(MyFramework PROPERTIES
     FRAMEWORK TRUE
-    FRAMEWORK_VERSION A # Version "A" is macOS convention
+    FRAMEWORK_VERSION A # バージョン "A" は macOS の慣例
     MACOSX_FRAMEWORK_IDENTIFIER org.cmake.MyFramework
   )
 
@@ -182,14 +182,14 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
   endif()
   add_library(archive SHARED ${srcs})
   if (LZMA_FOUND)
-    # The archive library sources are compiled with -DBUILDING_WITH_LZMA
+    # archive ライブラリのソースは -DBUILDING_WITH_LZMA でコンパイルされる
     target_compile_definitions(archive PRIVATE BUILDING_WITH_LZMA)
   endif()
   target_compile_definitions(archive INTERFACE USING_ARCHIVE_LIB)
 
   add_executable(consumer)
-  # Link consumer to archive and consume its usage requirements. The consumer
-  # executable sources are compiled with -DUSING_ARCHIVE_LIB.
+  # 実行形式の consumer を archive ライブラリにリンクして、その利用要件を使い切る
+  # consumer のソースは -DUSING_ARCHIVE_LIB でコンパイルされる
   target_link_libraries(consumer archive)
 
 ソース・ディレクトリとそれに対応するビルド・ディレクトリが :prop_tgt:`INCLUDE_DIRECTORIES` というターゲット・プロパティに追加されるのが一般的な使い方なので、CMake 変数である :variable:`CMAKE_INCLUDE_CURRENT_DIR` を ``TRUE`` にすると、これらのディレクトリがすべてのターゲットの :prop_tgt:`INCLUDE_DIRECTORIES` プロパティに簡単に追加できます。
@@ -215,11 +215,11 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   add_library(archiveExtras extras.cpp)
   target_link_libraries(archiveExtras PUBLIC archive)
   target_link_libraries(archiveExtras PRIVATE serialization)
-  # archiveExtras is compiled with -DUSING_ARCHIVE_LIB
-  # and -DUSING_SERIALIZATION_LIB
+  # archiveExtras ライブラリのソースは -DUSING_ARCHIVE_LIB と
+  # -DUSING_SERIALIZATION_LIB でコンパイルされる
 
   add_executable(consumer consumer.cpp)
-  # consumer is compiled with -DUSING_ARCHIVE_LIB
+  # 実行形式 consumer のソースは -DUSING_ARCHIVE_LIB でコンパイルされる
   target_link_libraries(consumer archiveExtras)
 
 この例では、``archive`` ライブラリは ``archiveExtras`` ライブラリと ``PUBLIC`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` にも伝搬します。
@@ -359,11 +359,11 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
   set_property(TARGET lib1Version3 PROPERTY INTERFACE_CONTAINER_SIZE_REQUIRED 1000)
 
   add_executable(exe1 exe1.cpp)
-  # CONTAINER_SIZE_REQUIRED will be "200"
+  # CONTAINER_SIZE_REQUIRED は "200"
   target_link_libraries(exe1 lib1Version2)
 
   add_executable(exe2 exe2.cpp)
-  # CONTAINER_SIZE_REQUIRED will be "1000"
+  # CONTAINER_SIZE_REQUIRED は "1000"
   target_link_libraries(exe2 lib1Version2 lib1Version3)
 
 同様に :prop_tgt:`COMPATIBLE_INTERFACE_NUMBER_MIN` というターゲット・プロパティは依存関係から伝搬してきたプロパティの最小値を計算する際に使用できます。
@@ -593,7 +593,7 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 ------------
 
 :command:`add_library` と :command:`add_executable` コマンドが生成したビルドシステムのターゲットは「:ref:`バイナリのターゲット <Binary Targets>`」をビルドするルールを生成します。
-ビルドするバイナリの正確な出力場所は、ビルド構成やリンクする際の依存関係などにより、実際にビルドする際に決まります。
+ビルドするバイナリの正確な出力場所は、ビルド構成やリンクする際の依存関係などにより実際にビルドする時に決まります。
 なお、ビルドしたバイナリの名前や出力場所は ``TARGET_FILE`` と ``TARGET_LINKER_FILE`` とそれらに関連する式を使って参照することは可能です。
 ただし、これらの式は「:ref:`オブジェクト・ライブラリ <Object Libraries>`」では機能しません。これは、このライブラリをビルドする際に生成されるファイルが一つだけでないからです。
 
@@ -606,9 +606,9 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 ランタイム形式の成果物
 ~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドシステムのターゲットが *ランタイム* 形式の成果物は次のとおりです：
+ビルドシステムが生成したターゲットが *ランタイム* 形式の場合の成果物は次のとおりです：
 
-* :command:`add_executable` コマンドで生成される実行可能なターゲットは、実行形式のファイル（たとえば ``.exe``）
+* :command:`add_executable` コマンドによって生成される実行可能なターゲットは、実行形式のファイル（たとえば ``.exe``）
 
 * DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットは、実行形式のファイル（たとえば ``.dll``）
 
@@ -619,11 +619,11 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 ライブラリ形式の成果物
 ~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドシステムのターゲットで *ライブラリ* 形式の成果物は次のとおりです:
+ビルドシステムが生成したターゲットが *ライブラリ* 形式の場合の成果物は次のとおりです:
 
-* ``MODULE`` オプションを指定した :command:`add_library` コマンドによって生成されたライブラリのターゲットは、ロード可能なモジュール・ファイル（たとえば、``.dll`` とか ``.so``）
+* ``MODULE`` オプションを指定した :command:`add_library` コマンドによって生成されるライブラリのターゲットは、ロード可能なモジュール・ファイル（たとえば、``.dll`` とか ``.so``）
 
-* DLL ベースではないプラットフォームの場合： ``SHARED``  オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、共有ライブラリのファイル（たとえば、``.so`` とか ``.dylib``）
+* DLL ベースではないプラットフォームの場合： ``SHARED``  オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットは、共有ライブラリのファイル（たとえば、``.so`` とか ``.dylib``）
 
 :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にライブラリ形式の成果物が格納される場所や成果物の名前を変更できます。
 
@@ -632,17 +632,17 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 アーカイブ形式の成果物
 ~~~~~~~~~~~~~~~~~~~~~~
 
-ビルドシステムのターゲットで *アーカイブ* 形式の成果物は次のとおりです：
+ビルドシステムが生成したターゲットが *アーカイブ* 形式の場合の成果物は次のとおりです：
 
-*  ``STATIC`` オプションを指定した :command:`add_library` コマンドによって生成された静的ライブラリのターゲットは、静的ライブラリのファイル（たとえば  ``.lib`` とか ``.a``）
+*  ``STATIC`` オプションを指定した :command:`add_library` コマンドによって生成される静的ライブラリのターゲットは、静的ライブラリのファイル（たとえば  ``.lib`` とか ``.a``）
 
-* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、インポート・ライブラリのファイル（たとえば、``.lib``）。このファイルは、生成されたライブラリが少なくと一個のアンマネージドなシンボルを外部に公開している場合にのみ生成される。
+* DLL ベースのプラットフォームの場合： ``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットは、インポート・ライブラリのファイル（たとえば、``.lib``）。このファイルは、生成されたライブラリが少なくと一個のアンマネージドなシンボルを外部に公開している場合にのみ生成される。
 
-* DLL ベースのプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成された実行形式のターゲットは、インポート・ライブラリのファイル（たとえば ``.lib``）
+* DLL ベースのプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成される実行形式のターゲットは、インポート・ライブラリのファイル（たとえば ``.lib``）
 
-* AIX 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成された実行形式のターゲットは、リンカ・インポートのファイル（たとえば  ``.imp``）
+* AIX 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に :command:`add_executable` コマンドで生成される実行形式のターゲットは、リンカ・インポートのファイル（たとえば  ``.imp``）
 
-* macOS 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に、``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成された共有ライブラリのターゲットは、リンカ・インポートのファル（たとえば  ``.tbd``） 
+* macOS 系のプラットフォームの場合： :prop_tgt:`ENABLE_EXPORTS` というターゲット・プロパティがセットされている（``TRUE``） の時に、``SHARED`` オプションを指定した :command:`add_library` コマンドによって生成される共有ライブラリのターゲットは、リンカ・インポートのファイル（たとえば  ``.tbd``） 
 
 :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` や :prop_tgt:`ARCHIVE_OUTPUT_NAME` といったターゲット・プロパティを使って、ビルドツリー内にアーカイブ形式の成果物が格納される場所や成果物の名前を変更できます。
 
@@ -650,7 +650,7 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 ------------------------------
 
 :command:`target_include_directories`、:command:`target_compile_definitions`、そして :command:`target_compile_options` といったコマンドは、一度に１個のターゲットにだけ作用します。
-これに対して :command:`add_compile_definitions`、:command:`add_compile_options`、そして :command:`include_directories` といったコマンドにも同様の機能がありますが、ターゲットではなくディレクトリが対象です。
+これに対して :command:`add_compile_definitions`、:command:`add_compile_options`、そして :command:`include_directories` といったコマンドにも同様の機能がありますが、作用するのはターゲットではなくディレクトリです。
 
 .. _`Build Configurations`:
 
@@ -660,25 +660,25 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 生成した「**ビルドの構成** （Build Configurations）」により、``Release`` や ``Debug`` といった特定の種類のビルドの仕様が決まります。
 ビルドの構成を指定する方法は、生成時に使用した :manual:`ジェネレータ <cmake-generators(7)>` に依存します。
 たとえば :ref:`Makefile Generators` や :generator:`Ninja` のような一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まります。
-あるいは :ref:`Visual Studio <Visual Studio Generators>` や :generator:`Xcode`、そして :generator:`Ninja Multi-Config` のような複数の構成を扱うジェネレータの場合、ユーザがビルド時に構成を選択するので、:variable:`CMAKE_BUILD_TYPE` の値は無視されます。
+対して :ref:`Visual Studio <Visual Studio Generators>` や :generator:`Xcode`、そして :generator:`Ninja Multi-Config` のような複数の構成を扱うジェネレータの場合、ユーザがビルド時に構成を選択するので、:variable:`CMAKE_BUILD_TYPE` の値は無視されます。
 後者のジェネレータでは、CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` で *利用可能な* 設定一式を指定できますが、実際に使用する設定はビルド時までわかりません。
 この違いは誤解されることが多く、次のような問題のあるコードにつながります：
 
 .. code-block:: cmake
 
-  # WARNING: This is wrong for multi-config generators because they don't use
-  #          and typically don't even set CMAKE_BUILD_TYPE
+  # 注意: この操作は複数の構成を扱うジェネレータでは間違い
+  #      （そのようなジェネレータは基本的に CMAKE_BUILD_TYPE を利用しないので）
   string(TOLOWER ${CMAKE_BUILD_TYPE} build_type)
   if (build_type STREQUAL debug)
     target_compile_definitions(exe1 PRIVATE DEBUG_BUILD)
   endif()
 
-このような場合、使用するジェネレータに依らず、構成に固有の仕様を正しく処理するために代わりに :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使用するようにして下さい
+このような場合、使用するジェネレータにかかわらず、構成に固有の仕様を正しく処理させるために CMake 変数ではなく、:manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使用して下さい。
 たとえば：
 
 .. code-block:: cmake
 
-  # Works correctly for both single and multi-config generators
+  # このようにするとジェネレータの種類に依らず正しく動作する
   target_compile_definitions(exe1 PRIVATE
     $<$<CONFIG:Debug>:DEBUG_BUILD>
   )
@@ -688,13 +688,13 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 大小文字を区別する
 ------------------
 
-CMake 変数の :variable:`CMAKE_BUILD_TYPE` と :variable:`CMAKE_CONFIGURATION_TYPES` は、これらの値を使った文字列比較では大文字と小文字が区別されるという点で、扱いは他の変数と同じです。
+CMake 変数の :variable:`CMAKE_BUILD_TYPE` と :variable:`CMAKE_CONFIGURATION_TYPES` は、これらの値を使った文字列比較では大文字と小文字が区別されるという点で、扱い方は他の変数と同じです。
 ジェネレータ式の :genex:`$<CONFIG>` は、ユーザまたは CMake のデフォルトによって指定されたビルドの構成での大文字/小文字も保持します。
 たとえば：
 
 .. code-block:: cmake
 
-  # 注意：実際に以下のような使い方はしないこと（これは便宜上、問題を説明するために使用している）
+  # 注意：実際に以下のような使い方はしないこと（これは便宜上、問題を説明するために使用しているだけ）
 
   set(CMAKE_BUILD_TYPE Debug)
   if(CMAKE_BUILD_TYPE STREQUAL DEBUG)
@@ -719,22 +719,22 @@ CMake 変数の :variable:`CMAKE_BUILD_TYPE` と :variable:`CMAKE_CONFIGURATION_
 デフォルトの構成とカスタマイズした構成
 --------------------------------------
 
-CMake はデフォルトで標準的なビルド構成をいくつか定義しています：
+CMake はデフォルトで標準的なビルドの構成をいくつか定義しています：
 
 * ``Debug``
 * ``Release``
 * ``RelWithDebInfo``
 * ``MinSizeRel``
 
-複数のビルドの構成を扱うジェネレータでは、ユーザやプロジェクトによって上書きされない限り、デフォルトで CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` の値に上記の定義（実際にはそのサブセット）がセットされます。
+複数の構成を扱うジェネレータでは、ユーザやプロジェクトによって上書きされない限り、デフォルトで CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` の値に上記の定義（実際にはそのサブセット）がセットされます。
 実際に使用するビルドの構成はビルド時にユーザが指定します。
 
 一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まり、ビルド時に構成を変更することはできません。
 デフォルトで、このCMake 変数には、上記の標準的な構成ではなく、空の文字列がセットされます。
 よくある誤解として、これが ``Debug`` と同じであるとするものですが、それは間違いです。
-この問題を回避するため、ユーザは常にビルドの構成を明治的に指定する必要があります。
+この問題を回避するため、ユーザは常にビルドの構成を明示的に指定する必要があります。
 
-上記の標準的なビルドの構成は、ほとんどのプラットフォームで適切に動作しますが、他の構成を提供するように変更することが可能です。
+上記の標準的なビルドの構成は、ほとんどのプラットフォームで適切に動作しますが、他の構成を提供するように拡張することが可能です。
 各構成は、使用しているプログラミング言語に対するコンパイラ・フラグとリンカ・フラグを変数として定義します。
 これらの変数は :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>` というスタイルを持ちます（構成の名前を表す ``<CONFIG>`` は常に大文字にすること）。
 独自にカスタマイズした構成を定義する際は、これらの変数が（通常はキャッシュ変数として） 適切に設定されていることを確認して下さい。
@@ -742,45 +742,30 @@ CMake はデフォルトで標準的なビルド構成をいくつか定義し�
 疑似ターゲット
 ==============
 
-ビルドの構成の中には、ビルドシステムのログを表示しないで、代わりに外部との依存関係、別名（エイリアス）、またはその他、ビルドの対象外の成果物の情報だけ表示するものがあります。
-疑似ターゲットは、ビルドシステムの生成中は何も表示されません。
+ビルドの構成の中には、ビルドシステムのログを表示しないで、代わりに外部との依存関係、別名（エイリアス）、またはビルドの対象外の成果物の情報だけ表示するものがあります。
+「**疑似ターゲット**」は、ビルドシステムの生成中は何も表示されません。
 
 .. _`Imported Targets`:
 
-Imported Targets
-----------------
+ターゲットをインポートする
+--------------------------
 
-An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.  Usually
-such targets are defined by an upstream package and should be treated as
-immutable. After declaring an :prop_tgt:`IMPORTED` target one can adjust its
-target properties by using the customary commands such as
-:command:`target_compile_definitions`, :command:`target_include_directories`,
-:command:`target_compile_options` or :command:`target_link_libraries` just like
-with any other regular target.
+An :prop_tgt:`IMPORTED` target represents a pre-existing dependency.
+Usually such targets are defined by an upstream package and should be treated as immutable.
+After declaring an :prop_tgt:`IMPORTED` target one can adjust its target properties by using the customary commands such as :command:`target_compile_definitions`, :command:`target_include_directories`, :command:`target_compile_options` or :command:`target_link_libraries` just like with any other regular target.
 
-:prop_tgt:`IMPORTED` targets may have the same usage requirement properties
-populated as binary targets, such as
-:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`,
-:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`,
-:prop_tgt:`INTERFACE_COMPILE_OPTIONS`,
-:prop_tgt:`INTERFACE_LINK_LIBRARIES`, and
-:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
+:prop_tgt:`IMPORTED` targets may have the same usage requirement properties populated as binary targets, such as :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`, :prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`, :prop_tgt:`INTERFACE_COMPILE_OPTIONS`, :prop_tgt:`INTERFACE_LINK_LIBRARIES`, and :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE`.
 
-The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there
-is rarely reason to do so.  Commands such as :command:`add_custom_command` can
-transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target
-as a ``COMMAND`` executable.
+The :prop_tgt:`LOCATION` may also be read from an IMPORTED target, though there is rarely reason to do so.
+Commands such as :command:`add_custom_command` can transparently use an :prop_tgt:`IMPORTED` :prop_tgt:`EXECUTABLE <TYPE>` target as a ``COMMAND`` executable.
 
-The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory
-where it was defined.  It may be accessed and used from subdirectories, but
-not from parent directories or sibling directories.  The scope is similar to
-the scope of a cmake variable.
+The scope of the definition of an :prop_tgt:`IMPORTED` target is the directory where it was defined.
+It may be accessed and used from subdirectories, but not from parent directories or sibling directories.
+The scope is similar to the scope of a cmake variable.
 
-It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is
-accessible globally in the buildsystem.
+It is also possible to define a ``GLOBAL`` :prop_tgt:`IMPORTED` target which is accessible globally in the buildsystem.
 
-See the :manual:`cmake-packages(7)` manual for more on creating packages
-with :prop_tgt:`IMPORTED` targets.
+See the :manual:`cmake-packages(7)` manual for more on creating packages with :prop_tgt:`IMPORTED` targets.
 
 .. _`Alias Targets`:
 
