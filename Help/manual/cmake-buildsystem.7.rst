@@ -141,7 +141,7 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 :command:`target_include_directories` や :command:`target_compile_definitions` や :command:`target_compile_options` といったコマンドは、バイナリのターゲットに対する「ビルドの仕様」（*Build Specification*） [#hint_for_build_specification]_ と「利用要件」（*Usage Requirements*） [#hint_for_build_specification]_ を指定します。
 これらのコマンドは、順に :prop_tgt:`INCLUDE_DIRECTORIES` 、:prop_tgt:`COMPILE_DEFINITIONS` 、そして :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティおよび / または :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` というターゲット・プロパティをセットします。
 
-各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` というスコープがあります。
+各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` という「**スコープ**」があります。
 ``PRIVATE`` のスコープは ``INTERFACE_`` 系以外のターゲット・プロパティだけセットし、``INTERFACE`` のスコープは ``INTERFACE_`` 系のターゲット・プロパティだけをセットし、``PUBLIC`` のスコープはその両方の系のターゲット・プロパティをセットします。
 各コマンドは各スコープを複数回使用して呼び出すことができます：
 

@@ -1,4 +1,4 @@
-.. cmake-manual-description: CMake Language Command Reference
+.. cmake-manual-description: CMake 言語コマンド・リファレス
 
 cmake-commands(7)
 *****************
@@ -7,10 +7,10 @@ cmake-commands(7)
 
    .. contents::
 
-Scripting Commands
-==================
+スクリプト用コマンド
+====================
 
-These commands are always available.
+これらのコマンドは常に利用可能です。
 
 .. toctree::
    :maxdepth: 1
@@ -66,10 +66,10 @@ These commands are always available.
    /command/variable_watch
    /command/while
 
-Project Commands
-================
+プロジェクト用コマンド
+======================
 
-These commands are available only in CMake projects.
+これらのコマンドは CMake のプロジェクトでのみ利用可能です。
 
 .. toctree::
    :maxdepth: 1
@@ -124,10 +124,10 @@ These commands are available only in CMake projects.
 
 .. _`CTest Commands`:
 
-CTest Commands
-==============
+CTest 用のコマンド
+==================
 
-These commands are available only in CTest scripts.
+これらのコマンドは CTest のスクリプトの中でのみ利用可能です。
 
 .. toctree::
    :maxdepth: 1
@@ -146,13 +146,12 @@ These commands are available only in CTest scripts.
    /command/ctest_update
    /command/ctest_upload
 
-Deprecated Commands
-===================
+廃止になったコマンド
+====================
 
-These commands are deprecated and are only made available to maintain
-backward compatibility.  The documentation of each command states the
-CMake version in which it was deprecated.  Do not use these commands
-in new code.
+これらのコマンドの利用は推奨されいません。下位互換性を維持する目的でのみ利用可能です。
+各コマンドのドキュメントには、それが非推奨になった CMake バージョンが記載されています。
+新しいコードの中で、これらのコマンドは利用しないで下さい。
 
 .. toctree::
    :maxdepth: 1
