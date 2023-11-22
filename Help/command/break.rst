@@ -1,12 +1,12 @@
 break
 -----
 
-Break from an enclosing foreach or while loop.
+囲んでいるループ・ブロック（foreach や while コマンド）を中断する。
 
 .. code-block:: cmake
 
   break()
 
-Breaks from an enclosing :command:`foreach` or :command:`while` loop.
+この例では、:command:`foreach` または :command:`while` コマンドで囲んでいるループ処理を中断します。
 
-See also the :command:`continue` command.
+:command:`continue` コマンドも参照して下さい。

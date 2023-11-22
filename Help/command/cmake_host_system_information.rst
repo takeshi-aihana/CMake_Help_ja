@@ -1,10 +1,10 @@
 cmake_host_system_information
 -----------------------------
 
-Query various host system information.
+いろいろなホスト・システムの情報を照会する。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
@@ -14,158 +14,159 @@ Synopsis
   `Query Windows registry`_
     cmake_host_system_information(RESULT <variable> QUERY WINDOWS_REGISTRY <key> ...)
 
-Query host system specific information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _Query host system specific information:
+
+ホスト・システム固有の情報の照会
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   cmake_host_system_information(RESULT <variable> QUERY <key> ...)
 
-Queries system information of the host system on which cmake runs.
-One or more ``<key>`` can be provided to select the information to be
-queried.  The list of queried values is stored in ``<variable>``.
 
-``<key>`` can be one of the following values:
+:program:`cmake` を実行するホスト・システムのシステム情報を照会します。
+問い合わせする情報を選択するために、１個以上の ``<key>`` を指定できます。
+照会した値を要素とするリストは ``<variable>`` に格納されます。
+
+``<key>`` には以下の値のいずれかを指定できます：
 
 ``NUMBER_OF_LOGICAL_CORES``
-  Number of logical cores
+  論理コアの数
 
 ``NUMBER_OF_PHYSICAL_CORES``
-  Number of physical cores
+  物理コアの数
 
 ``HOSTNAME``
-  Hostname
+  ホスト名
 
 ``FQDN``
-  Fully qualified domain name
+  完全就職のドメイン名（FQDN）
 
 ``TOTAL_VIRTUAL_MEMORY``
-  Total virtual memory in MiB [#mebibytes]_
+  仮想メモリの合計サイズ（MiB） [#mebibytes]_
 
 ``AVAILABLE_VIRTUAL_MEMORY``
-  Available virtual memory in MiB [#mebibytes]_
+  利用可能な仮想メモリのサイズ（MiB） [#mebibytes]_
 
 ``TOTAL_PHYSICAL_MEMORY``
-  Total physical memory in MiB [#mebibytes]_
+  物理メモリの合計サイズ（MiB） [#mebibytes]_
 
 ``AVAILABLE_PHYSICAL_MEMORY``
-  Available physical memory in MiB [#mebibytes]_
+  利用可能な物理メモリのサイズ（MiB） [#mebibytes]_
 
 ``IS_64BIT``
   .. versionadded:: 3.10
 
-  One if processor is 64Bit
+  プロセッサが 64Bit ならば 1
 
 ``HAS_FPU``
   .. versionadded:: 3.10
 
-  One if processor has floating point unit
+  プロセッサに浮動小数点演算ユニットがある場合は 1
 
 ``HAS_MMX``
   .. versionadded:: 3.10
 
-  One if processor supports MMX instructions
+  プロセッサが MMX 命令をサポートしている場合は 1
 
 ``HAS_MMX_PLUS``
   .. versionadded:: 3.10
 
-  One if processor supports Ext. MMX instructions
+  プロセッサが拡張 MMX 命令をサポートしている場合は 1
 
 ``HAS_SSE``
   .. versionadded:: 3.10
 
-  One if processor supports SSE instructions
+  プロセッサが SSE 命令をサポートしている場合は 1
 
 ``HAS_SSE2``
   .. versionadded:: 3.10
 
-  One if processor supports SSE2 instructions
+  プロセッサが SSE2 命令をサポートしている場合は 1
 
 ``HAS_SSE_FP``
   .. versionadded:: 3.10
 
-  One if processor supports SSE FP instructions
+  プロセッサが SSE EP 命令をサポートしている場合は 1
+
 
 ``HAS_SSE_MMX``
   .. versionadded:: 3.10
 
-  One if processor supports SSE MMX instructions
+  プロセッサが SSE MMX 命令をサポートしている場合は 1
 
 ``HAS_AMD_3DNOW``
   .. versionadded:: 3.10
 
-  One if processor supports 3DNow instructions
+  プロセッサが 3DNow 命令をサポートしている場合は 1
 
 ``HAS_AMD_3DNOW_PLUS``
   .. versionadded:: 3.10
 
-  One if processor supports 3DNow+ instructions
+  プロセッサが 3DNow+ 命令をサポートしている場合は 1
 
 ``HAS_IA64``
   .. versionadded:: 3.10
 
-  One if IA64 processor emulating x86
+  x86 のエミュレーションをサポートしている IA64 プロセッサの場合は 1
 
 ``HAS_SERIAL_NUMBER``
   .. versionadded:: 3.10
 
-  One if processor has serial number
+  プロセッサがシリアル番号を持っている場合は 1
 
 ``PROCESSOR_SERIAL_NUMBER``
   .. versionadded:: 3.10
 
-  Processor serial number
+  プロセッサのシリアル番号
 
 ``PROCESSOR_NAME``
   .. versionadded:: 3.10
 
-  Human readable processor name
+  プロセッサ名（可読な文字列）
 
 ``PROCESSOR_DESCRIPTION``
   .. versionadded:: 3.10
 
-  Human readable full processor description
+  プロセッサの説明（可読な文字列）
 
 ``OS_NAME``
   .. versionadded:: 3.10
 
-  See :variable:`CMAKE_HOST_SYSTEM_NAME`
+  :variable:`CMAKE_HOST_SYSTEM_NAME` 変数を参照のこと。
 
 ``OS_RELEASE``
   .. versionadded:: 3.10
 
-  The OS sub-type e.g. on Windows ``Professional``
+  OS のサブタイプ（例えば Windows の場合は ``Professional`` など）
 
 ``OS_VERSION``
   .. versionadded:: 3.10
 
-  The OS build ID
+  OS の build ID
 
 ``OS_PLATFORM``
   .. versionadded:: 3.10
 
-  See :variable:`CMAKE_HOST_SYSTEM_PROCESSOR`
+  :variable:`CMAKE_HOST_SYSTEM_PROCESSOR` 変数を参照のこと。
 
 ``MSYSTEM_PREFIX``
   .. versionadded:: 3.28
 
-  Available only on Windows hosts.  In a MSYS or MinGW development
-  environment that sets the ``MSYSTEM`` environment variable, this
-  is its installation prefix.  Otherwise, this is the empty string.
+  ホストが Windows の場合にのみ利用可能。
+  MSYS や MinGW の開発環境（``MSYSTEM`` という環境変数がセットされている環境）では、インストール先の Prefix で、それ以外は空の文字列。
 
 ``DISTRIB_INFO``
   .. versionadded:: 3.22
 
-  Read :file:`/etc/os-release` file and define the given ``<variable>``
-  into a list of read variables
+  :file:`/etc/os-release` ファイルを読み込んで、指定された ``<variable>`` を読み取って変数にセットする。
 
 ``DISTRIB_<name>``
   .. versionadded:: 3.22
 
-  Get the ``<name>`` variable (see `man 5 os-release`_) if it exists in the
-  :file:`/etc/os-release` file
+  :file:`/etc/os-release` ファイルの中に ``<name>`` を変数とするエントリあればその値（`man 5 os-release`_ 参照) を取得する。
 
-  Example:
+  実行例:
 
   .. code-block:: cmake
 
@@ -179,7 +180,7 @@ queried.  The list of queried values is stored in ``<variable>``.
       endforeach()
 
 
-  Output::
+  出力例::
 
     -- Ubuntu 20.04.2 LTS
     -- DISTRO_BUG_REPORT_URL=`https://bugs.launchpad.net/ubuntu/`
@@ -195,32 +196,25 @@ queried.  The list of queried values is stored in ``<variable>``.
     -- DISTRO_VERSION_CODENAME=`focal`
     -- DISTRO_VERSION_ID=`20.04`
 
-If :file:`/etc/os-release` file is not found, the command tries to gather OS
-identification via fallback scripts.  The fallback script can use `various
-distribution-specific files`_ to collect OS identification data and map it
-into `man 5 os-release`_ variables.
+:file:`/etc/os-release` が見つからなかった場合、このコマンドはフォールバック・スクリプトを介して OS の情報を収集しようとします。
+このフォールバック・スクリプトは `various distribution-specific files`_ を使って OS の識別データを収集して、それを `man 5 os-release`_ のエントリ（変数）に対応付けします。
 
-Fallback Interface Variables
-""""""""""""""""""""""""""""
+インタフェース変数のフォールバック
+""""""""""""""""""""""""""""""""""
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_SCRIPTS
 
-  In addition to the scripts shipped with CMake, a user may append full
-  paths to his script(s) to the this list.  The script filename has the
-  following format: ``NNN-<name>.cmake``, where ``NNN`` is three digits
-  used to apply collected scripts in a specific order.
+  CMake と一緒に提供されているスクリプトの他、このリスト型の変数にユーザ自らのスクリプトの絶対パスを追加できます。
+  このスクリプトのファイル名は次のような書式を持ちます：``NNN-<name>.cmake``（`NNN`` は３桁の数字で、特定の順番でスクリプトを収集した際に付与される）
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>
 
-  Variables collected by the user provided fallback script
-  ought to be assigned to CMake variables using this naming
-  convention.  Example, the ``ID`` variable from the manual becomes
-  ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_ID``.
+  Variables collected by the user provided fallback script ought to be assigned to CMake variables using this naming convention.
+  Example, the ``ID`` variable from the manual becomes ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_ID``.
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_RESULT
 
-  The fallback script ought to store names of all assigned
-  ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>`` variables in this list.
+  The fallback script ought to store names of all assigned  ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>`` variables in this list.
 
 Example:
 
@@ -270,8 +264,8 @@ Example:
 
 .. _Query Windows registry:
 
-Query Windows registry
-^^^^^^^^^^^^^^^^^^^^^^
+Windows レジストリ情報の照会
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.24
 
@@ -283,20 +277,16 @@ Query Windows registry
                                 [SEPARATOR <separator>]
                                 [ERROR_VARIABLE <result>])
 
-Performs query operations on local computer registry subkey. Returns a list of
-subkeys or value names that are located under the specified subkey in the
-registry or the data of the specified value name. The result of the queried
-entity is stored in ``<variable>``.
+Performs query operations on local computer registry subkey.
+Returns a list of subkeys or value names that are located under the specified subkey in the registry or the data of the specified value name.
+The result of the queried entity is stored in ``<variable>``.
 
 .. note::
 
-  Querying registry for any other platforms than ``Windows``, including
-  ``CYGWIN``, will always returns an empty string and sets an error message in
-  the variable specified with sub-option ``ERROR_VARIABLE``.
+  Querying registry for any other platforms than ``Windows``, including  ``CYGWIN``, will always returns an empty string and sets an error message in the variable specified with sub-option ``ERROR_VARIABLE``.
 
-``<key>`` specify the full path of a subkey on the local computer. The
-``<key>`` must include a valid root key. Valid root keys for the local computer
-are:
+``<key>`` specify the full path of a subkey on the local computer.
+The `<key>`` must include a valid root key. Valid root keys for the local computer are:
 
 * ``HKLM`` or ``HKEY_LOCAL_MACHINE``
 * ``HKCU`` or ``HKEY_CURRENT_USER``
@@ -304,8 +294,8 @@ are:
 * ``HKU`` or ``HKEY_USERS``
 * ``HKCC`` or ``HKEY_CURRENT_CONFIG``
 
-And, optionally, the path to a subkey under the specified root key. The path
-separator can be the slash or the backslash. ``<key>`` is not case sensitive.
+And, optionally, the path to a subkey under the specified root key. The path separator can be the slash or the backslash.
+``<key>`` is not case sensitive.
 For example:
 
 .. code-block:: cmake
@@ -315,16 +305,14 @@ For example:
   cmake_host_system_information(RESULT result QUERY WINDOWS_REGISTRY "HKCU\\SOFTWARE\\Kitware")
 
 ``VALUE_NAMES``
-  Request the list of value names defined under ``<key>``. If a default value
-  is defined, it will be identified with the special name ``(default)``.
+  Request the list of value names defined under ``<key>``.
+  If a default value is defined, it will be identified with the special name ``(default)``.
 
 ``SUBKEYS``
   Request the list of subkeys defined under ``<key>``.
 
 ``VALUE <name>``
-  Request the data stored in value named ``<name>``. If ``VALUE`` is not
-  specified or argument is the special name ``(default)``, the content of the
-  default value, if any, will be returned.
+  Request the data stored in value named ``<name>``. If ``VALUE`` is not specified or argument is the special name ``(default)``, the content of the default value, if any, will be returned.
 
   .. code-block:: cmake
 
@@ -349,55 +337,45 @@ For example:
   For all other types, an empty string is returned.
 
 ``VIEW``
-  Specify which registry views must be queried. When not specified, ``BOTH``
-  view is used.
+  Specify which registry views must be queried. When not specified,
+  ``BOTH`` view is used.
 
   ``64``
-    Query the 64bit registry. On ``32bit Windows``, returns always an empty
-    string.
+    Query the 64bit registry. On ``32bit Windows``, returns always an empty  string.
 
   ``32``
     Query the 32bit registry.
 
   ``64_32``
-    For ``VALUE`` sub-option or default value, query the registry using view
-    ``64``, and if the request failed, query the registry using view ``32``.
-    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``64``
-    and ``32``) and merge the results (sorted and duplicates removed).
+    For ``VALUE`` sub-option or default value, query the registry using view ``64``, and if the request failed, query the registry using view ``32``.
+    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``64`` and ``32``) and merge the results (sorted and duplicates removed).
 
   ``32_64``
-    For ``VALUE`` sub-option or default value, query the registry using view
-    ``32``, and if the request failed, query the registry using view ``64``.
-    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``32``
-    and ``64``) and merge the results (sorted and duplicates removed).
+    For ``VALUE`` sub-option or default value, query the registry using view ``32``, and if the request failed, query the registry using view ``64``.
+    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``32`` and ``64``) and merge the results (sorted and duplicates removed).
 
   ``HOST``
-    Query the registry matching the architecture of the host: ``64`` on ``64bit
-    Windows`` and ``32`` on ``32bit Windows``.
+    Query the registry matching the architecture of the host: ``64`` on ``64bit  Windows`` and ``32`` on ``32bit Windows``.
 
   ``TARGET``
-    Query the registry matching the architecture specified by
-    :variable:`CMAKE_SIZEOF_VOID_P` variable. If not defined, fallback to
-    ``HOST`` view.
+    Query the registry matching the architecture specified by :variable:`CMAKE_SIZEOF_VOID_P` variable.
+    If not defined, fallback to ``HOST`` view.
 
   ``BOTH``
-    Query both views (``32`` and ``64``). The order depends of the following
-    rules: If :variable:`CMAKE_SIZEOF_VOID_P` variable is defined. Use the
-    following view depending of the content of this variable:
+    Query both views (``32`` and ``64``).
+    The order depends of the following rules:
+    If :variable:`CMAKE_SIZEOF_VOID_P` variable is defined. Use the following view depending of the content of this variable:
 
     * ``8``: ``64_32``
     * ``4``: ``32_64``
 
-    If :variable:`CMAKE_SIZEOF_VOID_P` variable is not defined, rely on
-    architecture of the host:
+    If :variable:`CMAKE_SIZEOF_VOID_P` variable is not defined, rely on architecture of the host:
 
     * ``64bit``: ``64_32``
     * ``32bit``: ``32``
 
 ``SEPARATOR``
-  Specify the separator character for ``REG_MULTI_SZ`` type. When not
-  specified, the character ``\0`` is used.
+  Specify the separator character for ``REG_MULTI_SZ`` type. When not pecified, the character ``\0`` is used.
 
 ``ERROR_VARIABLE <result>``
-  Returns any error raised during query operation. In case of success, the
-  variable holds an empty string.
+  Returns any error raised during query operation. In case of success, the  variable holds an empty string.

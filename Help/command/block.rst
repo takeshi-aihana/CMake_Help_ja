@@ -3,7 +3,7 @@ block
 
 .. versionadded:: 3.25
 
-Evaluate a group of commands with a dedicated variable and/or policy scope.
+専用の変数 および／または ポリシーのスコープを使ってコマンドのグループを評価する。
 
 .. code-block:: cmake
 
@@ -11,33 +11,28 @@ Evaluate a group of commands with a dedicated variable and/or policy scope.
     <commands>
   endblock()
 
-All commands between ``block()`` and the matching :command:`endblock` are
-recorded without being invoked.  Once the :command:`endblock` is evaluated, the
-recorded list of commands is invoked inside the requested scopes, then the
-scopes created by the ``block()`` command are removed.
+この ``block()`` コマンドから :command:`endblock` の間にある全てのコマンドは呼び出されることなく記録されます。
+:command:`endblock` が評価されると、記録したコマンドのリストが要求されたスコープの中で呼び出され、この ``block()`` コマンドが生成した全てのスコープが削除されます。
 
 ``SCOPE_FOR``
-  Specify which scopes must be created.
+  作成するスコープを指定する。
 
   ``POLICIES``
-    Create a new policy scope. This is equivalent to
-    :command:`cmake_policy(PUSH)` with an automatic
-    :command:`cmake_policy(POP)` when leaving the block scope.
+    新しいスコープを一つ作成する。
+    これは、ブロック・スコープから外れる時に自動の :command:`cmake_policy(POP)` を使う  :command:`cmake_policy(PUSH)` と等価である。
 
   ``VARIABLES``
-    Create a new variable scope.
+    新しい変数のスコープを作成する。
 
-  If ``SCOPE_FOR`` is not specified, this is equivalent to:
+  もし ``SCOPE_FOR`` が指定されていなかったら、これは以下と等価である：
 
   .. code-block:: cmake
 
     block(SCOPE_FOR VARIABLES POLICIES)
 
 ``PROPAGATE``
-  When a variable scope is created by the :command:`block` command, this
-  option sets or unsets the specified variables in the parent scope. This is
-  equivalent to :command:`set(PARENT_SCOPE)` or :command:`unset(PARENT_SCOPE)`
-  commands.
+  :command:`block` コマンドで変数のスコープを作成したら、このオプションは親スコープ内で指定した変数をセットしたり解除する。
+  これは :command:`set(PARENT_SCOPE)` や :command:`unset(PARENT_SCOPE)` のコマンドと等価である。
 
   .. code-block:: cmake
 
@@ -49,27 +44,24 @@ scopes created by the ``block()`` command are removed.
       unset(var2)
     endblock()
 
-    # Now var1 holds VALUE1, and var2 is unset
+    # ここでは var1 = VALUE1、var2 = ''
+ 
+  このオプションは、変数のスコープを作成する時にだけ指定できる。それ以外はエラーとなる。
 
-  This option is only allowed when a variable scope is created. An error will
-  be raised in the other cases.
-
-When the ``block()`` is inside a :command:`foreach` or :command:`while`
-command, the :command:`break` and :command:`continue` commands can be used
-inside the block.
+この ``block()`` コマンドが :command:`foreach` や :command:`while` コマンドが生成したループ・ブロックの中にある時は、:command:`break` と :command:`continue` コマンドをそのブロックの中でそれぞれ呼び出すことは可能です。
 
 .. code-block:: cmake
 
   while(TRUE)
     block()
        ...
-       # the break() command will terminate the while() command
+       # break() コマンドで while() コマンドのループ処理を終了する
        break()
     endblock()
   endwhile()
 
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`endblock`
