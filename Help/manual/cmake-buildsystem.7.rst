@@ -141,9 +141,9 @@ MacOS や iOS のフレームワーク [#hint_for_framework_and_bundle_of_ios]_ 
 :command:`target_include_directories` や :command:`target_compile_definitions` や :command:`target_compile_options` といったコマンドは、バイナリのターゲットに対する「ビルドの仕様」（*Build Specification*） [#hint_for_build_specification]_ と「利用要件」（*Usage Requirements*） [#hint_for_build_specification]_ を指定します。
 これらのコマンドは、順に :prop_tgt:`INCLUDE_DIRECTORIES` 、:prop_tgt:`COMPILE_DEFINITIONS` 、そして :prop_tgt:`COMPILE_OPTIONS` というターゲット・プロパティおよび / または :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、そして :prop_tgt:`INTERFACE_COMPILE_OPTIONS` というターゲット・プロパティをセットします。
 
-各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` というモードがあります。
-``PRIVATE`` モードは ``INTERFACE_`` 系以外のターゲット・プロパティだけセットし、``INTERFACE`` モードは ``INTERFACE_`` 系のターゲット・プロパティだけをセットし、``PUBLIC`` モードはその両方の系のターゲット・プロパティをセットします。
-各コマンドは各モードを複数回使用して呼び出すことができます：
+各コマンドには ``PRIVATE``、``PUBLIC``、そして ``INTERFACE`` というスコープがあります。
+``PRIVATE`` のスコープは ``INTERFACE_`` 系以外のターゲット・プロパティだけセットし、``INTERFACE`` のスコープは ``INTERFACE_`` 系のターゲット・プロパティだけをセットし、``PUBLIC`` のスコープはその両方の系のターゲット・プロパティをセットします。
+各コマンドは各スコープを複数回使用して呼び出すことができます：
 
 .. code-block:: cmake
 
@@ -202,7 +202,7 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
 ----------------
 
 ターゲットの「利用要件」は依存先に推移的（*Transitive*） [#hint_for_transitive]_ に伝搬していきます。
-:command:`target_link_libraries` コマンドには、この伝搬を制御するために ``PRIVATE``、``INTERFACE``、そして ``PUBLIC`` モードがあります。
+:command:`target_link_libraries` コマンドには、この伝搬を制御するために ``PRIVATE``、``INTERFACE``、そして ``PUBLIC`` というスコープがあります。
 
 .. code-block:: cmake
 
@@ -225,10 +225,10 @@ CMake 変数の :variable:`CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE` を ``TRUE`` 
 この例では、``archive`` ライブラリは ``archiveExtras`` ライブラリと ``PUBLIC`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` にも伝搬します。
 また、``serialization`` ライブラリは ``archiveExtras`` ライブラリと ``PRIVATE`` な依存関係にあるので、その利用要件は実行形式の ``consumer`` には伝搬しません。
 
-一般に、依存関係がライブラリのビルドのみで利用され、ヘッダ・ファイルには影響しないような場合は ``PRIVATE`` モードで :command:`target_link_libraries` コマンドを呼び出す時にその依存関係を指定するようにして下さい。
-もし依存関係がライブラリのヘッダ・ファイルの中で追加でインクルードされる場合（たとえばクラスの継承）は ``PUBLIC`` モードで依存関係を指定して下さい。
-ライブラリの実装で利用されず、ヘッダ・ファイルのみ利用される依存関係の場合は ``INTERFACE`` モードで依存関係を指定して下さい。
-:command:`target_link_libraries` コマンドは各モードを複数回指定して呼び出すことも可能です：
+一般に、依存関係がライブラリのビルドのみで利用され、ヘッダ・ファイルには影響しないような場合は ``PRIVATE`` のスコープで :command:`target_link_libraries` コマンドを呼び出す時にその依存関係を指定するようにして下さい。
+もし依存関係がライブラリのヘッダ・ファイルの中で追加でインクルードされる場合（たとえばクラスの継承）は ``PUBLIC`` のスコープで依存関係を指定して下さい。
+ライブラリの実装で利用されず、ヘッダ・ファイルのみ利用される依存関係の場合は ``INTERFACE`` のスコープで依存関係を指定して下さい。
+:command:`target_link_libraries` コマンドは各スコープを複数回指定して呼び出すことも可能です：
 
 .. code-block:: cmake
 
@@ -806,22 +806,21 @@ ALIAS ターゲット
 
 .. _`Interface Libraries`:
 
-INTERFACE ライブラリなターゲット
+INTERFACE ライブラリのターゲット
 --------------------------------
 
-``INTERFACE`` ライブラリなターゲットはソースをコンパイルせず成果物となるファイルを出力しないため、:prop_tgt:`LOCATION` プロパティは持ちません。
+``INTERFACE`` 型のライブラリのターゲットはソースをコンパイルせず成果物となるファイルを出力しないため、:prop_tgt:`LOCATION` プロパティは持ちません。
 
-ターゲット・プロパティの :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_SOURCES`、そして :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` などの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ を指定する場合があります。
+このターゲットに :prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_SOURCES`、そして :prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` などの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ のプロパティを指定する場合があります。
+:command:`target_include_directories` や :command:`target_compile_definitions`、:command:`target_compile_options` や :command:`target_sources`、そして :command:`target_link_libraries` といったコマンドは、``INTERFACE`` ライブラリに対しては ``INTERFACE`` スコープだけ指定できます。
 
-Only the ``INTERFACE`` modes of the :command:`target_include_directories`, :command:`target_compile_definitions`, :command:`target_compile_options`, :command:`target_sources`, and :command:`target_link_libraries` commands may be used with ``INTERFACE`` libraries.
+CMake バージョン 3.19 から、``INTERFACE`` ライブラリのターゲットはオプションでソース・ファイルを含めることができるようになりました。
+ソース・ファイルを含む ``INTERFACE`` ライブラリは、生成したビルドシステムでビルド・ターゲットとして含められます。
+その場合はソース・ファイルをコンパイルしませんが、他のソース・ファイルを生成するようなカスタム・コマンドで使われる場合があります。
+さらに、コマンドラインではなく対話型の IDE で表示したり編集するために、それらのソース・ファイルがターゲットの一部として表示されます。
 
-Since CMake 3.19, an ``INTERFACE`` library target may optionally contain source files.
-An interface library that contains source files will be included as a build target in the generated buildsystem.
-It does not compile sources, but may contain custom commands to generate other sources.
-Additionally, IDEs will show the source files as part of the target for interactive reading and editing.
-
-A primary use-case for ``INTERFACE`` libraries is header-only libraries.
-Since CMake 3.23, header files may be associated with a library by adding them to a header set using the :command:`target_sources` command:
+``INTERFACE`` 型のライブラリは、主にヘッダ・ファイルだけを提供するライブラリとして使われます。
+CMake のバージョン 3.23 から、:command:`target_sources` コマンドを使ってヘッダ・ファイルをターゲットのヘッダリストに追加することで、``INTERFACE`` ライブラリと関連づけできます。
 
 .. code-block:: cmake
 
@@ -836,10 +835,10 @@ Since CMake 3.23, header files may be associated with a library by adding them t
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 Eigen)
 
-When we specify the ``FILE_SET`` here, the ``BASE_DIRS`` we define automatically become include directories in the usage requirements for the target ``Eigen``.
-The usage requirements from the target are consumed and used when compiling, but have no effect on linking.
+この例ではファイル・セット（``FILE_SET``）に ``HEADERS`` を指定しているので、定義した ``BASE_DIRS`` がターゲット ``Eigen`` の利用要件にあるインクルード・ディレクトリに自動的にセットされます。
+ターゲットから伝搬した利用要件（プロパティ）はコンパイル時に使い切るので、リンク時には適用されません。
 
-Another use-case is to employ an entirely target-focussed design for usage requirements:
+他に ``INTERFACE`` ライブラリを使うと、利用要件に対して完全にターゲット専用の設計を採用できる利点があります：
 
 .. code-block:: cmake
 
@@ -856,10 +855,10 @@ Another use-case is to employ an entirely target-focussed design for usage requi
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 pic_on enable_rtti)
 
-This way, the build specification of ``exe1`` is expressed entirely as linked targets, and the complexity of compiler-specific flags is encapsulated in an ``INTERFACE`` library target.
+この例だと、``exe1`` の「ビルドの仕様」（*Build Specification*） [#hint_for_build_specification]_ は完全にリンクされたターゲットとして示され、コンパイラ特有の複雑なフラグが ``INTERFACE`` ライブラリのターゲットにカプセル化されます。
 
-``INTERFACE`` libraries may be installed and exported.
-We can install the default header set along with the target:
+``INTERFACE`` 型のライブラリはインストールもエキスポートも可能です。
+ビルドしたターゲット ``exe1`` と共に、ヘッダファイルもデフォルトのファイル・セット（``HEADERS``）としてインストールできます。
 
 .. code-block:: cmake
 
@@ -877,12 +876,12 @@ We can install the default header set along with the target:
     DESTINATION lib/cmake/Eigen
   )
 
-Here, the headers defined in the header set are installed to ``include/Eigen``.
-The install destination automatically becomes an include directory that is a usage requirement for consumers.
+この例だと、ファイルセットとして定義したヘッダ・ファイルは ``include/Eigen`` 以下にインストールされます。
+インストール先は、自動的にこのライブラリの利用要件に含まれるインクルード・ディレクトリになります。
 
 .. rubric:: 日本語訳注記
 
 .. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
 .. [#hint_for_usage_requirements] 「`CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_」参照。
 .. [#hint_for_transitive] 次々に移って行くこと。「等号の―性」（たとえば a = b で b = c ならば必ず a = c という性質）。
-.. [#hint_for_build_specification] 「ビルドの仕様」とはターゲットAのビルドに必要な設定情報（ターゲット・プロパティ）、「利用要件」とはそのターゲットAを利用するターゲットB側で必要な設定情報（ターゲット・プロパティ）。利用要件のターゲット・プロパティはビルドの仕様のターゲット・プロパティに ``INTERFACE_`` という接頭辞を付けたもの。
+.. [#hint_for_build_specification] 「ビルドの仕様」とはターゲットAのビルドに必要な設定情報（ターゲット・プロパティ）ことで、「利用要件」とはそのターゲットAを利用するターゲットB側で必要な設定情報（ターゲット・プロパティ）のこと。利用要件のターゲット・プロパティはビルドの仕様のターゲット・プロパティに ``INTERFACE_`` という接頭辞を付けたもの。
