@@ -12,14 +12,14 @@ block
   endblock()
 
 この ``block()`` コマンドから :command:`endblock` の間にある全てのコマンドは呼び出されることなく記録されます。
-:command:`endblock` が評価されると、記録したコマンドのリストが要求されたスコープの中で呼び出され、この ``block()`` コマンドが生成した全てのスコープが削除されます。
+:command:`endblock` が評価されると、記録したコマンドのリストが要求されたスコープの中で呼び出されて、その後に ``block()`` コマンドが生成した全てのスコープが削除されます。
 
 ``SCOPE_FOR``
   作成するスコープを指定する。
 
   ``POLICIES``
     新しいスコープを一つ作成する。
-    これは、ブロック・スコープから外れる時に自動の :command:`cmake_policy(POP)` を使う  :command:`cmake_policy(PUSH)` と等価である。
+    これはブロック内のスコープから抜ける時に自動的に :command:`cmake_policy(POP)` コマンドを呼び出す :command:`cmake_policy(PUSH)` コマンドと等価である。
 
   ``VARIABLES``
     新しい変数のスコープを作成する。

@@ -1,7 +1,7 @@
 cmake_host_system_information
 -----------------------------
 
-いろいろなホスト・システムの情報を照会する。
+ホスト・システムのいろいろな情報を照会する。
 
 概要
 ^^^^
@@ -16,8 +16,8 @@ cmake_host_system_information
 
 .. _Query host system specific information:
 
-ホスト・システム固有の情報の照会
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ホスト・システム固有の情報を照会する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
@@ -199,43 +199,43 @@ cmake_host_system_information
 :file:`/etc/os-release` が見つからなかった場合、このコマンドはフォールバック・スクリプトを介して OS の情報を収集しようとします。
 このフォールバック・スクリプトは `various distribution-specific files`_ を使って OS の識別データを収集して、それを `man 5 os-release`_ のエントリ（変数）に対応付けします。
 
-インタフェース変数のフォールバック
-""""""""""""""""""""""""""""""""""
+特定の変数をフォールバックする
+""""""""""""""""""""""""""""""
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_SCRIPTS
 
-  CMake と一緒に提供されているスクリプトの他、このリスト型の変数にユーザ自らのスクリプトの絶対パスを追加できます。
+  CMake と一緒に提供されているフォールバック・スクリプト以外にも、このリスト型の変数にユーザ自らのフォールバック・スクリプトの絶対パスを追加できます。
   このスクリプトのファイル名は次のような書式を持ちます：``NNN-<name>.cmake``（`NNN`` は３桁の数字で、特定の順番でスクリプトを収集した際に付与される）
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>
 
-  Variables collected by the user provided fallback script ought to be assigned to CMake variables using this naming convention.
-  Example, the ``ID`` variable from the manual becomes ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_ID``.
+  ユーザが提供したフォールバック・スクリプトによって収集された変数は、この命名規則に従った CMake 変数に割り当てる必要がある。
+  たとえばシステムが定義した ``ID`` という変数は ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_ID`` に割り当てることになる。
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_RESULT
 
-  The fallback script ought to store names of all assigned  ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>`` variables in this list.
+  フォールバック・スクリプトは、割り当てた ``CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>`` を全て、このリスト型の変数に格納する必要がある。
 
-Example:
+たとえば：
 
 .. code-block:: cmake
 
-  # Try to detect some old distribution
-  # See also
+  # 古いディストリビューションを検出してみる
+  # 参考情報：
   # - http://linuxmafia.com/faq/Admin/release-files.html
   #
   if(NOT EXISTS "${CMAKE_SYSROOT}/etc/foobar-release")
     return()
   endif()
-  # Get the first string only
+  # 一行目の文字列だけ見る
   file(
       STRINGS "${CMAKE_SYSROOT}/etc/foobar-release" CMAKE_GET_OS_RELEASE_FALLBACK_CONTENT
       LIMIT_COUNT 1
     )
   #
-  # Example:
+  # 一行目が次の文字列の場合：
   #
-  #   Foobar distribution release 1.2.3 (server)
+  #   Foobar distribution release 1.2.3 (server) 
   #
   if(CMAKE_GET_OS_RELEASE_FALLBACK_CONTENT MATCHES "Foobar distribution release ([0-9\.]+) .*")
     set(CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_NAME Foobar)
@@ -257,7 +257,7 @@ Example:
 
 .. rubric:: Footnotes
 
-.. [#mebibytes] One MiB (mebibyte) is equal to 1024x1024 bytes.
+.. [#mebibytes] 1 MiB（メビバイト）は 1024x1024 バイトと同じです。
 
 .. _man 5 os-release: https://www.freedesktop.org/software/systemd/man/os-release.html
 .. _various distribution-specific files: http://linuxmafia.com/faq/Admin/release-files.html
@@ -277,26 +277,28 @@ Windows レジストリ情報の照会
                                 [SEPARATOR <separator>]
                                 [ERROR_VARIABLE <result>])
 
-Performs query operations on local computer registry subkey.
-Returns a list of subkeys or value names that are located under the specified subkey in the registry or the data of the specified value name.
-The result of the queried entity is stored in ``<variable>``.
+ローカルのコンピュータにあるレジストリのサブキーを照会します。
+レジストリ内の指定したサブキーの下に格納されているサブキーまたは値名のリスト、あるいは指定した値名のデータを返します。
+エントリの照会結果は ``<variable>`` に格納されます。
 
 .. note::
 
-  Querying registry for any other platforms than ``Windows``, including  ``CYGWIN``, will always returns an empty string and sets an error message in the variable specified with sub-option ``ERROR_VARIABLE``.
+  ``CYGWIN`` のような ``Windows`` 以外のプラットフォームのレジストリを照会すると、常に空の文字列が返され、オプションの ``ERROR_VARIABLE`` に指定した変数にエラー・メッセージがセットされます。
 
-``<key>`` specify the full path of a subkey on the local computer.
-The `<key>`` must include a valid root key. Valid root keys for the local computer are:
+``<key>`` にはローカル・コンピュータにあるサブキーの絶対パスを指定します。
+この ``<key>`` には有効な root キーを含めて下さい。
+ローカルのコンピュータで有効な root キーは次のとおりです：
 
-* ``HKLM`` or ``HKEY_LOCAL_MACHINE``
-* ``HKCU`` or ``HKEY_CURRENT_USER``
-* ``HKCR`` or ``HKEY_CLASSES_ROOT``
-* ``HKU`` or ``HKEY_USERS``
-* ``HKCC`` or ``HKEY_CURRENT_CONFIG``
+* ``HKLM`` または ``HKEY_LOCAL_MACHINE``
+* ``HKCU`` または ``HKEY_CURRENT_USER``
+* ``HKCR`` または ``HKEY_CLASSES_ROOT``
+* ``HKU`` または ``HKEY_USERS``
+* ``HKCC`` または ``HKEY_CURRENT_CONFIG``
 
-And, optionally, the path to a subkey under the specified root key. The path separator can be the slash or the backslash.
-``<key>`` is not case sensitive.
-For example:
+そして root  キーの下のサブキーへのパスをオプションで指定します。
+このパスの区切り文字はスラッシュ（``/``）またはバックスラッシュ（``\``）を使用できます。
+``<key>`` は大文字/小文字を区別しません。
+たとえば：
 
 .. code-block:: cmake
 
@@ -305,77 +307,78 @@ For example:
   cmake_host_system_information(RESULT result QUERY WINDOWS_REGISTRY "HKCU\\SOFTWARE\\Kitware")
 
 ``VALUE_NAMES``
-  Request the list of value names defined under ``<key>``.
-  If a default value is defined, it will be identified with the special name ``(default)``.
+  照会時に、``<key>`` の下で定義されている値名を要素とするリストを要求する。
+  もしデフォルトの値が定義されていたら、``(default)`` という特殊な名前で識別できます。
 
 ``SUBKEYS``
-  Request the list of subkeys defined under ``<key>``.
+  照会時に、``<key>`` の下で定義されているサブキーを要素とするリストを要求する。
 
 ``VALUE <name>``
-  Request the data stored in value named ``<name>``. If ``VALUE`` is not specified or argument is the special name ``(default)``, the content of the default value, if any, will be returned.
+  照会時に、``<name>`` という名前を持つ値に格納されたデータを要求する。
+   ``VALUE`` を指定しない、またはその引数が特殊な名前である ``(default)`` の場合、もしデフォルト値があれば、そのデータを返す。
 
   .. code-block:: cmake
 
-     # query default value for HKLM/SOFTWARE/Kitware key
+     # HKLM/SOFTWARE/Kitware キーに対するデフォルト値を参照する
      cmake_host_system_information(RESULT result
                                    QUERY WINDOWS_REGISTRY "HKLM/SOFTWARE/Kitware")
 
-     # query default value for HKLM/SOFTWARE/Kitware key using special value name
+     # 特殊なあ名前を使って HKLM/SOFTWARE/Kitware キーに対するデフォルト値を照会する
      cmake_host_system_information(RESULT result
                                    QUERY WINDOWS_REGISTRY "HKLM/SOFTWARE/Kitware"
                                    VALUE "(default)")
 
-  Supported types are:
+  サポートしている型は:
 
-  * ``REG_SZ``.
-  * ``REG_EXPAND_SZ``. The returned data is expanded.
-  * ``REG_MULTI_SZ``. The returned is expressed as a CMake list. See also
-    ``SEPARATOR`` sub-option.
-  * ``REG_DWORD``.
-  * ``REG_QWORD``.
+  * ``REG_SZ``
+  * ``REG_EXPAND_SZ`` （返されたデータは展開される）
+  * ``REG_MULTI_SZ`` （返されたでーたは CMake のリスト型として展開される、 ``SEPARATOR`` というオプションも参照のこと）
+  * ``REG_DWORD``
+  * ``REG_QWORD``
 
-  For all other types, an empty string is returned.
+  他の型は全て、空の文字列が返される。
 
 ``VIEW``
-  Specify which registry views must be queried. When not specified,
-  ``BOTH`` view is used.
+  どのレジストリ・ビューを照会するかを指定する。指定しない場合は、``BOTH`` ビューを使う。
 
   ``64``
-    Query the 64bit registry. On ``32bit Windows``, returns always an empty  string.
+    64bit のレジストリに照会する。``32bit Windows`` の場合は常に空の文字列を返す。
 
   ``32``
-    Query the 32bit registry.
+    32bit のレジストリに照会する。
 
   ``64_32``
-    For ``VALUE`` sub-option or default value, query the registry using view ``64``, and if the request failed, query the registry using view ``32``.
-    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``64`` and ``32``) and merge the results (sorted and duplicates removed).
+    ``VALUE`` オプションを指定した場合、またはデフォルト値の照会の場合は ``64`` ビューを使ってレジストリを照会し、その要求が失敗したら ``32`` ビューを使ってレジストリを照会する。
+    ``VALUE_NAMES`` と ``SUBKEYS`` オプションを指定した場合は、``64`` と ``32`` の両方のビューを使ってレジストリを照会し、最後に結果をマージする（重複するエントリは削除して並び替える）。
 
   ``32_64``
-    For ``VALUE`` sub-option or default value, query the registry using view ``32``, and if the request failed, query the registry using view ``64``.
-    For ``VALUE_NAMES`` and ``SUBKEYS`` sub-options, query both views (``32`` and ``64``) and merge the results (sorted and duplicates removed).
+    ``VALUE`` オプションを指定した場合、またはデフォルト値の照会の場合は ``32`` ビューを使ってレジストリを照会し、その要求が失敗したら ``64`` ビューを使ってレジストリを照会する。
+    ``VALUE_NAMES`` と ``SUBKEYS`` オプションを指定した場合は、``32`` と ``64`` の両方のビューを使ってレジストリを照会し、最後に結果をマージする（重複するエントリは削除して並び替える）。
 
   ``HOST``
-    Query the registry matching the architecture of the host: ``64`` on ``64bit  Windows`` and ``32`` on ``32bit Windows``.
+    ここで指定したホストのアーキテクチャとマッチするレジストリを照会する。
+    対象となるアーキテクチャは： ``64bit  Windows`` の場合は ``64``、``32bit Windows`` の場合は ``32``
 
   ``TARGET``
-    Query the registry matching the architecture specified by :variable:`CMAKE_SIZEOF_VOID_P` variable.
-    If not defined, fallback to ``HOST`` view.
+    CMake 変数の :variable:`CMAKE_SIZEOF_VOID_P` にセットしたアーキテクチャにマッチしたレジストリを照会する。
+    この変数に何もセットしていなかったら ``HOST`` ビューを使って照会する。
 
   ``BOTH``
-    Query both views (``32`` and ``64``).
-    The order depends of the following rules:
-    If :variable:`CMAKE_SIZEOF_VOID_P` variable is defined. Use the following view depending of the content of this variable:
+    ``32`` と ``64`` の両方のビューを使ってレジストリを照会する。
+    照会する順番は次のルールに従う：
+    CMake 変数の :variable:`CMAKE_SIZEOF_VOID_P` が定義されている場合は、この変数にセットされているアーキテクチャに応じたビューを使用する：
 
     * ``8``: ``64_32``
     * ``4``: ``32_64``
 
-    If :variable:`CMAKE_SIZEOF_VOID_P` variable is not defined, rely on architecture of the host:
+    CMake 変数の :variable:`CMAKE_SIZEOF_VOID_P` が定義されていない場合は、ホストのアーキテクチャに依存する：
 
     * ``64bit``: ``64_32``
     * ``32bit``: ``32``
 
 ``SEPARATOR``
-  Specify the separator character for ``REG_MULTI_SZ`` type. When not pecified, the character ``\0`` is used.
+  ``REG_MULTI_SZ`` 型の区切り文字を指定する
+  指定しない場合は ``\0`` と云う文字を使う。
 
 ``ERROR_VARIABLE <result>``
-  Returns any error raised during query operation. In case of success, the  variable holds an empty string.
+  照会中に発生したエラーを返す。エラー無しで照会操作が成功したら空の文字列を格納する。

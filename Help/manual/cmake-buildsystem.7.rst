@@ -660,8 +660,8 @@ contains a cycle.  :manual:`cmake(1)` issues an error message.
 生成した「**ビルドの構成** （Build Configurations）」により、``Release`` や ``Debug`` といった特定の種類のビルドの仕様が決まります。
 ビルドの構成を指定する方法は、生成時に使用した :manual:`ジェネレータ <cmake-generators(7)>` に依存します。
 たとえば :ref:`Makefile Generators` や :generator:`Ninja` のような一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まります。
-対して :ref:`Visual Studio <Visual Studio Generators>` や :generator:`Xcode`、そして :generator:`Ninja Multi-Config` のような複数の構成を扱うジェネレータの場合、ユーザがビルド時に構成を選択するので、:variable:`CMAKE_BUILD_TYPE` の値は無視されます。
-後者のジェネレータでは、CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` で *利用可能な* 設定一式を指定できますが、実際に使用する設定はビルド時までわかりません。
+対して :ref:`Visual Studio <Visual Studio Generators>` や :generator:`Xcode`、そして :generator:`Ninja Multi-Config` のような複数の構成を扱えるジェネレータの場合、ユーザがビルド時に構成を選択するので、:variable:`CMAKE_BUILD_TYPE` の値は無視されます。
+後者のジェネレータでは、CMake 変数の :variable:`CMAKE_CONFIGURATION_TYPES` で「*利用可能な*」設定一式を指定できますが、実際に使用する設定はビルド時までわかりません。
 この違いは誤解されることが多く、次のような問題のあるコードにつながります：
 
 .. code-block:: cmake
@@ -730,7 +730,7 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 実際に使用するビルドの構成はビルド時にユーザが指定します。
 
 一個の構成しか生成しないジェネレータの場合、ビルドの構成はその生成時に CMake の変数 :variable:`CMAKE_BUILD_TYPE` の値で決まり、ビルド時に構成を変更することはできません。
-デフォルトで、このCMake 変数には、上記の標準的な構成ではなく、空の文字列がセットされます。
+デフォルトで、この CMake 変数には上記の標準的な構成ではなく、空の文字列がセットされます。
 よくある誤解として、これが ``Debug`` と同じであるとするものですが、それは間違いです。
 この問題を回避するため、ユーザは常にビルドの構成を明示的に指定する必要があります。
 
@@ -750,16 +750,16 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 IMPORTED なターゲット
 ---------------------
 
-:prop_tgt:`IMPORTED` なターゲットは既存の依存関係を表します（？）。
-通常、このようなターゲットは上流のパッケージによって定義され変更不可として扱われる必要があります。
+:prop_tgt:`IMPORTED` なターゲットは既存の依存関係（*pre-existing dependency*）を表します。
+通常、このようなターゲットは上流のパッケージによって定義され、変更不可として扱われる必要があります。
 :prop_tgt:`IMPORTED` なターゲットは、他の通常のターゲットと同様に、:command:`target_compile_definitions`、:command:`target_include_directories`、:command:`target_compile_options`、あるいは :command:`target_link_libraries` といったコマンドを使って、そのターゲット・プロパティを変更できます。
 
 :prop_tgt:`IMPORTED` なターゲットには、:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` など、「:ref:`バイナリのターゲット <Binary Targets>`」と同じ「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ のプロパティが設定されている場合があります。
 
 ターゲット・プロパティの :prop_tgt:`LOCATION` も :prop_tgt:`IMPORTED` なターゲットから読みとられる場合がありますが、必ず読み取らなければならないという訳ではありません。
-:command:`add_custom_command` などのコマンドでは、:prop_tgt:`IMPORTED` で :prop_tgt:`EXECUTABLE <TYPE>` なターゲットを実行形式 ``COMMAND`` として透過的に利用できます。
+:command:`add_custom_command` などのコマンドでは、:prop_tgt:`IMPORTED` で :prop_tgt:`EXECUTABLE <TYPE>` なターゲットを実行形式として ``COMMAND`` に指定して透過的に利用できます。
 
-:prop_tgt:`IMPORTED` なターゲットの定義は、それが定義されたディレクトリが有効なスコープです。
+:prop_tgt:`IMPORTED` なターゲットは、それが定義されたディレクトリが有効なスコープになります。
 スコープのサブディレクトリからアクセスしたり利用することも可能ですが、スコープの親ディレクトリや兄弟ディレクトリからはアクセスできません。
 このスコープは CMake 変数のスコープと似ています。
 
@@ -772,7 +772,7 @@ IMPORTED なターゲット
 ALIAS ターゲット
 ----------------
 
-``ALIAS`` ターゲットは、読み取り専用のコンテキストで「:ref:`バイナリのターゲット <Binary Targets>`」の名前と同じように扱うことができる別の名前です。
+``ALIAS`` ターゲットは読み取り専用のコンテキストで、「:ref:`バイナリのターゲット <Binary Targets>`」の名前と同じように扱うことができる別の名前です。
 この ``ALIAS`` ターゲットの主な使い途としては、たとえばライブラリと一緒に行う実行形式の単体テストがあります。このテストは、同じビルドシステムの一部であったり、あるいはユーザが生成した構成に基づいて別々にビルドされる場合があります。
 
 .. code-block:: cmake
