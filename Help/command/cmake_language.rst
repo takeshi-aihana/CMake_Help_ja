@@ -3,10 +3,10 @@ cmake_language
 
 .. versionadded:: 3.18
 
-Call meta-operations on CMake commands.
+CMake コマンドでメタ操作（*meta-operations*）を呼び出す。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
@@ -16,36 +16,35 @@ Synopsis
   cmake_language(`SET_DEPENDENCY_PROVIDER`_ <command> SUPPORTED_METHODS <methods>...)
   cmake_language(`GET_MESSAGE_LOG_LEVEL`_ <out-var>)
 
-Introduction
-^^^^^^^^^^^^
+はじめに
+^^^^^^^^
 
-This command will call meta-operations on built-in CMake commands or
-those created via the :command:`macro` or :command:`function` commands.
+このコマンドは内蔵の CMake コマンド、または :command:`macro` や :command:`function` コマンドで作成したメタ操作を呼び出します。
 
-``cmake_language`` does not introduce a new variable or policy scope.
+``cmake_language`` は新しい変数やポリシーのスコープを導入しません。
 
-Calling Commands
-^^^^^^^^^^^^^^^^
+コマンドの呼び出し
+^^^^^^^^^^^^^^^^^^
 
 .. signature::
   cmake_language(CALL <command> [<arg>...])
 
-  Calls the named ``<command>`` with the given arguments (if any).
-  For example, the code:
+  引数を指定した場合、それを使って名前付きの ``<command>`` を呼び出す。
+  たとえば、このメタ操作は：
 
   .. code-block:: cmake
 
     set(message_command "message")
     cmake_language(CALL ${message_command} STATUS "Hello World!")
 
-  is equivalent to
+  次と等価である：
 
   .. code-block:: cmake
 
     message(STATUS "Hello World!")
 
   .. note::
-    To ensure consistency of the code, the following commands are not allowed:
+    コードの一貫性を保証するため、次のような操作は指定しないこと：
 
     * ``if`` / ``elseif`` / ``else`` / ``endif``
     * ``block`` / ``endblock``
@@ -54,16 +53,16 @@ Calling Commands
     * ``function`` / ``endfunction``
     * ``macro`` / ``endmacro``
 
-Evaluating Code
-^^^^^^^^^^^^^^^
+コードの評価
+^^^^^^^^^^^^
 
 .. signature::
   cmake_language(EVAL CODE <code>...)
   :target: EVAL
 
-  Evaluates the ``<code>...`` as CMake code.
+  ``<code>...`` を CMake のコードとして評価する。
 
-  For example, the code:
+  たとえば、このコードは：
 
   .. code-block:: cmake
 
@@ -80,7 +79,7 @@ Evaluating Code
       endif()"
     )
 
-  is equivalent to
+  次と等価である：
 
   .. code-block:: cmake
 
@@ -99,44 +98,37 @@ Evaluating Code
 
     include(${CMAKE_CURRENT_BINARY_DIR}/eval.cmake)
 
-Deferring Calls
-^^^^^^^^^^^^^^^
+遅延呼び出し
+^^^^^^^^^^^^
 
 .. versionadded:: 3.19
 
 .. signature::
   cmake_language(DEFER <options>... CALL <command> [<arg>...])
 
-  Schedules a call to the named ``<command>`` with the given arguments (if any)
-  to occur at a later time.  By default, deferred calls are executed as if
-  written at the end of the current directory's ``CMakeLists.txt`` file,
-  except that they run even after a :command:`return` call.  Variable
-  references in arguments are evaluated at the time the deferred call is
-  executed.
+  引数を指定していれば、それを使った名前付きの ``<command>`` を、あとで呼び出すようスケジュールする。  
+  デフォルトで、このような遅延呼び出しは、それらが :command:`return()` コマンドの呼び出しのあとでも実行されることを除き、現在のディレクトリにある CMakeLists.txt ファイルの最後に書かれたコマンドであるかのように実行される。
+  なお、引数として渡した変数の参照は、遅延呼び出しとして実行する時に評価される。
 
-  The options are:
+  指定できるオプションは次の通り：
 
   ``DIRECTORY <dir>``
-    Schedule the call for the end of the given directory instead of the
-    current directory.  The ``<dir>`` may reference either a source
-    directory or its corresponding binary directory.  Relative paths are
-    treated as relative to the current source directory.
+    現在のソース・ディレクトリではなく ``<dir>`` の最後で ``<command>`` が呼び出されるようにスケジュールする。
+    引数の ``<dir>`` はソース・ディレクトリ、またはそれに対応するバイナリ・ディレクトリを参照できる。
+    相対パスは、現在のソース・ディレクトリからの相対ディレクトリとして扱われる。
 
-    The given directory must be known to CMake, being either the top-level
-    directory or one added by :command:`add_subdirectory`.  Furthermore,
-    the given directory must not yet be finished processing.  This means
-    it can be the current directory or one of its ancestors.
+    CMake は ``<dir>`` を認識している必要があるので、プロジェクト最上位のディレクトリか、または :command:`add_subdirectory` コマンドで追加したディレクトリのいずれかになる。
+    さらに、``<dir>`` に対する処理が完了していないこと。
+    これは、現在のソース・ディレクトリまたはその上のディレクトリであることを意味する。
 
   ``ID <id>``
     Specify an identification for the deferred call.
     The ``<id>`` may not be empty and may not begin with a capital letter ``A-Z``.
-    The ``<id>`` may begin with an underscore (``_``) only if it was generated
-    automatically by an earlier call that used ``ID_VAR`` to get the id.
+    The ``<id>`` may begin with an underscore (``_``) only if it was generated  automatically by an earlier call that used ``ID_VAR`` to get the id.
 
   ``ID_VAR <var>``
-    Specify a variable in which to store the identification for the
-    deferred call.  If ``ID <id>`` is not given, a new identification
-    will be generated and the generated id will start with an underscore (``_``).
+    Specify a variable in which to store the identification for the  deferred call.
+    If ``ID <id>`` is not given, a new identification  will be generated and the generated id will start with an underscore (``_``).
 
   The currently scheduled list of deferred calls may be retrieved:
 
@@ -144,13 +136,10 @@ Deferring Calls
 
     cmake_language(DEFER [DIRECTORY <dir>] GET_CALL_IDS <var>)
 
-  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language
-  Lists>` of deferred call ids.  The ids are for the directory scope in which
-  the calls have been deferred to (i.e. where they will be executed), which can
-  be different to the scope in which they were created.  The ``DIRECTORY``
-  option can be used to specify the scope for which to retrieve the call ids.
-  If that option is not given, the call ids for the current directory scope
-  will be returned.
+  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language Lists>` of deferred call ids.
+  The ids are for the directory scope in which the calls have been deferred to (i.e. where they will be executed), which can be different to the scope in which they were created.
+  The ``DIRECTORY`` option can be used to specify the scope for which to retrieve the call ids.
+  If that option is not given, the call ids for the current directory scope will be returned.
 
   Details of a specific call may be retrieved from its id:
 
@@ -158,14 +147,8 @@ Deferring Calls
 
     cmake_language(DEFER [DIRECTORY <dir>] GET_CALL <id> <var>)
 
-  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language
-  Lists>` in which the first element is the name of the command to be
-  called, and the remaining elements are its unevaluated arguments (any
-  contained ``;`` characters are included literally and cannot be distinguished
-  from multiple arguments).  If multiple calls are scheduled with the same id,
-  this retrieves the first one.  If no call is scheduled with the given id in
-  the specified ``DIRECTORY`` scope (or the current directory scope if no
-  ``DIRECTORY`` option is given), this stores an empty string in the variable.
+  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language Lists>` in which the first element is the name of the command to be called, and the remaining elements are its unevaluated arguments (any contained ``;`` characters are included literally and cannot be distinguished  from multiple arguments).  If multiple calls are scheduled with the same id, this retrieves the first one.
+  If no call is scheduled with the given id in the specified ``DIRECTORY`` scope (or the current directory scope if no ``DIRECTORY`` option is given), this stores an empty string in the variable.
 
   Deferred calls may be canceled by their id:
 
@@ -173,9 +156,8 @@ Deferring Calls
 
     cmake_language(DEFER [DIRECTORY <dir>] CANCEL_CALL <id>...)
 
-  This cancels all deferred calls matching any of the given ids in the specified
-  ``DIRECTORY`` scope (or the current directory scope if no ``DIRECTORY`` option
-  is given).  Unknown ids are silently ignored.
+  This cancels all deferred calls matching any of the given ids in the specified ``DIRECTORY`` scope (or the current directory scope if no ``DIRECTORY`` option  is given).
+  Unknown ids are silently ignored.
 
 Deferred Call Examples
 """"""""""""""""""""""
