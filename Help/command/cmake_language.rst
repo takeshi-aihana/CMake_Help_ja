@@ -108,7 +108,7 @@ CMake コマンドでメタ操作（*meta-operations*）を呼び出す。
 
   引数を指定していれば、それを使った名前付きの ``<command>`` を、あとで呼び出すようスケジュールする。  
   デフォルトで、このような遅延呼び出しは、それらが :command:`return()` コマンドの呼び出しのあとでも実行されることを除き、現在のディレクトリにある CMakeLists.txt ファイルの最後に書かれたコマンドであるかのように実行される。
-  なお、引数として渡した変数の参照は、遅延呼び出しとして実行する時に評価される。
+  なお、引数として渡した変数の参照は、遅延呼び出しとして実際に実行する時に評価される。
 
   指定できるオプションは次の通り：
 
@@ -117,52 +117,54 @@ CMake コマンドでメタ操作（*meta-operations*）を呼び出す。
     引数の ``<dir>`` はソース・ディレクトリ、またはそれに対応するバイナリ・ディレクトリを参照できる。
     相対パスは、現在のソース・ディレクトリからの相対ディレクトリとして扱われる。
 
-    CMake は ``<dir>`` を認識している必要があるので、プロジェクト最上位のディレクトリか、または :command:`add_subdirectory` コマンドで追加したディレクトリのいずれかになる。
+    CMake は ``<dir>`` をプロジェクト最上位のディレクトリか、または :command:`add_subdirectory` コマンドで追加したディレクトリのいずれかとして認識しておく必要がある。
     さらに、``<dir>`` に対する処理が完了していないこと。
-    これは、現在のソース・ディレクトリまたはその上のディレクトリであることを意味する。
+    これは、``<dir>`` が現在のソース・ディレクトリまたはその上のディレクトリであることを意味する。
 
   ``ID <id>``
-    Specify an identification for the deferred call.
-    The ``<id>`` may not be empty and may not begin with a capital letter ``A-Z``.
-    The ``<id>`` may begin with an underscore (``_``) only if it was generated  automatically by an earlier call that used ``ID_VAR`` to get the id.
+    遅延呼び出しを識別する ID を指定する。
+    ``<id>`` は空にしないこと。さらに先頭文字を大文字の ``A-Z`` にしないこと。
+    ただし、このオプションを使用せずに ``ID_VAR`` というオプションを利用して自動的に ``<id>`` が生成された場合にだけ、先頭文字をアンダースコア（``_``）にすることができる。
 
   ``ID_VAR <var>``
-    Specify a variable in which to store the identification for the  deferred call.
-    If ``ID <id>`` is not given, a new identification  will be generated and the generated id will start with an underscore (``_``).
+    遅延呼び出しの ID を格納する変数を指定する。
+    もしオプション ``ID <id>`` が指定されていない場合は、先頭文字をアンダースコア（``_``）とする新しい ID を生成する。
 
-  The currently scheduled list of deferred calls may be retrieved:
+  現在、遅延されている呼び出しのリストは次のようにして取得できます：
 
   .. code-block:: cmake
 
     cmake_language(DEFER [DIRECTORY <dir>] GET_CALL_IDS <var>)
 
-  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language Lists>` of deferred call ids.
-  The ids are for the directory scope in which the calls have been deferred to (i.e. where they will be executed), which can be different to the scope in which they were created.
-  The ``DIRECTORY`` option can be used to specify the scope for which to retrieve the call ids.
-  If that option is not given, the call ids for the current directory scope will be returned.
+  この呼び出しにより、:ref:`セミコロンで区切られた遅延呼び出しの ID を要素とするリスト <CMake Language Lists>` が ``<var>`` に格納されます。
+  これらの ID は呼び出しが遅延されたディレクトリのスコープ（つまり、遅延された呼び出しが実行される場所）に対して付与された識別子で、その呼び出しが生成されたスコープとは異なる場合があります。
+  ``DIRECTORY`` オプションを利用して、取得する ID のスコープを指定できます。
+  この ``DIRECTORY`` オプションが指定されていない場合、現在のディレクトリをスコープとする遅延呼び出しのID を返します。
 
-  Details of a specific call may be retrieved from its id:
+  特定の遅延呼び出しの詳細は ID から取得できます：
 
   .. code-block:: cmake
 
     cmake_language(DEFER [DIRECTORY <dir>] GET_CALL <id> <var>)
 
-  This will store in ``<var>`` a :ref:`semicolon-separated list <CMake Language Lists>` in which the first element is the name of the command to be called, and the remaining elements are its unevaluated arguments (any contained ``;`` characters are included literally and cannot be distinguished  from multiple arguments).  If multiple calls are scheduled with the same id, this retrieves the first one.
-  If no call is scheduled with the given id in the specified ``DIRECTORY`` scope (or the current directory scope if no ``DIRECTORY`` option is given), this stores an empty string in the variable.
+  この呼び出しにより、:ref:`セミコロンで区切られた遅延呼び出しの ID を要素とするリスト <CMake Language Lists>` が ``<var>`` に格納され、その先頭の要素が呼び出すコマンドの名前で、残りの要素は未評価の引数です
+  （注意：この引数に含まれている ``;`` という文字は文字通りに評価されるため、シェルのような複数の引数を表す文字とは区別できません）。
+  もし複数回の呼び出しが同じ ID でスケジューリングされている場合は、１番目の呼び出しを取得します。
+  もし指定した ``DIRECTORY`` スコープで、与えられた ID に対して何も呼び出しがスケジューリングされていない場合（あるいは、``DIRECTORY`` オプションが指定されていないため、現在のディレクトリがスコープになっている場合で）、空の文字列が ``<var>`` に格納されます。
 
-  Deferred calls may be canceled by their id:
+  遅延呼び出しはその ID を使ってキャンセルできます：
 
   .. code-block:: cmake
 
     cmake_language(DEFER [DIRECTORY <dir>] CANCEL_CALL <id>...)
 
-  This cancels all deferred calls matching any of the given ids in the specified ``DIRECTORY`` scope (or the current directory scope if no ``DIRECTORY`` option  is given).
-  Unknown ids are silently ignored.
+  この呼び出しにより、指定した ``DIRECTORY`` のスコープ（あるいは、``DIRECTORY`` オプションが指定されていないため現在のディレクトリがスコープになっている場合）でいずれかの ``<id>`` に一致する全ての遅延呼び出しがキャンセルされます。
+  マッチしない ``<id>`` は何も表示せずに無視されます。
 
-Deferred Call Examples
-""""""""""""""""""""""
+遅延呼び出しの例
+""""""""""""""""
 
-For example, the code:
+例えば、次のコード：
 
 .. code-block:: cmake
 
@@ -172,19 +174,17 @@ For example, the code:
   message("Immediate Message")
   set(deferred_message "Deferred Message")
 
-prints::
+の実行結果は::
 
   Immediate Message
   Deferred Message
 
-The ``Cancelled Message`` is never printed because its command is
-canceled.  The ``deferred_message`` variable reference is not evaluated
-until the call site, so it can be set after the deferred call is scheduled.
+``Cancelled Message`` という文字列は、それを遅延呼び出しするコマンドがキャンセルされているので表示されません。
+``deferred_message`` という変数はその値がセットされるまで評価されることはありません。そのため遅延呼び出しを定義したあとにセットできます。
 
-In order to evaluate variable references immediately when scheduling a
-deferred call, wrap it using ``cmake_language(EVAL)``.  However, note that
-arguments will be re-evaluated in the deferred call, though that can be
-avoided by using bracket arguments.  For example:
+遅延呼び出しをスケジューリングした時に変数をすぐに評価するには、その呼び出しのコードを ``cmake_language(EVAL)`` でラップして下さい。
+ここで、このコマンドの引数は遅延呼び出しされた時に再評価されて上書きされてしまうことに注意して下さい。その場合、その引数をカッコ（``[[...]]``）でくくることで回避できます。
+たとえば:
 
 .. code-block:: cmake
 
@@ -197,7 +197,7 @@ avoided by using bracket arguments.  For example:
   message("Immediate Message")
   set(deferred_message "Deferred Message 2")
 
-also prints::
+の実行結果は::
 
   Immediate Message
   Deferred Message 1
@@ -465,8 +465,8 @@ calling the provider command recursively for the same dependency.
     SUPPORTED_METHODS FIND_PACKAGE
   )
 
-Getting current message log level
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+message コマンドの現在のログ・レベルを取得する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.25
 
@@ -475,16 +475,11 @@ Getting current message log level
 .. signature::
   cmake_language(GET_MESSAGE_LOG_LEVEL <output_variable>)
 
-  Writes the current :command:`message` logging level
-  into the given ``<output_variable>``.
+  現在の :command:`message` コマンドによるログ・レベルを、指定した ``<output_variable>`` という変数に格納します。
 
-  See :command:`message` for the possible logging levels.
+  指定できるログのレベルについたは :command:`message` を参照して下さい。
 
-  The current message logging level can be set either using the
-  :option:`--log-level <cmake --log-level>`
-  command line option of the :manual:`cmake(1)` program or using
-  the :variable:`CMAKE_MESSAGE_LOG_LEVEL` variable.
+  message コマンドの現在のログ・レベルを設定するには :manual:`cmake(1)` のコマンドライン・オプションである :option:`--log-level <cmake --log-level>` を使用するか、CMake 変数の :variable:`CMAKE_MESSAGE_LOG_LEVEL` を使います。
 
-  If both the command line option and the variable are set, the command line
-  option takes precedence. If neither are set, the default logging level
-  is returned.
+  コマンドライン・オプションと変数の両方が設定されれている場合は、コマンドライン・オプションで指定されたログ・レベルが格納されます。
+  対して、どちらも設定せれていない場合は、デフォルトのログ・レベルが格納されます。
