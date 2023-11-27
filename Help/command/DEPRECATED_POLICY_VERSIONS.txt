@@ -1,9 +1,9 @@
 .. versionchanged:: 3.27
 
   バージョン 3.5 より古い CMake との互換性は廃止になりました。
-  少なくともバージョン 3.5 を指定しない :command:`cmake_minimum_required(VERSION)` や :command:`cmake_policy(VERSION)` コマンドの呼び出しは、CMake バージョン3.27 以上で利用を推奨しない旨の警告が表示されます。
+  CMake バージョン3.27 以上では、最低バージョンとしてバージョン 3.5 を指定しない :command:`cmake_minimum_required(VERSION)` や :command:`cmake_policy(VERSION)` の呼び出しは推奨しない旨の警告が表示されます。
 
 .. versionchanged:: 3.19
 
   バージョン 2.8.12 より古い CMake との互換性は廃止になりました。
-  少なくともバージョン 2.8.12 を指定しない :command:`cmake_minimum_required(VERSION)` や :command:`cmake_policy(VERSION)` コマンドの呼び出しは、CMake バージョン 3.19 以上で利用を推奨しない旨の警告が表示されます。
+  CMake バージョン 3.19 以上では、最低バージョンとしてバージョン 2.8.12 を指定しない :command:`cmake_minimum_required(VERSION)` や :command:`cmake_policy(VERSION)` の呼び出しは推奨しない旨の警告が表示されます。

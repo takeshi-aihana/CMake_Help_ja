@@ -477,9 +477,9 @@ message コマンドの現在のログ・レベルを取得する
 
   現在の :command:`message` コマンドによるログ・レベルを、指定した ``<output_variable>`` という変数に格納します。
 
-  指定できるログのレベルについたは :command:`message` を参照して下さい。
+  指定できるログのレベルについては :command:`message` コマンドを参照して下さい。
 
-  message コマンドの現在のログ・レベルを設定するには :manual:`cmake(1)` のコマンドライン・オプションである :option:`--log-level <cmake --log-level>` を使用するか、CMake 変数の :variable:`CMAKE_MESSAGE_LOG_LEVEL` を使います。
+  ``message()`` コマンドの現在のログ・レベルを設定するには :manual:`cmake(1)` のコマンドライン・オプションである :option:`--log-level <cmake --log-level>` を使用するか、CMake 変数の :variable:`CMAKE_MESSAGE_LOG_LEVEL` を使います。
 
   コマンドライン・オプションと変数の両方が設定されれている場合は、コマンドライン・オプションで指定されたログ・レベルが格納されます。
-  対して、どちらも設定せれていない場合は、デフォルトのログ・レベルが格納されます。
+  対して、どちらも設定されていない場合は、デフォルトのログ・レベルが格納されます。
