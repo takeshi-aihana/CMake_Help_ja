@@ -1,88 +1,67 @@
 cmake_minimum_required
 ----------------------
 
-Require a minimum version of cmake.
+CMake の最低バージョンを要求する。
 
 .. code-block:: cmake
 
   cmake_minimum_required(VERSION <min>[...<policy_max>] [FATAL_ERROR])
 
 .. versionadded:: 3.12
-  The optional ``<policy_max>`` version.
+  ``<policy_max>`` オプションの追加。
 
-Sets the minimum required version of cmake for a project.
-Also updates the policy settings as explained below.
+プロジェクトに最低限必要な CMake のバージョンを設定します。
+加えて、以下に説明するプロジェクトのポリシーの設定も更新します。
 
-``<min>`` and the optional ``<policy_max>`` are each CMake versions of the
-form ``major.minor[.patch[.tweak]]``, and the ``...`` is literal.
+``<min>`` とオプションの ``<policy_max>`` には、それぞれ CMake のバージョンを ``major.minor[.patch[.tweak]]`` 形式で指定します。``...`` はそのままの文字列（リテラル）を表します。
 
-If the running version of CMake is lower than the ``<min>`` required
-version it will stop processing the project and report an error.
-The optional ``<policy_max>`` version, if specified, must be at least the
-``<min>`` version and affects policy settings as described in `Policy Settings`_.
-If the running version of CMake is older than 3.12, the extra ``...``
-dots will be seen as version component separators, resulting in the
-``...<max>`` part being ignored and preserving the pre-3.12 behavior
-of basing policies on ``<min>``.
+実行中の CMake のバージョンが、指定した ``<min>`` よりも小さい場合はプロジェクトの生成を停止してエラーを報告します。
+オプションの ``<policy_max>`` を指定した場合は、それが `Policy Settings`_ で説明する「**ポリシーの設定**」に影響するため、少なくともバージョンが ``<min>`` である :manual:`cmake(1)` コマンドを実行する必要があります。
+もし実行中の CMake のバージョンが 3.12 より古い場合、``...`` がバージョン・コンポーネントの区切り文字として認識され、その結果 ``...<max>`` の部分が無視されて、``<min>``  に基づくポリシーのうちバージョン 3.12 より前の動作（機能）が保証されます。
 
-This command will set the value of the
-:variable:`CMAKE_MINIMUM_REQUIRED_VERSION` variable to ``<min>``.
+このコマンドは、CMake 変数の :variable:`CMAKE_MINIMUM_REQUIRED_VERSION` に ``<min>`` をセットします。
 
-The ``FATAL_ERROR`` option is accepted but ignored by CMake 2.6 and
-higher.  It should be specified so CMake versions 2.4 and lower fail
-with an error instead of just a warning.
+オプションの ``FATAL_ERROR`` も受け取りますが、CMake バージョン 2.6 以上では無視されます。
+CMake のバージョン 2.4 以下の場合に警告ではなく、エラーとして失敗するように指定して下さい。
 
 .. note::
-  Call the ``cmake_minimum_required()`` command at the beginning of
-  the top-level ``CMakeLists.txt`` file even before calling the
-  :command:`project` command.  It is important to establish version
-  and policy settings before invoking other commands whose behavior
-  they may affect.  See also policy :policy:`CMP0000`.
+  たとえ :command:`project` コマンドを呼び出す前であっても、プロジェクト最上位にある ``CMakeLists.txt`` ファイルの先頭で、この ``cmake_minimum_required()`` コマンドを呼び出して下さい。
+  動作に影響を与える可能性があるその他のコマンドを呼び出す前に、CMake のバージョンとポリシーの設定を確立しておくことが重要です。
+  ポリシーの :policy:`CMP0000` も参照して下さい。
 
-  Calling ``cmake_minimum_required()`` inside a :command:`function`
-  limits some effects to the function scope when invoked.  For example,
-  the :variable:`CMAKE_MINIMUM_REQUIRED_VERSION` variable won't be set
-  in the calling scope.  Functions do not introduce their own policy
-  scope though, so policy settings of the caller *will* be affected
-  (see below).  Due to this mix of things that do and do not affect the
-  calling scope, calling ``cmake_minimum_required()`` inside a function
-  is generally discouraged.
+  :command:`function` の中で ``cmake_minimum_required()`` コマンドを呼び出すと、それを呼び出した時に、関数スコープに対する一部の効果が制限されます。
+  たとえば、CMake 変数の :variable:`CMAKE_MINIMUM_REQUIRED_VERSION` には何もセットされません。
+  ただし、関数には独自のポリシー・スコープが適用されないので、結果的に関数の呼び出し元のポリシーにも影響を与えることになります（以下、参照）。
+  すなわち、呼び出し元のスコープに影響を与えるものと与えないものが混在することになるので、一般的に任意の :command:`function` の中で ``cmake_minimum_required()`` コマンドを呼び出すことは推奨されません。
 
 .. _`Policy Settings`:
 
-Policy Settings
-^^^^^^^^^^^^^^^
+ポリシーの設定
+^^^^^^^^^^^^^^
 
-The ``cmake_minimum_required(VERSION)`` command implicitly invokes the
-:command:`cmake_policy(VERSION)` command to specify that the current
-project code is written for the given range of CMake versions.
-All policies known to the running version of CMake and introduced
-in the ``<min>`` (or ``<max>``, if specified) version or earlier will
-be set to use ``NEW`` behavior.  All policies introduced in later
-versions will be unset.  This effectively requests behavior preferred
-as of a given CMake version and tells newer CMake versions to warn
-about their new policies.
+``cmake_minimum_required(VERSION)`` コマンドは暗黙的に :command:`cmake_policy(VERSION)` コマンドを呼び出して、指定した範囲の CMake バージョンに対して、プロジェクトの構成を生成します。
+実行中の CMake のバージョンに準じ、``<min>`` （または指定した場合は ``<max>``）以前のバージョンで導入されたポリシーは、すべて ``NEW`` の機能を使うようにセットされます。
+そのあとのバージョンで導入されたポリシーはすべて解除されます。
+この仕組みは、特定のバージョンの CMake が推奨する動作（機能）を効果的に要求し、新しいバージョンの CMake が提供する新しいポリシーについて警告するように指示します。
 
-When a ``<min>`` version higher than 2.4 is specified the command
-implicitly invokes
+``<min>`` にバージョン 2.4 よりも大きいバージョンを指定すると、暗黙的に次のコマンドを呼び出します：
 
 .. code-block:: cmake
 
   cmake_policy(VERSION <min>[...<max>])
 
-which sets CMake policies based on the range of versions specified.
-When a ``<min>`` version 2.4 or lower is given the command implicitly
-invokes
+この呼び出しにより、指定したバージョンの範囲に基づく CMake のポリシーをセットします。
+``<min>`` がバージョン 2.4 以下の場合は、暗黙的に次のコマンドを呼び出します：
 
 .. code-block:: cmake
 
   cmake_policy(VERSION 2.4[...<max>])
 
-which enables compatibility features for CMake 2.4 and lower.
+この呼び出しは CMake のバージョン 2.4 以下と互換性のある動作（機能）を有効にします。
 
 .. include:: DEPRECATED_POLICY_VERSIONS.txt
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`cmake_policy`
