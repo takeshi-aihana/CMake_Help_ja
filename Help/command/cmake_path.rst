@@ -5,7 +5,7 @@ cmake_path
 
 **CMake 上のパス** を操作するコマンド。
 CMake 上のパスを構成している要素だけ処理し、実際のファイルシステムとのやりとりは行なわない。
-このパスは「存在しないパス」や「現在のファイルシステムやプットフォームに存在することを許されていないパス」を表すことがある。
+そのため CMake 上のパスは「実際には存在しないパス」とか「現在のファイルシステムやプットフォームに存在することが許されないパス」を表す場合がある。
 これに対し、ファイルシステムとやり取りする操作については :command:`file` コマンドを参照のこと。
 
 .. note::
@@ -121,7 +121,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
     * 二個のドット文字（"``..``"）を含む ``item-name`` は親ディレクトリを表す
 
   上に示した ``(item-name directory-separator)*`` のパタンは、``directory-separator`` で複数の要素が区切られ、０個以上の ``item-name`` が存在できることを示す。
-  また ``()*`` の部分はパスの一部ではない。
+  なお ``()*`` の部分はパスの一部ではない。
 
 ``directory-separator``
   ディレクトリの区切り文字として認識されるのはスラッシュ文字（"``/``"）だけ。
@@ -140,7 +140,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
   デフォルトで、拡張子はピリオドから ``filename`` の末尾までの部分文字列として定義される。
   ``LAST_ONLY`` というキーワードを受け取るコマンドでは、``LAST_ONLY`` が拡張子でピリオドを除く部分文字列に置き換わる。
 
-  この要素は、次に示す例外が適用される：
+  拡張子には、次に示す例外が適用される：
 
     * もし ``filename`` の先頭の文字が一個のドット文字（"``.``"）だったら、拡張子の検出では無視される（たとえば ``".profile"`` は拡張子なしとして扱う）
 
@@ -153,16 +153,12 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 ``relative-part`` は ``root-path`` を除く、絶対パス名を指します。
 
 
-Creating A Path Variable
-^^^^^^^^^^^^^^^^^^^^^^^^
+パス変数を作成する
+^^^^^^^^^^^^^^^^^^^^
 
-While a path can be created with care using an ordinary :command:`set`
-command, it is recommended to use :ref:`cmake_path(SET) <cmake_path-SET>`
-instead, as it automatically converts the path to the required form where
-required.  The :ref:`cmake_path(APPEND) <APPEND>` subcommand may
-be another suitable alternative where a path needs to be constructed by
-joining fragments.  The following example compares the three methods for
-constructing the same path:
+パス変数は、普通に :command:`set` コマンドで作成できますが、必要に応じて自動的にパスを任意の形式に変換させたい場合は、代わりに :ref:`cmake_path(SET) <cmake_path-SET>` コマンドの利用を推奨します。
+また、サブコマンドの :ref:`cmake_path(APPEND) <APPEND>` は、任意の文字列を連結してパスを構築していく手段として利用できます。
+次の例では、同じパスを構築する三つの方法を比較しています：
 
 .. code-block:: cmake
 
@@ -172,35 +168,24 @@ constructing the same path:
 
   cmake_path(APPEND path3 "${CMAKE_CURRENT_SOURCE_DIR}" "data")
 
-`Modification`_ and `Generation`_ sub-commands can either store the result
-in-place, or in a separate variable named after an ``OUTPUT_VARIABLE``
-keyword.  All other sub-commands store the result in a mandatory ``<out-var>``
-variable.
+`Modification`_ と `Generation`_ のサブコマンドは、実行結果をその場で保存することも、あるいは ``OUTPUT_VARIABLE`` というキーワードを持つ別の変数に保存することもできます。 
+それ以外のサブコマンドは全て ``<out-var>`` 変数に結果を保存します。
 
 .. _Normalization:
 
-Normalization
-^^^^^^^^^^^^^
+正規化
+^^^^^^
 
-Some sub-commands support *normalizing* a path.  The algorithm used to
-normalize a path is as follows:
+一部のサブコマンドはパスの *正規化* をサポートしています。
+このパスを正規化するアルゴリズムは次のとおりです：
 
-1. If the path is empty, stop (the normalized form of an empty path is
-   also an empty path).
-2. Replace each ``directory-separator``, which may consist of multiple
-   separators, with a single ``/`` (``/a///b  --> /a/b``).
-3. Remove each solitary period (``.``) and any immediately following
-   ``directory-separator`` (``/a/./b/. --> /a/b``).
-4. Remove each ``item-name`` (other than ``..``) that is immediately
-   followed by a ``directory-separator`` and a ``..``, along with any
-   immediately following ``directory-separator`` (``/a/b/../c --> a/c``).
-5. If there is a ``root-directory``, remove any ``..`` and any
-   ``directory-separators`` immediately following them.  The parent of the
-   root directory is treated as still the root directory (``/../a --> /a``).
-6. If the last ``item-name`` is ``..``, remove any trailing
-   ``directory-separator`` (``../ --> ..``).
-7. If the path is empty by this stage, add a ``dot`` (normal form of ``./``
-   is ``.``).
+1. If the path is empty, stop (the normalized form of an empty path is  also an empty path).
+2. Replace each ``directory-separator``, which may consist of multiple separators, with a single ``/`` (``/a///b  --> /a/b``).
+3. Remove each solitary period (``.``) and any immediately following ``directory-separator`` (``/a/./b/. --> /a/b``).
+4. Remove each ``item-name`` (other than ``..``) that is immediately followed by a ``directory-separator`` and a ``..``, along with any immediately following ``directory-separator`` (``/a/b/../c --> a/c``).
+5. If there is a ``root-directory``, remove any ``..`` and any ``directory-separators`` immediately following them.  The parent of the root directory is treated as still the root directory (``/../a --> /a``).
+6. If the last ``item-name`` is ``..``, remove any trailing ``directory-separator`` (``../ --> ..``).
+7. If the path is empty by this stage, add a ``dot`` (normal form of ``./`` is ``.``).
 
 
 .. _Path Decomposition:
