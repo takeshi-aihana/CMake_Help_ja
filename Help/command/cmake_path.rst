@@ -205,9 +205,8 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 .. _GET_RELATIVE_PART:
 .. _GET_PARENT_PATH:
 
-The following forms of the ``GET`` subcommand each retrieve a different
-component or group of components from a path.  See
-`Path Structure And Terminology`_ for the meaning of each path component.
+``GET`` サブコマンドは、引数として渡したパスからそれを構成している要素や要素のグループを取得します。
+パスを構成する要素の意味については「`パスを構成する要素`_」の項を参照して下さい。
 
 .. code-block:: cmake
 
@@ -220,16 +219,12 @@ component or group of components from a path.  See
   cmake_path(GET <path-var> RELATIVE_PART <out-var>)
   cmake_path(GET <path-var> PARENT_PATH <out-var>)
 
-If a requested component is not present in the path, an empty string will be
-stored in ``<out-var>``.  For example, only Windows systems have the concept
-of a ``root-name``, so when the host machine is non-Windows, the ``ROOT_NAME``
-subcommand will always return an empty string.
+コマンドで要求した要素がパスの中に存在しない場合は空の文字列を ``<out-var>`` に格納します。
+たとえば ``root-name`` の概念があるのは Windows のシステムだけなので、ホスト・マシンが Windows 以外のシステムの場合、``ROOT_NAME`` サブコマンドは常に空の文字列を返します。
 
-For ``PARENT_PATH``, if the `HAS_RELATIVE_PART`_ subcommand returns false,
-the result is a copy of ``<path-var>``.  Note that this implies that a root
-directory is considered to have a parent, with that parent being itself.
-Where `HAS_RELATIVE_PART`_ returns true, the result will essentially be
-``<path-var>`` with one less element.
+For ``PARENT_PATH``, if the `HAS_RELATIVE_PART`_ subcommand returns false, the result is a copy of ``<path-var>``.
+Note that this implies that a root directory is considered to have a parent, with that parent being itself.
+Where `HAS_RELATIVE_PART`_ returns true, the result will essentially be ``<path-var>`` with one less element.
 
 Root examples
 """""""""""""
