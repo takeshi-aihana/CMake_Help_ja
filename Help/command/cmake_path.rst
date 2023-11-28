@@ -18,7 +18,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 
 .. parsed-literal::
 
-  `規則`_
+  `慣例`_
 
   `パスを構成する要素`_
 
@@ -74,10 +74,10 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 
 .. _Conversions:
 
-規則
+慣例
 ^^^^
 
-このコマンドのドキュメントでは次の規則に準じます：
+このコマンドは次の慣例に準じます：
 
 ``<path-var>``
   変数名を表す。
@@ -111,11 +111,11 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 ``root-directory-separator``
   ディレクトリの区切り文字。
   この文字が含まれているパスは絶対パスであることを示す。
-  この区切り文字が無く、先頭の要素が ``root-name`` 以外の ``item-name`` の場合、そのパスは相対パスになる。
+  この区切り文字が無く、先頭の要素が ``root-name`` 以外の ``item-name`` の場合、そのパスは相対パスとして扱われる。
 
 ``item-name``
   ディレクトリの区切り文字ではない文字列リテラル。
-  この名前は、一個のファイル、一個のハード・リンク、一個のシンボリック・リンク、あるいは一個のディレクトリを表す。
+  この名前は一個のファイル、一個のハード・リンク、一個のシンボリック・リンク、あるいは一個のディレクトリを表す。
   次のような特殊なケースが二つある：
 
     * 一個のドット文字（"``.``"）を含む ``item-name`` は現在のディレクトリを表す
@@ -219,12 +219,12 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
   cmake_path(GET <path-var> RELATIVE_PART <out-var>)
   cmake_path(GET <path-var> PARENT_PATH <out-var>)
 
-コマンドで要求した要素がパスの中に存在しない場合は空の文字列を ``<out-var>`` に格納します。
+このコマンドで要求した要素がパスの中に存在しない場合は空の文字列を ``<out-var>`` に格納します。
 たとえば ``root-name`` の概念があるのは Windows のシステムだけなので、ホスト・マシンが Windows 以外のシステムの場合、``ROOT_NAME`` サブコマンドは常に空の文字列を返します。
 
-For ``PARENT_PATH``, if the `HAS_RELATIVE_PART`_ subcommand returns false, the result is a copy of ``<path-var>``.
-Note that this implies that a root directory is considered to have a parent, with that parent being itself.
-Where `HAS_RELATIVE_PART`_ returns true, the result will essentially be ``<path-var>`` with one less element.
+``PARENT_PATH`` サブコマンドの場合、もし `HAS_RELATIVE_PART`_ サブコマンドが ``FALSE`` を返した場合、その結果は指定した ``<path-var>`` と同じ（コピー）です。
+これは、すなわち root ディレクトリは親ディレクトリがあり、そのディレクトリ自身が親ディレクトリであるということです。
+これに対して `HAS_RELATIVE_PART`_ が ``TRUE`` を返す場合、その結果は基本的に要素を一つ削除した ``<path-var>`` になります。
 
 Root examples
 """""""""""""
