@@ -3,29 +3,24 @@ cmake_path
 
 .. versionadded:: 3.20
 
-This command is for the manipulation of paths.  Only syntactic aspects of
-paths are handled, there is no interaction of any kind with any underlying
-file system.  The path may represent a non-existing path or even one that
-is not allowed to exist on the current file system or platform.
-For operations that do interact with the filesystem, see the :command:`file`
-command.
+**CMake 上のパス** を操作するコマンド。
+CMake 上のパスを構成している要素だけ処理し、実際のファイルシステムとのやりとりは行なわない。
+このパスは「存在しないパス」や「現在のファイルシステムやプットフォームに存在することを許されていないパス」を表すことがある。
+これに対し、ファイルシステムとやり取りする操作については :command:`file` コマンドを参照のこと。
 
 .. note::
 
-  The ``cmake_path`` command handles paths in the format of the build system
-  (i.e. the host platform), not the target system.  When cross-compiling,
-  if the path contains elements that are not representable on the host
-  platform (e.g. a drive letter when the host is not Windows), the results
-  will be unpredictable.
+  ``cmake_path`` コマンドはターゲットではなく、ビルドシステム（すなわちホストのプラットフォーム）の形式でパスを処理します。
+  クロス・コンパイルで、パスにホストのプラットフォームでは扱えない要素（たとえばホストが Windows でない時のドライブ名など）が含まれていたら、その結果は不明です。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
-  `Conventions`_
+  `規則`_
 
-  `Path Structure And Terminology`_
+  `パスを構成する要素`_
 
   `Normalization`_
 
@@ -75,97 +70,87 @@ Synopsis
   `Hashing`_
     cmake_path(`HASH`_ <path-var> <out-var>)
 
-Conventions
-^^^^^^^^^^^
+.. _Conversions:
 
-The following conventions are used in this command's documentation:
+規則
+^^^^
+
+このコマンドのドキュメントでは次の規則に準じます：
 
 ``<path-var>``
-  Always the name of a variable.  For commands that expect a ``<path-var>``
-  as input, the variable must exist and it is expected to hold a single path.
+  変数名を表す。
+  入力として ``<path-var>`` を期待するコマンドの場合、必ず変数が存在し、その変数が単一のパスを保持していることが期待される。
 
 ``<input>``
-  A string literal which may contain a path, path fragment, or multiple paths
-  with a special separator depending on the command.  See the description of
-  each command to see how this is interpreted.
+  コマンドに応じて、パスだったり、パスの一部だったり、あるいは特別な区切り文字を含んだ複数のパスからなる文字列リテラルだったりする。
+  それぞれどのように解釈されるかについては、関連するコマンドの説明を参照のこと。
 
 ``<input>...``
-  Zero or more string literal arguments.
+  0個以上の文字列リテラルの引数を表す。
 
 ``<out-var>``
-  The name of a variable into which the result of a command will be written.
+  コマンドの結果を保持する変数名を表す。
 
 
 .. _Path Structure And Terminology:
 
-Path Structure And Terminology
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+パスを構成する要素
+^^^^^^^^^^^^^^^^^^
 
-A path has the following structure (all components are optional, with some
-constraints):
+CMake 上のパスは次のような構造を持ちます（全ての要素はオプションですが、いくつかの制限があります）：
 
 ::
 
   root-name root-directory-separator (item-name directory-separator)* filename
 
 ``root-name``
-  Identifies the root on a filesystem with multiple roots (such as ``"C:"``
-  or ``"//myserver"``). It is optional.
+  複数の root ディレクトリ（たとえば ``"C:"`` や ``"//myserver"`` など）があるファイルシステム上での root を表す（オプション）。
 
 ``root-directory-separator``
-  A directory separator that, if present, indicates that this path is
-  absolute.  If it is missing and the first element other than the
-  ``root-name`` is an ``item-name``, then the path is relative.
+  ディレクトリの区切り文字。
+  この文字が含まれているパスは絶対パスであることを示す。
+  この区切り文字が無く、先頭の要素が ``root-name`` 以外の ``item-name`` の場合、そのパスは相対パスになる。
 
 ``item-name``
-  A sequence of characters that aren't directory separators.  This name may
-  identify a file, a hard link, a symbolic link, or a directory.  Two special
-  cases are recognized:
+  ディレクトリの区切り文字ではない文字列リテラル。
+  この名前は、一個のファイル、一個のハード・リンク、一個のシンボリック・リンク、あるいは一個のディレクトリを表す。
+  次のような特殊なケースが二つある：
 
-    * The item name consisting of a single dot character ``.`` is a
-      directory name that refers to the current directory.
+    * 一個のドット文字（"``.``"）を含む ``item-name`` は現在のディレクトリを表す
 
-    * The item name consisting of two dot characters ``..`` is a
-      directory name that refers to the parent directory.
+    * 二個のドット文字（"``..``"）を含む ``item-name`` は親ディレクトリを表す
 
-  The ``(...)*`` pattern shown above is to indicate that there can be zero
-  or more item names, with multiple items separated by a
-  ``directory-separator``.  The ``()*`` characters are not part of the path.
+  上に示した ``(item-name directory-separator)*`` のパタンは、``directory-separator`` で複数の要素が区切られ、０個以上の ``item-name`` が存在できることを示す。
+  また ``()*`` の部分はパスの一部ではない。
 
 ``directory-separator``
-  The only recognized directory separator is a forward slash character ``/``.
-  If this character is repeated, it is treated as a single directory
-  separator.  In other words, ``/usr///////lib`` is the same as ``/usr/lib``.
+  ディレクトリの区切り文字として認識されるのはスラッシュ文字（"``/``"）だけ。
+  この文字が繰り返されても、一個のディレクトリの区切り文字として扱う。
+  つまり、``/usr///////lib`` は ``/usr/lib`` と同じ。
 
 .. _FILENAME_DEF:
 .. _EXTENSION_DEF:
 .. _STEM_DEF:
 
 ``filename``
-  A path has a ``filename`` if it does not end with a ``directory-separator``.
-  The ``filename`` is effectively the last ``item-name`` of the path, so it
-  can also be a hard link, symbolic link or a directory.
+  ファイル名を表す（すなわち、文字列の終端が ``directory-separator`` ではないパスのこと）。
+  実のところ ``filename`` はパスの最後にある ``item-name`` なので、一個のハードリンク、一個のシンボリック・リンク、または一個のディレクトリにすることも可能である。
 
-  A ``filename`` can have an *extension*.  By default, the extension is
-  defined as the sub-string beginning at the left-most period (including
-  the period) and until the end of the ``filename``.  In commands that
-  accept a ``LAST_ONLY`` keyword, ``LAST_ONLY`` changes the interpretation
-  to the sub-string beginning at the right-most period.
+  ``filename`` には一個の *拡張子* をつけることが可能である。
+  デフォルトで、拡張子はピリオドから ``filename`` の末尾までの部分文字列として定義される。
+  ``LAST_ONLY`` というキーワードを受け取るコマンドでは、``LAST_ONLY`` が拡張子でピリオドを除く部分文字列に置き換わる。
 
-  The following exceptions apply to the above interpretation:
+  この要素は、次に示す例外が適用される：
 
-    * If the first character in the ``filename`` is a period, that period is
-      ignored (i.e. a ``filename`` like ``".profile"`` is treated as having
-      no extension).
+    * もし ``filename`` の先頭の文字が一個のドット文字（"``.``"）だったら、拡張子の検出では無視される（たとえば ``".profile"`` は拡張子なしとして扱う）
 
-    * If the ``filename`` is either ``.`` or ``..``, it has no extension.
+    * もし ``filename`` が ``.`` または ``..`` だったら、拡張子なしとして扱う
 
-  The *stem* is the part of the ``filename`` before the extension.
+  *STEM* とは ``filename`` の拡張子よりも前の部分文字列を指す。
 
-Some commands refer to a ``root-path``.  This is the concatenation of
-``root-name`` and ``root-directory-separator``, either or both of which can
-be empty.  A ``relative-part`` refers to the full path with any ``root-path``
-removed.
+一部のコマンドは ``root-path`` を参照します。
+これは ``root-name`` と ``root-directory-separator`` を連結したもので、どちらかまたは両方を空文字にすることが可能です。
+``relative-part`` は ``root-path`` を除く、絶対パス名を指します。
 
 
 Creating A Path Variable
