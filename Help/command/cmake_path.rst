@@ -22,9 +22,11 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 
   `パスを構成する要素`_
 
-  `Normalization`_
+  `パス変数を作成する`_
 
-  `Decomposition`_
+  `パスの正規化`_
+
+  `パスの分解`_
     cmake_path(`GET`_ <path-var> :ref:`ROOT_NAME <GET_ROOT_NAME>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`ROOT_DIRECTORY <GET_ROOT_DIRECTORY>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`ROOT_PATH <GET_ROOT_PATH>` <out-var>)
@@ -154,7 +156,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 
 
 パス変数を作成する
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 パス変数は、普通に :command:`set` コマンドで作成できますが、必要に応じて自動的にパスを任意の形式に変換させたい場合は、代わりに :ref:`cmake_path(SET) <cmake_path-SET>` コマンドの利用を推奨します。
 また、サブコマンドの :ref:`cmake_path(APPEND) <APPEND>` は、任意の文字列を連結してパスを構築していく手段として利用できます。
@@ -173,25 +175,25 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 
 .. _Normalization:
 
-正規化
-^^^^^^
+パスの正規化
+^^^^^^^^^^^^
 
 一部のサブコマンドはパスの *正規化* をサポートしています。
-このパスを正規化するアルゴリズムは次のとおりです：
+パスを正規化するアルゴリズムは次のとおりです：
 
-1. If the path is empty, stop (the normalized form of an empty path is  also an empty path).
-2. Replace each ``directory-separator``, which may consist of multiple separators, with a single ``/`` (``/a///b  --> /a/b``).
-3. Remove each solitary period (``.``) and any immediately following ``directory-separator`` (``/a/./b/. --> /a/b``).
-4. Remove each ``item-name`` (other than ``..``) that is immediately followed by a ``directory-separator`` and a ``..``, along with any immediately following ``directory-separator`` (``/a/b/../c --> a/c``).
-5. If there is a ``root-directory``, remove any ``..`` and any ``directory-separators`` immediately following them.  The parent of the root directory is treated as still the root directory (``/../a --> /a``).
-6. If the last ``item-name`` is ``..``, remove any trailing ``directory-separator`` (``../ --> ..``).
-7. If the path is empty by this stage, add a ``dot`` (normal form of ``./`` is ``.``).
+1. パスが空文字だったら正規化を停止する（空文字を正規化しても空文字です）
+2. パスの中で、ディレクトリの区切り文字（"``/``"）が連続している可能性がある ``directory-separator`` を一個の ``/``  文字で置き換える（たとえば ``/a/////b  --> /a/b``）
+3. パスの中で、一個のドット文字（"``.``"）とその直後の ``directory-separator`` を削除する（たとえば ``/a/./b/. --> /a/b``）
+4. パスの中で、"``..``" を除く ``item-name`` の直後に ``directory-separator`` と二個のドット文字（"``..``"）が連続している部分を削除する（たとえば ``/a/b/../c --> /a/c``）
+5. パスの中に ``root-directory`` がある場合は、その直後の ``..`` と ``directory-separators`` のペアを削除する（たとえば ``/../a --> /a``）
+6. パスの最後の ``item-name`` が二個のドット文字（``..``） だったら、末尾の ``directory-separator`` を削除する（たとえば ``../ --> ..``）
+7. この段階でパスが空文字だったら一個のドット文字（"``.``"）を追加する（``./`` の標準的な書式は ``.``）
 
 
 .. _Path Decomposition:
 
-Decomposition
-^^^^^^^^^^^^^
+パスの分解
+^^^^^^^^^^
 
 .. _GET:
 .. _GET_ROOT_NAME:
