@@ -18,7 +18,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 
 .. parsed-literal::
 
-  `慣例`_
+  `凡例`_
 
   `パスを構成する要素`_
 
@@ -36,7 +36,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`GET`_ <path-var> :ref:`RELATIVE_PART <GET_RELATIVE_PART>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`PARENT_PATH <GET_PARENT_PATH>` <out-var>)
 
-  `Query`_
+  `パスの要素の照会`_
     cmake_path(`HAS_ROOT_NAME`_ <path-var> <out-var>)
     cmake_path(`HAS_ROOT_DIRECTORY`_ <path-var> <out-var>)
     cmake_path(`HAS_ROOT_PATH`_ <path-var> <out-var>)
@@ -64,20 +64,20 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`RELATIVE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [OUTPUT_VARIABLE <out-var>])
     cmake_path(`ABSOLUTE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [NORMALIZE] [OUTPUT_VARIABLE <out-var>])
 
-  `Native Conversion`_
+  `ネィティブの変換`_
     cmake_path(`NATIVE_PATH`_ <path-var> [NORMALIZE] <out-var>)
     cmake_path(`CONVERT`_ <input> `TO_CMAKE_PATH_LIST`_ <out-var> [NORMALIZE])
     cmake_path(`CONVERT`_ <input> `TO_NATIVE_PATH_LIST`_ <out-var> [NORMALIZE])
 
-  `Hashing`_
+  `ハッシュ化`_
     cmake_path(`HASH`_ <path-var> <out-var>)
 
 .. _Conversions:
 
-慣例
+凡例
 ^^^^
 
-このコマンドは次の慣例に準じます：
+このコマンドは次の凡例に準じます：
 
 ``<path-var>``
   変数名を表す。
@@ -148,7 +148,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 
     * もし ``filename`` が ``.`` または ``..`` だったら、拡張子なしとして扱う
 
-  *STEM* とは ``filename`` の拡張子よりも前の部分文字列を指す。
+  ステム（*STEM*）とは ``filename`` の拡張子よりも前にあるの部分文字列を指す。
 
 一部のコマンドは ``root-path`` を参照します。
 これは ``root-name`` と ``root-directory-separator`` を連結したもので、どちらかまたは両方を空文字にすることが可能です。
@@ -222,12 +222,12 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 このコマンドで要求した要素がパスの中に存在しない場合は空の文字列を ``<out-var>`` に格納します。
 たとえば ``root-name`` の概念があるのは Windows のシステムだけなので、ホスト・マシンが Windows 以外のシステムの場合、``ROOT_NAME`` サブコマンドは常に空の文字列を返します。
 
-``PARENT_PATH`` サブコマンドの場合、もし `HAS_RELATIVE_PART`_ サブコマンドが ``FALSE`` を返した場合、その結果は指定した ``<path-var>`` と同じ（コピー）です。
-これは、すなわち root ディレクトリは親ディレクトリがあり、そのディレクトリ自身が親ディレクトリであるということです。
-これに対して `HAS_RELATIVE_PART`_ が ``TRUE`` を返す場合、その結果は基本的に要素を一つ削除した ``<path-var>`` になります。
+``PARENT_PATH`` サブコマンドは、もし `HAS_RELATIVE_PART`_ サブコマンドが ``FALSE`` を返す場合、その結果は指定した ``<path-var>`` と同じ（コピー）です。
+なお 「CMake 上の root ディレクトリ」の定義は「親ディレクトリがある」＋「親ディレクトリは自分自身である」ということに留意しておいて下さい。
+これに対して `HAS_RELATIVE_PART`_ サブコマンドが ``TRUE`` を返す場合、その結果は基本的に ``<path-var>`` の末尾の要素を削除したものになります。
 
-Root examples
-"""""""""""""
+ROOT 系サブコマンドの例
+"""""""""""""""""""""""
 
 .. code-block:: cmake
 
@@ -247,8 +247,8 @@ Root examples
   Root directory is "/"
   Root path is "c:/"
 
-Filename examples
-"""""""""""""""""
+FILENAME 系サブコマンドの例
+"""""""""""""""""""""""""""
 
 .. code-block:: cmake
 
@@ -256,7 +256,7 @@ Filename examples
   cmake_path(GET path FILENAME filename)
   message("First filename is \"${filename}\"")
 
-  # Trailing slash means filename is empty
+  # 終端の '/' はファイル名が空であることを示す
   set(path "/a/b/")
   cmake_path(GET path FILENAME filename)
   message("Second filename is \"${filename}\"")
@@ -266,8 +266,8 @@ Filename examples
   First filename is "b"
   Second filename is ""
 
-Extension and stem examples
-"""""""""""""""""""""""""""
+拡張子とステムの例
+""""""""""""""""""
 
 .. code-block:: cmake
 
@@ -278,13 +278,13 @@ Extension and stem examples
   message("Full extension is \"${fullExt}\"")
   message("Full stem is \"${fullStem}\"")
 
-  # Effect of LAST_ONLY
+  # LAST_ONLY オプションの効果
   cmake_path(GET path EXTENSION LAST_ONLY lastExt)
   cmake_path(GET path STEM LAST_ONLY lastStem)
   message("Last extension is \"${lastExt}\"")
   message("Last stem is \"${lastStem}\"")
 
-  # Special cases
+  # 特殊なケース
   set(dotPath "/a/.")
   set(dotDotPath "/a/..")
   set(someMorePath "/a/.some.more")
@@ -314,8 +314,8 @@ Extension and stem examples
   .some.more extension is ".more"
   .some.more stem is ".some"
 
-Relative part examples
-""""""""""""""""""""""
+相対パスの例
+""""""""""""
 
 .. code-block:: cmake
 
@@ -337,8 +337,8 @@ Relative part examples
   Relative part is "c/d"
   Relative part is ""
 
-Path traversal examples
-"""""""""""""""""""""""
+パスの照会例
+""""""""""""
 
 .. code-block:: cmake
 
@@ -358,13 +358,11 @@ Path traversal examples
 
 .. _Path Query:
 
-Query
-^^^^^
+パスの要素の照会
+^^^^^^^^^^^^^^^^
 
-Each of the ``GET`` subcommands has a corresponding ``HAS_...``
-subcommand which can be used to discover whether a particular path
-component is present.  See `Path Structure And Terminology`_ for the
-meaning of each path component.
+Each of the ``GET`` subcommands has a corresponding ``HAS_...`` subcommand which can be used to discover whether a particular path component is present.
+See `Path Structure And Terminology`_ for the meaning of each path component.
 
 .. _HAS_ROOT_NAME:
 .. _HAS_ROOT_DIRECTORY:
@@ -386,16 +384,13 @@ meaning of each path component.
   cmake_path(HAS_RELATIVE_PART <path-var> <out-var>)
   cmake_path(HAS_PARENT_PATH <path-var> <out-var>)
 
-Each of the above follows the predictable pattern of setting ``<out-var>``
-to true if the path has the associated component, or false otherwise.
+Each of the above follows the predictable pattern of setting ``<out-var>`` to true if the path has the associated component, or false otherwise.
 Note the following special cases:
 
-* For ``HAS_ROOT_PATH``, a true result will only be returned if at least one
-  of ``root-name`` or ``root-directory`` is non-empty.
+* For ``HAS_ROOT_PATH``, a true result will only be returned if at least one  of ``root-name`` or ``root-directory`` is non-empty.
 
-* For ``HAS_PARENT_PATH``, the root directory is also considered to have a
-  parent, which will be itself.  The result is true except if the path
-  consists of just a :ref:`filename <FILENAME_DEF>`.
+* For ``HAS_PARENT_PATH``, the root directory is also considered to have a  parent, which will be itself.
+  The result is true except if the path consists of just a :ref:`filename <FILENAME_DEF>`.
 
 .. _IS_ABSOLUTE:
 
@@ -403,13 +398,11 @@ Note the following special cases:
 
   cmake_path(IS_ABSOLUTE <path-var> <out-var>)
 
-Sets ``<out-var>`` to true if ``<path-var>`` is absolute.  An absolute path
-is a path that unambiguously identifies the location of a file without
-reference to an additional starting location.  On Windows, this means the
-path must have both a ``root-name`` and a ``root-directory-separator`` to be
-considered absolute.  On other platforms, just a ``root-directory-separator``
-is sufficient.  Note that this means on Windows, ``IS_ABSOLUTE`` can be
-false while ``HAS_ROOT_DIRECTORY`` can be true.
+Sets ``<out-var>`` to true if ``<path-var>`` is absolute.
+An absolute path is a path that unambiguously identifies the location of a file without reference to an additional starting location.
+On Windows, this means the path must have both a ``root-name`` and a ``root-directory-separator`` to be considered absolute.
+On other platforms, just a ``root-directory-separator`` is sufficient.
+Note that this means on Windows, ``IS_ABSOLUTE`` can be false while ``HAS_ROOT_DIRECTORY`` can be true.
 
 .. _IS_RELATIVE:
 
@@ -427,8 +420,7 @@ This will store the opposite of ``IS_ABSOLUTE`` in ``<out-var>``.
 
 Checks if ``<path-var>`` is the prefix of ``<input>``.
 
-When the ``NORMALIZE`` option is specified, ``<path-var>`` and ``<input>``
-are :ref:`normalized <Normalization>` before the check.
+When the ``NORMALIZE`` option is specified, ``<path-var>`` and ``<input>`` are :ref:`normalized <Normalization>` before the check.
 
 .. code-block:: cmake
 
@@ -449,8 +441,7 @@ are :ref:`normalized <Normalization>` before the check.
   cmake_path(COMPARE <input1> NOT_EQUAL <input2> <out-var>)
 
 Compares the lexical representations of two paths provided as string literals.
-No normalization is performed on either path, except multiple consecutive
-directory separators are effectively collapsed into a single separator.
+No normalization is performed on either path, except multiple consecutive directory separators are effectively collapsed into a single separator.
 Equality is determined according to the following pseudo-code logic:
 
 ::
@@ -481,12 +472,11 @@ Modification
 
   cmake_path(SET <path-var> [NORMALIZE] <input>)
 
-Assign the ``<input>`` path to ``<path-var>``.  If ``<input>`` is a native
-path, it is converted into a cmake-style path with forward-slashes
-(``/``). On Windows, the long filename marker is taken into account.
+Assign the ``<input>`` path to ``<path-var>``.
+If ``<input>`` is a native path, it is converted into a cmake-style path with forward-slashes (``/``).
+On Windows, the long filename marker is taken into account.
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
-<Normalization>` after the conversion.
+When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` after the conversion.
 
 For example:
 
@@ -510,10 +500,9 @@ Output::
 
   cmake_path(APPEND <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
 
-Append all the ``<input>`` arguments to the ``<path-var>`` using ``/`` as
-the ``directory-separator``.  Depending on the ``<input>``, the previous
-contents of ``<path-var>`` may be discarded.  For each ``<input>`` argument,
-the following algorithm (pseudo-code) applies:
+Append all the ``<input>`` arguments to the ``<path-var>`` using ``/`` as the ``directory-separator``.
+Depending on the ``<input>``, the previous contents of ``<path-var>`` may be discarded.
+For each ``<input>`` argument, the following algorithm (pseudo-code) applies:
 
 ::
 
@@ -541,8 +530,7 @@ the following algorithm (pseudo-code) applies:
 
   cmake_path(APPEND_STRING <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
 
-Append all the ``<input>`` arguments to the ``<path-var>`` without adding any
-``directory-separator``.
+Append all the ``<input>`` arguments to the ``<path-var>`` without adding any ``directory-separator``.
 
 .. _REMOVE_FILENAME:
 
@@ -550,12 +538,10 @@ Append all the ``<input>`` arguments to the ``<path-var>`` without adding any
 
   cmake_path(REMOVE_FILENAME <path-var> [OUTPUT_VARIABLE <out-var>])
 
-Removes the :ref:`filename <FILENAME_DEF>` component (as returned by
-:ref:`GET ... FILENAME <GET_FILENAME>`) from ``<path-var>``.  After removal,
-any trailing ``directory-separator`` is left alone, if present.
+Removes the :ref:`filename <FILENAME_DEF>` component (as returned by :ref:`GET ... FILENAME <GET_FILENAME>`) from ``<path-var>``.
+After removal, any trailing ``directory-separator`` is left alone, if present.
 
-If ``OUTPUT_VARIABLE`` is not given, then after this function returns,
-`HAS_FILENAME`_ returns false for ``<path-var>``.
+If ``OUTPUT_VARIABLE`` is not given, then after this function returns, `HAS_FILENAME`_ returns false for ``<path-var>``.
 
 For example:
 
@@ -580,10 +566,9 @@ Output::
 
   cmake_path(REPLACE_FILENAME <path-var> <input> [OUTPUT_VARIABLE <out-var>])
 
-Replaces the :ref:`filename <FILENAME_DEF>` component from ``<path-var>``
-with ``<input>``.  If ``<path-var>`` has no filename component (i.e.
-`HAS_FILENAME`_ returns false), the path is unchanged.  The operation is
-equivalent to the following:
+Replaces the :ref:`filename <FILENAME_DEF>` component from ``<path-var>`` with ``<input>``.
+If ``<path-var>`` has no filename component (i.e. `HAS_FILENAME`_ returns false), the path is unchanged.
+The operation is equivalent to the following:
 
 .. code-block:: cmake
 
@@ -609,8 +594,8 @@ Removes the :ref:`extension <EXTENSION_DEF>`, if any, from ``<path-var>``.
   cmake_path(REPLACE_EXTENSION <path-var> [LAST_ONLY] <input>
                                [OUTPUT_VARIABLE <out-var>])
 
-Replaces the :ref:`extension <EXTENSION_DEF>` with ``<input>``.  Its effect
-is equivalent to the following:
+Replaces the :ref:`extension <EXTENSION_DEF>` with ``<input>``.
+Its effect  is equivalent to the following:
 
 .. code-block:: cmake
 
@@ -643,13 +628,9 @@ Normalize ``<path-var>`` according the steps described in :ref:`Normalization`.
                                       [OUTPUT_VARIABLE <out-var>])
 
 Modifies ``<path-var>`` to make it relative to the ``BASE_DIRECTORY`` argument.
-If ``BASE_DIRECTORY`` is not specified, the default base directory will be
-:variable:`CMAKE_CURRENT_SOURCE_DIR`.
+If ``BASE_DIRECTORY`` is not specified, the default base directory will be :variable:`CMAKE_CURRENT_SOURCE_DIR`.
 
-For reference, the algorithm used to compute the relative path is the same
-as that used by C++
-`std::filesystem::path::lexically_relative
-<https://en.cppreference.com/w/cpp/filesystem/path/lexically_normal>`_.
+For reference, the algorithm used to compute the relative path is the same as that used by C++ `std::filesystem::path::lexically_relative <https://en.cppreference.com/w/cpp/filesystem/path/lexically_normal>`_.
 
 .. _ABSOLUTE_PATH:
 
@@ -658,24 +639,18 @@ as that used by C++
   cmake_path(ABSOLUTE_PATH <path-var> [BASE_DIRECTORY <input>] [NORMALIZE]
                                       [OUTPUT_VARIABLE <out-var>])
 
-If ``<path-var>`` is a relative path (`IS_RELATIVE`_ is true), it is evaluated
-relative to the given base directory specified by ``BASE_DIRECTORY`` option.
-If ``BASE_DIRECTORY`` is not specified, the default base directory will be
-:variable:`CMAKE_CURRENT_SOURCE_DIR`.
+If ``<path-var>`` is a relative path (`IS_RELATIVE`_ is true), it is evaluated relative to the given base directory specified by ``BASE_DIRECTORY`` option.
+If ``BASE_DIRECTORY`` is not specified, the default base directory will be :variable:`CMAKE_CURRENT_SOURCE_DIR`.
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
-<Normalization>` after the path computation.
+When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` after the path computation.
 
-Because ``cmake_path()`` does not access the filesystem, symbolic links are
-not resolved and any leading tilde is not expanded.  To compute a real path
-with symbolic links resolved and leading tildes expanded, use the
-:command:`file(REAL_PATH)` command instead.
+Because ``cmake_path()`` does not access the filesystem, symbolic links are not resolved and any leading tilde is not expanded.
+To compute a real path with symbolic links resolved and leading tildes expanded, use the :command:`file(REAL_PATH)` command instead.
 
-Native Conversion
-^^^^^^^^^^^^^^^^^
+ネィティブの変換
+^^^^^^^^^^^^^^^^
 
-For commands in this section, *native* refers to the host platform, not the
-target platform when cross-compiling.
+For commands in this section, *native* refers to the host platform, not the target platform when cross-compiling.
 
 .. _cmake_path-NATIVE_PATH:
 .. _NATIVE_PATH:
@@ -684,11 +659,9 @@ target platform when cross-compiling.
 
   cmake_path(NATIVE_PATH <path-var> [NORMALIZE] <out-var>)
 
-Converts a cmake-style ``<path-var>`` into a native path with
-platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
+Converts a cmake-style ``<path-var>`` into a native path with platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
-<Normalization>` before the conversion.
+When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
 
 .. _CONVERT:
 .. _cmake_path-TO_CMAKE_PATH_LIST:
@@ -698,20 +671,16 @@ When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
 
   cmake_path(CONVERT <input> TO_CMAKE_PATH_LIST <out-var> [NORMALIZE])
 
-Converts a native ``<input>`` path into a cmake-style path with forward
-slashes (``/``).  On Windows hosts, the long filename marker is taken into
-account.  The input can be a single path or a system search path like
-``$ENV{PATH}``.  A search path will be converted to a cmake-style list
-separated by ``;`` characters (on non-Windows platforms, this essentially
-means ``:`` separators are replaced with ``;``).  The result of the
-conversion is stored in the ``<out-var>`` variable.
+Converts a native ``<input>`` path into a cmake-style path with forward slashes (``/``).
+On Windows hosts, the long filename marker is taken into account.
+The input can be a single path or a system search path like ``$ENV{PATH}``.
+A search path will be converted to a cmake-style list separated by ``;`` characters (on non-Windows platforms, this essentially means ``:`` separators are replaced with ``;``).
+The result of the conversion is stored in the ``<out-var>`` variable.
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
-<Normalization>` before the conversion.
+When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
 
 .. note::
-  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand
-  takes a literal string as input, not the name of a variable.
+  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand takes a literal string as input, not the name of a variable.
 
 .. _cmake_path-TO_NATIVE_PATH_LIST:
 .. _TO_NATIVE_PATH_LIST:
@@ -720,19 +689,15 @@ When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
 
   cmake_path(CONVERT <input> TO_NATIVE_PATH_LIST <out-var> [NORMALIZE])
 
-Converts a cmake-style ``<input>`` path into a native path with
-platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
-The input can be a single path or a cmake-style list.  A list will be
-converted into a native search path (``;``-separated on Windows,
-``:``-separated on other platforms).  The result of the conversion is
-stored in the ``<out-var>`` variable.
+Converts a cmake-style ``<input>`` path into a native path with platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
+The input can be a single path or a cmake-style list.
+A list will be converted into a native search path (``;``-separated on Windows, ``:``-separated on other platforms).
+The result of the conversion is stored in the ``<out-var>`` variable.
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized
-<Normalization>` before the conversion.
+When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
 
 .. note::
-  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand
-  takes a literal string as input, not the name of a variable.
+  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand takes a literal string as input, not the name of a variable.
 
 For example:
 
@@ -750,8 +715,8 @@ Output on all other platforms::
 
   Native path list is "/a/b/c:/x/y/z"
 
-Hashing
-^^^^^^^
+ハッシュ化
+^^^^^^^^^^
 
 .. _HASH:
 
@@ -759,7 +724,4 @@ Hashing
 
     cmake_path(HASH <path-var> <out-var>)
 
-Compute a hash value of ``<path-var>`` such that for two paths ``p1`` and
-``p2`` that compare equal (:ref:`COMPARE ... EQUAL <COMPARE>`), the hash
-value of ``p1`` is equal to the hash value of ``p2``.  The path is always
-:ref:`normalized <Normalization>` before the hash is computed.
+Compute a hash value of ``<path-var>`` such that for two paths ``p1`` and ``p2`` that compare equal (:ref:`COMPARE ... EQUAL <COMPARE>`), the hash value of ``p1`` is equal to the hash value of ``p2``.  The path is always :ref:`normalized <Normalization>` before the hash is computed.
