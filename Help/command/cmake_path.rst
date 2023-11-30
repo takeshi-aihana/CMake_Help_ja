@@ -24,9 +24,9 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 
   `パス変数を作成する`_
 
-  `パスの正規化`_
+  `パスを正規化する`_
 
-  `パスの分解`_
+  `パスの要素を取得する`_
     cmake_path(`GET`_ <path-var> :ref:`ROOT_NAME <GET_ROOT_NAME>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`ROOT_DIRECTORY <GET_ROOT_DIRECTORY>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`ROOT_PATH <GET_ROOT_PATH>` <out-var>)
@@ -36,7 +36,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`GET`_ <path-var> :ref:`RELATIVE_PART <GET_RELATIVE_PART>` <out-var>)
     cmake_path(`GET`_ <path-var> :ref:`PARENT_PATH <GET_PARENT_PATH>` <out-var>)
 
-  `パスの要素の照会`_
+  `パスの要素を照会する`_
     cmake_path(`HAS_ROOT_NAME`_ <path-var> <out-var>)
     cmake_path(`HAS_ROOT_DIRECTORY`_ <path-var> <out-var>)
     cmake_path(`HAS_ROOT_PATH`_ <path-var> <out-var>)
@@ -50,7 +50,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`IS_PREFIX`_ <path-var> <input> [NORMALIZE] <out-var>)
     cmake_path(`COMPARE`_ <input1> <OP> <input2> <out-var>)
 
-  `Modification`_
+  `パスを編集する`_
     cmake_path(:ref:`SET <cmake_path-SET>` <path-var> [NORMALIZE] <input>)
     cmake_path(`APPEND`_ <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
     cmake_path(`APPEND_STRING`_ <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
@@ -59,7 +59,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`REMOVE_EXTENSION`_ <path-var> [LAST_ONLY] [OUTPUT_VARIABLE <out-var>])
     cmake_path(`REPLACE_EXTENSION`_ <path-var> [LAST_ONLY] <input> [OUTPUT_VARIABLE <out-var>])
 
-  `Generation`_
+  `パスを変換する`_
     cmake_path(`NORMAL_PATH`_ <path-var> [OUTPUT_VARIABLE <out-var>])
     cmake_path(`RELATIVE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [OUTPUT_VARIABLE <out-var>])
     cmake_path(`ABSOLUTE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [NORMALIZE] [OUTPUT_VARIABLE <out-var>])
@@ -170,13 +170,13 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 
   cmake_path(APPEND path3 "${CMAKE_CURRENT_SOURCE_DIR}" "data")
 
-`Modification`_ と `Generation`_ のサブコマンドは、実行結果をその場で保存することも、あるいは ``OUTPUT_VARIABLE`` というキーワードを持つ別の変数に保存することもできます。 
+`パスを編集する`_ と `パスを変換する`_ サブコマンドは、実行結果をその場で保存することも、あるいは ``OUTPUT_VARIABLE`` というキーワードを持つ別の変数に保存することもできます。 
 それ以外のサブコマンドは全て ``<out-var>`` 変数に結果を保存します。
 
 .. _Normalization:
 
-パスの正規化
-^^^^^^^^^^^^
+パスを正規化する
+^^^^^^^^^^^^^^^^
 
 一部のサブコマンドはパスの *正規化* をサポートしています。
 パスを正規化するアルゴリズムは次のとおりです：
@@ -192,8 +192,8 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 
 .. _Path Decomposition:
 
-パスの分解
-^^^^^^^^^^
+パスの要素を取得する
+^^^^^^^^^^^^^^^^^^^^
 
 .. _GET:
 .. _GET_ROOT_NAME:
@@ -223,7 +223,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 たとえば ``root-name`` の概念があるのは Windows のシステムだけなので、ホスト・マシンが Windows 以外のシステムの場合、``ROOT_NAME`` サブコマンドは常に空の文字列を返します。
 
 ``PARENT_PATH`` サブコマンドは、もし `HAS_RELATIVE_PART`_ サブコマンドが ``FALSE`` を返す場合、その結果は指定した ``<path-var>`` と同じ（コピー）です。
-なお 「CMake 上の root ディレクトリ」の定義は「親ディレクトリがある」＋「親ディレクトリは自分自身である」ということに留意しておいて下さい。
+なお 「**CMake 上の root ディレクトリ**」の定義は「親ディレクトリがある」＋「親ディレクトリは自分自身である」ということに留意しておいて下さい。
 これに対して `HAS_RELATIVE_PART`_ サブコマンドが ``TRUE`` を返す場合、その結果は基本的に ``<path-var>`` の末尾の要素を削除したものになります。
 
 ROOT 系サブコマンドの例
@@ -358,8 +358,8 @@ FILENAME 系サブコマンドの例
 
 .. _Path Query:
 
-パスの要素の照会
-^^^^^^^^^^^^^^^^
+パスの要素を照会する
+^^^^^^^^^^^^^^^^^^^^
 
 ``GET`` サブコマンドには、パスの中に特定の要素が存在しているかどうかを調べるための ``HAS_...`` で始まるサブコマンドがあります。
 パスを構成する要素の意味については「`パスを構成する要素`_」の項を参照して下さい。
@@ -389,7 +389,7 @@ FILENAME 系サブコマンドの例
 
 * ``HAS_ROOT_PATH`` サブコマンドでは、``root-name`` または ``root-directory`` の少なくともどちらか一つが空ではない場合の結果は ``TRUE`` です。
 
-* ``HAS_PARENT_PATH`` サブコマンドでは、「CMake 上の root ディレクトリ」は親ディレクトリを持ち、それは自分自身であるという概念が適用されます。そのため、``<path-var>`` がファイル名だけで構成されている場合を除き、結果は ``TRUE`` です。
+* ``HAS_PARENT_PATH`` サブコマンドでは、「**CMake 上の root ディレクトリ**」は親ディレクトリを持ち、それは自分自身であるという概念が適用されます。そのため ``<path-var>`` が root ディレクトリの場合の結果は ``TRUE`` です。
 
 .. _IS_ABSOLUTE:
 
@@ -397,11 +397,17 @@ FILENAME 系サブコマンドの例
 
   cmake_path(IS_ABSOLUTE <path-var> <out-var>)
 
-Sets ``<out-var>`` to true if ``<path-var>`` is absolute.
-An absolute path is a path that unambiguously identifies the location of a file without reference to an additional starting location.
-On Windows, this means the path must have both a ``root-name`` and a ``root-directory-separator`` to be considered absolute.
-On other platforms, just a ``root-directory-separator`` is sufficient.
-Note that this means on Windows, ``IS_ABSOLUTE`` can be false while ``HAS_ROOT_DIRECTORY`` can be true.
+
+これは ``<path-var>`` に絶対パスを指定すると ``<out-var>`` は ``TRUE`` です。
+CMake 上で絶対パスとは、追加で始点となるパスを参照することなく [#hint_for_absolete_path]_ 、ファイルの場所を明確に識別できるパスのことです。
+ホストが Windows プラットフォームの場合、絶対パスを表現するには ``root-name`` と ``root-directory-separator``  の両方の要素が必要です。
+ホストがそれ以外のプラットフォームでは ``root-directory-separator`` があれば十分です。
+これは、 Windows の場合に ``IS_ABSOLUTE`` サブコマンドが ``FALSE`` になる一方で ``HAS_ROOT_DIRECTORY`` サブコマンドが ``TRUE`` になる可能性があるということに注意して下さい。
+
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_absolete_path] 相対パスの場合は、まず始点のパスを認識し、そこから辿ってファイルの場所を識別するが、絶対パスの場合は始点は常に root ディレクトリである。
 
 .. _IS_RELATIVE:
 
@@ -409,7 +415,7 @@ Note that this means on Windows, ``IS_ABSOLUTE`` can be false while ``HAS_ROOT_D
 
   cmake_path(IS_RELATIVE <path-var> <out-var>)
 
-This will store the opposite of ``IS_ABSOLUTE`` in ``<out-var>``.
+これは ``<out-var>`` に ``IS_ABSOLUTE`` サブコマンドとは反対の結果を格納します。
 
 .. _IS_PREFIX:
 
@@ -417,9 +423,9 @@ This will store the opposite of ``IS_ABSOLUTE`` in ``<out-var>``.
 
   cmake_path(IS_PREFIX <path-var> <input> [NORMALIZE] <out-var>)
 
-Checks if ``<path-var>`` is the prefix of ``<input>``.
+これは ``<path-var>`` が ``<input>`` の要素に含まれているかを確認します。
 
-When the ``NORMALIZE`` option is specified, ``<path-var>`` and ``<input>`` are :ref:`normalized <Normalization>` before the check.
+ここで ``NORMALIZE`` オプションを追加すると、確認する前に ``<path-var>`` と ``<input>`` が「:ref:`正規化 <Normalization>`」されます。
 
 .. code-block:: cmake
 
@@ -439,9 +445,9 @@ When the ``NORMALIZE`` option is specified, ``<path-var>`` and ``<input>`` are :
   cmake_path(COMPARE <input1> EQUAL <input2> <out-var>)
   cmake_path(COMPARE <input1> NOT_EQUAL <input2> <out-var>)
 
-Compares the lexical representations of two paths provided as string literals.
-No normalization is performed on either path, except multiple consecutive directory separators are effectively collapsed into a single separator.
-Equality is determined according to the following pseudo-code logic:
+これは文字列リテラルとして指定した二つのパスの字句表現（*lexical representations*）を比較します。
+比較する前に、どちらのパスも正規化は行いませんが、複数の連続する ``directory-separator`` があれば一つまとめらます。
+二つの字句が同じかどうかは、次の疑似コードによるアルゴリズム（疑似コード）に従って判断します：
 
 ::
 
@@ -451,19 +457,18 @@ Equality is determined according to the following pseudo-code logic:
   if(<input1>.has_root_directory() XOR <input2>.has_root_directory())
     return FALSE
 
-  Return FALSE if a relative portion of <input1> is not lexicographically
-  equal to the relative portion of <input2>. This comparison is performed path
-  component-wise. If all of the components compare equal, then return TRUE.
+  <input1> の相対部分（relative portion）が字句的に <input2> の相対部分
+  と一致しない場合は  FALSE を返す。この比較はパスの要素ごとに実行される。
+  そして <input1> と <input2> の全ての要素が同じであれば TRUE を返す。
 
 .. note::
-  Unlike most other ``cmake_path()`` subcommands, the ``COMPARE`` subcommand
-  takes literal strings as input, not the names of variables.
+  他の大部分のサブコマンドとは異なり、この ``COMPARE`` サブコマンドは入力として変数名ではなく、文字列リテラルを受け取ります。
 
 
 .. _Path Modification:
 
-Modification
-^^^^^^^^^^^^
+パスを編集する
+^^^^^^^^^^^^^^
 
 .. _cmake_path-SET:
 
@@ -471,13 +476,13 @@ Modification
 
   cmake_path(SET <path-var> [NORMALIZE] <input>)
 
-Assign the ``<input>`` path to ``<path-var>``.
-If ``<input>`` is a native path, it is converted into a cmake-style path with forward-slashes (``/``).
-On Windows, the long filename marker is taken into account.
+これは ``<input>`` をパスとして変数の ``<path-var>`` にセットします。
+``<input>`` がホストにネィティブな書式の場合、スラッシュ（``/``）を使って CMake スタイルのパスに変換します。
+ホストのプラットフォームが Windows の場合、長いファイル名のマーカー（``...``）も考慮されます。
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` after the conversion.
+``NORMALIZE`` オプションを指定すると、パスを変換した後に「:ref:`正規化 <Normalization>`」します。
 
-For example:
+たとえば：
 
 .. code-block:: cmake
 
@@ -488,7 +493,7 @@ For example:
   cmake_path(SET path NORMALIZE "${native_path}")
   message("Normalized CMake path is \"${path}\"")
 
-Output::
+の結果は::
 
   CMake path is "c:/a/b/../c"
   Normalized CMake path is "c:/a/c"
@@ -499,13 +504,13 @@ Output::
 
   cmake_path(APPEND <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
 
-Append all the ``<input>`` arguments to the ``<path-var>`` using ``/`` as the ``directory-separator``.
-Depending on the ``<input>``, the previous contents of ``<path-var>`` may be discarded.
-For each ``<input>`` argument, the following algorithm (pseudo-code) applies:
+これは、全ての ``<input>`` を ``<path-var>`` の最後に追加します。この時 ``directory-separator`` は ``/`` を使用します。
+``<input>`` によっては ``<path-var>`` の以前の内容が破棄される場合があります。
+``<input>`` はそれぞれ次のアルゴリズム（疑似コード） が適用されます：
 
 ::
 
-  # <path> is the contents of <path-var>
+  # <path> は <path-var> の中身
 
   if(<input>.is_absolute() OR
      (<input>.has_root_name() AND
@@ -529,7 +534,7 @@ For each ``<input>`` argument, the following algorithm (pseudo-code) applies:
 
   cmake_path(APPEND_STRING <path-var> [<input>...] [OUTPUT_VARIABLE <out-var>])
 
-Append all the ``<input>`` arguments to the ``<path-var>`` without adding any ``directory-separator``.
+これは、全ての ``<input>`` を ``<path-var>`` の最後に追加します。ただし、この時 ``directory-separator`` は追加しません。
 
 .. _REMOVE_FILENAME:
 
@@ -537,12 +542,12 @@ Append all the ``<input>`` arguments to the ``<path-var>`` without adding any ``
 
   cmake_path(REMOVE_FILENAME <path-var> [OUTPUT_VARIABLE <out-var>])
 
-Removes the :ref:`filename <FILENAME_DEF>` component (as returned by :ref:`GET ... FILENAME <GET_FILENAME>`) from ``<path-var>``.
-After removal, any trailing ``directory-separator`` is left alone, if present.
+これは、``<path-var>`` から :ref:`filename <FILENAME_DEF>` の要素（:ref:`GET ... FILENAME <GET_FILENAME>` サブコマンドがが返す結果）を削除します。
+その時、末尾にある ``directory-separator`` はそのまま残します。
 
-If ``OUTPUT_VARIABLE`` is not given, then after this function returns, `HAS_FILENAME`_ returns false for ``<path-var>``.
+``OUTPUT_VARIABLE`` オプションを指定しない場合、このコマンドから戻った後の `HAS_FILENAME`_ サブコマンドは ``<path-var>`` に対して ``FALSE`` を返します。
 
-For example:
+たとえば：
 
 .. code-block:: cmake
 
@@ -550,11 +555,11 @@ For example:
   cmake_path(REMOVE_FILENAME path)
   message("First path is \"${path}\"")
 
-  # filename is now already empty, the following removes nothing
+  # ここで「ファイル名」に相当する要素は空なので、次のコマンドは何もしない
   cmake_path(REMOVE_FILENAME path)
   message("Second path is \"${result}\"")
 
-Output::
+この結果は::
 
   First path is "/a/"
   Second path is "/a/"
@@ -565,9 +570,9 @@ Output::
 
   cmake_path(REPLACE_FILENAME <path-var> <input> [OUTPUT_VARIABLE <out-var>])
 
-Replaces the :ref:`filename <FILENAME_DEF>` component from ``<path-var>`` with ``<input>``.
-If ``<path-var>`` has no filename component (i.e. `HAS_FILENAME`_ returns false), the path is unchanged.
-The operation is equivalent to the following:
+これは、``<path-var>`` にある :ref:`filename <FILENAME_DEF>` の要素を ``<input>`` で置き換えます。
+``<path-var>`` に ``filename`` の要素がない場合（すなわち `HAS_FILENAME`_ サブコマンドの返り値が ``FALSE`` の場合）、パスは何も変更されません。
+このサブコマンドは次の操作と等価です：
 
 .. code-block:: cmake
 
@@ -584,7 +589,7 @@ The operation is equivalent to the following:
   cmake_path(REMOVE_EXTENSION <path-var> [LAST_ONLY]
                                          [OUTPUT_VARIABLE <out-var>])
 
-Removes the :ref:`extension <EXTENSION_DEF>`, if any, from ``<path-var>``.
+これは、``<path-var>`` の中にある :ref:`拡張子 <EXTENSION_DEF>` を削除します（存在しなければ、パスは何も変更されません）。
 
 .. _REPLACE_EXTENSION:
 
@@ -593,8 +598,8 @@ Removes the :ref:`extension <EXTENSION_DEF>`, if any, from ``<path-var>``.
   cmake_path(REPLACE_EXTENSION <path-var> [LAST_ONLY] <input>
                                [OUTPUT_VARIABLE <out-var>])
 
-Replaces the :ref:`extension <EXTENSION_DEF>` with ``<input>``.
-Its effect  is equivalent to the following:
+これは、:ref:`拡張子 <EXTENSION_DEF>` を ``<input>`` で置き換えます。
+このサブコマンドは次の操作と等価です：
 
 .. code-block:: cmake
 
@@ -607,8 +612,8 @@ Its effect  is equivalent to the following:
 
 .. _Path Generation:
 
-Generation
-^^^^^^^^^^
+パスを変換する
+^^^^^^^^^^^^^^
 
 .. _NORMAL_PATH:
 
@@ -616,7 +621,7 @@ Generation
 
   cmake_path(NORMAL_PATH <path-var> [OUTPUT_VARIABLE <out-var>])
 
-Normalize ``<path-var>`` according the steps described in :ref:`Normalization`.
+これは、「:ref:`パスの正規化 <Normalization>`」で説明した手順に従って ``<path-var>`` を正規化します。
 
 .. _cmake_path-RELATIVE_PATH:
 .. _RELATIVE_PATH:
@@ -626,10 +631,10 @@ Normalize ``<path-var>`` according the steps described in :ref:`Normalization`.
   cmake_path(RELATIVE_PATH <path-var> [BASE_DIRECTORY <input>]
                                       [OUTPUT_VARIABLE <out-var>])
 
-Modifies ``<path-var>`` to make it relative to the ``BASE_DIRECTORY`` argument.
-If ``BASE_DIRECTORY`` is not specified, the default base directory will be :variable:`CMAKE_CURRENT_SOURCE_DIR`.
+これは、``<path-var>`` を ``BASE_DIRECTORY`` のオプションとして渡した ``<input>`` をベース・ディレクトリとした相対パスに変更します。
+``BASE_DIRECTORY`` オプションを指定しない場合は、デフォルトのベース・ディレクトリとして CMake 変数の :variable:`CMAKE_CURRENT_SOURCE_DIR` を使います。
 
-For reference, the algorithm used to compute the relative path is the same as that used by C++ `std::filesystem::path::lexically_relative <https://en.cppreference.com/w/cpp/filesystem/path/lexically_normal>`_.
+なお、ここで相対パスを計算する際に使用するアルゴリズムは、C++ の `std::filesystem::path::lexically_relative <https://en.cppreference.com/w/cpp/filesystem/path/lexically_normal>`_ で使っているものと同じです。
 
 .. _ABSOLUTE_PATH:
 
@@ -638,8 +643,8 @@ For reference, the algorithm used to compute the relative path is the same as th
   cmake_path(ABSOLUTE_PATH <path-var> [BASE_DIRECTORY <input>] [NORMALIZE]
                                       [OUTPUT_VARIABLE <out-var>])
 
-If ``<path-var>`` is a relative path (`IS_RELATIVE`_ is true), it is evaluated relative to the given base directory specified by ``BASE_DIRECTORY`` option.
-If ``BASE_DIRECTORY`` is not specified, the default base directory will be :variable:`CMAKE_CURRENT_SOURCE_DIR`.
+これは、``<path-var>`` が相対パス（`IS_RELATIVE`_ サブコマンドの返り値が ``TRUE`` のパス ）の場合に ``BASE_DIRECTORY`` オプションで指定した ``<input>`` をベース・ディレクトリとして評価します。
+``BASE_DIRECTORY`` オプションを指定しない場合は、デフォルトのベース・ディレクトリとして CMake 変数の :variable:`CMAKE_CURRENT_SOURCE_DIR` を使います。
 
 When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` after the path computation.
 
