@@ -1,21 +1,16 @@
 cmake_policy
 ------------
 
-Manage CMake Policy settings.  See the :manual:`cmake-policies(7)`
-manual for defined policies.
+CMake プロジェクトのポリシーを管理する。
+これまで定義されたポリシーとその設定については :manual:`cmake-policies(7)` のマニュアルを参照のこと。
 
-As CMake evolves it is sometimes necessary to change existing behavior
-in order to fix bugs or improve implementations of existing features.
-The CMake Policy mechanism is designed to help keep existing projects
-building as new versions of CMake introduce changes in behavior.  Each
-new policy (behavioral change) is given an identifier of the form
-``CMP<NNNN>`` where ``<NNNN>`` is an integer index.  Documentation
-associated with each policy describes the ``OLD`` and ``NEW`` behavior
-and the reason the policy was introduced.  Projects may set each policy
-to select the desired behavior.  When CMake needs to know which behavior
-to use it checks for a setting specified by the project.  If no
-setting is available the ``OLD`` behavior is assumed and a warning is
-produced requesting that the policy be set.
+CMake が進化するにつれて、バグを修正したり、既存の機能を改善するための変更が必要になることがある。
+「**CMake のポリシー・メカニズム**」は、新しいバージョンの CMake で動作が変更になった時に、古いバージョンで生成したプロジェクトのビルドを継続できるよう設計されている。
+動作の変更、すなわち「**ポリシー**」が新しくなると ``CMP<NNNN>`` という識別子が付与される（ ``<NNNN>`` は整数のインデックス）。
+それぞれのポリシーに関連付けられたドキュメントには ``OLD`` と ``NEW`` のカテゴリと、ポリシーが導入された理由が説明されている。
+CMake のプロジェクトは希望する機能を選択するためにポリシーを設定できる。
+CMake は、プロジェクトでどの機能を使用するのかを知る必要がある時、そのポリシーの設定を確認する。
+ポリシーが設定されていない場合は ``OLD`` のカテゴリに属す動作が期待されていると想定し、ポリシーを設定するように警告が発せられる。
 
 Setting Policies by CMake Version
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
