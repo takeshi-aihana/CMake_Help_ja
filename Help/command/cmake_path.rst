@@ -361,8 +361,8 @@ FILENAME 系サブコマンドの例
 パスの要素の照会
 ^^^^^^^^^^^^^^^^
 
-Each of the ``GET`` subcommands has a corresponding ``HAS_...`` subcommand which can be used to discover whether a particular path component is present.
-See `Path Structure And Terminology`_ for the meaning of each path component.
+``GET`` サブコマンドには、パスの中に特定の要素が存在しているかどうかを調べるための ``HAS_...`` で始まるサブコマンドがあります。
+パスを構成する要素の意味については「`パスを構成する要素`_」の項を参照して下さい。
 
 .. _HAS_ROOT_NAME:
 .. _HAS_ROOT_DIRECTORY:
@@ -384,13 +384,12 @@ See `Path Structure And Terminology`_ for the meaning of each path component.
   cmake_path(HAS_RELATIVE_PART <path-var> <out-var>)
   cmake_path(HAS_PARENT_PATH <path-var> <out-var>)
 
-Each of the above follows the predictable pattern of setting ``<out-var>`` to true if the path has the associated component, or false otherwise.
-Note the following special cases:
+上記は ``<path-var>`` の中に関連する要素が含まれていれば ``TRUE`` を、 それ以外は ``FALSE`` をそれぞれ ``<out-var>`` に格納します。
+この時は、次の特殊なケースに注意して下さい：
 
-* For ``HAS_ROOT_PATH``, a true result will only be returned if at least one  of ``root-name`` or ``root-directory`` is non-empty.
+* ``HAS_ROOT_PATH`` サブコマンドでは、``root-name`` または ``root-directory`` の少なくともどちらか一つが空ではない場合の結果は ``TRUE`` です。
 
-* For ``HAS_PARENT_PATH``, the root directory is also considered to have a  parent, which will be itself.
-  The result is true except if the path consists of just a :ref:`filename <FILENAME_DEF>`.
+* ``HAS_PARENT_PATH`` サブコマンドでは、「CMake 上の root ディレクトリ」は親ディレクトリを持ち、それは自分自身であるという概念が適用されます。そのため、``<path-var>`` がファイル名だけで構成されている場合を除き、結果は ``TRUE`` です。
 
 .. _IS_ABSOLUTE:
 
