@@ -3,15 +3,15 @@ cmake_path
 
 .. versionadded:: 3.20
 
-**CMake 上のパス** を操作するコマンド。
-CMake 上のパスを構成している要素だけ処理し、実際のファイルシステムとのやりとりは行なわない。
-そのため CMake 上のパスは「実際には存在しないパス」とか「現在のファイルシステムやプットフォームに存在することが許されないパス」を表す場合がある。
+**CMake スタイルのパス** を操作するコマンド。
+CMake スタイルのパスを構成している要素だけ処理し、実際のファイルシステムとのやりとりは行なわない。
+そのため CMake スタイルのパスは「実際には存在しないパス」とか「現在のファイルシステムやプットフォームに存在することが許されないパス」を表す場合がある。
 これに対し、ファイルシステムとやり取りする操作については :command:`file` コマンドを参照のこと。
 
 .. note::
 
-  ``cmake_path`` コマンドはターゲットではなく、ビルドシステム（すなわちホストのプラットフォーム）の形式でパスを処理します。
-  クロス・コンパイルで、パスにホストのプラットフォームでは扱えない要素（たとえばホストが Windows でない時のドライブ名など）が含まれていたら、その結果は不明です。
+  ``cmake_path`` コマンドはターゲットではなく、ビルドシステム（すなわちホストのプラットフォーム）のスタイルでパスを処理します。
+  クロス・コンパイルで、ホストのプラットフォームでは扱えない要素（たとえばホストが Windows でない時のドライブ名など）がパス含まれていたら、その結果は不明です。
 
 概要
 ^^^^
@@ -64,7 +64,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
     cmake_path(`RELATIVE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [OUTPUT_VARIABLE <out-var>])
     cmake_path(`ABSOLUTE_PATH`_ <path-var> [BASE_DIRECTORY <input>] [NORMALIZE] [OUTPUT_VARIABLE <out-var>])
 
-  `ネィティブの変換`_
+  `ネィティブ・スタイルに変換する`_
     cmake_path(`NATIVE_PATH`_ <path-var> [NORMALIZE] <out-var>)
     cmake_path(`CONVERT`_ <input> `TO_CMAKE_PATH_LIST`_ <out-var> [NORMALIZE])
     cmake_path(`CONVERT`_ <input> `TO_NATIVE_PATH_LIST`_ <out-var> [NORMALIZE])
@@ -99,7 +99,7 @@ CMake 上のパスを構成している要素だけ処理し、実際のファ�
 パスを構成する要素
 ^^^^^^^^^^^^^^^^^^
 
-CMake 上のパスは次のような構造を持ちます（全ての要素はオプションですが、いくつかの制限があります）：
+CMake スタイルのパスは次のような構造を持ちます（全ての要素はオプションですが、いくつかの制限があります）：
 
 ::
 
@@ -223,7 +223,7 @@ CMake 上のパスは次のような構造を持ちます（全ての要素は�
 たとえば ``root-name`` の概念があるのは Windows のシステムだけなので、ホスト・マシンが Windows 以外のシステムの場合、``ROOT_NAME`` サブコマンドは常に空の文字列を返します。
 
 ``PARENT_PATH`` サブコマンドは、もし `HAS_RELATIVE_PART`_ サブコマンドが ``FALSE`` を返す場合、その結果は指定した ``<path-var>`` と同じ（コピー）です。
-なお 「**CMake 上の root ディレクトリ**」の定義は「親ディレクトリがある」＋「親ディレクトリは自分自身である」ということに留意しておいて下さい。
+なお 「**CMake スタイルの root ディレクトリ**」の定義は「親ディレクトリがある」＋「親ディレクトリは自分自身である」ということに留意しておいて下さい。
 これに対して `HAS_RELATIVE_PART`_ サブコマンドが ``TRUE`` を返す場合、その結果は基本的に ``<path-var>`` の末尾の要素を削除したものになります。
 
 ROOT 系サブコマンドの例
@@ -389,7 +389,7 @@ FILENAME 系サブコマンドの例
 
 * ``HAS_ROOT_PATH`` サブコマンドでは、``root-name`` または ``root-directory`` の少なくともどちらか一つが空ではない場合の結果は ``TRUE`` です。
 
-* ``HAS_PARENT_PATH`` サブコマンドでは、「**CMake 上の root ディレクトリ**」は親ディレクトリを持ち、それは自分自身であるという概念が適用されます。そのため ``<path-var>`` が root ディレクトリの場合の結果は ``TRUE`` です。
+* ``HAS_PARENT_PATH`` サブコマンドでは、「**CMake スタイルの root ディレクトリ**」は親ディレクトリを持ち、それは自分自身であるという概念が適用されます。そのため ``<path-var>`` が root ディレクトリの場合の結果は ``TRUE`` です。
 
 .. _IS_ABSOLUTE:
 
@@ -399,7 +399,7 @@ FILENAME 系サブコマンドの例
 
 
 これは ``<path-var>`` に絶対パスを指定すると ``<out-var>`` は ``TRUE`` です。
-CMake 上で絶対パスとは、追加で始点となるパスを参照することなく [#hint_for_absolete_path]_ 、ファイルの場所を明確に識別できるパスのことです。
+CMake スタイルの絶対パスとは、追加で始点となるパスを参照することなく [#hint_for_absolete_path]_ 、ファイルの場所を明確に識別できるパスのことです。
 ホストが Windows プラットフォームの場合、絶対パスを表現するには ``root-name`` と ``root-directory-separator``  の両方の要素が必要です。
 ホストがそれ以外のプラットフォームでは ``root-directory-separator`` があれば十分です。
 これは、 Windows の場合に ``IS_ABSOLUTE`` サブコマンドが ``FALSE`` になる一方で ``HAS_ROOT_DIRECTORY`` サブコマンドが ``TRUE`` になる可能性があるということに注意して下さい。
@@ -542,7 +542,7 @@ CMake 上で絶対パスとは、追加で始点となるパスを参照する�
 
   cmake_path(REMOVE_FILENAME <path-var> [OUTPUT_VARIABLE <out-var>])
 
-これは、``<path-var>`` から :ref:`filename <FILENAME_DEF>` の要素（:ref:`GET ... FILENAME <GET_FILENAME>` サブコマンドがが返す結果）を削除します。
+これは、``<path-var>`` から :ref:`filename <FILENAME_DEF>` の要素（:ref:`GET ... FILENAME <GET_FILENAME>` サブコマンドが返す結果）を削除します。
 その時、末尾にある ``directory-separator`` はそのまま残します。
 
 ``OUTPUT_VARIABLE`` オプションを指定しない場合、このコマンドから戻った後の `HAS_FILENAME`_ サブコマンドは ``<path-var>`` に対して ``FALSE`` を返します。
@@ -621,7 +621,7 @@ CMake 上で絶対パスとは、追加で始点となるパスを参照する�
 
   cmake_path(NORMAL_PATH <path-var> [OUTPUT_VARIABLE <out-var>])
 
-これは、「:ref:`パスの正規化 <Normalization>`」で説明した手順に従って ``<path-var>`` を正規化します。
+これは、「:ref:`パスを正規化する <Normalization>`」で説明した手順に従って ``<path-var>`` を正規化します。
 
 .. _cmake_path-RELATIVE_PATH:
 .. _RELATIVE_PATH:
@@ -646,15 +646,15 @@ CMake 上で絶対パスとは、追加で始点となるパスを参照する�
 これは、``<path-var>`` が相対パス（`IS_RELATIVE`_ サブコマンドの返り値が ``TRUE`` のパス ）の場合に ``BASE_DIRECTORY`` オプションで指定した ``<input>`` をベース・ディレクトリとして評価します。
 ``BASE_DIRECTORY`` オプションを指定しない場合は、デフォルトのベース・ディレクトリとして CMake 変数の :variable:`CMAKE_CURRENT_SOURCE_DIR` を使います。
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` after the path computation.
+ここで ``NORMALIZE`` オプションを追加すると、評価した後にパスが :ref:`正規化 <Normalization>` されます。
 
-Because ``cmake_path()`` does not access the filesystem, symbolic links are not resolved and any leading tilde is not expanded.
-To compute a real path with symbolic links resolved and leading tildes expanded, use the :command:`file(REAL_PATH)` command instead.
+この ``cmake_path()`` コマンドは実際のファイルシステムにアクセスしないので、シンボリック・リンクは解決されず、パスの先頭にあるチルダ文字（"``~``"）はシェルのように展開されません。
+シンボリック・リンクを解決し、チルダ文字が正しく展開された実際のパスに変換するには、代わりに :command:`file(REAL_PATH)` コマンドを使って下さい。
 
-ネィティブの変換
-^^^^^^^^^^^^^^^^
+ネィティブ・スタイルに変換する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For commands in this section, *native* refers to the host platform, not the target platform when cross-compiling.
+このセクションにあるコマンドで、クロス・コンパイル時の「ネィティブ」とはターゲット・プラットフォームではなく、ホストのプラットフォームを指します。
 
 .. _cmake_path-NATIVE_PATH:
 .. _NATIVE_PATH:
@@ -663,9 +663,9 @@ For commands in this section, *native* refers to the host platform, not the targ
 
   cmake_path(NATIVE_PATH <path-var> [NORMALIZE] <out-var>)
 
-Converts a cmake-style ``<path-var>`` into a native path with platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
+これは、CMake スタイルの ``<path-var>`` をプラットフォーム固有のスラッシュ（Windows の場合は ``\``、それ以外は ``/``）を含む「ネィティブ」なパスに変換します。
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
+ここで ``NORMALIZE`` オプションを追加すると、変換する前にパスが :ref:`正規化 <Normalization>` されます。
 
 .. _CONVERT:
 .. _cmake_path-TO_CMAKE_PATH_LIST:
@@ -675,16 +675,16 @@ When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normal
 
   cmake_path(CONVERT <input> TO_CMAKE_PATH_LIST <out-var> [NORMALIZE])
 
-Converts a native ``<input>`` path into a cmake-style path with forward slashes (``/``).
-On Windows hosts, the long filename marker is taken into account.
-The input can be a single path or a system search path like ``$ENV{PATH}``.
-A search path will be converted to a cmake-style list separated by ``;`` characters (on non-Windows platforms, this essentially means ``:`` separators are replaced with ``;``).
-The result of the conversion is stored in the ``<out-var>`` variable.
+これは、「ネィティブ」のパス ``<input>`` を、スラッシュ（"``/``"） を使った CMake スタイルのパスに変換します。
+ホストのプラットフォームが Windows の場合、長いファイル名のマーカー（``...``）も考慮されます。
+``<input>`` には、単一のパス、または ``$ENV{PATH}`` のような環境変数の検索パスを渡すことができます。
+この検索パスはセミコロン文字（"``;``"）で区切られた CMake スタイルのパスを要素とするリストに変換されます（すなわち、Windows 以外のプラットフォームの場合は、コロン文字 `:`` がセミコロン文字 `;`` で置き換えられます）。
+変換した結果は ``<out-var>`` に格納されます。
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
+ここで ``NORMALIZE`` オプションを追加すると、変換する前にパスが :ref:`正規化 <Normalization>` されます。
 
 .. note::
-  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand takes a literal string as input, not the name of a variable.
+  他の大部分のサブコマンドとは異なり、この ``CONVERT`` サブコマンドは入力として変数名ではなく、文字列リテラルを受け取ります。
 
 .. _cmake_path-TO_NATIVE_PATH_LIST:
 .. _TO_NATIVE_PATH_LIST:
@@ -693,17 +693,17 @@ When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normal
 
   cmake_path(CONVERT <input> TO_NATIVE_PATH_LIST <out-var> [NORMALIZE])
 
-Converts a cmake-style ``<input>`` path into a native path with platform-specific slashes (``\`` on Windows hosts and ``/`` elsewhere).
-The input can be a single path or a cmake-style list.
-A list will be converted into a native search path (``;``-separated on Windows, ``:``-separated on other platforms).
-The result of the conversion is stored in the ``<out-var>`` variable.
+これは、CMake スタイルのパス ``<input>`` をプラットフォーム固有のスラッシュ（Windows の場合は ``\``、それ以外は ``/``）を含む「ネィティブ」なパスに変換します。
+``<input>`` には、単一のパス、または CMake スタイルのパスを要素とするリストを渡すことができます。
+このリストはネィティブの検索パス形式（パスは、Windows プラットフォームではセミコロン ``;``、それ以外のプラットフォームではコロン ``:`` で区切られます）に変換されます。
+変換した結果は ``<out-var>`` に格納されます。
 
-When the ``NORMALIZE`` option is specified, the path is :ref:`normalized <Normalization>` before the conversion.
+ここで ``NORMALIZE`` オプションを追加すると、変換する前にパスが :ref:`正規化 <Normalization>` されます。
 
 .. note::
-  Unlike most other ``cmake_path()`` subcommands, the ``CONVERT`` subcommand takes a literal string as input, not the name of a variable.
+  他の大部分のサブコマンドとは異なり、この ``CONVERT`` サブコマンドは入力として変数名ではなく、文字列リテラルを受け取ります。
 
-For example:
+たとえば：
 
 .. code-block:: cmake
 
@@ -711,11 +711,11 @@ For example:
   cmake_path(CONVERT "${paths}" TO_NATIVE_PATH_LIST native_paths)
   message("Native path list is \"${native_paths}\"")
 
-Output on Windows::
+この結果は Windows プラットフォームでは::
 
   Native path list is "\a\b\c;\x\y\z"
 
-Output on all other platforms::
+それ以外のプラットフォームでは::
 
   Native path list is "/a/b/c:/x/y/z"
 
@@ -728,4 +728,6 @@ Output on all other platforms::
 
     cmake_path(HASH <path-var> <out-var>)
 
-Compute a hash value of ``<path-var>`` such that for two paths ``p1`` and ``p2`` that compare equal (:ref:`COMPARE ... EQUAL <COMPARE>`), the hash value of ``p1`` is equal to the hash value of ``p2``.  The path is always :ref:`normalized <Normalization>` before the hash is computed.
+``<path-var>`` のハッシュ値を計算します。
+これは、二つのパス ``p1`` と ``p2`` を :ref:`COMPARE ... EQUAL <COMPARE>` サブコマンドで比較するように、``p1`` のハッシュ値が ``p2`` のハッシュ値と同じになるように計算します。
+ハッシュ計算する前に必ずパスは  :ref:`正規化 <Normalization>` されます。
