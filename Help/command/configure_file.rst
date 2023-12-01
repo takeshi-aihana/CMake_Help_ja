@@ -32,8 +32,8 @@ configure_file
   /* #undef VAR */
 
 どちらで置き換えられるかは ``VAR`` という変数に何がセットされているかに依存します（たとえば :command:`if` コマンドで ``VAR`` を判定した結果）。
-また、変数名につづく "``...``" の部分に何か指定されている場合は、``VAR`` が "``...``" の文字列で置き換えられます。
-さらに ``#cmakedefine01 VAR`` の書式を持つ行は ``VAR`` 自身が ``VAR 0`` または ``VAR 1`` に展開されます。
+また ``VAR`` につづく "``...``" の部分に何か指定されている場合は、``VAR`` が "``...``" の文字列で置き換えられます。
+さらに ``#cmakedefine01 VAR`` という書式を持つ行は ``VAR`` 自身が ``VAR 0`` または ``VAR 1`` に展開されます。
 したがって、次のような書式を持つ行は
 
 .. code-block:: c
@@ -52,94 +52,85 @@ configure_file
 
   #define VAR 1
 
-Input lines of the form ``#cmakedefine01 VAR ...`` will expand as ``#cmakedefine01 VAR ... 0`` or ``#cmakedefine01 VAR ... 1``, which may lead to undefined behavior.
+ここで ``#cmakedefine01 VAR ...`` という書式にしてしまうと ``#cmakedefine01 VAR ... 0`` または ``#cmakedefine01 VAR ... 1`` に展開されてしまい、未定義の動作になる可能性があります。
 
 .. versionadded:: 3.10
-  The result lines (with the exception of the ``#undef`` comments) can be indented using spaces and/or tabs between the ``#`` character and the ``cmakedefine`` or ``cmakedefine01`` words.
-  This whitespace indentation will be preserved in the output lines:
+  行頭におく ``#`` 文字と ``cmakedefine`` または ``cmakedefine01`` キーワードの間に空白やタブ文字を挿入してインデントさせることができるようになりました（ただし ``#undef`` キーワードは除く）。
+  この空白を利用したインデントは変換後も維持されます：
 
   .. code-block:: c
 
     #  cmakedefine VAR
     #  cmakedefine01 VAR
 
-  will be replaced, if ``VAR`` is defined, with
+  これは ``VAR`` が定義されていたら、次のように置き換えられます：
 
   .. code-block:: c
 
     #  define VAR
     #  define VAR 1
 
-If the input file is modified the build system will re-run CMake to
-re-configure the file and generate the build system again.
-The generated file is modified and its timestamp updated on subsequent
-cmake runs only if its content is changed.
+``<input>`` ファイルが変更されると、ビルドシステムは CMake を再実行してファイルを再構成し、ビルドシステムを再度生成します。
+ここで生成されたファイルは、その内容が変更された場合にだけ更新されます。
 
-The arguments are:
+このコマンドに指定できる引数は次のとおりです：
 
 ``<input>``
-  Path to the input file.  A relative path is treated with respect to
-  the value of :variable:`CMAKE_CURRENT_SOURCE_DIR`.  The input path
-  must be a file, not a directory.
+  コピー元のファイルのパス名。
+  相対パスを指定すると、:variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとしてパスを計算する。
+  このパスはディレクトリではなくファイルにすること。
 
 ``<output>``
-  Path to the output file or directory.  A relative path is treated
-  with respect to the value of :variable:`CMAKE_CURRENT_BINARY_DIR`.
-  If the path names an existing directory the output file is placed
-  in that directory with the same file name as the input file.
-  If the path contains non-existent directories, they are created.
+  コピー先のファイルまたはディレクトリへのパス名。
+  相対パスを指定すると、:variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとしてパスを計算する。
+  既に存在しているディレクトリを指定した場合、出力先は入力ファイルと同じ名前のファイルで、指定したディレクトリ下にコピーされる。
+  パスに存在していないディレクトリが含まれている場合は、まずそのディレクトリを成してからコピーする。
 
 ``NO_SOURCE_PERMISSIONS``
   .. versionadded:: 3.19
 
-  Do not transfer the permissions of the input file to the output file.
-  The copied file permissions default to the standard 644 value
-  (-rw-r--r--).
+  コピー元のアクセス権限をコピー先のファイルに適用しない。
+  コピー先のアクセス権限は、デフォルトで標準の 644 (``-rw-r--r--``) が適用される。
 
 ``USE_SOURCE_PERMISSIONS``
   .. versionadded:: 3.20
 
-  Transfer the permissions of the input file to the output file.
-  This is already the default behavior if none of the three permissions-related
-  keywords are given (``NO_SOURCE_PERMISSIONS``, ``USE_SOURCE_PERMISSIONS``
-  or ``FILE_PERMISSIONS``).  The ``USE_SOURCE_PERMISSIONS`` keyword mostly
-  serves as a way of making the intended behavior clearer at the call site.
+  コピー元のアクセス権限をコピー先のファイルに適用する。
+  アクセス権限に関連する3つの引数（``NO_SOURCE_PERMISSIONS`` と ``USE_SOURCE_PERMISSIONS`` と ``FILE_PERMISSIONS``）がいずれも指定されていない場合は、この対応がデフォルトである。
+  この ``USE_SOURCE_PERMISSIONS`` 引数は主に、コマンドの呼び出し側で意図した対応を明示的に実現する方法である。
 
 ``FILE_PERMISSIONS <permissions>...``
   .. versionadded:: 3.20
 
-  Ignore the input file's permissions and use the specified ``<permissions>``
-  for the output file instead.
+  コピー元のアクセス権限を無視して、代わりに指定した ``<permissions>`` をコピー先に適用する。
 
 ``COPYONLY``
-  Copy the file without replacing any variable references or other
-  content.  This option may not be used with ``NEWLINE_STYLE``.
+  変数の値を置き換えたり、その他の内容を書き換えることはせずに、単にファイルをコピーするだけ。
+  これは ``NEWLINE_STYLE`` と一緒には使用できない。
 
 ``ESCAPE_QUOTES``
-  Escape any substituted quotes with backslashes (C-style).
+  置き換えたあとにクォート文字をバックスラッシュでエスケープする（C言語方式）。
 
 ``@ONLY``
-  Restrict variable replacement to references of the form ``@VAR@``.
-  This is useful for configuring scripts that use ``${VAR}`` syntax.
+  変数の値の置き換えを ``@VAR@`` だけに制限する。
+  これは ``${VAR}`` を使うスクリプトを構成する際に便利である。
 
 ``NEWLINE_STYLE <style>``
-  Specify the newline style for the output file.  Specify
-  ``UNIX`` or ``LF`` for ``\n`` newlines, or specify
-  ``DOS``, ``WIN32``, or ``CRLF`` for ``\r\n`` newlines.
-  This option may not be used with ``COPYONLY``.
+  コピー先の改行スタイルを指定する。
+  指定可能なスタイル： 改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` 。
+  これは ``COPYONLY`` と一緒には使用できない。
 
 例
 ^^
 
-Consider a source tree containing a ``foo.h.in`` file:
+以下の内容を持つ ``foo.h.in`` というファイルがあるソースツリーを考えてみます：
 
 .. code-block:: c
 
   #cmakedefine FOO_ENABLE
   #cmakedefine FOO_STRING "@FOO_STRING@"
 
-An adjacent ``CMakeLists.txt`` may use ``configure_file`` to
-configure the header:
+``CMakeLists.txt`` では ``configure_file`` コマンドを使って ``foo.h`` というヘッダファイルを生成します：
 
 .. code-block:: cmake
 
@@ -149,30 +140,28 @@ configure the header:
   endif()
   configure_file(foo.h.in foo.h @ONLY)
 
-This creates a ``foo.h`` in the build directory corresponding to
-this source directory.  If the ``FOO_ENABLE`` option is on, the
-configured file will contain:
+これにより、ソースツリーに対応するビルドツリーに ``foo.h`` というファイルが作成されます。
+もし ``FOO_ENABLE`` が ``ON`` の場合は ``configure_file`` には以下が含まれる：
 
 .. code-block:: c
 
   #define FOO_ENABLE
   #define FOO_STRING "foo"
 
-Otherwise it will contain:
+それ以外の場合は以下のように変換されます：
 
 .. code-block:: c
 
   /* #undef FOO_ENABLE */
   /* #undef FOO_STRING */
 
-One may then use the :command:`target_include_directories` command to
-specify the output directory as an include directory:
+次に :command:`target_include_directories` コマンドを使って、出力先のディレクトリをインクルード・ディレクトリとして指定します：
 
 .. code-block:: cmake
 
   target_include_directories(<target> [SYSTEM] <INTERFACE|PUBLIC|PRIVATE> "${CMAKE_CURRENT_BINARY_DIR}")
 
-so that sources may include the header as ``#include <foo.h>``.
+その結果、ソースには ``#include <foo.h>`` のようにヘッダ・ファイルをインクルードすることができます。
 
 参考情報
 ^^^^^^^^
