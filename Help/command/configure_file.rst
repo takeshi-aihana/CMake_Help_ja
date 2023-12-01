@@ -73,7 +73,7 @@ configure_file
 ``<input>`` ファイルが変更されると、ビルドシステムは CMake を再実行してファイルを再構成し、ビルドシステムを再度生成します。
 ここで生成されたファイルは、その内容が変更された場合にだけ更新されます。
 
-このコマンドに指定できる引数は次のとおりです：
+このコマンドに指定できるオプションは次のとおりです：
 
 ``<input>``
   コピー元のファイルのパス名。
@@ -96,8 +96,8 @@ configure_file
   .. versionadded:: 3.20
 
   コピー元のアクセス権限をコピー先のファイルに適用する。
-  アクセス権限に関連する3つの引数（``NO_SOURCE_PERMISSIONS`` と ``USE_SOURCE_PERMISSIONS`` と ``FILE_PERMISSIONS``）がいずれも指定されていない場合は、この対応がデフォルトである。
-  この ``USE_SOURCE_PERMISSIONS`` 引数は主に、コマンドの呼び出し側で意図した対応を明示的に実現する方法である。
+  アクセス権限に関連する3つのオプション（``NO_SOURCE_PERMISSIONS`` と ``USE_SOURCE_PERMISSIONS`` と ``FILE_PERMISSIONS``）がいずれも指定されていない場合は、この対応がデフォルトである。
+  この ``USE_SOURCE_PERMISSIONS`` オプションは主に、コマンドの呼び出し側で意図した対応を明示的に実現する方法である。
 
 ``FILE_PERMISSIONS <permissions>...``
   .. versionadded:: 3.20
