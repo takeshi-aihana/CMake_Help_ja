@@ -1,4 +1,2 @@
 .. note::
-  The ``OLD`` behavior of a policy is
-  :manual:`deprecated by definition <cmake-policies(7)>`
-  and may be removed in a future version of CMake.
+  任意のポリシーで ``OLD`` の機能は :manual:`推奨されないポリシー <cmake-policies(7)>` であり、将来のバージョンで削除される可能性があります。

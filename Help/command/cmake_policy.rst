@@ -7,99 +7,88 @@ CMake プロジェクトのポリシーを管理する。
 CMake が進化するにつれて、バグを修正したり、既存の機能を改善するための変更が必要になることがある。
 「CMake のポリシー・メカニズム」は、新しいバージョンの CMake で動作が変更になった時に、古いバージョンで生成したプロジェクトのビルドを継続できるよう設計されている。
 動作の変更、すなわち「**ポリシー**」が新しくなると ``CMP<NNNN>`` という識別子が付与される（ ``<NNNN>`` は整数のインデックス）。
-それぞれのポリシーに関連付けられたドキュメントには ``OLD`` と ``NEW`` のカテゴリと、ポリシーが導入された理由が説明されている。
+それぞれのポリシーに関連付けられたドキュメントには、その動作（機能）が ``OLD`` なのか ``NEW`` なのかの分類と、ポリシーが導入された理由が説明されている。
 CMake のプロジェクトは希望する機能を選択するためにポリシーを設定できる。
 CMake は、プロジェクトでどの機能を使用するのかを知る必要がある時、そのポリシーの設定を確認する。
 ポリシーが設定されていない場合は ``OLD`` のカテゴリに属す動作が期待されていると想定し、ポリシーを設定するように警告が発せられる。
 
-CMake のバージョンごとのポリシー
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+CMake バージョンごとのポリシー
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``cmake_policy`` command is used to set policies to ``OLD`` or ``NEW`` behavior.
-While setting policies individually is supported, we encourage projects to set policies based on CMake versions:
+この ``cmake_policy`` コマンドを使用して、そのポリシーが ``OLD`` の機能なのか、または ``NEW`` の機能なのかをセットします。
+ポリシーを一つ一つセットすることも可能ですが、CMake のバージョンに基づいて、いくつかのポリシーをセットすることをおすすめします：
 
 .. signature:: cmake_policy(VERSION <min>[...<max>])
   :target: VERSION
 
 .. versionadded:: 3.12
-  The optional ``<max>`` version.
+  オプション ``<max>`` （最大バージョンの指定）が追加されました。
 
-``<min>`` and the optional ``<max>`` are each CMake versions of the form ``major.minor[.patch[.tweak]]``, and the ``...`` is literal.
-The ``<min>`` version must be at least ``2.4`` and at most the running version of CMake.
-The ``<max>`` version, if specified, must be at least the ``<min>`` version but may exceed the running version of CMake.
-If the running version of CMake is older than 3.12, the extra ``...`` dots will be seen as version component separators, resulting in the ``...<max>`` part being ignored and preserving the pre-3.12 behavior of basing policies on ``<min>``.
+``<min>`` とオプションの ``<max>`` はそれぞれ ``major.minor[.patch[.tweak]]`` の形式の CMake のバージョンを表し、``...`` は文字列リテラルです。
+``<min>`` のバージョンには、最小値として ``2.4``、最大値として実行する CMake のバージョンを指定して下さい。
+``<max>`` のバージョンを指定する場合は、最小値は ``<min>`` のバージョンですが、実行する CMake よりも大きいバージョンも指定できます。
+CMake の実行バージョンが ``3.12`` より古い場合、追加の ``...`` は区切り文字として認識し、その結果 ``...<max>`` の部分は無視され、``<min>`` のバージョン・ポリシーの中でバージョン ``3.12`` 以前の機能が保証されます。
 
-This specifies that the current CMake code is written for the given range of CMake versions.
-All policies known to the running version of CMake and introduced in the ``<min>`` (or ``<max>``, if specified) version or earlier will be set to use ``NEW`` behavior.
-All policies introduced in later versions will be unset (unless the :variable:`CMAKE_POLICY_DEFAULT_CMP<NNNN>` variable sets a default).
-This effectively requests behavior preferred as of a given CMake version and tells newer CMake versions to warn about their new policies.
+これは、このポリシーで生成した CMake のビルド構成が、指定された範囲の CMake バージョンに対応したコードで記述されていることを意味します。
+この時、``<min>`` （または、指定していれば ``<max>``）以前のバージョンで導入されたすべてのポリシーは ``NEW`` の機能として分類されます。
+そして ``<min>`` 以降のバージョンで導入されたすべてのポリシーが解除されます（ただし、CMake 変数の :variable:`CMAKE_POLICY_DEFAULT_CMP<NNNN>` でデフォルトのポリシーがセットされている場合は除く）。
+これは、特定の CMake バージョンで推奨される機能を効果的に要求し、新しいバージョンの CMake に対して新しいポリシーに対する警告を出すよう指示します。
 
-Note that the :command:`cmake_minimum_required(VERSION)` command implicitly calls ``cmake_policy(VERSION)`` too.
+なお :command:`cmake_minimum_required(VERSION)` コマンドは暗黙的に、この ``cmake_policy(VERSION)`` コマンドを呼び出していることに注意して下さい。
 
 .. include:: DEPRECATED_POLICY_VERSIONS.txt
 
-Setting Policies Explicitly
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ポリシーを明示的にセットする
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. signature:: cmake_policy(SET CMP<NNNN> NEW|OLD)
   :target: SET
 
-Tell CMake to use the ``OLD`` or ``NEW`` behavior for a given policy.
-Projects depending on the old behavior of a given policy may silence a
-policy warning by setting the policy state to ``OLD``.  Alternatively
-one may fix the project to work with the new behavior and set the
-policy state to ``NEW``.
+これは、指定したポリシーに対して ``OLD`` または ``NEW`` の機能を使用するよう CMake に指示します。
+この時、指定したポリシーで古い機能に依存しているプロジェクトは、そのポリシーの状態を ``OLD`` にセットすると、ポリシーに対する警告が表示されなくなります。
+あるいは、プロジェクトを新しい機能で動作するように修正してから、そのポリシーの状態を ``NEW`` にセットすると、同様に警告が表示されなくなります。
 
 .. include:: ../policy/DEPRECATED.txt
 
-Checking Policy Settings
-^^^^^^^^^^^^^^^^^^^^^^^^
+ポリシーを確認する
+^^^^^^^^^^^^^^^^^^
 
 .. signature:: cmake_policy(GET CMP<NNNN> <variable>)
   :target: GET
 
-Check whether a given policy is set to ``OLD`` or ``NEW`` behavior.
-The output ``<variable>`` value will be ``OLD`` or ``NEW`` if the
-policy is set, and empty otherwise.
+これは、指定したポリシーが ``OLD`` の機能にセットされているのか、``NEW`` の機能にセットされいるのかをチェックします。
+ポリシーがセットされている場合は、``<variable>`` に ``OLD`` または ``NEW`` がセットされ、それ以外は空です。
 
-CMake Policy Stack
-^^^^^^^^^^^^^^^^^^
+CMake のポリシー・スタック
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CMake keeps policy settings on a stack, so changes made by the
-``cmake_policy`` command affect only the top of the stack.  A new entry on
-the policy stack is managed automatically for each subdirectory to
-protect its parents and siblings.  CMake also manages a new entry for
-scripts loaded by :command:`include` and :command:`find_package` commands
-except when invoked with the ``NO_POLICY_SCOPE`` option
-(see also policy :policy:`CMP0011`).
-The ``cmake_policy`` command provides an interface to manage custom
-entries on the policy stack:
+CMake は任意のスタック上にポリシーの設定を保存しているので、``cmake_policy`` コマンドによる変更はスタックにある最上位にのみ影響します。
+ポリシー・スタックの新しいエントリは、サブディレクトリ単位で自動的に管理されます。
+また CMake は、:command:`include` と :command:`find_package`  コマンドでロードしたスクリプトの新しいエントリも管理します（ただし、``NO_POLICY_SCOPE`` オプションを付きで呼び出した場合は除く）。
+:policy:`CMP0011` のポリシーも参照のこと。
+``cmake_policy`` コマンドは、ポリシー・スタック上で独自のエントリを管理するインタフェースも提供しています：
 
 .. signature:: cmake_policy(PUSH)
   :target: PUSH
 
-  Create a new entry on the policy stack.
+  ポリシー・スタック上に新しいエントリを一つ生成する。
 
 .. signature:: cmake_policy(POP)
   :target: POP
 
-  Remove the last policy stack entry created with ``cmake_policy(PUSH)``.
+  ``cmake_policy(PUSH)`` コマンドで生成したポリシー・スタック上の最後のエントリを削除する。
 
-Each ``PUSH`` must have a matching ``POP`` to erase any changes.
-This is useful to make temporary changes to policy settings.
-Calls to the :command:`cmake_minimum_required(VERSION)`,
-:command:`cmake_policy(VERSION)`, or :command:`cmake_policy(SET)` commands
-influence only the current top of the policy stack.
+エントリを削除するには ``PUSH`` 操作に対応する ``POP`` 操作が必要です。
+このインタフェースは、ポリシーを「一時的に」変更する際に便利です。
+:command:`cmake_minimum_required(VERSION)` や :command:`cmake_policy(VERSION)`、あるいは :command:`cmake_policy(SET)` といったコマンドは、ポリシー・スタックの現在のトップにのみ影響します。
 
 .. versionadded:: 3.25
-  The :command:`block(SCOPE_FOR POLICIES)` command offers a more flexible
-  and more secure way to manage the policy stack. The pop action is done
-  automatically when leaving the block scope, so there is no need to
-  precede each :command:`return` with a call to :command:`cmake_policy(POP)`.
+  :command:`block(SCOPE_FOR POLICIES)` コマンドが、ポリシー・スタックを管理するもっとも柔軟で安全な方法を提供するようになりました。
+  POP 操作はブロックのスコープから出ると自動的に実施されるので、:command:`return` コマンドの前に :command:`cmake_policy(POP)` コマンドを呼び出す必要はありません。
 
   .. code-block:: cmake
 
-    # stack management with cmake_policy()
+    # cmake_policy() コマンドを使ってポリシー・スタックを管理する
     function(my_func)
       cmake_policy(PUSH)
       cmake_policy(SET ...)
@@ -116,7 +105,7 @@ influence only the current top of the policy stack.
       cmake_policy(POP)
     endfunction()
 
-    # stack management with block()/endblock()
+    # block()/endblock() を使ってポリシー・スタックを管理する
     function(my_func)
       block(SCOPE_FOR POLICIES)
         cmake_policy(SET ...)
@@ -131,12 +120,8 @@ influence only the current top of the policy stack.
       endblock()
     endfunction()
 
-Commands created by the :command:`function` and :command:`macro`
-commands record policy settings when they are created and
-use the pre-record policies when they are invoked.  If the function or
-macro implementation sets policies, the changes automatically
-propagate up through callers until they reach the closest nested
-policy stack entry.
+上の例では、:command:`function` や :command:`macro` といったコマンドで新しい ``my_func`` コマンドを作成した時にポリシーの設定を記録しておき、実際にそのコマンドを呼び出した時に、記録しておいたポリシーを使います。
+``function()`` や ``macro()`` の中でポリシーの設定を変更した場合、その変更は直近のスタック・エントリに到達するまで、呼び出し元を介して自動的に伝搬されます。
 
 参考情報
 ^^^^^^^^
