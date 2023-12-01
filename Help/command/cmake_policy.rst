@@ -5,19 +5,18 @@ CMake プロジェクトのポリシーを管理する。
 これまで定義されたポリシーとその設定については :manual:`cmake-policies(7)` のマニュアルを参照のこと。
 
 CMake が進化するにつれて、バグを修正したり、既存の機能を改善するための変更が必要になることがある。
-「**CMake のポリシー・メカニズム**」は、新しいバージョンの CMake で動作が変更になった時に、古いバージョンで生成したプロジェクトのビルドを継続できるよう設計されている。
+「CMake のポリシー・メカニズム」は、新しいバージョンの CMake で動作が変更になった時に、古いバージョンで生成したプロジェクトのビルドを継続できるよう設計されている。
 動作の変更、すなわち「**ポリシー**」が新しくなると ``CMP<NNNN>`` という識別子が付与される（ ``<NNNN>`` は整数のインデックス）。
 それぞれのポリシーに関連付けられたドキュメントには ``OLD`` と ``NEW`` のカテゴリと、ポリシーが導入された理由が説明されている。
 CMake のプロジェクトは希望する機能を選択するためにポリシーを設定できる。
 CMake は、プロジェクトでどの機能を使用するのかを知る必要がある時、そのポリシーの設定を確認する。
 ポリシーが設定されていない場合は ``OLD`` のカテゴリに属す動作が期待されていると想定し、ポリシーを設定するように警告が発せられる。
 
-Setting Policies by CMake Version
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+CMake のバージョンごとのポリシー
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``cmake_policy`` command is used to set policies to ``OLD`` or ``NEW``
-behavior.  While setting policies individually is supported, we
-encourage projects to set policies based on CMake versions:
+The ``cmake_policy`` command is used to set policies to ``OLD`` or ``NEW`` behavior.
+While setting policies individually is supported, we encourage projects to set policies based on CMake versions:
 
 .. signature:: cmake_policy(VERSION <min>[...<max>])
   :target: VERSION
@@ -25,26 +24,17 @@ encourage projects to set policies based on CMake versions:
 .. versionadded:: 3.12
   The optional ``<max>`` version.
 
-``<min>`` and the optional ``<max>`` are each CMake versions of the form
-``major.minor[.patch[.tweak]]``, and the ``...`` is literal.  The ``<min>``
-version must be at least ``2.4`` and at most the running version of CMake.
-The ``<max>`` version, if specified, must be at least the ``<min>`` version
-but may exceed the running version of CMake.  If the running version of
-CMake is older than 3.12, the extra ``...`` dots will be seen as version
-component separators, resulting in the ``...<max>`` part being ignored and
-preserving the pre-3.12 behavior of basing policies on ``<min>``.
+``<min>`` and the optional ``<max>`` are each CMake versions of the form ``major.minor[.patch[.tweak]]``, and the ``...`` is literal.
+The ``<min>`` version must be at least ``2.4`` and at most the running version of CMake.
+The ``<max>`` version, if specified, must be at least the ``<min>`` version but may exceed the running version of CMake.
+If the running version of CMake is older than 3.12, the extra ``...`` dots will be seen as version component separators, resulting in the ``...<max>`` part being ignored and preserving the pre-3.12 behavior of basing policies on ``<min>``.
 
-This specifies that the current CMake code is written for the given
-range of CMake versions.  All policies known to the running version of CMake
-and introduced in the ``<min>`` (or ``<max>``, if specified) version
-or earlier will be set to use ``NEW`` behavior.  All policies
-introduced in later versions will be unset (unless the
-:variable:`CMAKE_POLICY_DEFAULT_CMP<NNNN>` variable sets a default).
-This effectively requests behavior preferred as of a given CMake
-version and tells newer CMake versions to warn about their new policies.
+This specifies that the current CMake code is written for the given range of CMake versions.
+All policies known to the running version of CMake and introduced in the ``<min>`` (or ``<max>``, if specified) version or earlier will be set to use ``NEW`` behavior.
+All policies introduced in later versions will be unset (unless the :variable:`CMAKE_POLICY_DEFAULT_CMP<NNNN>` variable sets a default).
+This effectively requests behavior preferred as of a given CMake version and tells newer CMake versions to warn about their new policies.
 
-Note that the :command:`cmake_minimum_required(VERSION)`
-command implicitly calls ``cmake_policy(VERSION)`` too.
+Note that the :command:`cmake_minimum_required(VERSION)` command implicitly calls ``cmake_policy(VERSION)`` too.
 
 .. include:: DEPRECATED_POLICY_VERSIONS.txt
 
@@ -148,7 +138,7 @@ macro implementation sets policies, the changes automatically
 propagate up through callers until they reach the closest nested
 policy stack entry.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`cmake_minimum_required`
