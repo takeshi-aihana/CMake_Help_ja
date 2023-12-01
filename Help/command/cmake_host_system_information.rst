@@ -205,7 +205,7 @@ cmake_host_system_information
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_SCRIPTS
 
   CMake と一緒に提供されているフォールバック・スクリプト以外にも、このリスト型の変数にユーザ自らのフォールバック・スクリプトの絶対パスを追加できます。
-  このスクリプトのファイル名は次のような書式を持ちます：``NNN-<name>.cmake``（`NNN`` は３桁の数字で、特定の順番でスクリプトを収集した際に付与される）
+  このスクリプトのファイル名は次のような書式を持ちます： ``NNN-<name>.cmake`` （``NNN`` は３桁の数字で、特定の順番でスクリプトを収集した際に付与される）
 
 .. variable:: CMAKE_GET_OS_RELEASE_FALLBACK_RESULT_<varname>
 

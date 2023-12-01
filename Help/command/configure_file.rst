@@ -1,7 +1,7 @@
 configure_file
 --------------
 
-Copy a file to another location and modify its contents.
+ファイルを別の場所にコピーして、その内容を変更する。
 
 .. code-block:: cmake
 
@@ -11,61 +11,52 @@ Copy a file to another location and modify its contents.
                  [COPYONLY] [ESCAPE_QUOTES] [@ONLY]
                  [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF] ])
 
-Copies an ``<input>`` file to an ``<output>`` file and substitutes
-variable values referenced as ``@VAR@``, ``${VAR}``, ``$CACHE{VAR}`` or
-``$ENV{VAR}`` in the input file content.  Each variable reference will be
-replaced with the current value of the variable, or the empty string if
-the variable is not defined.  Furthermore, input lines of the form
+``<input>`` ファイルを ``<output>`` ファイルにコピーし、そのファイルの中にある ``@VAR@``、``${VAR}``、``$CACHE{VAR}``、``$ENV{VAR}`` として参照できる変数の値を置き換えます。
+変数の参照部分はそれぞれ、その変数が現在保持している値で置き換えられるか、またはその変数が定義されていなかったら空の文字列で置き換えられます。
+さらに、次のような書式を持つ行は
 
 .. code-block:: c
 
   #cmakedefine VAR ...
 
-will be replaced with either
+次のいずれかで置き換えられます：
 
 .. code-block:: c
 
   #define VAR ...
 
-or
+または
 
 .. code-block:: c
 
   /* #undef VAR */
 
-depending on whether ``VAR`` is set in CMake to any value not considered
-a false constant by the :command:`if` command.  The "..." content on the
-line after the variable name, if any, is processed as above.
-
-Unlike lines of the form ``#cmakedefine VAR ...``, in lines of the form
-``#cmakedefine01 VAR``, ``VAR`` itself will expand to ``VAR 0`` or ``VAR 1``
-rather than being assigned the value ``...``. Therefore, input lines of the form
+どちらで置き換えられるかは ``VAR`` という変数に何がセットされているかに依存します（たとえば :command:`if` コマンドで ``VAR`` を判定した結果）。
+また、変数名につづく "``...``" の部分に何か指定されている場合は、``VAR`` が "``...``" の文字列で置き換えられます。
+さらに ``#cmakedefine01 VAR`` の書式を持つ行は ``VAR`` 自身が ``VAR 0`` または ``VAR 1`` に展開されます。
+したがって、次のような書式を持つ行は
 
 .. code-block:: c
 
   #cmakedefine01 VAR
 
-will be replaced with either
+次のいずれかで置き換えられます：
 
 .. code-block:: c
 
   #define VAR 0
 
-or
+または
 
 .. code-block:: c
 
   #define VAR 1
 
-Input lines of the form ``#cmakedefine01 VAR ...`` will expand
-as ``#cmakedefine01 VAR ... 0`` or ``#cmakedefine01 VAR ... 1``,
-which may lead to undefined behavior.
+Input lines of the form ``#cmakedefine01 VAR ...`` will expand as ``#cmakedefine01 VAR ... 0`` or ``#cmakedefine01 VAR ... 1``, which may lead to undefined behavior.
 
 .. versionadded:: 3.10
-  The result lines (with the exception of the ``#undef`` comments) can be
-  indented using spaces and/or tabs between the ``#`` character
-  and the ``cmakedefine`` or ``cmakedefine01`` words. This whitespace
-  indentation will be preserved in the output lines:
+  The result lines (with the exception of the ``#undef`` comments) can be indented using spaces and/or tabs between the ``#`` character and the ``cmakedefine`` or ``cmakedefine01`` words.
+  This whitespace indentation will be preserved in the output lines:
 
   .. code-block:: c
 
@@ -137,8 +128,8 @@ The arguments are:
   ``DOS``, ``WIN32``, or ``CRLF`` for ``\r\n`` newlines.
   This option may not be used with ``COPYONLY``.
 
-Example
-^^^^^^^
+例
+^^
 
 Consider a source tree containing a ``foo.h.in`` file:
 
@@ -183,7 +174,7 @@ specify the output directory as an include directory:
 
 so that sources may include the header as ``#include <foo.h>``.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`file(GENERATE)`
