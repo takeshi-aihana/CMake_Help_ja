@@ -84,7 +84,7 @@ configure_file
   コピー先のファイルまたはディレクトリへのパス名。
   相対パスを指定すると、:variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとしてパスを計算する。
   既に存在しているディレクトリを指定した場合、出力先は入力ファイルと同じ名前のファイルで、指定したディレクトリ下にコピーされる。
-  パスに存在していないディレクトリが含まれている場合は、まずそのディレクトリを成してからコピーする。
+  パスに存在していないディレクトリが含まれている場合は、まずそのディレクトリを作成してからコピーする。
 
 ``NO_SOURCE_PERMISSIONS``
   .. versionadded:: 3.19
@@ -106,7 +106,7 @@ configure_file
 
 ``COPYONLY``
   変数の値を置き換えたり、その他の内容を書き換えることはせずに、単にファイルをコピーするだけ。
-  これは ``NEWLINE_STYLE`` と一緒には使用できない。
+  これは ``NEWLINE_STYLE`` と一緒には指定できない。
 
 ``ESCAPE_QUOTES``
   置き換えたあとにクォート文字をバックスラッシュでエスケープする（C言語方式）。
@@ -117,20 +117,20 @@ configure_file
 
 ``NEWLINE_STYLE <style>``
   コピー先の改行スタイルを指定する。
-  指定可能なスタイル： 改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` 。
-  これは ``COPYONLY`` と一緒には使用できない。
+  指定可能なスタイルは、改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` である。
+  これは ``COPYONLY`` と一緒には指定できない。
 
 例
 ^^
 
-以下の内容を持つ ``foo.h.in`` というファイルがあるソースツリーを考えてみます：
+以下の内容を持った ``foo.h.in`` というファイルがソースツリーにある場合を考えてみます：
 
 .. code-block:: c
 
   #cmakedefine FOO_ENABLE
   #cmakedefine FOO_STRING "@FOO_STRING@"
 
-``CMakeLists.txt`` では ``configure_file`` コマンドを使って ``foo.h`` というヘッダファイルを生成します：
+``CMakeLists.txt`` では ``configure_file`` コマンドを使ってヘッダ・ファイルを生成します：
 
 .. code-block:: cmake
 
@@ -140,15 +140,15 @@ configure_file
   endif()
   configure_file(foo.h.in foo.h @ONLY)
 
-これにより、ソースツリーに対応するビルドツリーに ``foo.h`` というファイルが作成されます。
-もし ``FOO_ENABLE`` が ``ON`` の場合は ``configure_file`` には以下が含まれる：
+これにより、ソースツリーに対応するビルドツリーに ``foo.h`` というヘッダ・ファイルが作成されます。
+``FOO_ENABLE`` が ``ON`` の場合は以下の内容に変換されます：
 
 .. code-block:: c
 
   #define FOO_ENABLE
   #define FOO_STRING "foo"
 
-それ以外の場合は以下のように変換されます：
+それ以外の場合は以下の内容に変換されます：
 
 .. code-block:: c
 
@@ -161,7 +161,7 @@ configure_file
 
   target_include_directories(<target> [SYSTEM] <INTERFACE|PUBLIC|PRIVATE> "${CMAKE_CURRENT_BINARY_DIR}")
 
-その結果、ソースには ``#include <foo.h>`` のようにヘッダ・ファイルをインクルードすることができます。
+その結果、ソース・ファイルでは ``#include <foo.h>`` のようにヘッダ・ファイルをインクルードすることができます。
 
 参考情報
 ^^^^^^^^
