@@ -1,11 +1,10 @@
 elseif
 ------
 
-Starts an elseif portion of an if block.
+:command:`if` ブロック内の ``elseif`` ブロックの処理を開始する。
 
 .. code-block:: cmake
 
   elseif(<condition>)
 
-See the :command:`if` command, especially for the syntax and logic
-of the ``<condition>``.
+``<condition>`` の構文と扱い方については :command:`if` コマンドを参照して下さい。

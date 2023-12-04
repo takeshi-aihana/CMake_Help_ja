@@ -106,7 +106,7 @@ configure_file
 
 ``COPYONLY``
   変数の値を置き換えたり、その他の内容を書き換えることはせずに、単にファイルをコピーするだけ。
-  これは ``NEWLINE_STYLE`` と一緒には指定できない。
+  これは ``NEWLINE_STYLE`` オプションと一緒には指定できない。
 
 ``ESCAPE_QUOTES``
   置き換えたあとにクォート文字をバックスラッシュでエスケープする（C言語方式）。
@@ -118,7 +118,7 @@ configure_file
 ``NEWLINE_STYLE <style>``
   コピー先の改行スタイルを指定する。
   指定可能なスタイルは、改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` である。
-  これは ``COPYONLY`` と一緒には指定できない。
+  これは ``COPYONLY`` オプションと一緒には指定できない。
 
 例
 ^^
@@ -155,7 +155,7 @@ configure_file
   /* #undef FOO_ENABLE */
   /* #undef FOO_STRING */
 
-次に :command:`target_include_directories` コマンドを使って、出力先のディレクトリをインクルード・ディレクトリとして指定します：
+次に :command:`target_include_directories` コマンドを使って、ヘッダ・ファイルが作成されたディレクトリをインクルード・ディレクトリとして指定します：
 
 .. code-block:: cmake
 

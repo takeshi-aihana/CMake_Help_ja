@@ -1,10 +1,10 @@
 else
 ----
 
-Starts the else portion of an if block.
+:command:`if` ブロック内の ``else`` ブロックの処理を開始する。
 
 .. code-block:: cmake
 
   else([<condition>])
 
-See the :command:`if` command.
+:command:`if` コマンドも参照して下さい。

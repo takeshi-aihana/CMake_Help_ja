@@ -3,14 +3,12 @@ continue
 
 .. versionadded:: 3.2
 
-Continue to the top of enclosing foreach or while loop.
+囲んでいるループ・ブロック（foreach や while コマンド）の先頭へジャンプして処理を継続する。
 
 .. code-block:: cmake
 
   continue()
 
-The ``continue()`` command allows a cmake script to abort the rest of the
-current iteration of a :command:`foreach` or :command:`while` loop, and start
-at the top of the next iteration.
+この ``continue()`` コマンドを使うと、CMake スクリプトで :command:`foreach` や :command:`while` で囲んでいる現在のブロックの残りの処理を中止して、ブロックの先頭から処理を開始します。
 
-See also the :command:`break` command.
+:command:`break` コマンドも参照して下さい。
