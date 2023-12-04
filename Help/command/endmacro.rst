@@ -1,14 +1,14 @@
 endmacro
 --------
 
-Ends a list of commands in a macro block.
+:command:`macro` コマンドで定義したブロックの中で実行するコマンド列を終了する。
 
 .. code-block:: cmake
 
   endmacro([<name>])
 
-See the :command:`macro` command.
+:command:`macro` コマンドを参照して下さい。
 
-The optional ``<name>`` argument is supported for backward compatibility
-only. If used it must be a verbatim repeat of the ``<name>`` argument
-of the opening ``macro`` command.
+``<name>`` は下位互換のためだけのオプションです。
+対応する ``macro`` コマンドの引数である ``<name>`` をそのままの順番で指定して下さい。
+

@@ -1,14 +1,14 @@
 endif
 -----
 
-Ends a list of commands in an if block.
+:command:`if` コマンドで定義したブロックの中で実行するコマンド列を終了する。
 
 .. code-block:: cmake
 
   endif([<condition>])
 
-See the :command:`if` command.
+:command:`if` コマンドを参照して下さい。
 
-The optional ``<condition>`` argument is supported for backward compatibility
-only. If used it must be a verbatim repeat of the argument of the opening
-``if`` clause.
+``<condition>`` は下位互換のためだけのオプションです。
+対応する ``if`` コマンドの引数である ``<condition>`` をそのままの順番で指定して下さい。
+

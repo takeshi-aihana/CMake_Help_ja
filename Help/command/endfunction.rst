@@ -1,14 +1,13 @@
 endfunction
 -----------
 
-Ends a list of commands in a function block.
+:command:`function` コマンドで定義したブロックの中で実行するコマンド列を終了する。
 
 .. code-block:: cmake
 
   endfunction([<name>])
 
-See the :command:`function` command.
+:command:`function` コマンドを参照して下さい。
 
-The optional ``<name>`` argument is supported for backward compatibility
-only. If used it must be a verbatim repeat of the ``<name>`` argument
-of the opening ``function`` command.
+``<name>`` は下位互換のためだけのオプションです。
+対応する ``function`` コマンドの引数である ``<name>`` をそのままの順番で指定して下さい。
