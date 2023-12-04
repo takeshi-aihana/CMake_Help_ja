@@ -62,7 +62,7 @@ execute_process
 ``RESULTS_VARIABLE <variable>``
  .. versionadded:: 3.10
 
- 指定された ``COMMAND`` の順番で、:ref:`セミコロンで区切った子プロセスの結果を要素とするリスト <CMake Language Lists>` を ``<variable>`` に格納する。
+ 指定された ``COMMAND`` の順番でセミコロンで区切った子プロセスの結果を要素とする :ref:`リスト <CMake Language Lists>` を ``<variable>`` に格納する。
  このリストの要素は、子プロセスからの返り値コード（整数値）か、またはエラーの状態を説明する文字列である。
 
 ``INPUT_FILE <file>``

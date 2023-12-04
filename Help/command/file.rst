@@ -1,36 +1,29 @@
 file
 ----
 
-File manipulation command.
+ファイルを操作するコマンド。
 
-This command is dedicated to file and path manipulation requiring access to the
-filesystem.
+このコマンドは、ファイルやパスを操作するためにファイルシステムへのアクセスを必要とする。
 
-For other path manipulation, handling only syntactic aspects, have a look at
-:command:`cmake_path` command.
+これに対して、CMake 上でファイルやパスを操作するコマンドについては :command:`cmake_path` コマンドを参照のこと。
 
 .. note::
 
-  The sub-commands `RELATIVE_PATH`_, `TO_CMAKE_PATH`_ and `TO_NATIVE_PATH`_ has
-  been superseded, respectively, by sub-commands
-  :ref:`RELATIVE_PATH <cmake_path-RELATIVE_PATH>`,
-  :ref:`CONVERT ... TO_CMAKE_PATH_LIST <cmake_path-TO_CMAKE_PATH_LIST>` and
-  :ref:`CONVERT ... TO_NATIVE_PATH_LIST <cmake_path-TO_NATIVE_PATH_LIST>` of
-  :command:`cmake_path` command.
+  このコマンドのサブコマンド `RELATIVE_PATH`_、 `TO_CMAKE_PATH`_ 、そして `TO_NATIVE_PATH`_ は、それぞれ :command:`cmake_path` コマンドのサブコマンド :ref:`RELATIVE_PATH <cmake_path-RELATIVE_PATH>`、:ref:`CONVERT ... TO_CMAKE_PATH_LIST <cmake_path-TO_CMAKE_PATH_LIST>` 、そして :ref:`CONVERT ... TO_NATIVE_PATH_LIST <cmake_path-TO_NATIVE_PATH_LIST>` に置き換えられました。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
-  `Reading`_
+  `ファイルを読み込む`_
     file(`READ`_ <filename> <out-var> [...])
     file(`STRINGS`_ <filename> <out-var> [...])
     file(`\<HASH\>`_ <filename> <out-var>)
     file(`TIMESTAMP`_ <filename> <out-var> [...])
     file(`GET_RUNTIME_DEPENDENCIES`_ [...])
 
-  `Writing`_
+  `ファイルに書き込む`_
     file({`WRITE`_ | `APPEND`_} <filename> <content>...)
     file({`TOUCH`_ | `TOUCH_NOCREATE`_} [<file>...])
     file(`GENERATE`_ OUTPUT <output-file> [...])
@@ -65,92 +58,81 @@ Synopsis
     file(`ARCHIVE_CREATE`_ OUTPUT <archive> PATHS <paths>... [...])
     file(`ARCHIVE_EXTRACT`_ INPUT <archive> [...])
 
-Reading
-^^^^^^^
+ファイルを読み込む
+^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(READ <filename> <variable>
        [OFFSET <offset>] [LIMIT <max-in>] [HEX])
 
-  Read content from a file called ``<filename>`` and store it in a
-  ``<variable>``.  Optionally start from the given ``<offset>`` and
-  read at most ``<max-in>`` bytes.  The ``HEX`` option causes data to
-  be converted to a hexadecimal representation (useful for binary data).
-  If the ``HEX`` option is specified, letters in the output
-  (``a`` through ``f``) are in lowercase.
+  ``<filename>`` というファイルからその内容を読み込んで、``<variable>`` に格納します。
+  オプションで、指定した ``<offset>`` から読み込みを開始し、最大で ``<max-in>`` バイトを読み取ることもできます。
+  ``HEX`` オプションを指定すると、読み込んだデータを16進数表記に変換します（これはバイナリデータの読み込みに便利です）。
+  この ``HEX`` オプションを指定すると、出力する文字（``a`` から ``f``）は小文字になります。
 
 .. signature::
   file(STRINGS <filename> <variable> [<options>...])
 
-  Parse a list of ASCII strings from ``<filename>`` and store it in
-  ``<variable>``.  Binary data in the file are ignored.  Carriage return
-  (``\r``, CR) characters are ignored.  The options are:
+  ``<filename>`` というファイルを読み込んで ASCII 文字列のリストを解析し、それを ``<variable>`` に格納します。
+  ファイルにあるバイナリデータは無視します。
+  キャリッジリターン文字（``\r`` や CR）は無視します。
+  指定できるオプションは次のとおり:
 
     ``LENGTH_MAXIMUM <max-len>``
-      Consider only strings of at most a given length.
+      最大で ``<max-len>`` の長さの文字列だけ解析する。
 
     ``LENGTH_MINIMUM <min-len>``
-      Consider only strings of at least a given length.
+      最低で ``<min-len>`` の長さの文字列だけ解析する。
 
     ``LIMIT_COUNT <max-num>``
-      Limit the number of distinct strings to be extracted.
+      最大で ``<max-num>`` 個の文字列（個別）を読み込む。
 
     ``LIMIT_INPUT <max-in>``
-      Limit the number of input bytes to read from the file.
+      ファイルから読み込むバイト数を ``<min-num>`` にする。
 
     ``LIMIT_OUTPUT <max-out>``
-      Limit the number of total bytes to store in the ``<variable>``.
+      ``<variable>`` に格納するバイト数の合計を ``<max-out>`` にする。
 
     ``NEWLINE_CONSUME``
-      Treat newline characters (``\n``, LF) as part of string content
-      instead of terminating at them.
+      改行文字（``\n`` や LF）を文字列の一部として扱う。
 
     ``NO_HEX_CONVERSION``
-      Intel Hex and Motorola S-record files are automatically converted to
-      binary while reading unless this option is given.
+      このオプションを指定すると、Intel Hex と Motorola S-レコードのファイルの場合、自動的にバイナリデータには変換しない。
 
     ``REGEX <regex>``
-      Consider only strings that match the given regular expression,
-      as described under :ref:`string(REGEX) <Regex Specification>`.
+      正規表現の ``<regex>`` にマッチする文字列だけ読み込む。正規表現については :ref:`string(REGEX) <Regex Specification>` を参照のこと。
 
     ``ENCODING <encoding-type>``
       .. versionadded:: 3.1
 
-      Consider strings of a given encoding.  Currently supported encodings are:
-      ``UTF-8``, ``UTF-16LE``, ``UTF-16BE``, ``UTF-32LE``, ``UTF-32BE``.
-      If the ``ENCODING`` option is not provided and the file
-      has a Byte Order Mark, the ``ENCODING`` option will be defaulted
-      to respect the Byte Order Mark.
+      読み込んだ文字列を ``<encoding-type>`` のエンコーディングで扱う。現在サポートしているエンコーディングは、``UTF-8``、``UTF-16LE``、``UTF-16BE``、``UTF-32LE``、``UTF-32BE`` 。
+      ``ENCODING`` オプションを指定せず、ファイルにバイト・オーダーのマークがある場合、``ENCODING`` オプションはバイト・オーダー・マークをデフォルトで尊重する。
 
   .. versionadded:: 3.2
-    Added the ``UTF-16LE``, ``UTF-16BE``, ``UTF-32LE``, ``UTF-32BE`` encodings.
+    ``UTF-16LE``、``UTF-16BE``、``UTF-32LE``、そして ``UTF-32BE`` のエンコーディングが追加された。
 
-  For example, the code
+  たとえば、次のコマンドは：
 
   .. code-block:: cmake
 
     file(STRINGS myfile.txt myfile)
 
-  stores a list in the variable ``myfile`` in which each item is a line
-  from the input file.
+  ファイル ``myfile.txt`` を読み込んで、各行を要素とするリストを作成し、それを変数の ``myfile`` に格納します。
 
 .. signature::
   file(<HASH> <filename> <variable>)
   :target: <HASH>
 
-  Compute a cryptographic hash of the content of ``<filename>`` and
-  store it in a ``<variable>``.  The supported ``<HASH>`` algorithm names
-  are those listed by the :command:`string(<HASH>)` command.
+  Compute a cryptographic hash of the content of ``<filename>`` and store it in a ``<variable>``.
+  The supported ``<HASH>`` algorithm names are those listed by the :command:`string(<HASH>)` command.
 
 .. signature::
   file(TIMESTAMP <filename> <variable> [<format>] [UTC])
 
-  Compute a string representation of the modification time of ``<filename>``
-  and store it in ``<variable>``.  Should the command be unable to obtain a
-  timestamp variable will be set to the empty string ("").
+  Compute a string representation of the modification time of ``<filename>`` and store it in ``<variable>``.
+  Should the command be unable to obtain a timestamp variable will be set to the empty string ("").
 
-  See the :command:`string(TIMESTAMP)` command for documentation of
-  the ``<format>`` and ``UTC`` options.
+  See the :command:`string(TIMESTAMP)` command for documentation of the ``<format>`` and ``UTC`` options.
 
 .. signature::
   file(GET_RUNTIME_DEPENDENCIES [...])
@@ -179,9 +161,7 @@ Reading
       )
 
   Please note that this sub-command is not intended to be used in project mode.
-  It is intended for use at install time, either from code generated by the
-  :command:`install(RUNTIME_DEPENDENCY_SET)` command, or from code provided by
-  the project via :command:`install(CODE)` or :command:`install(SCRIPT)`.
+  It is intended for use at install time, either from code generated by the :command:`install(RUNTIME_DEPENDENCY_SET)` command, or from code provided by the project via :command:`install(CODE)` or :command:`install(SCRIPT)`.
   For example:
 
   .. code-block:: cmake
@@ -469,8 +449,8 @@ Reading
     .. versionadded:: 3.18
       Use ``CMAKE_OBJDUMP`` if set.
 
-Writing
-^^^^^^^
+ファイルに書き込む
+^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(WRITE <filename> <content>...)
