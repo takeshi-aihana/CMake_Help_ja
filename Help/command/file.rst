@@ -396,14 +396,12 @@ file
   file(WRITE <filename> <content>...)
   file(APPEND <filename> <content>...)
 
-  Write ``<content>`` into a file called ``<filename>``.  If the file does
-  not exist, it will be created.  If the file already exists, ``WRITE``
-  mode will overwrite it and ``APPEND`` mode will append to the end.
-  Any directories in the path specified by ``<filename>`` that do not
-  exist will be created.
+  ``<content>`` を ``<filename>`` というファイルに書き込みます。
+  ``<filename>`` が存在していない場合は、書き込む前に作成します。
+  ``<filename>`` が既に存在している場合、``WRITE`` モードではその内容を ``<content>`` で上書きし、``APPEND`` モードではその内容の最後に ``<content>`` を追加します。
+  ``<filename>`` で指定されているパスに存在していないディレクトリがあれば、全て作成します。
 
-  If the file is a build input, use the :command:`configure_file` command
-  to update the file only when its content changes.
+  ``<filename>`` がビルド時の入力の時は、その内容が変更されている場合にのみ :command:`configure_file` コマンドを使って更新します。
 
 .. signature::
   file(TOUCH [<files>...])
@@ -411,23 +409,18 @@ file
 
   .. versionadded:: 3.12
 
-  Create a file with no content if it does not yet exist. If the file already
-  exists, its access and/or modification will be updated to the time when the
-  function call is executed.
+  ファイルが存在していない場合は、空のファイルを作成します。
+  ファイルが既に存在している場合は、このコマンドを呼び出した時の日時でファイルのタイムスタンプ（アクセス時間と/または変更時間）を更新します。
 
-  Use ``TOUCH_NOCREATE`` to touch a file if it exists but not create it.
-  If a file does not exist it will be silently ignored.
+  ``TOUCH_NOCREATE`` のサブコマンドは、ファイルが存在している場合は ``touch`` し、ファイルが存在していない場合は何もしません。
 
-  With ``TOUCH`` and ``TOUCH_NOCREATE``, the contents of an existing file
-  will not be modified.
+  すなわち ``TOUCH`` と ``TOUCH_NOCREATE`` のサブコマンドは、既存のファイルの内容を変更しません。
 
 .. signature::
   file(GENERATE [...])
 
-  Generate an output file for each build configuration supported by the current
-  :manual:`CMake Generator <cmake-generators(7)>`.  Evaluate
-  :manual:`generator expressions <cmake-generator-expressions(7)>`
-  from the input content to produce the output content.
+  Generate an output file for each build configuration supported by the current :manual:`CMake Generator <cmake-generators(7)>`.
+  Evaluate :manual:`generator expressions <cmake-generator-expressions(7)>` from the input content to produce the output content.
 
   .. code-block:: cmake
 
@@ -441,9 +434,8 @@ file
   The options are:
 
     ``CONDITION <condition>``
-      Generate the output file for a particular configuration only if
-      the condition is true.  The condition must be either ``0`` or ``1``
-      after evaluating generator expressions.
+      Generate the output file for a particular configuration only if the condition is true.
+      The condition must be either ``0`` or ``1`` after evaluating generator expressions.
 
     ``CONTENT <content>``
       Use the content given explicitly as input.
@@ -452,15 +444,14 @@ file
       Use the content from a given file as input.
 
       .. versionchanged:: 3.10
-        A relative path is treated with respect to the value of
-        :variable:`CMAKE_CURRENT_SOURCE_DIR`.  See policy :policy:`CMP0070`.
+        A relative path is treated with respect to the value of :variable:`CMAKE_CURRENT_SOURCE_DIR`.
+        See policy :policy:`CMP0070`.
 
     ``OUTPUT <output-file>``
-      Specify the output file name to generate.  Use generator expressions
-      such as :genex:`$<CONFIG>` to specify a configuration-specific
-      output file name.  Multiple configurations may generate the same output
-      file only if the generated content is identical.  Otherwise, the
-      ``<output-file>`` must evaluate to an unique name for each configuration.
+      Specify the output file name to generate.
+      Use generator expressions such as :genex:`$<CONFIG>` to specify a configuration-specific output file name.
+      Multiple configurations may generate the same output file only if the generated content is identical.
+      Otherwise, the ``<output-file>`` must evaluate to an unique name for each configuration.
 
       .. versionchanged:: 3.10
         A relative path (after evaluating generator expressions) is treated
