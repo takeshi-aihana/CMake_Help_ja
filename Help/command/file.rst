@@ -172,7 +172,7 @@ file
         )
       ]])
 
-  このコマンドに指定できるサブコマンドと引数は次のとおりです：
+  このコマンドに指定できる引数は次のとおりです：
 
     ``RESOLVED_DEPENDENCIES_VAR <deps_var>``
       解決できた依存関係のリストを格納する変数を指定する。
@@ -207,90 +207,78 @@ file
     ``DIRECTORIES <directories>``
       依存関係を調べる際の追加ディレクトリを :ref:`リスト <CMake Language Lists>` 形式で指定する。
       ターゲットが Linux 系のプラットフォームの場合、標準の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する。
-      この追加ディレクトリから依存関係が見つからなかったら警告を発行する。これは、依存関係を調べるファイルが不完全なものであると判断するため（たとえば依存関係を含む全てのパスがリストされていないなど）。
+      この追加ディレクトリから依存関係が見つからなかったら警告を発行する。これは、依存関係を調べるファイルのリンクが不完全なものであると判断するため（依存関係を含む全てのパスがリストされていない）。
       ターゲットが Windows 系のプラットフォームの場合、他の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する（ただし、他の検索パスは Windows の依存関係の解決で基本となるディレクトリなので、見つからなくても警告は発行しない）。
-      ターゲットが Apple 系のプラットフォームの場合、このサブコマンドは無視される。
+      ターゲットが Apple 系のプラットフォームの場合、この引数は無視される。
 
     ``BUNDLE_EXECUTABLE <bundle_executable_file>``
-      Executable to treat as the "bundle executable" when resolving libraries.
-      On Apple platforms, this argument determines the value of ``@executable_path`` when recursively resolving libraries for ``LIBRARIES`` and ``MODULES`` files.
-      It has no effect on ``EXECUTABLES`` files.
-      On other platforms, it has no effect. This is typically (but not always) one of the executables in the ``EXECUTABLES`` argument which designates the "main" executable of the package.
+      依存関係を解決する際に「バンドル実行形式（*Bundle Executable*） [#hint_for_framework_and_bundle_of_ios]_ 」として扱う実行形式を指定する。
+      ターゲットが Apple 系プラットフォームの場合、 ``LIBRARIES`` と ``MODULES`` 型のファイルの依存関係を再帰的に解決する際に ``@executable_path`` を決定する。
+      この引数は ``EXECUTABLES`` 型のファイルの場合は何もしない。
+      ターゲットがそれ以外のプラットフォームの場合、この引数は何もしない。
+      この引数は、通常は（ただし常にではないが） ``EXECUTABLES`` にリストされた実行形式のいずれかになる（パッケージの "main" 実行部）。
 
-  The following arguments specify filters for including or excluding libraries to be resolved. See below for a full description of how they work.
+  次の引数で、任意のライブラリを依存関係の調査対象に含めるか含めないかを表すフィルタを指定できます。
+  フィルタの仕組みについて詳細は、以下の説明を参照して下さい。
 
     ``PRE_INCLUDE_REGEXES <regexes>``
-      List of pre-include regexes through which to filter the names of not-yet-resolved dependencies.
+      まだ解決していない依存関係（ライブラリの名前）を調査対象に含める際に使用する pre-include 型の正規表現のリストを指定する。
 
     ``PRE_EXCLUDE_REGEXES <regexes>``
-      List of pre-exclude regexes through which to filter the names of not-yet-resolved dependencies.
+      まだ解決していない依存関係（ライブラリの名前）を調査対象から外す際に使用する pre-exclude 型の正規表現のリストを指定する。
 
     ``POST_INCLUDE_REGEXES <regexes>``
-      List of post-include regexes through which to filter the names of resolved dependencies.
+      解決した依存関係（ライブラリの名前）を調査対象に含める際に使用する post-include 型の正規表現のリストを指定する。
 
     ``POST_EXCLUDE_REGEXES <regexes>``
-      List of post-exclude regexes through which to filter the names of resolved dependencies.
+      解決した依存関係（ライブラリの名前）を調査対象から外す際に使用する post-exclude 型の正規表現のリストを指定する。
 
     ``POST_INCLUDE_FILES <files>``
       .. versionadded:: 3.21
 
-      List of post-include filenames through which to filter the names of resolved dependencies.
-      Symlinks are resolved when attempting to match these filenames.
+      解決した依存関係（ライブラリの名前）を調査対象に含める際に使用する post-include 型のファイル名のリストを指定する。
+      これらのファイル名にマッチするかどうかを確認する際に、シンボリックリンクを解決できる。
 
     ``POST_EXCLUDE_FILES <files>``
       .. versionadded:: 3.21
 
-      List of post-exclude filenames through which to filter the names of resolved dependencies.
-      Symlinks are resolved when attempting to match these filenames.
+      解決した依存関係（ライブラリの名前）を調査対象から外す際に使用する post-exclude 型のファイル名のリストを指定する。
+      これらのファイル名にマッチするかどうかを確認する際に、シンボリックリンクを解決できる。
 
-  These arguments can be used to exclude unwanted system libraries when resolving the dependencies, or to include libraries from a specific directory.
-  The filtering works as follows:
+  これらの引数を使って、依存関係を解決する時に不要なシステム・ライブラリを除外したり、特定のディレクトリにあるライブラリを依存関係に含めることができます。
+  このフィルタは次のステップに従って機能します：
 
-  1. If the not-yet-resolved dependency matches any of the ``PRE_INCLUDE_REGEXES``, steps 2 and 3 are skipped, and the dependency resolution proceeds to step 4.
+  1. まだ解決していない依存関係（ライブラリ）が ``PRE_INCLUDE_REGEXES`` のいずれかの正規表現にマッチする場合、ステップ 2 と 3 をスキップし、依存関係の解決はステップ 4 へ。
 
-  2. If the not-yet-resolved dependency matches any of the ``PRE_EXCLUDE_REGEXES``, dependency resolution stops for that dependency.
+  2. まだ解決していない依存関係（ライブラリ）が ``PRE_EXCLUDE_REGEXES`` のいずれかの正規表現にマッチする場合、その依存関係の解決を停止する。
 
-  3. Otherwise, dependency resolution proceeds.
+  3. それ以外は、依存関係の解決を続行する。
 
-  4. ``file(GET_RUNTIME_DEPENDENCIES)`` searches for the dependency according to the linking rules of the platform (see below).
+  4. ``file(GET_RUNTIME_DEPENDENCIES)`` コマンドは、プラットフォームごとのリンク規則に従って依存関係（ライブラリ）を探す。
 
-  5. If the dependency is found, and its full path matches one of the ``POST_INCLUDE_REGEXES`` or ``POST_INCLUDE_FILES``, the full path is added to the resolved dependencies, and ``file(GET_RUNTIME_DEPENDENCIES)`` recursively resolves that library's own dependencies.
-     Otherwise, resolution proceeds to step 6.
+  5. 依存関係（ライブラリ）が見つかり、その絶対パスが ``POST_INCLUDE_REGEXES`` または ``POST_INCLUDE_FILES`` のいずれかのエントリを満足したら、その絶対パスを解決した依存関係のリストに追加し、``file(GET_RUNTIME_DEPENDENCIES)`` コマンドは再帰的に依存関係を解決していく。それに対して依存関係（ライブラリ）が見つからなかったらステップ 6 へ進む。
 
-  6. If the dependency is found, but its full path matches one of the ``POST_EXCLUDE_REGEXES`` or ``POST_EXCLUDE_FILES``, it is not added to the  resolved dependencies, and dependency resolution stops for that dependency.
+  6. 依存関係（ライブラリ）が見つかり、その絶対パスが ``POST_EXCLUDE_REGEXES`` または ``POST_EXCLUDE_FILES`` のいずれかのエントリを満足していたら、その絶対パスは解決した依存関係のリストには追加せす、依存関係の解決を停止する。
 
-  7. If the dependency is found, and its full path does not match either ``POST_INCLUDE_REGEXES``, ``POST_INCLUDE_FILES``, ``POST_EXCLUDE_REGEXES``,  or ``POST_EXCLUDE_FILES``, the full path is added to the resolved   dependencies, and ``file(GET_RUNTIME_DEPENDENCIES)``  recursively resolves that library's own dependencies.
+  7. 依存関係（ライブラリ）が見つかり、その絶対パスが ``POST_INCLUDE_REGEXES`` や ``POST_INCLUDE_FILES`` や ``POST_EXCLUDE_REGEXES`` や ``POST_EXCLUDE_FILES`` のいずれのエントリを満足していなければ、その絶対パスを解決した依存関係のリストに追加し、``file(GET_RUNTIME_DEPENDENCIES)``  コマンドは再帰的に依存関係を解決していく。
 
-  Different platforms have different rules for how dependencies are resolved.
-  These specifics are described here.
+  この依存関係を解決するステップには、プラットフォームごとに異なる処理があります。
+  ここでは、その詳細について説明します。
 
-  On Linux platforms, library resolution works as follows:
+  ターゲットが Linux 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
-  1. If the depending file does not have any ``RUNPATH`` entries, and the
-     library exists in one of the depending file's ``RPATH`` entries, or its
-     parents', in that order, the dependency is resolved to that file.
-  2. Otherwise, if the depending file has any ``RUNPATH`` entries, and the
-     library exists in one of those entries, the dependency is resolved to that
-     file.
-  3. Otherwise, if the library exists in one of the directories listed by
-     ``ldconfig``, the dependency is resolved to that file.
-  4. Otherwise, if the library exists in one of the ``DIRECTORIES`` entries,
-     the dependency is resolved to that file. In this case, a warning is
-     issued, because finding a file in one of the ``DIRECTORIES`` means that
-     the depending file is not complete (it does not list all the directories
-     from which it pulls dependencies).
+  1. 依存元のファイルに ``RUNPATH`` のエントリが無く、依存先のライブラリが ``RPATH`` のいずれかのディレクトリか、またはその親ディレクトリの順で存在する場合、その依存関係（ライブラリ）は解決されたものとする。
+  2. それ以外で、依存元のファイルに ``RUNPATH`` のエントリが有り、依存先のライブラリがそのエントリのいずれかに存在している場合、その依存関係（ライブラリ）は解決されたものとする。
+  3. それ以外で、依存先のライブラリが ``ldconfig`` が返すディレクトリのいずれかに存在している場合、その依存関係（ライブラリ）は解決されたものとする。
+  4. それ以外で、依存先のライブラリが ``DIRECTORIES`` のエントリのいずれかに存在している場合、その依存関係（ライブラリ）は解決されたものとする。
+     この場合は警告が発行される（``DIRECTORIES`` のエントリのいずれかでライブラリが見つかったということは、依存元のファイルが不完全であることを意味するため）。
+  5. それ以外は、依存関係は未解決であるとする。
 
-  5. Otherwise, the dependency is unresolved.
-
-  On Windows platforms, library resolution works as follows:
+  ターゲットが Windows 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
   1. DLL dependency names are converted to lowercase for matching filters.
-     Windows DLL names are case-insensitive, and some linkers mangle the
-     case of the DLL dependency names.  However, this makes it more difficult
-     for ``PRE_INCLUDE_REGEXES``, ``PRE_EXCLUDE_REGEXES``,
-     ``POST_INCLUDE_REGEXES``, and ``POST_EXCLUDE_REGEXES`` to properly
-     filter DLL names - every regex would have to check for both uppercase
-     and lowercase letters.  For example:
+     Windows DLL names are case-insensitive, and some linkers mangle the case of the DLL dependency names.
+     However, this makes it more difficult for ``PRE_INCLUDE_REGEXES``, ``PRE_EXCLUDE_REGEXES``, ``POST_INCLUDE_REGEXES``, and ``POST_EXCLUDE_REGEXES`` to properly filter DLL names - every regex would have to check for both uppercase and lowercase letters.  For example:
 
      .. code-block:: cmake
 
@@ -299,8 +287,8 @@ file
          PRE_INCLUDE_REGEXES "^[Mm][Yy][Ll][Ii][Bb][Rr][Aa][Rr][Yy]\\.[Dd][Ll][Ll]$"
          )
 
-     Converting the DLL name to lowercase allows the regexes to only match
-     lowercase names, thus simplifying the regex. For example:
+     Converting the DLL name to lowercase allows the regexes to only match lowercase names, thus simplifying the regex.
+     For example:
 
      .. code-block:: cmake
 
@@ -309,19 +297,14 @@ file
          PRE_INCLUDE_REGEXES "^mylibrary\\.dll$"
          )
 
-     This regex will match ``mylibrary.dll`` regardless of how it is cased,
-     either on disk or in the depending file. (For example, it will match
-     ``mylibrary.dll``, ``MyLibrary.dll``, and ``MYLIBRARY.DLL``.)
+     This regex will match ``mylibrary.dll`` regardless of how it is cased, either on disk or in the depending file. (For example, it will match ``mylibrary.dll``, ``MyLibrary.dll``, and ``MYLIBRARY.DLL``.)
 
      .. versionchanged:: 3.27
 
        The conversion to lowercase only applies while matching filters.
-       Results reported after filtering case-preserve each DLL name as it is
-       found on disk, if resolved, and otherwise as it is referenced by the
-       dependent binary.
+       Results reported after filtering case-preserve each DLL name as it is found on disk, if resolved, and otherwise as it is referenced by the dependent binary.
 
-       Prior to CMake 3.27, the results were reported with lowercase DLL
-       file names, but the directory portion retained its casing.
+       Prior to CMake 3.27, the results were reported with lowercase DLL file names, but the directory portion retained its casing.
 
   2. (**Not yet implemented**) If the depending file is a Windows Store app,
      and the dependency is listed as a dependency in the application's package
@@ -341,7 +324,7 @@ file
 
   6. Otherwise, the dependency is unresolved.
 
-  On Apple platforms, library resolution works as follows:
+  ターゲットが Apple 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
   1. If the dependency starts with ``@executable_path/``, and an
      ``EXECUTABLES`` argument is in the process of being resolved, and
@@ -369,48 +352,42 @@ file
 
   6. Otherwise, the dependency is unresolved.
 
-  This function accepts several variables that determine which tool is used for
-  dependency resolution:
+  このコマンドは、依存関係の解決にどのようなツールを使うかを決定する CMake 変数をいくつかサポートしています：
 
   .. variable:: CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM
 
-    Determines which operating system and executable format the files are built
-    for. This could be one of several values:
+    ファイルがビルドされたオペレーティング・システムと実行形式を指定します。この変数は次のいずれかの値になります：
 
     * ``linux+elf``
     * ``windows+pe``
     * ``macos+macho``
 
-    If this variable is not specified, it is determined automatically by system
-    introspection.
+    この変数が指定されない場合は、CMake が実行環境から自動的に決定します。
 
   .. variable:: CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL
 
-    Determines the tool to use for dependency resolution. It could be one of
-    several values, depending on the value of
-    :variable:`CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM`:
+    依存関係の解決で使用するツールを指定します。
+    CMake 変数の :variable:`CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM` の値に応じて、次のいずれかの値になります：
 
-    ================================================= =============================================
-       ``CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM``       ``CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL``
-    ================================================= =============================================
-    ``linux+elf``                                     ``objdump``
-    ``windows+pe``                                    ``objdump`` or ``dumpbin``
-    ``macos+macho``                                   ``otool``
-    ================================================= =============================================
+    ================================================== ==============================================
+     ``CMAKE_GET_RUNTIME_DEPENDENCIES_PLATFORM`` の値   ``CMAKE_GET_RUNTIME_DEPENDENCIES_TOOL`` の値
+    ================================================== ==============================================
+    ``linux+elf``                                      ``objdump``
+    ``windows+pe``                                     ``objdump`` または ``dumpbin``
+    ``macos+macho``                                    ``otool``
+    ================================================== ==============================================
 
-    If this variable is not specified, it is determined automatically by system
-    introspection.
+    この変数が指定されない場合は、CMake が実行環境から自動的に決定します。
 
   .. variable:: CMAKE_GET_RUNTIME_DEPENDENCIES_COMMAND
 
-    Determines the path to the tool to use for dependency resolution. This is
-    the actual path to ``objdump``, ``dumpbin``, or ``otool``.
+    依存関係の解決で使用するツールのパスを指定します。
+    これは ``objdump`` または ``dumpbin`` または ``otool`` の実パスです。
 
-    If this variable is not specified, it is determined by the value of
-    ``CMAKE_OBJDUMP`` if set, else by system introspection.
+    この変数が指定されない場合は、CMake 変数の ``CMAKE_OBJDUMP`` がセットされていたらその値を使い、それ以外は CMake が実行環境から自動的に決定します。
 
     .. versionadded:: 3.18
-      Use ``CMAKE_OBJDUMP`` if set.
+      CMake 変数の ``CMAKE_OBJDUMP`` がセットされていたら、それを使うようになった。
 
 ファイルに書き込む
 ^^^^^^^^^^^^^^^^^^
@@ -1197,3 +1174,7 @@ Archiving
     timestamp instead of extracting file timestamps from the archive.
 
   With ``VERBOSE``, the command will produce verbose output.
+
+.. rubric:: 日本語訳注記
+
+.. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
