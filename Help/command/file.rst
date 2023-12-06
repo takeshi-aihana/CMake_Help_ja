@@ -29,7 +29,7 @@ file
     file(`GENERATE`_ OUTPUT <output-file> [...])
     file(`CONFIGURE`_ OUTPUT <output-file> CONTENT <content> [...])
 
-  `Filesystem`_
+  `ファイルシステムを使う`_
     file({`GLOB`_ | `GLOB_RECURSE`_} <out-var> [...] [<globbing-expr>...])
     file(`MAKE_DIRECTORY`_ [<dir>...])
     file({`REMOVE`_ | `REMOVE_RECURSE`_ } [<files>...])
@@ -76,7 +76,7 @@ file
   ``<filename>`` というファイルを読み込んで 一行分の ASCII 文字列を要素とするリストを変換し、それを ``<variable>`` に格納します。
   ファイルにあるバイナリデータは無視します。
   キャリッジリターン文字（``\r`` や CR）は無視します。
-  指定できるオプションは次のとおり:
+  指定できるオプションは次のとおりです:
 
     ``LENGTH_MAXIMUM <max-len>``
       最大で ``<max-len>`` の長さの文字列だけ解析する。
@@ -398,7 +398,7 @@ file
 
   ``<content>`` を ``<filename>`` というファイルに書き込みます。
   ``<filename>`` が存在していない場合は、書き込む前に作成します。
-  ``<filename>`` が既に存在している場合、``WRITE`` モードではその内容を ``<content>`` で上書きし、``APPEND`` モードではその内容の最後に ``<content>`` を追加します。
+  ``<filename>`` が既に存在している場合、``WRITE`` モードではそのファイルの内容を ``<content>`` で上書きし、``APPEND`` モードではその内容の最後に ``<content>`` を書き込みます。
   ``<filename>`` で指定されているパスに存在していないディレクトリがあれば、全て作成します。
 
   ``<filename>`` がビルド時の入力の時は、その内容が変更されている場合にのみ :command:`configure_file` コマンドを使って更新します。
@@ -410,7 +410,7 @@ file
   .. versionadded:: 3.12
 
   ファイルが存在していない場合は、空のファイルを作成します。
-  ファイルが既に存在している場合は、このコマンドを呼び出した時の日時でファイルのタイムスタンプ（アクセス時間と/または変更時間）を更新します。
+  ファイルが既に存在している場合は、このコマンドを呼び出した時の日時でファイルのタイムスタンプ（アクセス日時 および/または 変更日時）を更新します。
 
   ``TOUCH_NOCREATE`` のサブコマンドは、ファイルが存在している場合は ``touch`` し、ファイルが存在していない場合は何もしません。
 
@@ -419,8 +419,8 @@ file
 .. signature::
   file(GENERATE [...])
 
-  Generate an output file for each build configuration supported by the current :manual:`CMake Generator <cmake-generators(7)>`.
-  Evaluate :manual:`generator expressions <cmake-generator-expressions(7)>` from the input content to produce the output content.
+  :manual:`ジェネレータ <cmake-generators(7)>` が生成したビルドシステムのデータを出力ファイルに書き込みます。
+  あるいは、オプションとして受け取ったデータ [#content_of_file]_ から :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を評価して、その結果を出力ファイルに書き込みます。
 
   .. code-block:: cmake
 
@@ -431,79 +431,69 @@ file
           FILE_PERMISSIONS <permissions>...]
          [NEWLINE_STYLE [UNIX|DOS|WIN32|LF|CRLF] ])
 
-  The options are:
+  指定できるオプションは次のとおりです:
 
     ``CONDITION <condition>``
-      Generate the output file for a particular configuration only if the condition is true.
-      The condition must be either ``0`` or ``1`` after evaluating generator expressions.
+      ``<condition>`` が ``TRUE`` の場合にだけ、特定のビルドシステムを含まれる出力ファイルを作成する。
+      この ``<condition>`` には、ジェネレータ式を評価したあとに ``0`` または ``1`` のどちらかが格納される。
 
     ``CONTENT <content>``
-      Use the content given explicitly as input.
+      ここで明示的に与えられた ``<content>`` をビルドシステム生成の入力データとして使う。
 
     ``INPUT <input-file>``
-      Use the content from a given file as input.
+      ``<input-file>`` をビルドシステム生成の入力データとして使う。
 
       .. versionchanged:: 3.10
-        A relative path is treated with respect to the value of :variable:`CMAKE_CURRENT_SOURCE_DIR`.
-        See policy :policy:`CMP0070`.
+        ``<input-file>`` が相対パスを含んでいる場合は CMake 変数の :variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとして使うようになった。
+        :policy:`CMP0070` のポリシーも参照して下さい。
 
     ``OUTPUT <output-file>``
-      Specify the output file name to generate.
-      Use generator expressions such as :genex:`$<CONFIG>` to specify a configuration-specific output file name.
-      Multiple configurations may generate the same output file only if the generated content is identical.
-      Otherwise, the ``<output-file>`` must evaluate to an unique name for each configuration.
+      生成する出力ファイル名を指定する。
+      :genex:`$<CONFIG>` 等のジェネレータ式を使って、ジェネレータ固有の出力ファイルを指定できる。
+      生成されたデータが同一である場合にのみ、複数のビルドシステムで同じ出力ファイルを生成することが可能である。
+      それ以外の場合 ``<output-file>`` はビルドシステムごとに重複しないファイル名が付与される。
 
       .. versionchanged:: 3.10
-        A relative path (after evaluating generator expressions) is treated
-        with respect to the value of :variable:`CMAKE_CURRENT_BINARY_DIR`.
-        See policy :policy:`CMP0070`.
+        ジェネレータ式を評価したあと、``<output-file>`` が相対パスを含んでいる場合は CMake 変数の :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとして使うようになった。
+        :policy:`CMP0070` のポリシーも参照して下さい。
 
     ``TARGET <target>``
       .. versionadded:: 3.19
 
-      Specify which target to use when evaluating generator expressions that
-      require a target for evaluation (e.g.
-      :genex:`$<COMPILE_FEATURES:...>`,
-      :genex:`$<TARGET_PROPERTY:prop>`).
+      ジェネレータ式を評価する際に必要となるターゲットを指定する（たとえば :genex:`$<COMPILE_FEATURES:...>`、:genex:`$<TARGET_PROPERTY:prop>` など）。
 
     ``NO_SOURCE_PERMISSIONS``
       .. versionadded:: 3.20
 
-      The generated file permissions default to the standard 644 value
-      (-rw-r--r--).
+      生成した出力ファイルのアクセス権限として、デフォルトで標準の 644 (``-rw-r--r--``) が適用される。
 
     ``USE_SOURCE_PERMISSIONS``
       .. versionadded:: 3.20
 
-      Transfer the file permissions of the ``INPUT`` file to the generated
-      file. This is already the default behavior if none of the three
-      permissions-related keywords are given (``NO_SOURCE_PERMISSIONS``,
-      ``USE_SOURCE_PERMISSIONS`` or ``FILE_PERMISSIONS``).  The
-      ``USE_SOURCE_PERMISSIONS`` keyword mostly serves as a way of making
-      the intended behavior clearer at the call site. It is an error to
-      specify this option without ``INPUT``.
+      生成した出力ファイルに ``<input-file>`` のアクセス権限を適用する。
+      アクセス権限を表す 3つのキーワード（``NO_SOURCE_PERMISSIONS``、``USE_SOURCE_PERMISSIONS``、``FILE_PERMISSIONS``）のいずれも指定されていない場合は、``<input-file>`` のアクセス権限を適用することがデフォルトの動作である。
+      主に、この ``USE_SOURCE_PERMISSIONS`` オプションは、``file()`` コマンドを呼び出した側の対応が意図したものであることを明確にする方法として使われる。
+      ``INPUT`` オプションなしで、このオプションを指定するとエラーを発行する。
 
     ``FILE_PERMISSIONS <permissions>...``
       .. versionadded:: 3.20
 
-      Use the specified permissions for the generated file.
+      ここで指定した ``<permissions>`` を生成した出力ファイルに適用する。
 
     ``NEWLINE_STYLE <style>``
       .. versionadded:: 3.20
 
-      Specify the newline style for the generated file.  Specify
-      ``UNIX`` or ``LF`` for ``\n`` newlines, or specify
-      ``DOS``, ``WIN32``, or ``CRLF`` for ``\r\n`` newlines.
+      生成するファイルの改行スタイルを指定する。
+      指定可能なスタイルは、改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` である。
 
-  Exactly one ``CONTENT`` or ``INPUT`` option must be given.  A specific
-  ``OUTPUT`` file may be named by at most one invocation of ``file(GENERATE)``.
-  Generated files are modified and their timestamp updated on subsequent cmake
-  runs only if their content is changed.
+  ``CONTENT`` と ``INPUT`` オプションはどちらか一つ指定して下さい。
+  ``file(GENERATE)`` コマンドを一回呼び出すと、``OUTPUT`` オプションで指定した ``<output-file>`` が生成されます。
+  出力ファイルの内容が変更された場合にのみ、ファイルのタイムスタンプが更新されます。
 
-  Note also that ``file(GENERATE)`` does not create the output file until the
-  generation phase. The output file will not yet have been written when the
-  ``file(GENERATE)`` command returns, it is written only after processing all
-  of a project's ``CMakeLists.txt`` files.
+  この ``file(GENERATE)`` コマンドには注意点があります。
+  このコマンドはビルドシステムの生成が完了するまで出力ファイルを生成しません。
+  さらに ``file(GENERATE)`` コマンドの呼び出しから戻ってきた時点でも、まだ生成したデータは書き込まれていません。
+  すなわち、現在のプロジェクトに関連する全ての ``CMakeLists.txt`` ファイルを処理した後に、はじめて書き込まれます。
 
 .. signature::
   file(CONFIGURE OUTPUT <output-file>
@@ -514,37 +504,34 @@ file
 
   .. versionadded:: 3.18
 
-  Generate an output file using the input given by ``CONTENT`` and substitute
-  variable values referenced as ``@VAR@`` or ``${VAR}`` contained therein. The
-  substitution rules behave the same as the :command:`configure_file` command.
-  In order to match :command:`configure_file`'s behavior, generator expressions
-  are not supported for both ``OUTPUT`` and ``CONTENT``.
+  ``CONTENT`` オプションで指定した入力データから出力ファイルを生成します。その際は、入力データに含まれている ``@VAR@`` や ``${VAR}`` で参照される変数の値を置き換えます。
+  この置き換えは :command:`configure_file` コマンドが採用しているルールに従います。
+  :command:`configure_file` コマンドに準拠させているため、``OUTPUT`` と ``CONTENT`` オプションではジェネレータ式をサポートしていないので注意して下さい。
 
-  The arguments are:
+  指定できるオプションは次のとおりです:
 
     ``OUTPUT <output-file>``
-      Specify the output file name to generate. A relative path is treated with
-      respect to the value of :variable:`CMAKE_CURRENT_BINARY_DIR`.
-      ``<output-file>`` does not support generator expressions.
+      生成する出力ファイル名を指定する。
+      ``<output-file>`` が相対パスを含んでいる場合は CMake 変数の :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとして使う。
+      ジェネレータ式を使った ``<output-file>`` の指定はサポートしない。
 
     ``CONTENT <content>``
-      Use the content given explicitly as input.
-      ``<content>`` does not support generator expressions.
+      ここで明示的に与えられた ``<content>`` をビルドシステム生成の入力データとして使う。
+      ジェネレータ式を使った ``<content>`` の処理はサポートしない。
 
     ``ESCAPE_QUOTES``
-      Escape any substituted quotes with backslashes (C-style).
+      置き換えたあとにクォート文字をバックスラッシュでエスケープする（C言語方式）。
 
     ``@ONLY``
-      Restrict variable replacement to references of the form ``@VAR@``.
-      This is useful for configuring scripts that use ``${VAR}`` syntax.
+      変数の値の置き換えを ``@VAR@`` だけに制限する。
+      これは ``${VAR}`` を使うスクリプトを構成する際に便利である。
 
     ``NEWLINE_STYLE <style>``
-      Specify the newline style for the output file.  Specify
-      ``UNIX`` or ``LF`` for ``\n`` newlines, or specify
-      ``DOS``, ``WIN32``, or ``CRLF`` for ``\r\n`` newlines.
+      生成するファイルの改行スタイルを指定する。
+      指定可能なスタイルは、改行文字が ``\n`` の場合は ``UNIX`` または ``LF``、 改行文字が ``\r\n`` の場合は ``DOS``、``WIN32`` または ``CRLF`` である。
 
-Filesystem
-^^^^^^^^^^
+ファイルシステムを使う
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(GLOB <variable>
@@ -554,58 +541,44 @@ Filesystem
        [LIST_DIRECTORIES true|false] [RELATIVE <path>] [CONFIGURE_DEPENDS]
        [<globbing-expressions>...])
 
-  Generate a list of files that match the ``<globbing-expressions>`` and
-  store it into the ``<variable>``.  Globbing expressions are similar to
-  regular expressions, but much simpler.  If ``RELATIVE`` flag is
-  specified, the results will be returned as relative paths to the given
-  path.
+  指定した ``<globbing-expressions>`` にマッチするファイルのリストを生成し、そのリストを ``<variable>`` に格納します。
+  この ``<globbing-expressions>`` は正規表現に似ていますが、より単純です。
+  ``RELATIVE`` オプションを指定すると、生成したファイルのパスは ``<path>`` をベース・ディレクトリとした相対パスに変換されます。
 
   .. versionchanged:: 3.6
-    The results will be ordered lexicographically.
+    生成したファイルのパスはアルファベット順にリストに格納されるようになった。
 
-  On Windows and macOS, globbing is case-insensitive even if the underlying
-  filesystem is case-sensitive (both filenames and globbing expressions are
-  converted to lowercase before matching).  On other platforms, globbing is
-  case-sensitive.
+  ターゲットが Windows や macOS 系のプラットフォームの場合、それぞれのファイルシステムがファイル名の大文字と小文字を区別できるとしても、このコマンドは区別しません（コマンドを実行する前にファイル名と ```<globbing-expression>`` の両方を全て小文字に変換します）。
+  それ以外のターゲットでは大文字と小文字を区別します。
 
   .. versionadded:: 3.3
-    By default ``GLOB`` lists directories. Directories are omitted in the
-    result if ``LIST_DIRECTORIES`` is set to false.
+    この ``GLOB`` サブコマンドは、デフォルトでディレクトリもリスト化するようになった。
+    ただし ``LIST_DIRECTORIES`` オプションを ``FALSE`` にした場合は除く。
 
   .. versionadded:: 3.12
-    If the ``CONFIGURE_DEPENDS`` flag is specified, CMake will add logic
-    to the main build system check target to rerun the flagged ``GLOB``
-    commands at build time. If any of the outputs change, CMake will regenerate
-    the build system.
+    ``CONFIGURE_DEPENDS`` オプションを指定すると、ビルド時にフラグが付いた ``GLOB`` サブコマンドを再実行できるようになった。
+    再実行した結果、リストの内容が更新されたら、ビルドシステムを再生成する。
 
   .. note::
-    We do not recommend using GLOB to collect a list of source files from
-    your source tree.  If no CMakeLists.txt file changes when a source is
-    added or removed then the generated build system cannot know when to
-    ask CMake to regenerate.
-    The ``CONFIGURE_DEPENDS`` flag may not work reliably on all generators, or
-    if a new generator is added in the future that cannot support it, projects
-    using it will be stuck. Even if ``CONFIGURE_DEPENDS`` works reliably, there
-    is still a cost to perform the check on every rebuild.
+    この ``GLOB`` サブコマンドを使ってソースツリーからソース・ファイルのリストを得ることは推奨しません。
+    このサブコマンドを使ってソース・ファイルを追加したり削除したとしても、``CMakeLists.txt`` 自身は変更されないため、一度生成されたビルドシステムは、いつビルドシステムの再生性を CMake に要求すべきか判断できないからです。
+    また ``CONFIGURE_DEPENDS`` オプションは全てのジェネレータ上で動作するとは限らず、将来、そのオプションをサポートしない新しいジェネレータが追加された場合、このコマンドを使うプロジェクトは互換性を維持できなくなります。
+    仮に ``CONFIGURE_DEPENDS`` オプションが確実に動いたとしても、依然としてビルドシステムを再生成するたびにチェックを実行するというコストがつきまといます。
 
-  Examples of globbing expressions include:
+  ``<globbing-expressions>`` の例：
 
-  ============== ======================================================
-  ``*.cxx``      match all files with extension ``cxx``
-  ``*.vt?``      match all files with extension ``vta``, ..., ``vtz``
-  ``f[3-5].txt`` match files ``f3.txt``, ``f4.txt``, ``f5.txt``
-  ============== ======================================================
+  ============== =================================================================
+  ``*.cxx``      拡張子が ``cxx`` である全てのファイルにマッチする
+  ``*.vt?``      拡張子が ``vta`` , ..., ``vtz`` である全てのファイルにマッチする
+  ``f[3-5].txt`` ``f3.txt`` または ``f4.txt`` または ``f5.txt`` にマッチする
+  ============== =================================================================
 
-  The ``GLOB_RECURSE`` mode will traverse all the subdirectories of the
-  matched directory and match the files.  Subdirectories that are symlinks
-  are only traversed if ``FOLLOW_SYMLINKS`` is given or policy
-  :policy:`CMP0009` is not set to ``NEW``.
+  The ``GLOB_RECURSE`` mode will traverse all the subdirectories of the matched directory and match the files.
+  Subdirectories that are symlinks are only traversed if ``FOLLOW_SYMLINKS`` is given or policy :policy:`CMP0009` is not set to ``NEW``.
 
   .. versionadded:: 3.3
-    By default ``GLOB_RECURSE`` omits directories from result list. Setting
-    ``LIST_DIRECTORIES`` to true adds directories to result list.
-    If ``FOLLOW_SYMLINKS`` is given or policy :policy:`CMP0009` is not set to
-    ``NEW`` then ``LIST_DIRECTORIES`` treats symlinks as directories.
+    By default ``GLOB_RECURSE`` omits directories from result list. Setting ``LIST_DIRECTORIES`` to true adds directories to result list.
+    If ``FOLLOW_SYMLINKS`` is given or policy :policy:`CMP0009` is not set to ``NEW`` then ``LIST_DIRECTORIES`` treats symlinks as directories.
 
   Examples of recursive globbing include:
 
@@ -622,37 +595,34 @@ Filesystem
   file(REMOVE [<files>...])
   file(REMOVE_RECURSE [<files>...])
 
-  Remove the given files.  The ``REMOVE_RECURSE`` mode will remove the given
-  files and directories, including non-empty directories. No error is emitted
-  if a given file does not exist.  Relative input paths are evaluated with
-  respect to the current source directory.
+  Remove the given files.
+  The ``REMOVE_RECURSE`` mode will remove the given files and directories, including non-empty directories.
+  No error is emitted if a given file does not exist.
+  Relative input paths are evaluated with respect to the current source directory.
 
   .. versionchanged:: 3.15
-    Empty input paths are ignored with a warning.  Previous versions of CMake
-    interpreted empty strings as a relative path with respect to the current
-    directory and removed its contents.
+    Empty input paths are ignored with a warning.
+    Previous versions of CMake interpreted empty strings as a relative path with respect to the current directory and removed its contents.
 
 .. signature::
   file(RENAME <oldname> <newname> [RESULT <result>] [NO_REPLACE])
 
-  Move a file or directory within a filesystem from ``<oldname>`` to
-  ``<newname>``, replacing the destination atomically.
+  Move a file or directory within a filesystem from ``<oldname>`` to ``<newname>``, replacing the destination atomically.
 
   The options are:
 
     ``RESULT <result>``
       .. versionadded:: 3.21
 
-      Set ``<result>`` variable to ``0`` on success or an error message
-      otherwise. If ``RESULT`` is not specified and the operation fails,
-      an error is emitted.
+      Set ``<result>`` variable to ``0`` on success or an error message otherwise.
+      If ``RESULT`` is not specified and the operation fails, an error is emitted.
 
     ``NO_REPLACE``
       .. versionadded:: 3.21
 
       If the ``<newname>`` path already exists, do not replace it.
-      If ``RESULT <result>`` is used, the result variable will be
-      set to ``NO_REPLACE``.  Otherwise, an error is emitted.
+      If ``RESULT <result>`` is used, the result variable will be set to ``NO_REPLACE``.
+      Otherwise, an error is emitted.
 
 .. signature::
   file(COPY_FILE <oldname> <newname>
@@ -662,45 +632,36 @@ Filesystem
 
   .. versionadded:: 3.21
 
-  Copy a file from ``<oldname>`` to ``<newname>``. Directories are not
-  supported. Symlinks are ignored and ``<oldfile>``'s content is read and
-  written to ``<newname>`` as a new file.
+  Copy a file from ``<oldname>`` to ``<newname>``. Directories are not supported. Symlinks are ignored and ``<oldfile>``'s content is read and written to ``<newname>`` as a new file.
 
   The options are:
 
     ``RESULT <result>``
-      Set ``<result>`` variable to ``0`` on success or an error message
-      otherwise.  If ``RESULT`` is not specified and the operation fails,
-      an error is emitted.
+      Set ``<result>`` variable to ``0`` on success or an error message otherwise.
+      If ``RESULT`` is not specified and the operation fails, an error is emitted.
 
     ``ONLY_IF_DIFFERENT``
-      If the ``<newname>`` path already exists, do not replace it if the file's
-      contents are already the same as ``<oldname>`` (this avoids updating
-      ``<newname>``'s timestamp).
+      If the ``<newname>`` path already exists, do not replace it if the file's contents are already the same as ``<oldname>`` (this avoids updating  ``<newname>``'s timestamp).
 
     ``INPUT_MAY_BE_RECENT``
       .. versionadded:: 3.26
 
-      Tell CMake that the input file may have been recently created.  This is
-      meaningful only on Windows, where files may be inaccessible for a short
-      time after they are created.  With this option, if permission is denied,
-      CMake will retry reading the input a few times.
+      Tell CMake that the input file may have been recently created.
+      This is meaningful only on Windows, where files may be inaccessible for a short time after they are created.
+      With this option, if permission is denied, CMake will retry reading the input a few times.
 
-  This sub-command has some similarities to :command:`configure_file`
-  with the ``COPYONLY`` option.  An important difference is that
-  :command:`configure_file` creates a dependency on the source file,
-  so CMake will be re-run if it changes. The ``file(COPY_FILE)``
-  sub-command does not create such a dependency.
+  This sub-command has some similarities to :command:`configure_file` with the ``COPYONLY`` option.
+  An important difference is that :command:`configure_file` creates a dependency on the source file, so CMake will be re-run if it changes.
+  The ``file(COPY_FILE)`` sub-command does not create such a dependency.
 
-  See also the :command:`file(COPY)` sub-command just below which provides
-  further file-copying capabilities.
+  See also the :command:`file(COPY)` sub-command just below which provides further file-copying capabilities.
 
 .. signature::
   file(COPY [...])
   file(INSTALL [...])
 
-  The ``COPY`` signature copies files, directories, and symlinks to a
-  destination folder.  Relative input paths are evaluated with respect
+  The ``COPY`` signature copies files, directories, and symlinks to a destination folder.
+  Relative input paths are evaluated with respect
   to the current source directory, and a relative destination is
   evaluated with respect to the current build directory.  Copying
   preserves input file timestamps, and optimizes out a file if it exists
@@ -1169,3 +1130,4 @@ Archiving
 .. rubric:: 日本語訳注記
 
 .. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
+.. [#content_of_file] ファイルの「内容」に相当するもの。「データ」はファイルに書き込まれてファイルの「内容」になり、ファイルから読み込んだ内容が「データ」になる。
