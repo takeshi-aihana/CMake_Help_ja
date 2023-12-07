@@ -597,13 +597,13 @@ file
   file(REMOVE_RECURSE [<files>...])
 
   指定した ``<files>`` をファイルシステムから削除します。
-  ``REMOVE_RECURSE`` サブコマンドは、指定した ``<files>`` とそのサブディレクトリ（空ではないディレクトリを含む）を削除します。
+  ``REMOVE_RECURSE`` サブコマンドは、指定した ``<files>`` とそのサブディレクトリ（空ではないディレクトリを含む）を全て削除します。
   指定したファイルが存在していなくても、エラーを発行しません。
-  相対パスの場合は、現在のソース・ディレクトリをベース・ディレクトリとして評価します。
+  ``<files>`` に相対パスが含まれている場合は、現在のソース・ディレクトリをベース・ディレクトリとしてパスを評価します。
 
   .. versionchanged:: 3.15
     ``<files>`` の中に空文字のパスが含まれている場合は無視するが、警告を発行するようになった。
-    以前のバージョンでは、空の文字列を現在のディレクトリであり、ベース・ディレクトリであるとして、そこからの相対バスとして該当するファイルを削除していた。
+    以前のバージョンでは、空の文字列を現在のディレクトリとし、かつ相対パスのベース・ディレクトリであるとしてパスを評価し、該当するファイルを削除していた。
 
 .. signature::
   file(RENAME <oldname> <newname> [RESULT <result>] [NO_REPLACE])
@@ -644,33 +644,29 @@ file
       この ``RESULT`` オプションを指定しない場合に操作が失敗したら、エラーを発行する。
 
     ``ONLY_IF_DIFFERENT``
-      ``<newname>`` が既に存在し、その内容が ``<oldname>`` の内容と同じ場合は置き換えない（これにより ``<newname>`` のタイムスタンプが更新されずに済む）
+      ``<newname>`` が既に存在し、その内容が ``<oldname>`` の内容と同じ場合は置き換えない（これにより ``<newname>`` のタイムスタンプが更新されずに済む）。
 
     ``INPUT_MAY_BE_RECENT``
       .. versionadded:: 3.26
 
       入力ファイルが最近作成された旨を CMake に知らせる。
-      これは、ホストが Windows 系プラットフォームThis is meaningful only on Windows, where files may be inaccessible for a short time after they are created.
-      With this option, if permission is denied, CMake will retry reading the input a few times.
+      このオプションは、ホストが Windows 系プラットフォームの場合にだけ意味を持ちます（ファイルの作成直後は、そのファイルにアクセスできない場合があるため）。
+      このオプションを指定すると、ファイルへのアクセスが拒否された場合、CMake はファイルの読み取りを数回繰り返す。
 
-  This sub-command has some similarities to :command:`configure_file` with the ``COPYONLY`` option.
-  An important difference is that :command:`configure_file` creates a dependency on the source file, so CMake will be re-run if it changes.
-  The ``file(COPY_FILE)`` sub-command does not create such a dependency.
+  このサブコマンドには、``COPYONLY`` オプションを指定した :command:`configure_file` コマンドと類似点がいくつかあります。
+  重要な違いは、:command:`configure_file` コマンドが入力ファイル上で依存関係を生成するので、もし入力ファイルが変更されていたら、もう一度コマンドを再実行するという点です。
+  それに対して、 ``file(COPY_FILE)`` サブコマンドは依存関係を生成しません。
 
-  See also the :command:`file(COPY)` sub-command just below which provides further file-copying capabilities.
+  ファイルのコピー機能を拡張する、この下の :command:`file(COPY)` サブコマンドも参照して下さい。
 
 .. signature::
   file(COPY [...])
   file(INSTALL [...])
 
   The ``COPY`` signature copies files, directories, and symlinks to a destination folder.
-  Relative input paths are evaluated with respect
-  to the current source directory, and a relative destination is
-  evaluated with respect to the current build directory.  Copying
-  preserves input file timestamps, and optimizes out a file if it exists
-  at the destination with the same timestamp.  Copying preserves input
-  permissions unless explicit permissions or ``NO_SOURCE_PERMISSIONS``
-  are given (default is ``USE_SOURCE_PERMISSIONS``).
+  Relative input paths are evaluated with respect to the current source directory, and a relative destination is evaluated with respect to the current build directory.
+  Copying preserves input file timestamps, and optimizes out a file if it exists at the destination with the same timestamp.
+  Copying preserves input permissions unless explicit permissions or ``NO_SOURCE_PERMISSIONS``  are given (default is ``USE_SOURCE_PERMISSIONS``).
 
   .. code-block:: cmake
 
@@ -685,21 +681,14 @@ file
 
   .. note::
 
-    For a simple file copying operation, the :command:`file(COPY_FILE)`
-    sub-command just above may be easier to use.
+    For a simple file copying operation, the :command:`file(COPY_FILE)` sub-command just above may be easier to use.
 
   .. versionadded:: 3.15
-    If ``FOLLOW_SYMLINK_CHAIN`` is specified, ``COPY`` will recursively resolve
-    the symlinks at the paths given until a real file is found, and install
-    a corresponding symlink in the destination for each symlink encountered.
-    For each symlink that is installed, the resolution is stripped of the
-    directory, leaving only the filename, meaning that the new symlink points
-    to a file in the same directory as the symlink. This feature is useful on
-    some Unix systems, where libraries are installed as a chain of symlinks
-    with version numbers, with less specific versions pointing to more specific
-    versions. ``FOLLOW_SYMLINK_CHAIN`` will install all of these symlinks and
-    the library itself into the destination directory. For example, if you have
-    the following directory structure:
+    If ``FOLLOW_SYMLINK_CHAIN`` is specified, ``COPY`` will recursively resolve the symlinks at the paths given until a real file is found, and install a corresponding symlink in the destination for each symlink encountered.
+    For each symlink that is installed, the resolution is stripped of the directory, leaving only the filename, meaning that the new symlink points to a file in the same directory as the symlink.
+    This feature is useful on some Unix systems, where libraries are installed as a chain of symlinks with version numbers, with less specific versions pointing to more specific versions.
+    ``FOLLOW_SYMLINK_CHAIN`` will install all of these symlinks and  the library itself into the destination directory.
+    For example, if you have the following directory structure:
 
       * ``/opt/foo/lib/libfoo.so.1.2.3``
       * ``/opt/foo/lib/libfoo.so.1.2 -> libfoo.so.1.2.3``
@@ -712,42 +701,33 @@ file
 
       file(COPY /opt/foo/lib/libfoo.so DESTINATION lib FOLLOW_SYMLINK_CHAIN)
 
-    This will install all of the symlinks and ``libfoo.so.1.2.3`` itself into
-    ``lib``.
+    This will install all of the symlinks and ``libfoo.so.1.2.3`` itself into ``lib``.
 
-  See the :command:`install(DIRECTORY)` command for documentation of
-  permissions, ``FILES_MATCHING``, ``PATTERN``, ``REGEX``, and
-  ``EXCLUDE`` options.  Copying directories preserves the structure
-  of their content even if options are used to select a subset of
-  files.
+  See the :command:`install(DIRECTORY)` command for documentation of permissions, ``FILES_MATCHING``, ``PATTERN``, ``REGEX``, and ``EXCLUDE`` options.
+  Copying directories preserves the structure of their content even if options are used to select a subset of files.
 
-  The ``INSTALL`` signature differs slightly from ``COPY``: it prints
-  status messages, and ``NO_SOURCE_PERMISSIONS`` is default. Installation
-  scripts generated by the :command:`install` command use this signature
-  (with some undocumented options for internal use).
+  The ``INSTALL`` signature differs slightly from ``COPY``: it prints status messages, and ``NO_SOURCE_PERMISSIONS`` is default.
+  Installation scripts generated by the :command:`install` command use this signature (with some undocumented options for internal use).
 
   .. versionchanged:: 3.22
 
-    The environment variable :envvar:`CMAKE_INSTALL_MODE` can override the
-    default copying behavior of :command:`file(INSTALL)`.
+    The environment variable :envvar:`CMAKE_INSTALL_MODE` can override the default copying behavior of :command:`file(INSTALL)`.
 
 .. signature::
   file(SIZE <filename> <variable>)
 
   .. versionadded:: 3.14
 
-  Determine the file size of the ``<filename>`` and put the result in
-  ``<variable>`` variable. Requires that ``<filename>`` is a valid path
-  pointing to a file and is readable.
+  Determine the file size of the ``<filename>`` and put the result in ``<variable>`` variable.
+  Requires that ``<filename>`` is a valid path pointing to a file and is readable.
 
 .. signature::
   file(READ_SYMLINK <linkname> <variable>)
 
   .. versionadded:: 3.14
 
-  Query the symlink ``<linkname>`` and stores the path it points to
-  in the result ``<variable>``.  If ``<linkname>`` does not exist
-  or is not a symlink, CMake issues a fatal error.
+  Query the symlink ``<linkname>`` and stores the path it points to in the result ``<variable>``.
+  If ``<linkname>`` does not exist or is not a symlink, CMake issues a fatal error.
 
   Note that this command returns the raw symlink path and does not resolve
   a relative path.  The following is an example of how to ensure that an
