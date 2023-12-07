@@ -42,19 +42,19 @@ file
     file(`CHMOD`_ <files>... <directories>... PERMISSIONS <permissions>... [...])
     file(`CHMOD_RECURSE`_ <files>... <directories>... PERMISSIONS <permissions>... [...])
 
-  `Path Conversion`_
+  `パスを評価する`_
     file(`REAL_PATH`_ <path> <out-var> [BASE_DIRECTORY <dir>] [EXPAND_TILDE])
     file(`RELATIVE_PATH`_ <out-var> <directory> <file>)
     file({`TO_CMAKE_PATH`_ | `TO_NATIVE_PATH`_} <path> <out-var>)
 
-  `Transfer`_
+  `ファイルを転送する`_
     file(`DOWNLOAD`_ <url> [<file>] [...])
     file(`UPLOAD`_ <file> <url> [...])
 
-  `Locking`_
+  `ファイルをロックする`_
     file(`LOCK`_ <path> [...])
 
-  `Archiving`_
+  `アーカイブを作成する`_
     file(`ARCHIVE_CREATE`_ OUTPUT <archive> PATHS <paths>... [...])
     file(`ARCHIVE_EXTRACT`_ INPUT <archive> [...])
 
@@ -650,8 +650,8 @@ file
       .. versionadded:: 3.26
 
       入力ファイルが最近作成された旨を CMake に知らせる。
-      このオプションは、ホストが Windows 系プラットフォームの場合にだけ意味を持ちます（ファイルの作成直後は、そのファイルにアクセスできない場合があるため）。
-      このオプションを指定すると、ファイルへのアクセスが拒否された場合、CMake はファイルの読み取りを数回繰り返す。
+      このオプションは、ホストが Windows 系プラットフォームの場合にだけ意味を持つ（ファイルの作成直後は、そのファイルにアクセスできない場合があるため）。
+      このオプションを指定すると、ファイルへのアクセスが拒否された場合に CMake はファイルの読み取りを数回繰り返す。
 
   このサブコマンドには、``COPYONLY`` オプションを指定した :command:`configure_file` コマンドと類似点がいくつかあります。
   重要な違いは、:command:`configure_file` コマンドが入力ファイル上で依存関係を生成するので、もし入力ファイルが変更されていたら、もう一度コマンドを再実行するという点です。
@@ -768,27 +768,27 @@ file
   .. versionadded:: 3.19
 
   指定した ``<files>...`` および ``<directories>...`` のアクセス権限をセットします。
-  セットできる権限は ``OWNER_READ``、``OWNER_WRITE``、``OWNER_EXECUTE``、``GROUP_READ``、``GROUP_WRITE``、``GROUP_EXECUTE``、 ``WORLD_READ``、``WORLD_WRITE``、``WORLD_EXECUTE``、``SETUID``、そして ``SETGID`` です。
+  セットできる権限（キーワード）は ``OWNER_READ``、``OWNER_WRITE``、``OWNER_EXECUTE``、``GROUP_READ``、``GROUP_WRITE``、``GROUP_EXECUTE``、 ``WORLD_READ``、``WORLD_WRITE``、``WORLD_EXECUTE``、``SETUID``、そして ``SETGID`` です。
 
   各キーワードの有効な組み合わせは次のとおりです：
 
     ``PERMISSIONS``
-      All items are changed.
+      全てのキーワードを変更する。
 
     ``FILE_PERMISSIONS``
-      Only files are changed.
+      ファイルだけ変更する。
 
     ``DIRECTORY_PERMISSIONS``
-      Only directories are changed.
+      ディレクトリだけ変更する。
 
-    ``PERMISSIONS`` and ``FILE_PERMISSIONS``
-      ``FILE_PERMISSIONS`` overrides ``PERMISSIONS`` for files.
+    ``PERMISSIONS`` と ``FILE_PERMISSIONS``
+      ``FILE_PERMISSIONS`` でファイルの ``PERMISSIONS`` を上書きする。
 
-    ``PERMISSIONS`` and ``DIRECTORY_PERMISSIONS``
-      ``DIRECTORY_PERMISSIONS`` overrides ``PERMISSIONS`` for directories.
+    ``PERMISSIONS`` と ``DIRECTORY_PERMISSIONS``
+      ``DIRECTORY_PERMISSIONS`` でディレクトリの ``PERMISSIONS`` を上書きする。
 
-    ``FILE_PERMISSIONS`` and ``DIRECTORY_PERMISSIONS``
-      Use ``FILE_PERMISSIONS`` for files and ``DIRECTORY_PERMISSIONS`` for directories.
+    ``FILE_PERMISSIONS`` と ``DIRECTORY_PERMISSIONS``
+      ファイルの場合は ``FILE_PERMISSIONS`` を使い、ディレクトリの場合は ``DIRECTORY_PERMISSIONS`` を使う
 
 .. signature::
   file(CHMOD_RECURSE <files>... <directories>...
@@ -798,64 +798,56 @@ file
 
   .. versionadded:: 3.19
 
-  Same as :cref:`CHMOD`, but change the permissions of files and directories present in the ``<directories>...`` recursively.
+  基本は :cref:`CHMOD` サブコマンドと同じですが、``<directories>...`` 配下に存在するファイルとディレクトリのアクセス権限を再帰的に（一括で）セットします。
 
 
-Path Conversion
-^^^^^^^^^^^^^^^
+パスを評価する
+^^^^^^^^^^^^^^
 
 .. signature::
   file(REAL_PATH <path> <out-var> [BASE_DIRECTORY <dir>] [EXPAND_TILDE])
 
   .. versionadded:: 3.19
 
-  Compute the absolute path to an existing file or directory with symlinks
-  resolved.  The options are:
+  シンボリックリンクが解決されたファイルやディレクトリの絶対パスを計算します。
+  指定できるオプションは次のとおりです：
 
     ``BASE_DIRECTORY <dir>``
-      If the provided ``<path>`` is a relative path, it is evaluated relative
-      to the given base directory ``<dir>``. If no base directory is provided,
-      the default base directory will be :variable:`CMAKE_CURRENT_SOURCE_DIR`.
+      指定した ``<path>`` が相対パスの場合、``<dir>`` をベース・ディレクトリとしてパスを評価する。
+      ``<dir>`` を指定しない場合は、デフォルトのベース・ディレクトリとして :variable:`CMAKE_CURRENT_SOURCE_DIR` を使用する。
 
     ``EXPAND_TILDE``
       .. versionadded:: 3.21
 
-      If the ``<path>`` is ``~`` or starts with ``~/``, the ``~`` is replaced
-      by the user's home directory.  The path to the home directory is obtained
-      from environment variables.  On Windows, the ``USERPROFILE`` environment
-      variable is used, falling back to the ``HOME`` environment variable
-      if ``USERPROFILE`` is not defined.  On all other platforms, only ``HOME``
-      is used.
+      ``<path>`` が ``~`` （チルダ）か、または ``~/`` で始まる場合、``~`` をユーザのホーム・ディレクトリに置き換える。
+      ホーム・ディレクトリへのパスは実行時の環境変数から取得する。
+      ホストが Windows 系のプラットフォームの場合、``USERPROFILE`` という環境変数から取得し、この変数が定義されていない場合は ``HOME`` 環境変数から取得する。
+      それ以外のプラットフォームは全て ``HOME`` 環境変数から取得する。
 
   .. versionchanged:: 3.28
 
-    All symlinks are resolved before collapsing ``../`` components.
-    See policy :policy:`CMP0152`.
+    全てのシンボリックリンクが、``../`` の部分を評価する前に解決されるようになった。
+    :policy:`CMP0152` のポリシーも参照して下さい。
 
 .. signature::
   file(RELATIVE_PATH <variable> <directory> <file>)
 
-  Compute the relative path from a ``<directory>`` to a ``<file>`` and
-  store it in the ``<variable>``.
+  ``<directory>`` から ``<file>`` への相対パスを計算して、それを ``<variable>`` という変数に格納する。
 
 .. signature::
   file(TO_CMAKE_PATH "<path>" <variable>)
   file(TO_NATIVE_PATH "<path>" <variable>)
 
-  The ``TO_CMAKE_PATH`` mode converts a native ``<path>`` into a cmake-style
-  path with forward-slashes (``/``).  The input can be a single path or a
-  system search path like ``$ENV{PATH}``.  A search path will be converted
-  to a cmake-style list separated by ``;`` characters.
+  ``TO_CMAKE_PATH`` サブコマンドは、ホストにネィティブな ``<path>`` をスラッシュ（"``/``"）を使った CMake スタイルのパスに変換します。
+  ``<path>`` には単一のパス、または ``$ENV{PATH}`` のような環境変数の検索パスを渡すことができます。
+  この検索パスはセミコロン文字（"``;``"）で区切られた CMake スタイルのパスを要素とするリストに変換されます。
 
-  The ``TO_NATIVE_PATH`` mode converts a cmake-style ``<path>`` into a native
-  path with platform-specific slashes (``\`` on Windows hosts and ``/``
-  elsewhere).
+  ``TO_NATIVE_PATH`` サブコマンドは、CMake スタイルの ``<path>`` をホストのプラットフォーム固有のスラッシュ（Windows 系のプラットフォームの場合は ``\``、それ以外のプラットフォームは ``/``）を含んだネィティブなパスに変換します。
 
-  Always use double quotes around the ``<path>`` to be sure it is treated
-  as a single argument to this command.
+  ``<path>`` が一個の引数として扱われるように、必ず ``<path>`` を二重引用符で囲んで下さい（例: ``"<path>"``）。
 
-Transfer
-^^^^^^^^
+ファイルを転送する
+^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(DOWNLOAD <url> [<file>] [<options>...])
@@ -986,8 +978,8 @@ Transfer
       download everything from the specified ``RANGE_START`` to the end of
       file.
 
-Locking
-^^^^^^^
+ファイルをロックする
+^^^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(LOCK <path> [DIRECTORY] [RELEASE]
@@ -1020,8 +1012,8 @@ Locking
   directories and the file itself will be created if they not exist.  The
   ``GUARD`` and ``TIMEOUT`` options are ignored on the ``RELEASE`` operation.
 
-Archiving
-^^^^^^^^^
+アーカイブを作成する
+^^^^^^^^^^^^^^^^^^^^
 
 .. signature::
   file(ARCHIVE_CREATE OUTPUT <archive>
