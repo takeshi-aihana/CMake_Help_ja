@@ -12,11 +12,11 @@
 
 このファイルを見てみると、計算値のテーブルを生成する C++ の関数があり、引数として渡されたファイルに出力しているのがわかります。
 
-次のステップで ``MathFunctions/MakeTable.cmake`` を生成します。
+次のステップで ``MathFunctions/MakeTable.cmake`` を作成します。
 そして ``MakeTable`` という実行形式をビルドするための CMake コマンドを追加して、ビルドの過程でそれを実行するようにします。
 これを実現するには、いくつかのコマンドが必要です。
 
-まず ``MakeTable`` という実行形式の生成を CMake に指示します。
+まず ``MakeTable`` という実行形式の作成を CMake に指示します。
 
 .. literalinclude:: Step9/MathFunctions/MakeTable.cmake
   :caption: MathFunctions/MakeTable.cmake
@@ -34,7 +34,7 @@
   :start-after: add_executable
   :end-before: # add the command to generate
 
-そして、``MakeTable`` を実行して ``Table.h`` というファイルを生成する方法を指定する CMake のカスタム・コマンドを追加します。
+そして、``MakeTable`` を実行して ``Table.h`` というファイルを作成する方法を指定する CMake のカスタム・コマンドを追加します。
 
 .. literalinclude:: Step9/MathFunctions/MakeTable.cmake
   :caption: MathFunctions/MakeTable.cmake
@@ -42,7 +42,7 @@
   :language: cmake
   :start-after: # add the command to generate the source code
 
-なお、ソース・ファイルの ``mysqrt.cxx`` が、ここで生成した ``Table.h`` に依存していることを CMake に知らせる必要があります。
+なお、ソース・ファイルの ``mysqrt.cxx`` が、ここで作成した ``Table.h`` に依存していることを CMake に知らせる必要があります。
 これは ``Sqrtlibrary`` ライブラリに対するソースのリストに ``Table.h`` を追加することで実現できます。
 
 .. literalinclude:: Step9/MathFunctions/CMakeLists.txt
@@ -83,7 +83,7 @@
 
 :manual:`cmake <cmake(1)>` コマンドまたは :manual:`cmake-gui <cmake-gui(1)>` を実行してプロジェクトを構成し、選択したビルド・ツールを使ってプロジェクトをビルドして下さい。
 
-このプロジェクトのビルドが始まると、まず実行形式の ``MakeTable`` を生成します。
-それから ``MakeTable`` を実行して ``Table.h`` を生成します。
-最後に、``Table.h`` をインクルードした ``mysqrt.cxx`` をコンパイルして、``MathFunctions`` ライブラリを生成します。
+このプロジェクトのビルドが始まると、まず実行形式の ``MakeTable`` を作成します。
+それから ``MakeTable`` を実行して ``Table.h`` を作成します。
+最後に、``Table.h`` をインクルードした ``mysqrt.cxx`` をコンパイルして、``MathFunctions`` ライブラリを作成します。
 実行形式の ``Tutorial`` を実行して、テーブルが使用されていることを確認してみて下さい。

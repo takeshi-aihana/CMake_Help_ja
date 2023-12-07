@@ -71,7 +71,7 @@ configure_file
     #  define VAR 1
 
 ``<input>`` ファイルが変更されると、ビルドシステムは CMake を再実行してファイルを再構成し、ビルドシステムを再度生成します。
-ここで生成されたファイルは、その内容が変更された場合にだけ更新されます。
+ここで作成されたファイルは、その内容が変更された場合にだけ更新されます。
 
 このコマンドに指定できるオプションは次のとおりです：
 
@@ -130,7 +130,7 @@ configure_file
   #cmakedefine FOO_ENABLE
   #cmakedefine FOO_STRING "@FOO_STRING@"
 
-``CMakeLists.txt`` では ``configure_file`` コマンドを使ってヘッダ・ファイルを生成します：
+``CMakeLists.txt`` では ``configure_file`` コマンドを使ってヘッダ・ファイルを作成します：
 
 .. code-block:: cmake
 

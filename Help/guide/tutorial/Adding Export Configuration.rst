@@ -16,7 +16,7 @@
   :language: cmake
   :start-after: # install libs
 
-ここで ``MathFunctions`` ライブラリをエキスポートして生成された ``MathFunctionsTargets.cmake`` という CMake ファイルを明示的にインストールする必要があります。
+ここで ``MathFunctions`` ライブラリをエキスポートして作成された ``MathFunctionsTargets.cmake`` という CMake ファイルを明示的にインストールする必要があります。
 これはプロジェクト最上位にある ``CMakeLists.txt`` の最後に次のコマンドを追加することで実現できます：
 
 .. literalinclude:: Complete/CMakeLists.txt
@@ -51,7 +51,7 @@
 
 これを変更したら、もう一度 CMake を実行して、エラーが表示されなくなったことを確認して下さい。
 
-この時点で、CMake はインストールするファイルの情報を正しくエキスポートするようになりますが、他のプロジェクトからそれらを :command:`find_package` コマンドで見つけられるようにするために、依然として ``MathFunctionsConfig.cmake`` の生成が必要です。
+この時点で、CMake はインストールするファイルの情報を正しくエキスポートするようになりますが、他のプロジェクトからそれらを :command:`find_package` コマンドで見つけられるようにするために、依然として ``MathFunctionsConfig.cmake`` の作成が必要です。
 それではプロジェクト最上位に、次の内容を含む ``Config.cmake.in`` という新しいファイルを追加してみて下さい：
 
 .. literalinclude:: Step12/Config.cmake.in
@@ -92,7 +92,7 @@
   :start-after: # generate the version file
   :end-before: # install the generated configuration files
 
-最後に、生成された両方のファイルがインストールされるように設定します：
+最後に、作成された両方のファイルがインストールされるように設定します：
 
 .. literalinclude:: Step12/CMakeLists.txt
   :caption: CMakeLists.txt
@@ -111,7 +111,7 @@
   :start-after: # needs to be after the install(TARGETS) command
 
 
-:command:`export` コマンド呼び出しで ``MathFunctionsTargets.cmake`` が生成され、ビルド・ディレクトリにある構成済みの ``MathFunctionsConfig.cmake`` ファイルをインストールすることなしに、他のプロジェクトで利用できるようになります。
+:command:`export` コマンド呼び出しで ``MathFunctionsTargets.cmake`` が作成され、ビルド・ディレクトリにある構成済みの ``MathFunctionsConfig.cmake`` ファイルをインストールすることなしに、他のプロジェクトで利用できるようになります。
 
 .. rubric:: 日本語訳注記
 
