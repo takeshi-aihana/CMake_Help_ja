@@ -853,16 +853,14 @@ file
   file(DOWNLOAD <url> [<file>] [<options>...])
   file(UPLOAD <file> <url> [<options>...])
 
-  The ``DOWNLOAD`` subcommand downloads the given ``<url>`` to a local
-  ``<file>``.  The ``UPLOAD`` mode uploads a local ``<file>`` to a given
-  ``<url>``.
+  ``DOWNLOAD`` サブコマンドは、指定した ``<url>`` をローカルの ``<file>`` にダウンロードします。
+  ``UPLOAD`` サブコマンドは、ローカルの ``<file>`` を指定した ``<url>`` へアップロードします。
 
   .. versionadded:: 3.19
-    If ``<file>`` is not specified for ``file(DOWNLOAD)``, the file is not
-    saved. This can be useful if you want to know if a file can be downloaded
-    (for example, to check that it exists) without actually saving it anywhere.
+    ``file(DOWNLOAD)`` で ``<file>`` が指定されなかったら、ダウロードしてもローカルには保存しないようになった。
+    これは、ファイルを保存すること無く、単にダウンロードできるかどうか知りたい場合（たとえば、``<url>`` が存在しているかどうかを確認する場合）に便利である。
 
-  Options to both ``DOWNLOAD`` and ``UPLOAD`` are:
+  両サブコマンドで指定できるオプションは次のとおりです：
 
     ``INACTIVITY_TIMEOUT <seconds>``
       Terminate the operation after a period of inactivity.
@@ -871,14 +869,12 @@ file
       Store a human-readable log of the operation in a variable.
 
     ``SHOW_PROGRESS``
-      Print progress information as status messages until the operation is
-      complete.
+      Print progress information as status messages until the operation is complete.
 
     ``STATUS <variable>``
       Store the resulting status of the operation in a variable.
       The status is a ``;`` separated list of length 2.
-      The first element is the numeric return value for the operation,
-      and the second element is a string value for the error.
+      The first element is the numeric return value for the operation, and the second element is a string value for the error.
       A ``0`` numeric error means no error in the operation.
 
     ``TIMEOUT <seconds>``
@@ -892,8 +888,7 @@ file
     ``HTTPHEADER <HTTP-header>``
       .. versionadded:: 3.7
 
-      HTTP header for ``DOWNLOAD`` and ``UPLOAD`` operations. ``HTTPHEADER``
-      can be repeated for multiple options:
+      HTTP header for ``DOWNLOAD`` and ``UPLOAD`` operations. ``HTTPHEADER`` can be repeated for multiple options:
 
       .. code-block:: cmake
 
@@ -904,9 +899,8 @@ file
     ``NETRC <level>``
       .. versionadded:: 3.11
 
-      Specify whether the .netrc file is to be used for operation.  If this
-      option is not specified, the value of the :variable:`CMAKE_NETRC`
-      variable will be used instead.
+      Specify whether the .netrc file is to be used for operation.
+      If this option is not specified, the value of the :variable:`CMAKE_NETRC` variable will be used instead.
 
       Valid levels are:
 
@@ -916,8 +910,7 @@ file
 
         ``OPTIONAL``
           The .netrc file is optional, and information in the URL is preferred.
-          The file will be scanned to find which ever information is not
-          specified in the URL.
+          The file will be scanned to find which ever information is not specified in the URL.
 
         ``REQUIRED``
           The .netrc file is required, and information in the URL is ignored.
@@ -925,58 +918,51 @@ file
     ``NETRC_FILE <file>``
       .. versionadded:: 3.11
 
-      Specify an alternative .netrc file to the one in your home directory,
-      if the ``NETRC`` level is ``OPTIONAL`` or ``REQUIRED``. If this option
-      is not specified, the value of the :variable:`CMAKE_NETRC_FILE` variable
-      will be used instead.
+      Specify an alternative .netrc file to the one in your home directory, if the ``NETRC`` level is ``OPTIONAL`` or ``REQUIRED``.
+      If this option is not specified, the value of the :variable:`CMAKE_NETRC_FILE` variable will be used instead.
 
     ``TLS_VERIFY <ON|OFF>``
       Specify whether to verify the server certificate for ``https://`` URLs.
-      The default is to *not* verify. If this option is not specified, the
-      value of the :variable:`CMAKE_TLS_VERIFY` variable will be used instead.
+      The default is to *not* verify. If this option is not specified, the value of the :variable:`CMAKE_TLS_VERIFY` variable will be used instead.
 
       .. versionadded:: 3.18
         Added support to ``file(UPLOAD)``.
 
     ``TLS_CAINFO <file>``
       Specify a custom Certificate Authority file for ``https://`` URLs.
-      If this option is not specified, the value of the
-      :variable:`CMAKE_TLS_CAINFO` variable will be used instead.
+      If this option is not specified, the value of the :variable:`CMAKE_TLS_CAINFO` variable will be used instead.
 
       .. versionadded:: 3.18
         Added support to ``file(UPLOAD)``.
 
-  For ``https://`` URLs CMake must be built with OpenSSL support.  ``TLS/SSL``
-  certificates are not checked by default.  Set ``TLS_VERIFY`` to ``ON`` to
-  check certificates.
+  For ``https://`` URLs CMake must be built with OpenSSL support.
+  ``TLS/SSL`` certificates are not checked by default.
+  Set ``TLS_VERIFY`` to ``ON`` to check certificates.
 
   Additional options to ``DOWNLOAD`` are:
 
     ``EXPECTED_HASH <algorithm>=<value>``
-      Verify that the downloaded content hash matches the expected value, where
-      ``<algorithm>`` is one of the algorithms supported by :cref:`<HASH>`.
+      Verify that the downloaded content hash matches the expected value, where ``<algorithm>`` is one of the algorithms supported by :cref:`<HASH>`.
       If the file already exists and matches the hash, the download is skipped.
-      If the file already exists and does not match the hash, the file is
-      downloaded again. If after download the file does not match the hash, the
-      operation fails with an error. It is an error to specify this option if
-      ``DOWNLOAD`` is not given a ``<file>``.
+      If the file already exists and does not match the hash, the file is downloaded again.
+      If after download the file does not match the hash, the operation fails with an error.
+      It is an error to specify this option if ``DOWNLOAD`` is not given a ``<file>``.
 
     ``EXPECTED_MD5 <value>``
-      Historical short-hand for ``EXPECTED_HASH MD5=<value>``. It is an error
-      to specify this if ``DOWNLOAD`` is not given a ``<file>``.
+      Historical short-hand for ``EXPECTED_HASH MD5=<value>``.
+      It is an error to specify this if ``DOWNLOAD`` is not given a ``<file>``.
 
     ``RANGE_START <value>``
       .. versionadded:: 3.24
 
-      Offset of the start of the range in file in bytes. Could be omitted to
-      download up to the specified ``RANGE_END``.
+      Offset of the start of the range in file in bytes.
+      Could be omitted to download up to the specified ``RANGE_END``.
 
     ``RANGE_END <value>``
       .. versionadded:: 3.24
 
-      Offset of the end of the range in file in bytes. Could be omitted to
-      download everything from the specified ``RANGE_START`` to the end of
-      file.
+      Offset of the end of the range in file in bytes.
+      Could be omitted to download everything from the specified ``RANGE_START`` to the end of file.
 
 ファイルをロックする
 ^^^^^^^^^^^^^^^^^^^^
