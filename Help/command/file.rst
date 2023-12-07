@@ -190,7 +190,7 @@ file
     ``EXECUTABLES <executable_files>``
       依存関係を調べる実行形式のファイル名を :ref:`リスト <CMake Language Lists>` 形式で指定する。
       このリストは、通常は :command:`add_executable` コマンドで生成するものであるが、必ずしも CMake に作成させる必要はない。
-      ターゲットが Apple 系のプラットフォームの場合、ライブラリの依存関係を再帰的に解決する時に、このリストを使って ``@executable_path`` の値を決定する。
+      ホストが Apple 系のプラットフォームの場合、ライブラリの依存関係を再帰的に解決する時に、このリストを使って ``@executable_path`` の値を決定する。
       このリストにライブラリ（``STATIC``、``MODULE``、または ``SHARED``）を指定した場合の結果は未定義である。
 
     ``LIBRARIES <library_files>``
@@ -206,16 +206,16 @@ file
 
     ``DIRECTORIES <directories>``
       依存関係を調べる際の追加ディレクトリを :ref:`リスト <CMake Language Lists>` 形式で指定する。
-      ターゲットが Linux 系のプラットフォームの場合、標準の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する。
+      ホストが Linux 系のプラットフォームの場合、標準の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する。
       この追加ディレクトリから依存関係が見つからなかったら警告を発行する。これは、依存関係を調べるファイルのリンクが不完全なものであると判断するため（依存関係を含む全てのパスがリストされていない）。
-      ターゲットが Windows 系のプラットフォームの場合、他の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する（ただし、他の検索パスは Windows の依存関係の解決で基本となるディレクトリなので、見つからなくても警告は発行しない）。
-      ターゲットが Apple 系のプラットフォームの場合、この引数は無視される。
+      ホストが Windows 系のプラットフォームの場合、他の検索パスから依存関係が見つからなかった場合に、これらのディレクトリを追加で検索する（ただし、他の検索パスは Windows の依存関係の解決で基本となるディレクトリなので、見つからなくても警告は発行しない）。
+      ホストが Apple 系のプラットフォームの場合、この引数は無視される。
 
     ``BUNDLE_EXECUTABLE <bundle_executable_file>``
       依存関係を解決する際に「バンドル実行形式（*Bundle Executable*） [#hint_for_framework_and_bundle_of_ios]_ 」として扱う実行形式を指定する。
-      ターゲットが Apple 系プラットフォームの場合、 ``LIBRARIES`` と ``MODULES`` 型のファイルの依存関係を再帰的に解決する際に ``@executable_path`` を決定する。
+      ホストが Apple 系プラットフォームの場合、 ``LIBRARIES`` と ``MODULES`` 型のファイルの依存関係を再帰的に解決する際に ``@executable_path`` を決定する。
       この引数は ``EXECUTABLES`` 型のファイルの場合は何もしない。
-      ターゲットがそれ以外のプラットフォームの場合、この引数は何もしない。
+      ホストがそれ以外のプラットフォームの場合、この引数は何もしない。
       この引数は、通常は（ただし常にではないが） ``EXECUTABLES`` にリストされた実行形式のいずれかになる（パッケージの "main" 実行部）。
 
   次の引数で、任意のライブラリを依存関係の調査対象に含めるか含めないかを表すフィルタを指定できます。
@@ -265,7 +265,7 @@ file
   この依存関係を解決するステップには、プラットフォームごとに異なる処理があります。
   ここでは、その詳細について説明します。
 
-  ターゲットが Linux 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
+  ホストが Linux 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
   1. 依存元のファイルに ``RUNPATH`` のエントリが無く、依存先のライブラリが ``RPATH`` のいずれかのディレクトリか、またはその親ディレクトリの順で存在する場合、その依存関係（ライブラリ）は解決されたものとする。
   2. それ以外で、依存元のファイルに ``RUNPATH`` のエントリが有り、依存先のライブラリがそのエントリのいずれかに存在している場合、その依存関係（ライブラリ）は解決されたものとする。
@@ -274,7 +274,7 @@ file
      この場合は警告が発行される（``DIRECTORIES`` のエントリのいずれかでライブラリが見つかったということは、依存元のファイルが不完全であることを意味するため）。
   5. それ以外は、依存関係は未解決であるとする。
 
-  ターゲットが Windows 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
+  ホストが Windows 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
   1. DLL dependency names are converted to lowercase for matching filters.
      Windows DLL names are case-insensitive, and some linkers mangle the case of the DLL dependency names.
@@ -324,7 +324,7 @@ file
 
   6. Otherwise, the dependency is unresolved.
 
-  ターゲットが Apple 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
+  ホストが Apple 系プラットフォームの場合、依存関係（ライブラリ）の解決は次のように処理します：
 
   1. If the dependency starts with ``@executable_path/``, and an
      ``EXECUTABLES`` argument is in the process of being resolved, and
@@ -504,7 +504,7 @@ file
 
   .. versionadded:: 3.18
 
-  ``CONTENT`` オプションで指定した入力データから出力ファイルを作成します。その際は、入力データに含まれている ``@VAR@`` や ``${VAR}`` で参照される変数の値を置き換えます。
+  ``CONTENT`` オプションで指定した入力データ ``<content>`` から出力ファイルを作成します。その際は、``<content>`` に含まれている ``@VAR@`` や ``${VAR}`` で参照される変数の値を置き換えます。
   この置き換えは :command:`configure_file` コマンドが採用しているルールに従います。
   :command:`configure_file` コマンドに準拠させているため、``OUTPUT`` と ``CONTENT`` オプションではジェネレータ式をサポートしていないので注意して下さい。
 
@@ -541,14 +541,14 @@ file
        [LIST_DIRECTORIES true|false] [RELATIVE <path>] [CONFIGURE_DEPENDS]
        [<globbing-expressions>...])
 
-  指定した ``<globbing-expressions>`` にマッチするファイルのリストを生成し、そのリストを ``<variable>`` に格納します。
+  指定した ``<globbing-expressions>`` （グロブ式）にマッチするファイルのリストを生成し、そのリストを ``<variable>`` に格納します。
   この ``<globbing-expressions>`` は正規表現に似ていますが、より単純です。
   ``RELATIVE`` オプションを指定すると、生成したファイルのパスは ``<path>`` をベース・ディレクトリとした相対パスに変換されます。
 
   .. versionchanged:: 3.6
     生成したファイルのパスはアルファベット順にリストに格納されるようになった。
 
-  ターゲットが Windows や macOS 系のプラットフォームの場合、それぞれのファイルシステムがファイル名の大文字と小文字を区別できるとしても、このコマンドは区別しません（コマンドを実行する前にファイル名と ```<globbing-expression>`` の両方を全て小文字に変換します）。
+  ホストが Windows や macOS 系のプラットフォームの場合、それぞれのファイルシステムがファイル名の大文字と小文字を区別できるとしても、このコマンドは無視します（つまり、コマンドを実行する前にファイル名と ``<globbing-expression>`` の両方を全て小文字に変換します）。
   それ以外のターゲットでは大文字と小文字を区別します。
 
   .. versionadded:: 3.3
@@ -560,10 +560,10 @@ file
     再実行した結果、リストの内容が更新されたら、ビルドシステムを再生成する。
 
   .. note::
-    この ``GLOB`` サブコマンドを使ってソースツリーからソース・ファイルのリストを得ることは推奨しません。
-    このサブコマンドを使ってソース・ファイルを追加したり削除したとしても、``CMakeLists.txt`` 自身は変更されないため、一度生成されたビルドシステムは、いつビルドシステムの再生性を CMake に要求すべきか判断できないからです。
+    この ``GLOB`` サブコマンドを使ってソースツリーから入力ファイルのリストを得ることは推奨しません。
+    このサブコマンドを使ってソース・ファイルを追加したり削除したとしても、``CMakeLists.txt`` 自身は変更されないため、一度生成されたビルドシステムは、いつビルドシステムの再生成を CMake に要求すべきか判断できないからです。
     また ``CONFIGURE_DEPENDS`` オプションは全てのジェネレータ上で動作するとは限らず、将来、そのオプションをサポートしない新しいジェネレータが追加された場合、このコマンドを使うプロジェクトは互換性を維持できなくなります。
-    仮に ``CONFIGURE_DEPENDS`` オプションが確実に動いたとしても、依然としてビルドシステムを再生成するたびにチェックを実行するというコストがつきまといます。
+    仮に ``CONFIGURE_DEPENDS`` オプションが確実に動作したとしても、依然として、ビルドシステムを再生成するたびにファイルシステムを走査するというコストがつきまといます。
 
   ``<globbing-expressions>`` の例：
 
@@ -573,56 +573,57 @@ file
   ``f[3-5].txt`` ``f3.txt`` または ``f4.txt`` または ``f5.txt`` にマッチする
   ============== =================================================================
 
-  The ``GLOB_RECURSE`` mode will traverse all the subdirectories of the matched directory and match the files.
-  Subdirectories that are symlinks are only traversed if ``FOLLOW_SYMLINKS`` is given or policy :policy:`CMP0009` is not set to ``NEW``.
+  ``GLOB_RECURSE`` サブコマンドは、``<globbing-expression>`` にマッチするディレクトリ下の全てのサブディレクトリを走査してマッチするものをチェックします。
+  サブディレクトリがシンボリックリンクの場合、``FOLLOW_SYMLINKS`` オプションを指定するか、:policy:`CMP0009` ポリシーが ``OLD``  の場合にだけチェックします。
 
   .. versionadded:: 3.3
-    By default ``GLOB_RECURSE`` omits directories from result list. Setting ``LIST_DIRECTORIES`` to true adds directories to result list.
-    If ``FOLLOW_SYMLINKS`` is given or policy :policy:`CMP0009` is not set to ``NEW`` then ``LIST_DIRECTORIES`` treats symlinks as directories.
+    デフォルトで、``GLOB_RECURSE`` サブコマンドはリストにはディレクトリを含めないようになった。
+    ただし ``LIST_DIRECTORIES`` オプションを ``TRUE`` にした場合は除く。
+    ``FOLLOW_SYMLINKS`` オプションを指定するか、または :policy:`CMP0009` ポリシーを ``OLD`` にすると、``GLOB_RECURSE`` サブコマンド [#maybe_misprint_LIST_DIRECTORIES]_ はシンボリックをディレクトリとして扱う。
 
-  Examples of recursive globbing include:
+  再帰的な ``<globbing-expressions>`` の例：
 
-  ============== ======================================================
-  ``/dir/*.py``  match all python files in ``/dir`` and subdirectories
-  ============== ======================================================
+  ============== =========================================================================
+  ``/dir/*.py``  ``/dir`` とそのサブディレクトリ下にある全ての python ファイルにマッチする
+  ============== =========================================================================
 
 .. signature::
   file(MAKE_DIRECTORY [<directories>...])
 
-  Create the given directories and their parents as needed.
+  指定した ``<directories>`` と、必要に応じて、その親ディレクトリを作成します。
 
 .. signature::
   file(REMOVE [<files>...])
   file(REMOVE_RECURSE [<files>...])
 
-  Remove the given files.
-  The ``REMOVE_RECURSE`` mode will remove the given files and directories, including non-empty directories.
-  No error is emitted if a given file does not exist.
-  Relative input paths are evaluated with respect to the current source directory.
+  指定した ``<files>`` をファイルシステムから削除します。
+  ``REMOVE_RECURSE`` サブコマンドは、指定した ``<files>`` とそのサブディレクトリ（空ではないディレクトリを含む）を削除します。
+  指定したファイルが存在していなくても、エラーを発行しません。
+  相対パスの場合は、現在のソース・ディレクトリをベース・ディレクトリとして評価します。
 
   .. versionchanged:: 3.15
-    Empty input paths are ignored with a warning.
-    Previous versions of CMake interpreted empty strings as a relative path with respect to the current directory and removed its contents.
+    ``<files>`` の中に空文字のパスが含まれている場合は無視するが、警告を発行するようになった。
+    以前のバージョンでは、空の文字列を現在のディレクトリであり、ベース・ディレクトリであるとして、そこからの相対バスとして該当するファイルを削除していた。
 
 .. signature::
   file(RENAME <oldname> <newname> [RESULT <result>] [NO_REPLACE])
 
-  Move a file or directory within a filesystem from ``<oldname>`` to ``<newname>``, replacing the destination atomically.
+  ファイルシステム上のファイルまたはディレクトリを ``<oldname>`` から ``<newname>`` へ移動します（移送先をアトミックに置き換えます）。
 
-  The options are:
+  指定できるオプションは次のとおりです:
 
     ``RESULT <result>``
       .. versionadded:: 3.21
 
-      Set ``<result>`` variable to ``0`` on success or an error message otherwise.
-      If ``RESULT`` is not specified and the operation fails, an error is emitted.
+      この操作が成功したら ``<result>`` という変数に ``0`` をセットし、それ以外はエラーメッセージをセットする。
+      この ``RESULT`` オプションを指定しない場合に操作が失敗したら、エラーを発行する。
 
     ``NO_REPLACE``
       .. versionadded:: 3.21
 
-      If the ``<newname>`` path already exists, do not replace it.
-      If ``RESULT <result>`` is used, the result variable will be set to ``NO_REPLACE``.
-      Otherwise, an error is emitted.
+      ``<newname>`` が既に存在している場合は置き換えない。
+      その際に ``RESULT <result>`` オプションを指定していたら、``<result>`` 変数には ``NO_REPLACE`` をセットする。
+      それ以外は、エラーを発行する。
 
 .. signature::
   file(COPY_FILE <oldname> <newname>
@@ -632,22 +633,24 @@ file
 
   .. versionadded:: 3.21
 
-  Copy a file from ``<oldname>`` to ``<newname>``. Directories are not supported. Symlinks are ignored and ``<oldfile>``'s content is read and written to ``<newname>`` as a new file.
+  ファイルシステム上のファイルを ``<oldname>`` から ``<newname>`` にコピーします。
+  ディレクトリのコピーはサポートしていません。
+  シンボリックリンクは無視し、そのリンクが指す ``<oldfile>`` の内容を ``<newname>`` という新しいファイルを作成して書き込みます。
 
-  The options are:
+  指定できるオプションは次のとおりです:
 
     ``RESULT <result>``
-      Set ``<result>`` variable to ``0`` on success or an error message otherwise.
-      If ``RESULT`` is not specified and the operation fails, an error is emitted.
+      この操作が成功したら ``<result>`` という変数に ``0`` をセットし、それ以外はエラーメッセージをセットする。
+      この ``RESULT`` オプションを指定しない場合に操作が失敗したら、エラーを発行する。
 
     ``ONLY_IF_DIFFERENT``
-      If the ``<newname>`` path already exists, do not replace it if the file's contents are already the same as ``<oldname>`` (this avoids updating  ``<newname>``'s timestamp).
+      ``<newname>`` が既に存在し、その内容が ``<oldname>`` の内容と同じ場合は置き換えない（これにより ``<newname>`` のタイムスタンプが更新されずに済む）
 
     ``INPUT_MAY_BE_RECENT``
       .. versionadded:: 3.26
 
-      Tell CMake that the input file may have been recently created.
-      This is meaningful only on Windows, where files may be inaccessible for a short time after they are created.
+      入力ファイルが最近作成された旨を CMake に知らせる。
+      これは、ホストが Windows 系プラットフォームThis is meaningful only on Windows, where files may be inaccessible for a short time after they are created.
       With this option, if permission is denied, CMake will retry reading the input a few times.
 
   This sub-command has some similarities to :command:`configure_file` with the ``COPYONLY`` option.
@@ -1131,3 +1134,4 @@ Archiving
 
 .. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
 .. [#content_of_file] ファイルの「内容」に相当するもの。「データ」はファイルに書き込まれてファイルの「内容」になり、ファイルから読み込んだ内容が「データ」になる。
+.. [#maybe_misprint_LIST_DIRECTORIES] おそらく原文の ``LIST_DIRECTORIES treats symlinks ...`` は ``GLOB_RECURSE treats symlinks ...`` の誤植。
