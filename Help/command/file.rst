@@ -840,7 +840,7 @@ file
 
   ``TO_CMAKE_PATH`` サブコマンドは、ホストにネィティブな ``<path>`` をスラッシュ（"``/``"）を使った CMake スタイルのパスに変換します。
   ``<path>`` には単一のパス、または ``$ENV{PATH}`` のような環境変数の検索パスを渡すことができます。
-  この検索パスはセミコロン文字（"``;``"）で区切られた CMake スタイルのパスを要素とするリストに変換されます。
+  この検索パスは、セミコロン文字（"``;``"）で区切られた CMake スタイルのパスを要素とするリストに変換されます。
 
   ``TO_NATIVE_PATH`` サブコマンドは、CMake スタイルの ``<path>`` をホストのプラットフォーム固有のスラッシュ（Windows 系のプラットフォームの場合は ``\``、それ以外のプラットフォームは ``/``）を含んだネィティブなパスに変換します。
 
@@ -863,32 +863,31 @@ file
   両サブコマンドで指定できるオプションは次のとおりです：
 
     ``INACTIVITY_TIMEOUT <seconds>``
-      Terminate the operation after a period of inactivity.
+      アクティビティがない状態が一定時間（``<seconds>``）続いたあとに操作を終了する。
 
     ``LOG <variable>``
-      Store a human-readable log of the operation in a variable.
+      操作中のログを ``<variable>`` に格納する。
 
     ``SHOW_PROGRESS``
-      Print progress information as status messages until the operation is complete.
+      操作が完了するまで、進行状況をステータス・メッセージに出力する。
 
     ``STATUS <variable>``
-      Store the resulting status of the operation in a variable.
-      The status is a ``;`` separated list of length 2.
-      The first element is the numeric return value for the operation, and the second element is a string value for the error.
-      A ``0`` numeric error means no error in the operation.
+      操作の終了ステータスを ``<variable>`` に格納する。
+      このステータスは ``;`` で区切ったリスト（サイズは 2）で、最初の要素は終了ステータス（数値）で、二番目の要素はエラーメッセージ（文字列）である。
+      終了ステータスが ``0`` の場合はエラーは無いことを示す。
 
     ``TIMEOUT <seconds>``
-      Terminate the operation after a given total time has elapsed.
+      操作を開始してから指定した ``<seconds>`` 時間が経過したら操作を終了する。
 
     ``USERPWD <username>:<password>``
       .. versionadded:: 3.7
 
-      Set username and password for operation.
+      操作で使用するユーザ名とパスワードを設定する。
 
     ``HTTPHEADER <HTTP-header>``
       .. versionadded:: 3.7
 
-      HTTP header for ``DOWNLOAD`` and ``UPLOAD`` operations. ``HTTPHEADER`` can be repeated for multiple options:
+      各操作で使用する HTTP ヘッダを設定する。この ``HTTPHEADER`` オプションは繰り返し指定できる。たとえば：
 
       .. code-block:: cmake
 
@@ -899,70 +898,71 @@ file
     ``NETRC <level>``
       .. versionadded:: 3.11
 
-      Specify whether the .netrc file is to be used for operation.
-      If this option is not specified, the value of the :variable:`CMAKE_NETRC` variable will be used instead.
+      ``.netrc`` ファイルを使用するかどうかを指定する。
+      このオプションを指定しない場合は、代わりに CMake 変数の :variable:`CMAKE_NETRC` の値を使用する。
 
-      Valid levels are:
+      有効な ``<level>`` の値は次の通り：
 
         ``IGNORED``
-          The .netrc file is ignored.
-          This is the default.
+          ``.netrc`` ファイルを無視する。
+          これがデフォルトの値。
 
         ``OPTIONAL``
-          The .netrc file is optional, and information in the URL is preferred.
-          The file will be scanned to find which ever information is not specified in the URL.
+          ``.netrc`` ファイルがオプションで、``<url>`` 内の情報を優先する。 
+          ``<url>`` の中で指定されていない情報があれば、 ``.netfc`` ファイルを読み込む。
 
         ``REQUIRED``
-          The .netrc file is required, and information in the URL is ignored.
+          ``.netrc`` ファイルの情報を優先し、``<url>`` の中の情報を無視する。
 
     ``NETRC_FILE <file>``
       .. versionadded:: 3.11
 
-      Specify an alternative .netrc file to the one in your home directory, if the ``NETRC`` level is ``OPTIONAL`` or ``REQUIRED``.
-      If this option is not specified, the value of the :variable:`CMAKE_NETRC_FILE` variable will be used instead.
+      ``NETRC`` オプションに ``OPTIONAL`` またはr ``REQUIRED`` を指定した場合、ホーム・ディレクトリにある ``.netrc`` ファイルの代わり使う ``<file>`` を指定する。
+      このオプションを指定しない場合、 代わりに CMake 変数の :variable:`CMAKE_NETRC_FILE` に指定したファイルを使用する。
 
     ``TLS_VERIFY <ON|OFF>``
-      Specify whether to verify the server certificate for ``https://`` URLs.
-      The default is to *not* verify. If this option is not specified, the value of the :variable:`CMAKE_TLS_VERIFY` variable will be used instead.
+      ``https://`` 系の URL で使うサーバ証明書を検証するかどうかを指定する。
+      「*検証しない*」がデフォルト。
+      このオプションを指定しない場合、 代わりに CMake 変数の :variable:`CMAKE_TLS_VERIFY` に指定した値を使用する。
 
       .. versionadded:: 3.18
-        Added support to ``file(UPLOAD)``.
+        ``file(UPLOAD)`` に対するサポートを追加した。
 
     ``TLS_CAINFO <file>``
-      Specify a custom Certificate Authority file for ``https://`` URLs.
-      If this option is not specified, the value of the :variable:`CMAKE_TLS_CAINFO` variable will be used instead.
+      ``https://`` 系の URL で使う独自の認証局ファイルを指定する。
+      このオプションを指定しない場合、 代わりに CMake 変数の :variable:`CMAKE_TLS_CAINFO` に指定した値を使用する。
 
       .. versionadded:: 3.18
-        Added support to ``file(UPLOAD)``.
+        ``file(UPLOAD)`` に対するサポートを追加した。
 
-  For ``https://`` URLs CMake must be built with OpenSSL support.
-  ``TLS/SSL`` certificates are not checked by default.
-  Set ``TLS_VERIFY`` to ``ON`` to check certificates.
+  ``https://`` 系の URL を使う場合、CMake は OpenSSL サポート付きでビルドする必要があります。
+  ``TLS/SSL`` の証明書は、デフォルトではチェックしません。
+  ``TLS_VERIFY`` オプションを ``ON`` にすると証明書をチェックします。
 
-  Additional options to ``DOWNLOAD`` are:
+  ``DOWNLOAD`` サブコマンド向けの追加のオプションは次のとおりです：
 
     ``EXPECTED_HASH <algorithm>=<value>``
-      Verify that the downloaded content hash matches the expected value, where ``<algorithm>`` is one of the algorithms supported by :cref:`<HASH>`.
-      If the file already exists and matches the hash, the download is skipped.
-      If the file already exists and does not match the hash, the file is downloaded again.
-      If after download the file does not match the hash, the operation fails with an error.
-      It is an error to specify this option if ``DOWNLOAD`` is not given a ``<file>``.
+      ダウンロードしたファイルのハッシュ値が期待値 ``<value>`` と合致するか検証する（``<algorithm>`` には :cref:`<HASH>` でサポートしているアルゴリズムの一つを指定する）。
+      ダウンロードする前に既にファイルが存在し、そのハッシュ値が合致する場合は、ダウンロードをスキップする。
+      ダウンロードする前に既にファイルが存在し、そのハッシュ値が合致しない場合は、もう一度ダウンロードする。
+      ダウンロードしたファイルのハッシュ値が合致しない場合、``DOWNLOAD`` コマンドの操作はエラーになる。
+      この ``DOWNLOAD`` サブコマンドに ``<file>`` を指定していない場合はエラーを発行する。
 
     ``EXPECTED_MD5 <value>``
-      Historical short-hand for ``EXPECTED_HASH MD5=<value>``.
-      It is an error to specify this if ``DOWNLOAD`` is not given a ``<file>``.
+      ``EXPECTED_HASH MD5=<value>`` オプションの短縮形。
+      この ``DOWNLOAD`` サブコマンドに ``<file>`` を指定していない場合はエラーを発行する。
 
     ``RANGE_START <value>``
       .. versionadded:: 3.24
 
-      Offset of the start of the range in file in bytes.
-      Could be omitted to download up to the specified ``RANGE_END``.
+      ダウンロードする範囲の開始オフセットをバイト単位で指定する。
+      ファイルの先頭から ``RANGE_END`` までダウンロードする場合は省略できる。
 
     ``RANGE_END <value>``
       .. versionadded:: 3.24
 
-      Offset of the end of the range in file in bytes.
-      Could be omitted to download everything from the specified ``RANGE_START`` to the end of file.
+      ダウンロードする範囲の終端オフセットをバイト単位で指定する。
+      ``RANGE_START`` からファイルの終端までダウンロードする場合は省略できる。
 
 ファイルをロックする
 ^^^^^^^^^^^^^^^^^^^^
