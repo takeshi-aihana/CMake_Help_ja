@@ -54,7 +54,7 @@ file
   `ファイルをロックする`_
     file(`LOCK`_ <path> [...])
 
-  `アーカイブを作成する`_
+  `アーカイブを扱う`_
     file(`ARCHIVE_CREATE`_ OUTPUT <archive> PATHS <paths>... [...])
     file(`ARCHIVE_EXTRACT`_ INPUT <archive> [...])
 
@@ -994,8 +994,8 @@ file
   指定した ``<path>`` に含まれるディレクトリやファイルが存在していなければ作成します。
   ``RELEASE`` オプションを指定すると、``GUARD`` と ``TIMEOUT`` オプションは無視されます。
 
-アーカイブを作成する
-^^^^^^^^^^^^^^^^^^^^
+アーカイブを扱う
+^^^^^^^^^^^^^^^^
 
 .. signature::
   file(ARCHIVE_CREATE OUTPUT <archive>
@@ -1010,38 +1010,32 @@ file
 
   .. versionadded:: 3.18
 
-  Creates the specified ``<archive>`` file with the files and directories
-  listed in ``<paths>``.  Note that ``<paths>`` must list actual files or
-  directories; wildcards are not supported.
+  ``<paths>`` にリストされているファイルとディレクトリを使って ``<archive>`` を作成します。
+  ``<paths>`` には存在するファイルまたはディレクトリを指定して下さい。ワイルドカードはサポートしていません。
 
-  Use the ``FORMAT`` option to specify the archive format.  Supported values
-  for ``<format>`` are ``7zip``, ``gnutar``, ``pax``, ``paxr``, ``raw`` and
-  ``zip``.  If ``FORMAT`` is not given, the default format is ``paxr``.
+  ``FORMAT <format>`` オプションでアーカイブの種類を指定します。
+  ``<format>`` に指定できるアーカイブの種類は ``7zip``、``gnutar``、``pax``、``paxr``、``raw``、そして ``zip`` です。
+  ``FORMAT`` オプションを指定しない場合は、デフォルトは ``paxr`` です。
 
-  Some archive formats allow the type of compression to be specified.
-  The ``7zip`` and ``zip`` archive formats already imply a specific type of
-  compression.  The other formats use no compression by default, but can be
-  directed to do so with the ``COMPRESSION`` option.  Valid values for
-  ``<compression>`` are ``None``, ``BZip2``, ``GZip``, ``XZ``, and ``Zstd``.
+  一部のアーカイブは圧縮の種類を指定できます。
+  ``7zip`` と ``zip`` のアーカイブは圧縮も含まれています。
+  それ以外はデフォルトで圧縮は行いませんが、``COMPRESSION <compression>`` オプションを使用して圧縮するよう指示できます。
+  ``<compression>`` に指定できる圧縮の種類は ``None``、``BZip2``、``GZip``、``XZ``、そして ``Zstd`` です。
 
   .. versionadded:: 3.19
-    The compression level can be specified with the ``COMPRESSION_LEVEL``
-    option.  The ``<compression-level>`` should be between 0-9, with the
-    default being 0.  The ``COMPRESSION`` option must be present when
-    ``COMPRESSION_LEVEL`` is given.
+    圧縮レベルを ``COMPRESSION_LEVEL``  オプションで指定できるようになった。
+    ``<compression-level>`` に指定できる値は0〜9の範囲（デフォルトは 0）である。
+    ``COMPRESSION_LEVEL`` オプションを指定する場合は ``COMPRESSION`` オプションが必須である。
 
   .. versionadded:: 3.26
-    The ``<compression-level>`` of the ``Zstd`` algorithm can be set
-    between 0-19.
+    ``Zstd`` アルゴリズムの ``<compression-level>`` が0〜19の範囲で指定できるようになった。
 
   .. note::
-    With ``FORMAT`` set to ``raw``, only one file will be compressed with the
-    compression type specified by ``COMPRESSION``.
+    ``FORMAT`` に ``raw`` を指定した場合は、``COMPRESSION`` オプションで指定した圧縮タイプで1個だけファイルを圧縮します。
 
-  The ``VERBOSE`` option enables verbose output for the archive operation.
+  ``VERBOSE`` オプションを指定すると、アーカイブ操作の冗長なログ出力が有効になります。
 
-  To specify the modification time recorded in tarball entries, use
-  the ``MTIME`` option.
+  ``MTIME`` オプションを使って、アーカイブしたファイルのタイムスタンプ（変更日時）を指定できます。
 
 .. signature::
   file(ARCHIVE_EXTRACT
@@ -1055,25 +1049,22 @@ file
 
   .. versionadded:: 3.18
 
-  Extracts or lists the content of the specified ``<archive>``.
+  ``<archive>`` の内容を展開するか、または一覧表示します。
 
-  The directory where the content of the archive will be extracted to can
-  be specified using the ``DESTINATION`` option.  If the directory does not
-  exist, it will be created.  If ``DESTINATION`` is not given, the current
-  binary directory will be used.
+  アーカイブを展開する先のディレクトリを ``DESTINATION`` オプションで指定できます。
+  指定した ``<dir>`` が存在しない場合は作成します。
+  ``DESTINATION`` オプションを指定しない場合は :variable:`CMAKE_CURRENT_BINARY_DIR` に展開します。
 
-  If required, you may select which files and directories to list or extract
-  from the archive using the specified ``<patterns>``.  Wildcards are
-  supported.  If the ``PATTERNS`` option is not given, the entire archive will
-  be listed or extracted.
+  指定した ``PATTERNS <patterns>`` を使って、アーカイブからどのファイルやディレクトリを展開または一覧表示するかを選択できます。
+  この ``PATTERNS`` オプションはワイルドカードをサポートしています。
+  ``PATTERNS`` オプションを指定しない場合は、アーカイブ全体を展開または一覧表示します。
 
-  ``LIST_ONLY`` will list the files in the archive rather than extract them.
+  ``LIST_ONLY`` オプションはアーカイブを展開することなく一覧表示だけします。
 
   .. versionadded:: 3.24
-    The ``TOUCH`` option gives extracted files a current local
-    timestamp instead of extracting file timestamps from the archive.
+    ``TOUCH`` オプションは、アーカイブからタイムスタンプを変更することなくそのまま展開する代わりに、アーカイブから展開した時の日時をタイムスタンプにして展開する。
 
-  With ``VERBOSE``, the command will produce verbose output.
+  ``VERBOSE`` オプションを指定すると、アーカイブ操作の冗長なログ出力が有効になります。
 
 .. rubric:: 日本語訳注記
 
