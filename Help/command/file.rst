@@ -860,7 +860,7 @@ file
     ``file(DOWNLOAD)`` で ``<file>`` が指定されなかったら、ダウロードしてもローカルには保存しないようになった。
     これは、ファイルを保存すること無く、単にダウンロードできるかどうか知りたい場合（たとえば、``<url>`` が存在しているかどうかを確認する場合）に便利である。
 
-  両サブコマンドで指定できるオプションは次のとおりです：
+  両サブコマンドに共通のオプションは次のとおりです：
 
     ``INACTIVITY_TIMEOUT <seconds>``
       アクティビティがない状態が一定時間（``<seconds>``）続いたあとに操作を終了する。
@@ -946,11 +946,11 @@ file
       ダウンロードする前に既にファイルが存在し、そのハッシュ値が合致する場合は、ダウンロードをスキップする。
       ダウンロードする前に既にファイルが存在し、そのハッシュ値が合致しない場合は、もう一度ダウンロードする。
       ダウンロードしたファイルのハッシュ値が合致しない場合、``DOWNLOAD`` コマンドの操作はエラーになる。
-      この ``DOWNLOAD`` サブコマンドに ``<file>`` を指定していない場合はエラーを発行する。
+      ``DOWNLOAD`` サブコマンドで、このオプションを指定しながら ``<file>`` を指定していない場合はエラーを発行する。
 
     ``EXPECTED_MD5 <value>``
       ``EXPECTED_HASH MD5=<value>`` オプションの短縮形。
-      この ``DOWNLOAD`` サブコマンドに ``<file>`` を指定していない場合はエラーを発行する。
+      ``DOWNLOAD`` サブコマンドで、このオプションを指定しながら ``<file>`` を指定していない場合はエラーを発行する。
 
     ``RANGE_START <value>``
       .. versionadded:: 3.24
@@ -975,28 +975,24 @@ file
 
   .. versionadded:: 3.2
 
-  Lock a file specified by ``<path>`` if no ``DIRECTORY`` option present and
-  file ``<path>/cmake.lock`` otherwise.  The file will be locked for the scope
-  defined by the ``GUARD`` option (default value is ``PROCESS``).  The
-  ``RELEASE`` option can be used to unlock the file explicitly.  If the
-  ``TIMEOUT`` option is not specified, CMake will wait until the lock succeeds
-  or until a fatal error occurs.  If ``TIMEOUT`` is set to ``0``, locking will
-  be tried once and the result will be reported immediately.  If ``TIMEOUT``
-  is not ``0``, CMake will try to lock the file for the period specified by
-  the ``TIMEOUT <seconds>`` value.  Any errors will be interpreted as fatal if
-  there is no ``RESULT_VARIABLE`` option.  Otherwise, the result will be stored
-  in ``<variable>`` and will be ``0`` on success or an error message on
-  failure.
+  ``DIRECTORY`` オプションを指定しない場合は ``<path>`` のファイルをロックし、それ以外は ``<path>/cmake.lock`` をロックします。
+  ファイルは、``GUARD`` オプションで定義したスコープ（デフォルト値は ``PROCESS``）に対してロックされます
+  ``RELEASE`` オプションを使うと、明示的にファイルのロックを解除できます。
+  ``TIMEOUT`` オプションを指定しない場合、CMake はロックが成功するか、または Fatal エラーが発行されるまで待機します。
+  ``TIMEOUT`` オプションに ``0`` をセットすると、ロックは1回だけ試行され、結果は直ぐに報告されます。
+  それに対して、``TIMEOUT`` オプションに ``0`` 以外をセットすると、CMake は ``TIMEOUT <seconds>`` の周期でファイルのロックを試みます。
+  ``RESULT_VARIABLE`` オプションを指定しない場合は、すべて Fatal エラーとして解釈されます。
+  ``RESULT_VARIABLE`` オプションを指定した場合は、成功時は ``0``、失敗したらエラー・メッセージがそれぞれ ``<variable>`` に格納されます。
 
-  Note that lock is advisory; there is no guarantee that other processes will
-  respect this lock, i.e. lock synchronize two or more CMake instances sharing
-  some modifiable resources. Similar logic applies to the ``DIRECTORY`` option;
-  locking a parent directory doesn't prevent other ``LOCK`` commands from
-  locking any child directory or file.
+  あくまでも、このロックは「勧告」レベルであることに注意して下さい。
+  他の CMake プロセスが、このロックを尊重することは保証されません。
+  このロックは、変更が可能なリソースを共有する2つ以上の CMake のインスタンスと同期するだけです。
+  同様のロジックが ``DIRECTORY`` オプションを指定した場合も適用されます。
+  親ディレクトリをロックしても、他の ``LOCK`` サブコマンドによるサブディレクトリやファイルのロックを排他することはできません。
 
-  Trying to lock the same file twice is not allowed.  Any intermediate
-  directories and the file itself will be created if they not exist.  The
-  ``GUARD`` and ``TIMEOUT`` options are ignored on the ``RELEASE`` operation.
+  同じファイルを2回ロックすることは許されません。
+  指定した ``<path>`` に含まれるディレクトリやファイルが存在していなければ作成します。
+  ``RELEASE`` オプションを指定すると、``GUARD`` と ``TIMEOUT`` オプションは無視されます。
 
 アーカイブを作成する
 ^^^^^^^^^^^^^^^^^^^^
