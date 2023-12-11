@@ -1,10 +1,10 @@
-A short-hand signature is:
+このコマンドの短縮形は次のとおり：
 
 .. parsed-literal::
 
    |FIND_XXX| (<VAR> name1 [path1 path2 ...])
 
-The general signature is:
+このコマンドの一般形は次のとおり：
 
 .. parsed-literal::
 
@@ -31,32 +31,26 @@ The general signature is:
               NO_CMAKE_FIND_ROOT_PATH]
             )
 
-This command is used to find a |SEARCH_XXX_DESC|.
-A cache entry, or a normal variable if ``NO_CACHE`` is specified,
-named by ``<VAR>`` is created to store the result of this command.
-If the |SEARCH_XXX| is found the result is stored in the variable
-and the search will not be repeated unless the variable is cleared.
-If nothing is found, the result will be ``<VAR>-NOTFOUND``.
+このコマンドは「|SEARCH_XXX_DESC|」を探す際に使用します。
+このコマンドの結果を格納するため、 ``<VAR>`` に指定したキャッシュ変数、または ``NO_CACHE`` を指定した場合はキャッシュされない通常の変数を作成します。
+「|SEARCH_XXX|」が見つかった場合、結果はその変数に格納され、その変数がクリアされない限り、ファイルを探す処理は終了します。
+何も見つからなかった場合、結果は ``<VAR>-NOTFOUND`` になります。
 
-Options include:
+指定できるオプションは次のとおりです：
 
 ``NAMES``
-  Specify one or more possible names for the |SEARCH_XXX|.
+  「|SEARCH_XXX|」を1つ以上指定する。
 
-  When using this to specify names with and without a version
-  suffix, we recommend specifying the unversioned name first
-  so that locally-built packages can be found before those
-  provided by distributions.
+  なお、このオプションを使ってファイルの名前を指定する際は、システムが提供するパッケージよりも前にローカルでビルドしたパッケージが見つかるように、まず最初にバージョンが付いていない名前を指定することを推奨している（パッケージにバージョンが付いているかどうかに拘わらず）。
+
 
 ``HINTS``, ``PATHS``
-  Specify directories to search in addition to the default locations.
-  The ``ENV var`` sub-option reads paths from a system environment
-  variable.
+  デフォルトのディレクトリに加え、追加でファイルを探すディレクトリを指定する。
+  ``ENV var`` というサブ・オプションは、実行するシステムの環境変数 ``var`` からディレクトリを読み取る。
 
   .. versionchanged:: 3.24
-    On ``Windows`` platform, it is possible to include registry queries as part
-    of the directories, using a :ref:`dedicated syntax <Find Using Windows Registry>`.
-    Such specifications will be ignored on all other platforms.
+    Windows 系のプラットフォームの場合は「:ref:`専用の構文 <Find Using Windows Registry>`」を使用して、Windows レジストリのクエリを対象ディレクトリの一部として含めることができるようになった。
+    この仕様は、他のプラットフォームでは無視される。
 
 ``REGISTRY_VIEW``
   .. versionadded:: 3.24
@@ -64,19 +58,15 @@ Options include:
   .. include:: FIND_XXX_REGISTRY_VIEW.txt
 
 ``PATH_SUFFIXES``
-  Specify additional subdirectories to check below each directory
-  location otherwise considered.
+  確認する追加のサブディレクトリを指定する（FIXME: below each directory location otherwise considered は意味不明）。
 
 ``VALIDATOR``
   .. versionadded:: 3.25
 
-  Specify a :command:`function` to be called for each candidate item found
-  (a :command:`macro` cannot be provided, that will result in an error).
-  Two arguments will be passed to the validator function: the name of a
-  result variable, and the absolute path to the candidate item.  The item
-  will be accepted and the search will end unless the function sets the
-  value in the result variable to false in the calling scope.  The result
-  variable will hold a true value when the validator function is entered.
+  見つかったファイル毎に呼び出す :command:`function` を指定する（:command:`macro` は不可。指定した場合はエラーになる）。
+  この関数には（関数名の他に）、関数からの返り値を格納する変数とファイルの絶対パスを引数として渡す。
+  関数では、受け取った絶対パスが現在のスコープ ``PARENT_SCOPE`` では目的のファイルでなくファイルを探す処理を継続させる ``FALSE`` か、または受け取った絶対パスが目的のファイルでありファイルを探す処理を終了させる ``TRUE`` のいずれかを返り値の変数に格納する。
+  なお、この関数に入ると自動的に返り値の変数に ``TRUE`` がセットされるので、たとえば関数のコードは次の様になる：
 
   .. parsed-literal::
 
@@ -88,9 +78,8 @@ Options include:
 
      |FIND_XXX| (result NAMES ... VALIDATOR my_check)
 
-  Note that if a cached result is used, the search is skipped and any
-  ``VALIDATOR`` is ignored.  The cached result is not required to pass the
-  validation function.
+  キャッシュ変数にキャッシュされた結果を使用する場合は、ファイルを探す処理をスキップし、この ``VALIDATOR`` オプションは無視されることに注意して下さい。
+  キャッシュされた結果を、ここで指定した関数に渡す必要はない。
 
 ``DOC``
   Specify the documentation string for the ``<VAR>`` cache entry.
@@ -98,28 +87,22 @@ Options include:
 ``NO_CACHE``
   .. versionadded:: 3.21
 
-  The result of the search will be stored in a normal variable rather than
-  a cache entry.
+  The result of the search will be stored in a normal variable rather than a cache entry.
 
   .. note::
 
-    If the variable is already set before the call (as a normal or cache
-    variable) then the search will not occur.
+    If the variable is already set before the call (as a normal or cache variable) then the search will not occur.
 
   .. warning::
 
-    This option should be used with caution because it can greatly increase
-    the cost of repeated configure steps.
+    This option should be used with caution because it can greatly increase the cost of repeated configure steps.
 
 ``REQUIRED``
   .. versionadded:: 3.18
 
-  Stop processing with an error message if nothing is found, otherwise
-  the search will be attempted again the next time |FIND_XXX| is invoked
-  with the same variable.
+  Stop processing with an error message if nothing is found, otherwise the search will be attempted again the next time |FIND_XXX| is invoked with the same variable.
 
-If ``NO_DEFAULT_PATH`` is specified, then no additional paths are
-added to the search.
+If ``NO_DEFAULT_PATH`` is specified, then no additional paths are added to the search.
 If ``NO_DEFAULT_PATH`` is not specified, the search process is as follows:
 
 .. |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR| replace::
