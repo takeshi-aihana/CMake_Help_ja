@@ -41,7 +41,7 @@
 ``NAMES``
   「|SEARCH_XXX|」を1つ以上指定する。
 
-  なお、このオプションを使ってファイルの名前を指定する際は、システムが提供するパッケージよりも前にローカルでビルドしたパッケージが見つかるように、まず最初にバージョンが付いていない名前を指定することを推奨している（パッケージにバージョンが付いているかどうかに拘わらず）。
+  なお、このオプションを使ってファイル名を指定する際は、システムが提供するパッケージよりも前にローカルでビルドしたパッケージが見つかるように、まず最初にバージョンが付いていない名前を指定することを推奨している（パッケージにバージョンが付いているかどうかに拘わらず）。
 
 
 ``HINTS``, ``PATHS``
@@ -58,7 +58,7 @@
   .. include:: FIND_XXX_REGISTRY_VIEW.txt
 
 ``PATH_SUFFIXES``
-  確認する追加のサブディレクトリを指定する（FIXME: below each directory location otherwise considered は意味不明）。
+  ここで指定したキーワードを含むサブディレクトリを追加で確認する（たとえば ``include`` ディレクトリなど）。
 
 ``VALIDATOR``
   .. versionadded:: 3.25
@@ -82,116 +82,94 @@
   キャッシュされた結果を、ここで指定した関数に渡す必要はない。
 
 ``DOC``
-  Specify the documentation string for the ``<VAR>`` cache entry.
+  キャッシュ変数の ``<VAR>`` のドキュメント文字列を指定する。
 
 ``NO_CACHE``
   .. versionadded:: 3.21
 
-  The result of the search will be stored in a normal variable rather than a cache entry.
+  ファイルを探した結果を、キャッシュ変数ではなく通常の変数に格納する。
 
   .. note::
 
-    If the variable is already set before the call (as a normal or cache variable) then the search will not occur.
+    このコマンドを呼び出す前に、既に変数が（通常の変数またはキャッシュ変数として）使用されていたらファイルは探しません。
 
   .. warning::
 
-    This option should be used with caution because it can greatly increase the cost of repeated configure steps.
+    ビルドシステムの作成を繰り返す場合、このオプションはコストが大幅に増加する可能性があるので、注意して使用する必要があります。
 
 ``REQUIRED``
   .. versionadded:: 3.18
 
-  Stop processing with an error message if nothing is found, otherwise the search will be attempted again the next time |FIND_XXX| is invoked with the same variable.
+  ファイルが見つからなかったらエラー・メッセージを出力して処理を停止するようになった。次回の |FIND_XXX| コマンドは同じ変数を使って呼び出される。
 
-If ``NO_DEFAULT_PATH`` is specified, then no additional paths are added to the search.
-If ``NO_DEFAULT_PATH`` is not specified, the search process is as follows:
+``NO_DEFAULT_PATH`` オプションを指定した場合、追加の検索ディレクトリは使用しません。
+``NO_DEFAULT_PATH`` オプションを指定しない場合、ファイルを検索する処理は、次のステップになります：
 
 .. |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR| replace::
-   |prefix_XXX_SUBDIR| for each ``<prefix>`` in the
-   :variable:`<PackageName>_ROOT` CMake variable and the
-   :envvar:`<PackageName>_ROOT` environment variable if
-   called from within a find module loaded by
-   :command:`find_package(<PackageName>)`
+   このコマンドが :command:`find_package(<PackageName>)` コマンドでロードした ``find`` モジュールの中から呼び出されている場合は、CMake 変数の :variable:`<PackageName>_ROOT` と環境変数の :envvar:`<PackageName>_ROOT` の ``<prefix>`` を使った |prefix_XXX_SUBDIR|
 
 .. |CMAKE_PREFIX_PATH_XXX_SUBDIR| replace::
-   |prefix_XXX_SUBDIR| for each ``<prefix>`` in :variable:`CMAKE_PREFIX_PATH`
+   CMake 変数の :variable:`CMAKE_PREFIX_PATH` にある ``<prefix>`` を使った |prefix_XXX_SUBDIR|
 
 .. |ENV_CMAKE_PREFIX_PATH_XXX_SUBDIR| replace::
-   |prefix_XXX_SUBDIR| for each ``<prefix>`` in :envvar:`CMAKE_PREFIX_PATH`
+   環境変数の :envvar:`CMAKE_PREFIX_PATH` にある ``<prefix>`` を使った |prefix_XXX_SUBDIR|
 
 .. |SYSTEM_ENVIRONMENT_PREFIX_PATH_XXX_SUBDIR| replace::
-   |prefix_XXX_SUBDIR| for each ``<prefix>/[s]bin`` in ``PATH``, and
-   |entry_XXX_SUBDIR| for other entries in ``PATH``
+   |prefix_XXX_SUBDIR| for each ``<prefix>/[s]bin`` in ``PATH``, and  |entry_XXX_SUBDIR| for other entries in ``PATH``
 
 .. |CMAKE_SYSTEM_PREFIX_PATH_XXX_SUBDIR| replace::
-   |prefix_XXX_SUBDIR| for each ``<prefix>`` in
-   :variable:`CMAKE_SYSTEM_PREFIX_PATH`
+   |prefix_XXX_SUBDIR| for each ``<prefix>`` in :variable:`CMAKE_SYSTEM_PREFIX_PATH`
 
-1. If called from within a find module or any other script loaded by a call to
-   :command:`find_package(<PackageName>)`, search prefixes unique to the
-   current package being found.  See policy :policy:`CMP0074`.
+1. このコマンドが ``find`` モジュール、または :command:`find_package(<PackageName>)` コマンドの呼び出しでロードされたスクリプトから呼び出されている場合は、見つかった現在のパッケージに固有のディレクトリを検索します。
+   :policy:`CMP0074` のポリシーも参照して下さい。
 
    .. versionadded:: 3.12
 
-   Specifically, search paths specified by the following variables, in order:
+   具体的には、次の変数で指定されたディレクトリを順番に検索します：
 
-   a. :variable:`<PackageName>_ROOT` CMake variable,
-      where ``<PackageName>`` is the case-preserved package name.
+   a. CMake 変数の :variable:`<PackageName>_ROOT` （``<PackageName>`` は大文字・小文字を区別したパッケージ名）。
 
-   b. :variable:`<PACKAGENAME>_ROOT` CMake variable,
-      where ``<PACKAGENAME>`` is the upper-cased package name.
-      See policy :policy:`CMP0144`.
+   b. CMake 変数の :variable:`<PACKAGENAME>_ROOT` （``<PACKAGENAME>`` は大文字のパッケージ名）。
+      :policy:`CMP0144` のポリシーも参照のこと。
 
       .. versionadded:: 3.27
 
-   c. :envvar:`<PackageName>_ROOT` environment variable,
-      where ``<PackageName>`` is the case-preserved package name.
+   c. 環境変数の :envvar:`<PackageName>_ROOT` （``<PackageName>`` は大文字・小文字を区別したパッケージ名）。
 
-   d. :envvar:`<PACKAGENAME>_ROOT` environment variable,
-      where ``<PACKAGENAME>`` is the upper-cased package name.
-      See policy :policy:`CMP0144`.
+   d. 環境変数の :envvar:`<PACKAGENAME>_ROOT` （``<PACKAGENAME>`` は大文字のパッケージ名）。
+      :policy:`CMP0144` のポリシーも参照のこと。
 
       .. versionadded:: 3.27
 
-   The package root variables are maintained as a stack, so if called from
-   nested find modules or config packages, root paths from the parent's find
-   module or config package will be searched after paths from the current
-   module or package.  In other words, the search order would be
-   ``<CurrentPackage>_ROOT``, ``ENV{<CurrentPackage>_ROOT}``,
-   ``<ParentPackage>_ROOT``, ``ENV{<ParentPackage>_ROOT}``, etc.
-   This can be skipped if ``NO_PACKAGE_ROOT_PATH`` is passed or by setting
-   the :variable:`CMAKE_FIND_USE_PACKAGE_ROOT_PATH` to ``FALSE``.
+   パッケージの検索ディレクトリはスタックとして管理されているので、このコマンドがネストされた ``find`` モジュールやパッケージから呼び出された場合、親の ``find`` モジュールや親パッケージからの検索ディレクトリは、現在のモジュールまたはパッケージの検索ディレクトリの後に検索します。
+   すなわち、ファイルを探す順番は ``<CurrentPackage>_ROOT``、``ENV{<CurrentPackage>_ROOT}``、``<ParentPackage>_ROOT``、``ENV{<ParentPackage>_ROOT}``、.... になります。
+   このステップは、``NO_PACKAGE_ROOT_PATH`` オプションが指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_PACKAGE_ROOT_PATH` を ``FALSE`` にセットした時はスキップします。
 
    * |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX|
 
-2. Search paths specified in cmake-specific cache variables.
-   These are intended to be used on the command line with a ``-DVAR=value``.
-   The values are interpreted as :ref:`semicolon-separated lists <CMake Language Lists>`.
-   This can be skipped if ``NO_CMAKE_PATH`` is passed or by setting the
-   :variable:`CMAKE_FIND_USE_CMAKE_PATH` to ``FALSE``.
+2. キャッシュ変数で指定したディレクトリを検索します。
+   これは ``-DVAR=value`` を指定した :manual:`cmake(1)` コマンドラインの場合を想定しています。
+   ``value`` はセミコロンで区切った :ref:`リスト <CMake Language Lists>` として解釈されます。
+   このステップは、``NO_CMAKE_PATH`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_CMAKE_PATH` を ``FALSE`` にセットした時はスキップします。
 
    * |CMAKE_PREFIX_PATH_XXX|
    * |CMAKE_XXX_PATH|
    * |CMAKE_XXX_MAC_PATH|
 
 3. Search paths specified in cmake-specific environment variables.
-   These are intended to be set in the user's shell configuration,
-   and therefore use the host's native path separator
-   (``;`` on Windows and ``:`` on UNIX).
-   This can be skipped if ``NO_CMAKE_ENVIRONMENT_PATH`` is passed or
-   by setting the :variable:`CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH` to ``FALSE``.
+   These are intended to be set in the user's shell configuration, and therefore use the host's native path separator (``;`` on Windows and ``:`` on UNIX).
+   This can be skipped if ``NO_CMAKE_ENVIRONMENT_PATH`` is passed or by setting the :variable:`CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH` to ``FALSE``.
 
    * |ENV_CMAKE_PREFIX_PATH_XXX|
    * |ENV_CMAKE_XXX_PATH|
    * |ENV_CMAKE_XXX_MAC_PATH|
 
 4. Search the paths specified by the ``HINTS`` option.
-   These should be paths computed by system introspection, such as a
-   hint provided by the location of another item already found.
+   These should be paths computed by system introspection, such as a hint provided by the location of another item already found.
    Hard-coded guesses should be specified with the ``PATHS`` option.
 
 5. Search the standard system environment variables.
-   This can be skipped if ``NO_SYSTEM_ENVIRONMENT_PATH`` is passed or by
-   setting the :variable:`CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH` to ``FALSE``.
+   This can be skipped if ``NO_SYSTEM_ENVIRONMENT_PATH`` is passed or by setting the :variable:`CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH` to ``FALSE``.
 
    * |SYSTEM_ENVIRONMENT_PATH_XXX|
 

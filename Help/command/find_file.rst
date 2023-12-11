@@ -1,7 +1,8 @@
-find_file
----------
+===========
+ find_file
+===========
 
-.. |FIND_XXX| replace:: find_file
+.. |FIND_XXX| replace:: ``find_file``
 .. |NAMES| replace:: NAMES name1 [name2 ...]
 .. |SEARCH_XXX| replace:: ファイルの絶対パス
 .. |SEARCH_XXX_DESC| replace:: 名前が付いたファイルの絶対パス
@@ -11,11 +12,9 @@ find_file
 .. |FIND_XXX_REGISTRY_VIEW_DEFAULT| replace:: ``TARGET``
 
 .. |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX| replace::
-   ``<prefix>/include/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE`
-   is set, and |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/include/<arch>`` と、|FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR|
 .. |CMAKE_PREFIX_PATH_XXX| replace::
-   ``<prefix>/include/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE`
-   is set, and |CMAKE_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/include/<arch>`` と、|CMAKE_PREFIX_PATH_XXX_SUBDIR|
 .. |CMAKE_XXX_PATH| replace:: :variable:`CMAKE_INCLUDE_PATH`
 .. |CMAKE_XXX_MAC_PATH| replace:: :variable:`CMAKE_FRAMEWORK_PATH`
 
