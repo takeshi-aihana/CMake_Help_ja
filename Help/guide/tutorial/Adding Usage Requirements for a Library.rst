@@ -271,4 +271,4 @@
 .. rubric:: 日本語訳注記
 
 .. [#hint_for_usage_requirements] `CMake再入門メモ <https://zenn.dev/rjkuro/articles/054dab5b0e4f40#build-specification%E3%81%A8usage-requirement>`_ 参照。
-.. [#comment_for_translation_01] 意味不明。原文は "In addition, we create a single source of truth in our interface library."。
+.. [#comment_for_translation_01] FIXME：意味不明。原文は "In addition, we create a single source of truth in our interface library."。

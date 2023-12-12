@@ -87,7 +87,7 @@ cmake_parse_arguments
 
 このあと、それらの変数を継続して処理できます。
 
-Keywords terminate lists of values,（訳注：意味不明）
+Keywords terminate lists of values,（FIXME：意味不明）
 
 ``one_value_keyword`` の処理中に、別に認識されたキーワードが続く場合は、これを新しいオプションの始まりと解釈します。
 たとえば ``my_install(TARGETS foo DESTINATION OPTIONAL)`` というマクロの呼び出しを処理すると、``MY_INSTALL_DESTINATION`` という変数にはじめは ``"OPTIONAL"`` がセットされますが、``OPTIONAL`` はキーワードであるので、この ``MY_INSTALL_DESTINATION`` は空になり（さらに、``DESTINATION`` というキーワードが ``MY_INSTALL_KEYWORDS_MISSING_VALUES`` に追加され）、最終的に ``MY_INSTALL_OPTIONAL`` という変数には ``TRUE`` がセットされます。
