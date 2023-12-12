@@ -1,7 +1,7 @@
 find_package
 ------------
 
-.. |FIND_XXX| replace:: find_package
+.. |FIND_XXX| replace:: ``find_package``
 .. |FIND_ARGS_XXX| replace:: <PackageName>
 .. |FIND_XXX_REGISTRY_VIEW_DEFAULT| replace:: ``TARGET``
 .. |CMAKE_FIND_ROOT_PATH_MODE_XXX| replace::
@@ -11,15 +11,13 @@ find_package
 
    .. contents::
 
-.. note:: The :guide:`Using Dependencies Guide` provides a high-level
-  introduction to this general topic. It provides a broader overview of
-  where the ``find_package()`` command fits into the bigger picture,
-  including its relationship to the :module:`FetchContent` module.
-  The guide is recommended pre-reading before moving on to the details below.
+.. note::
+  「:guide:`依存関係を利用するためのガイド`」では、このコマンドの一般的なトピックについて、その概要を説明しています。
+  このガイドは、:module:`FetchContent` モジュールとの関係を含め、``find_package()`` コマンドが CMake の全体像のどこに当てはまるのかについて、より広範な概要を提供しています。
+  本ドキュメントの前に、こちらのガイドを事前に目を通しておくことをお勧めします。
 
-Find a package (usually provided by something external to the project),
-and load its package-specific details.  Calls to this command can also
-be intercepted by :ref:`dependency providers <dependency_providers>`.
+Find a package (usually provided by something external to the project), and load its package-specific details.
+Calls to this command can also be intercepted by :ref:`dependency providers <dependency_providers>`.
 
 Search Modes
 ^^^^^^^^^^^^

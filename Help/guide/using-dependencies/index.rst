@@ -1,67 +1,56 @@
-Using Dependencies Guide
-************************
+依存関係を利用するためのガイド
+******************************
 
 .. only:: html
 
    .. contents::
 
-Introduction
-============
+はじめに
+========
 
-Projects will frequently depend on other projects, assets, and artifacts.
-CMake provides a number of ways to incorporate such things into the build.
-Projects and users have the flexibility to choose between methods that
-best suit their needs.
+一般的に「プロジェクト」は他のプロジェクトや、いろいろな目的、そしていろいろな生成物に依存することがよくあります。
+CMake は、このような「**依存関係**」をビルドに組み込むためのさまざまな方法を提供します。
+これを利用するプロジェクトとユーザは、ニーズにあった最適な方法を柔軟に選択することが可能です。
 
-The primary methods of bringing dependencies into the build are the
-:command:`find_package` command and the :module:`FetchContent` module.
-The :module:`FindPkgConfig` module is also sometimes used, although it
-lacks some of the integration of the other two and is not discussed any
-further in this guide.
+依存関係をビルドに組み込む主な方法は、:command:`find_package` コマンドと :module:`FetchContent` モジュールを利用するというものです。
+:module:`FindPkgConfig` モジュールを利用できるケースもありますが、これら二つの方法との連携が部分的に欠如しているので、本ガイドでこれ以上は説明しないことにします。
 
-Dependencies can also be made available by a custom
-:ref:`dependency provider <dependency_providers>`.
-This might be a third party package manager, or it might be custom code
-implemented by the developer.  Dependency providers co-operate with the
-primary methods mentioned above to extend their flexibility.
+依存関係の中には、独自の「:ref:`依存関係のプロバイダ <dependency_providers>`」なるもので利用可能になるものもあります。
+これは、たとえばサードパーティ製のパッケージ・マネージャである場合もあれば、開発者が実装した独自のコードである場合もあります。
+依存関係のプロバイダは、上記の二つの方法と連携し、依存関係を組み込む際の柔軟性をさらに拡張します。
 
 .. _prebuilt_find_package:
 
-Using Pre-built Packages With ``find_package()``
-================================================
+``find_package()`` で Pre-built パッケージを利用する
+====================================================
 
-A package needed by the project may already be built and available at some
-location on the user's system.  That package might have also been built by
-CMake, or it could have used a different build system entirely.  It might
-even just be a collection of files that didn't need to be built at all.
-CMake provides the :command:`find_package` command for these scenarios.
-It searches well-known locations, along with additional hints and paths
-provided by the project or user.  It also supports package components and
-packages being optional.  Result variables are provided to allow the project
-to customize its own behavior according to whether the package or specific
-components were found.
+プロジェクトで必要なパッケージが既にビルドされ、ホスト上のどこかの場所で利用できる場合があります。
+そのようなパッケージも CMake でビルドされていたり、完全に別のビルドシステムが使用されている場合があります。
+あるいは、まったくビルドする必要の無いただのファイルの集まりであるかもしれません。
+CMake では、このようなケースで利用できる :command:`find_package` コマンドを提供しています。
+このコマンドは、プロジェクトまたはユーザから提供された追加情報（ヒント）や追加ディレクトリと連動して、システムで既知の場所からファイルを探し出します。
+さらに、ファイルだけではなくパッケージに含まれるコンポーネントやオプションのパッケージもサポートしています。
+パッケージや特定のファイルが見つかったかどうかに応じて、プロジェクト内で独自に対応できるように、検索した結果を格納するための変数が自動的に提供されます。
 
-In most cases, projects should generally use the :ref:`basic signature`.
-Most of the time, this will involve just the package name, maybe a version
-constraint, and the ``REQUIRED`` keyword if the dependency is not optional.
-A set of package components may also be specified.
+プロジェクトで、このコマンドを使う場合は :ref:`basic signature` に従う必要があります。
+ほとんどの場合、引数としてパッケージの名前や、場合によってはパッケージのバージョン、そして必須の依存関係ならば ``REQUIRED`` というキーワードを渡します。
+また、パッケージのコンポーネント一式を指定するケースもあるかもしれません。
 
 .. code-block:: cmake
-  :caption: Examples of ``find_package()`` basic signature
+  :caption: ``find_package()`` コマンドの呼び出し例
 
   find_package(Catch2)
   find_package(GTest REQUIRED)
   find_package(Boost 1.79 COMPONENTS date_time)
 
-The :command:`find_package` command supports two main methods for carrying
-out the search:
+この :command:`find_package` コマンドは、検索処理を実施するために主要なメソッドを二つ提供しています：
 
-**Config mode**
+**Config モード**
   With this method, the command looks for files that are typically provided
   by the package itself.  This is the more reliable method of the two, since
   the package details should always be in sync with the package.
 
-**Module mode**
+**Module モード**
   Not all packages are CMake-aware. Many don't provide the files needed to
   support config mode.  For such cases, a Find module file can be provided
   separately, either by the project or by CMake.  A Find module is typically
