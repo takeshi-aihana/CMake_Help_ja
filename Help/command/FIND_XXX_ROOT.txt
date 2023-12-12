@@ -3,7 +3,7 @@ CMake 変数の :variable:`CMAKE_FIND_ROOT_PATH` には、全ての検索ディ�
 この時、CMake 変数 :variable:`CMAKE_STAGING_PREFIX` の配下のディレクトリは、常にホストシステム上のパスであるため、再構成した検索ディレクトリからは除外されます。
 なお :variable:`CMAKE_FIND_ROOT_PATH` のデフォルトは空です。
 
-CMake 変数の :variable:`CMAKE_SYSROOT` を使って ``<prefix>`` として使用するディレクトリを1つだけ指定することができます。
+CMake 変数の :variable:`CMAKE_SYSROOT` を使って ``<prefix>`` として使用するディレクトリを1つだけ指定することもできます。
 この :variable:`CMAKE_SYSROOT` 変数には、他に別の効果があります。
 詳細は、この変数のドキュメントを参照して下さい。
 
