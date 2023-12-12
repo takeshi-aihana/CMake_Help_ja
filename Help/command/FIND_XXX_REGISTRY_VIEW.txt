@@ -1,40 +1,37 @@
-Specify which registry views must be queried.
-This option is only meaningful on ``Windows`` platforms and will be ignored on other ones.
-When not specified, the |FIND_XXX_REGISTRY_VIEW_DEFAULT| view is used when the :policy:`CMP0134` policy is ``NEW``.
-Refer to :policy:`CMP0134` for the default view when the policy is ``OLD``.
+どのレジストリ・ビューを照会するかを指定する。
+このオプションは、ホストのプラットフォームが Windows の場合にのみ意味を持ち、その他のプラットフォームでは無視される。
+このオプションを指定しない場合 :policy:`CMP0134` のポリシーが ``NEW`` の時は |FIND_XXX_REGISTRY_VIEW_DEFAULT| ビューを使用する。
+対して、このポリシーが ``OLD`` の時に使用するビューについては、:policy:`このポリシー <CMP0134>` のドキュメントを参照のこと。
 
 ``64``
-  Query the 64-bit registry. On 32-bit Windows, it always returns the string
-  ``/REGISTRY-NOTFOUND``.
+  64bit のレジストリに照会する。32bit の Windows の場合は常に ``/REGISTRY-NOTFOUND`` という文字列を返す。
 
 ``32``
-  Query the 32-bit registry.
+  32bit のレジストリに照会する。
 
 ``64_32``
-  Query both views (``64`` and ``32``) and generate a path for each.
+  両方（``64`` と ``32``）のビューを照会し、それぞれのディレクトリを作成する。
 
 ``32_64``
-  Query both views (``32`` and ``64``) and generate a path for each.
+  両方（``32`` と ``64``）のビューを照会し、それぞれのディレクトリを作成する。
 
 ``HOST``
-  Query the registry matching the architecture of the host: ``64`` on 64-bit
-  Windows and ``32`` on 32-bit Windows.
+  ホストのプラットフォームのアーキテクチャに対応するレジストリを照会する：
+  64bit の Windows の場合は ``64``、32bit の Windows の場合は ``32``
 
 ``TARGET``
-  Query the registry matching the architecture specified by the
-  :variable:`CMAKE_SIZEOF_VOID_P` variable. If not defined, fall back to
-  ``HOST`` view.
+  CMake 変数の :variable:`CMAKE_SIZEOF_VOID_P` が指すアーキテクチャに対応するレジストリを照会する。
+  この変数が指定されていない場合は、``HOST`` のビューに従う。
 
 ``BOTH``
-  Query both views (``32`` and ``64``). The order depends on the following
-  rules: If the :variable:`CMAKE_SIZEOF_VOID_P` variable is defined, use the
-  following view depending on the content of this variable:
+  両方（``32`` と ``64``）のビューを照会する。  
+  この照会する順番は次のルールに従って決める：
+  CMake 変数の :variable:`CMAKE_SIZEOF_VOID_P` を指定した場合、この変数の内容に応じて次のビューを使用する：
 
   * ``8``: ``64_32``
   * ``4``: ``32_64``
 
-  If the :variable:`CMAKE_SIZEOF_VOID_P` variable is not defined, rely on the
-  architecture of the host:
+  この変数 :variable:`CMAKE_SIZEOF_VOID_P` を指定していない場合はホストのプラットフォームのアーキテクチャに従う：
 
-  * 64-bit: ``64_32``
-  * 32-bit: ``32``
+  * 64bit: ``64_32``
+  * 32bit: ``32``

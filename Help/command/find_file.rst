@@ -1,10 +1,9 @@
-===========
- find_file
-===========
+find_file
+---------
 
 .. |FIND_XXX| replace:: ``find_file``
 .. |NAMES| replace:: NAMES name1 [name2 ...]
-.. |SEARCH_XXX| replace:: ファイルの絶対パス
+.. |SEARCH_XXX| replace:: ファイル
 .. |SEARCH_XXX_DESC| replace:: ファイルの絶対パス
 .. |prefix_XXX_SUBDIR| replace:: ``<prefix>/include``
 .. |entry_XXX_SUBDIR| replace:: ``<entry>/include``

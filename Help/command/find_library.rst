@@ -1,41 +1,34 @@
 find_library
 ------------
 
-.. |FIND_XXX| replace:: find_library
+.. |FIND_XXX| replace:: ``find_library``
 .. |NAMES| replace:: NAMES name1 [name2 ...] [NAMES_PER_DIR]
-.. |SEARCH_XXX| replace:: library
-.. |SEARCH_XXX_DESC| replace:: library
+.. |SEARCH_XXX| replace:: ライブラリ
+.. |SEARCH_XXX_DESC| replace:: ライブラリの絶対パス
 .. |prefix_XXX_SUBDIR| replace:: ``<prefix>/lib``
 .. |entry_XXX_SUBDIR| replace:: ``<entry>/lib``
 
 .. |FIND_XXX_REGISTRY_VIEW_DEFAULT| replace:: ``TARGET``
 
 .. |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX| replace::
-   ``<prefix>/lib/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE` is set,
-   and |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/lib/<arch>`` と、|FIND_PACKAGE_ROOT_PREFIX_PATH_XXX_SUBDIR|
 .. |CMAKE_PREFIX_PATH_XXX| replace::
-   ``<prefix>/lib/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE` is set,
-   and |CMAKE_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/lib/<arch>`` と、|CMAKE_PREFIX_PATH_XXX_SUBDIR|
 .. |CMAKE_XXX_PATH| replace:: :variable:`CMAKE_LIBRARY_PATH`
 .. |CMAKE_XXX_MAC_PATH| replace:: :variable:`CMAKE_FRAMEWORK_PATH`
 
 .. |ENV_CMAKE_PREFIX_PATH_XXX| replace::
-   ``<prefix>/lib/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE` is set,
-   and |ENV_CMAKE_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/lib/<arch>`` と、|ENV_CMAKE_PREFIX_PATH_XXX_SUBDIR|
 .. |ENV_CMAKE_XXX_PATH| replace:: :envvar:`CMAKE_LIBRARY_PATH`
 .. |ENV_CMAKE_XXX_MAC_PATH| replace:: :envvar:`CMAKE_FRAMEWORK_PATH`
 
-.. |SYSTEM_ENVIRONMENT_PATH_XXX| replace:: The directories in ``LIB``
-   and ``PATH``.
+.. |SYSTEM_ENVIRONMENT_PATH_XXX| replace:: 環境変数の ``LIB`` と ``PATH`` にセットされているディレクトリ
 .. |SYSTEM_ENVIRONMENT_PATH_WINDOWS_XXX| replace::
-   On Windows hosts, CMake 3.3 through 3.27 searched additional paths:
-   ``<prefix>/lib/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE`
-   is set, and |SYSTEM_ENVIRONMENT_PREFIX_PATH_XXX_SUBDIR|.
-   This behavior was removed by CMake 3.28.
+   Windows 系プラットフォームで、CMake のバージョン 3.3〜3.27 は CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合、追加で次のディレクトリを検索していた: ``<prefix>/lib/<arch>`` と |SYSTEM_ENVIRONMENT_PREFIX_PATH_XXX_SUBDIR|
+   （これは CMake バージョン 3.28 から削除される）
 
 .. |CMAKE_SYSTEM_PREFIX_PATH_XXX| replace::
-   ``<prefix>/lib/<arch>`` if :variable:`CMAKE_LIBRARY_ARCHITECTURE` is set,
-   and |CMAKE_SYSTEM_PREFIX_PATH_XXX_SUBDIR|
+   CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE` がセットされている場合は ``<prefix>/lib/<arch>`` と |CMAKE_SYSTEM_PREFIX_PATH_XXX_SUBDIR|
 .. |CMAKE_SYSTEM_XXX_PATH| replace::
    :variable:`CMAKE_SYSTEM_LIBRARY_PATH`
 .. |CMAKE_SYSTEM_XXX_MAC_PATH| replace::
@@ -46,51 +39,28 @@ find_library
 
 .. include:: FIND_XXX.txt
 
-When more than one value is given to the ``NAMES`` option this command by
-default will consider one name at a time and search every directory
-for it.  The ``NAMES_PER_DIR`` option tells this command to consider one
-directory at a time and search for all names in it.
+このコマンドは ``NAMES`` オプションに複数の「|SEARCH_XXX|」を指定しても、デフォルトでは全てのディレクトリに対して一度に1つの |SEARCH_XXX| を探します。
+一方、``NAMES_PER_DIR`` オプションは、一度に1つのディレクトリに対して全ての「|SEARCH_XXX|」をまとめて探すようコマンドに指示します。
 
-Each library name given to the ``NAMES`` option is first considered
-as a library file name and then considered with platform-specific
-prefixes (e.g. ``lib``) and suffixes (e.g. ``.so``).  Therefore one
-may specify library file names such as ``libfoo.a`` directly.
-This can be used to locate static libraries on UNIX-like systems.
+``NAMES`` オプションに指定した |SEARCH_XXX| はそれぞれファイル名として、ホスト・プラットフォームに固有の接頭子（たとえば ``lib``）と接尾子（たとえば ``.so``）が付けられます。
+したがって、たとえば ``libfoo.a`` のようなふぁいるめいを直接指定できます。
+これにより UNIX 系プラットフォームで静的ライブラリを見つけることができます。
 
-If the library found is a framework, then ``<VAR>`` will be set to the full
-path to the framework ``<fullPath>/A.framework``.  When a full path to a
-framework is used as a library, CMake will use a ``-framework A``, and a
-``-F<fullPath>`` to link the framework to the target.
+見つかったライブラリが「フレームワーク」の場合、``<VAR>`` にはフレームワークへの絶対パス ``<fullPath>/A.framework`` が格納されます。
+フレームワークへの絶対パスが1個のライブラリを指す場合、CMake は ``-framework A`` と ``-F<fullPath>`` を使ってそのフレームワークをターゲットにリンクします。
 
 .. versionadded:: 3.28
 
-  The library found can now be a ``.xcframework`` folder.
+  見つかったライブラリを ``.xcframework`` フォルダにすることができるようになった。
 
-If the :variable:`CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX` variable is set all
-search paths will be tested as normal, with the suffix appended, and with
-all matches of ``lib/`` replaced with
-``lib${CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX}/``.  This variable overrides
-the :prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS`,
-:prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS`,
-and :prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` global properties.
+CMake 変数の :variable:`CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX` に任意の文字列をセットすると、検索対象のすべてのディレクトリの ``lib/`` を ``lib${CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX}/`` で置き換えたディレクトリでライブラリを検索します。
+この CMake 変数は、:prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS`、:prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS`、そして :prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` といったグローバルなプロパティを上書きします。
 
-If the :prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS` global property is set
-all search paths will be tested as normal, with ``32/`` appended, and
-with all matches of ``lib/`` replaced with ``lib32/``.  This property is
-automatically set for the platforms that are known to need it if at
-least one of the languages supported by the :command:`project` command
-is enabled.
+:prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS` というグローバルなプロパティに任意の文字列をセットすると、検索対象のすべてのディレクトリに ``32/`` を追加し、``lib/`` を ``lib32/`` で置き換えたディレクトリでライブラリを検索します。
+このプロパティは、:command:`project` コマンドでサポートしているプログラミング言語の少なくとも1つが利用できる場合は、そのプラットフォームに対して自動的にセットされます（訳注: 意味不明）。
 
-If the :prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS` global property is set
-all search paths will be tested as normal, with ``x32/`` appended, and
-with all matches of ``lib/`` replaced with ``libx32/``.  This property is
-automatically set for the platforms that are known to need it if at
-least one of the languages supported by the :command:`project` command
-is enabled.
+:prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS` というグローバルなプロパティに任意の文字列をセットすると、検索対象のすべてのディレクトリ ``x32/`` を追加し、 ``lib/`` を ``libx32/`` で置き換えたディレクトリでライブラリを検索します。
+このプロパティは、:command:`project` コマンドでサポートしているプログラミング言語の少なくとも1つが利用できる場合は、そのプラットフォームに対して自動的にセットされます（訳注: 意味不明）。
 
-If the :prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` global property is set
-all search paths will be tested as normal, with ``64/`` appended, and
-with all matches of ``lib/`` replaced with ``lib64/``.  This property is
-automatically set for the platforms that are known to need it if at
-least one of the languages supported by the :command:`project` command
-is enabled.
+:prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` というグローバルなプロパティに任意の文字列をセットすると、検索対象のすべてのディレクトリ ``64/`` を追加し、 ``lib/`` を ``lib64/`` で置き換えたディレクトリでライブラリを検索します。
+このプロパティは、:command:`project` コマンドでサポートしているプログラミング言語の少なくとも1つが利用できる場合は、そのプラットフォームに対して自動的にセットされます（訳注: 意味不明）。
