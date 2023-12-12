@@ -1,10 +1,9 @@
-このコマンドのデフォルトの検索順番は、一般的な使用例に対して、「最も多いもの」から「最も少ないもの」へと設計されている。
-The default search order is designed to be most-specific to least-specific for common use cases.
-Projects may override the order by simply calling the command multiple times and using the ``NO_*`` options:
+このコマンドのデフォルトの検索順序は、一般的な使用例に対して、「最も多いもの」から「最も少ないもの」へと設計されている。
+一般的に、プロジェクトでこの |FIND_XXX| コマンドに ``NO_*`` 系のオプションを指定して複数回呼び出すだけで、その検索順序をラインタイムで変更できます：
 
 .. parsed-literal::
 
    |FIND_XXX| (|FIND_ARGS_XXX| PATHS paths... NO_DEFAULT_PATH)
    |FIND_XXX| (|FIND_ARGS_XXX|)
 
-Once one of the calls succeeds the result variable will be set and stored in the cache so that no call will search again.
+この例では、いずれかの呼び出しが成功したら、指定した ``<VAR>`` に結果がキャッシュされるので、そのオプションを指定した呼び出しをもう一度実行する必要はありません。

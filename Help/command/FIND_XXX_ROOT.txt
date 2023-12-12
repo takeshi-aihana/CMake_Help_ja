@@ -1,22 +1,22 @@
-The CMake variable :variable:`CMAKE_FIND_ROOT_PATH` specifies one or more directories to be prepended to all other search directories.
-This effectively "re-roots" the entire search under given locations.
-Paths which are descendants of the :variable:`CMAKE_STAGING_PREFIX` are excluded from this re-rooting, because that variable is always a path on the host system.
-By default the :variable:`CMAKE_FIND_ROOT_PATH` is empty.
+CMake 変数の :variable:`CMAKE_FIND_ROOT_PATH` には、全ての検索ディレクトリの前に追加する1つ以上のディレクトリを指定します。
+これの変数により、指定したディレクトリでの検索が再構成（re-root）されて効率の良い検索ディレクトリの集合になります。
+この時、CMake 変数 :variable:`CMAKE_STAGING_PREFIX` の配下のディレクトリは、常にホストシステム上のパスであるため、再構成した検索ディレクトリからは除外されます。
+なお :variable:`CMAKE_FIND_ROOT_PATH` のデフォルトは空です。
 
-The :variable:`CMAKE_SYSROOT` variable can also be used to specify exactly one directory to use as a prefix.
-Setting :variable:`CMAKE_SYSROOT` also has other effects.
-See the documentation for that variable for more.
+CMake 変数の :variable:`CMAKE_SYSROOT` を使って ``<prefix>`` として使用するディレクトリを1つだけ指定することができます。
+この :variable:`CMAKE_SYSROOT` 変数には、他に別の効果があります。
+詳細は、この変数のドキュメントを参照して下さい。
 
-These variables are especially useful when cross-compiling to point to the root directory of the target environment and CMake will search there too.
-By default at first the directories listed in :variable:`CMAKE_FIND_ROOT_PATH` are searched, then the :variable:`CMAKE_SYSROOT` directory is searched, and then the non-rooted directories will be searched.
-The default behavior can be adjusted by setting |CMAKE_FIND_ROOT_PATH_MODE_XXX|.
-This behavior can be manually overridden on a per-call basis using options:
+これらの CMake 変数は、特にクロス・コンパイルする際に便利です。例えばターゲット環境の root ディレクトリをセットしておくと、CMake はそのディレクトリも検索します。
+デフォルトは、最初に CMake 変数の :variable:`CMAKE_FIND_ROOT_PATH` に :ref:`リスト <CMake Language Lists>` されたディレクトリからファイルを探したあと、:variable:`CMAKE_SYSROOT` 変数が指すディレクトリを検索し、最後に再構成されていないその他のディレクトリを検索します。
+デフォルトの処理は CMake 変数の |CMAKE_FIND_ROOT_PATH_MODE_XXX| を設定することで調整できます。
+また、次にあげるオプションを使って、この処理を呼び出すたびに変更できます：
 
 ``CMAKE_FIND_ROOT_PATH_BOTH``
-  Search in the order described above.
+  この上で説明した順番（:variable:`CMAKE_FIND_ROOT_PATH` -> :variable:`CMAKE_SYSROOT` -> その他のディレクトリ）で検索する。
 
 ``NO_CMAKE_FIND_ROOT_PATH``
-  Do not use the :variable:`CMAKE_FIND_ROOT_PATH` variable.
+  :variable:`CMAKE_FIND_ROOT_PATH` 変数のディレクトリは無視する。
 
 ``ONLY_CMAKE_FIND_ROOT_PATH``
-  Search only the re-rooted directories and directories below :variable:`CMAKE_STAGING_PREFIX`.
+  再構成されたディレクトリと :variable:`CMAKE_STAGING_PREFIX` 以下のディレクトリだけ検索する。
