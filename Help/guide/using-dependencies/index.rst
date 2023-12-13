@@ -8,12 +8,12 @@
 はじめに
 ========
 
-一般的に「プロジェクト」は他のプロジェクトや、いろいろな目的、そしていろいろな生成物に依存することがよくあります。
+一般的に「プロジェクト」は他のプロジェクトや、いろいろな目的、そしていろいろな成果物（*Artifacts*）に依存することがよくあります。
 CMake は、このような「**依存関係**」をビルドに組み込むためのさまざまな方法を提供します。
 これを利用するプロジェクトとユーザは、ニーズにあった最適な方法を柔軟に選択することが可能です。
 
-依存関係をビルドに組み込む主な方法は、:command:`find_package` コマンドと :module:`FetchContent` モジュールを利用するというものです。
-:module:`FindPkgConfig` モジュールを利用できるケースもありますが、これら二つの方法との連携が部分的に欠如しているので、本ガイドでこれ以上は説明しないことにします。
+依存関係をビルドに組み込むために提供されている主な方法は、:command:`find_package` コマンドと :module:`FetchContent` モジュールです。
+他に :module:`FindPkgConfig` モジュールを利用できるケースもありますが、これら二つの方法との連携が部分的に欠如しているので、本ガイドでこれ以上は説明しないことにします。
 
 依存関係の中には、独自の「:ref:`依存関係のプロバイダ <dependency_providers>`」なるもので利用可能になるものもあります。
 これは、たとえばサードパーティ製のパッケージ・マネージャである場合もあれば、開発者が実装した独自のコードである場合もあります。
@@ -30,7 +30,7 @@ CMake は、このような「**依存関係**」をビルドに組み込むた�
 CMake では、このようなケースで利用できる :command:`find_package` コマンドを提供しています。
 このコマンドは、プロジェクトまたはユーザから提供された追加情報（ヒント）や追加ディレクトリと連動して、システムで既知の場所からファイルを探し出します。
 さらに、ファイルだけではなくパッケージに含まれるコンポーネントやオプションのパッケージもサポートしています。
-パッケージや特定のファイルが見つかったかどうかに応じて、プロジェクト内で独自に対応できるように、検索した結果を格納するための変数が自動的に提供されます。
+パッケージや特定のファイルが見つかったかどうかに応じて、プロジェクト内で独自に対応できるように、その結果を格納するための変数が自動的に提供されます。
 
 プロジェクトで、このコマンドを使う場合は :ref:`basic signature` に従う必要があります。
 ほとんどの場合、引数としてパッケージの名前や、場合によってはパッケージのバージョン、そして必須の依存関係ならば ``REQUIRED`` というキーワードを渡します。
@@ -43,125 +43,83 @@ CMake では、このようなケースで利用できる :command:`find_package
   find_package(GTest REQUIRED)
   find_package(Boost 1.79 COMPONENTS date_time)
 
-この :command:`find_package` コマンドは、検索処理を実施するために主要なメソッドを二つ提供しています：
+この :command:`find_package` コマンドは検索モードを二つ提供しています：
 
 **Config モード**
-  With this method, the command looks for files that are typically provided
-  by the package itself.  This is the more reliable method of the two, since
-  the package details should always be in sync with the package.
+  このモードを使うと、通常はパッケージが配布しインストールしたファイルを探します。
+  これらのファイルの詳細は常にパッケージと同期されているはずなので、他のモードよりも信頼性の高い結果が得られます。
 
 **Module モード**
-  Not all packages are CMake-aware. Many don't provide the files needed to
-  support config mode.  For such cases, a Find module file can be provided
-  separately, either by the project or by CMake.  A Find module is typically
-  a heuristic implementation which knows what the package normally provides
-  and how to present that package to the project.  Since Find modules are
-  usually distributed separately from the package, they are not as reliable.
-  They are typically maintained separately, and they are likely to follow
-  different release schedules, so they can easily become out-of-date.
+  全てのパッケージが CMake に対応しているわけではありません。
+  多くパッケージが **Config モード** を機能させるのに必要なファイルを提供していません。
+  そのような場合は、プロジェクトまたは CMake でパッケージ向けの ``Find`` モジュールなるものを用意できます。
+  通常 ``Find`` モジュールは、そのパッケージが何のファイルを配布し、それらをどのようにしてプロジェクト側に提供しているのかを解決する実装を持っています。
+  通常 ``Find`` モジュールはパッケージと別々に提供されているため、検索結果の信頼性はそれほど高くありません。
+  つまり、パッケージと ``Find`` モジュールは個別に保守され、異なるスケジュールに従ってリリースされる場合が多いので、簡単に情報が古くなってしまう可能性があります。
 
-Depending on the arguments used, :command:`find_package` may use one or both
-of the above methods.  By restricting the options to just the basic signature,
-both config mode and module mode can be used to satisfy the dependency.
-The presence of other options may restrict the call to using only one of the
-two methods, potentially reducing the command's ability to find the dependency.
-See the :command:`find_package` documentation for full details about this
-complex topic.
+この :command:`find_package` コマンドは、受け取ったオプションに応じて、二つあるモードの一方を使うか、あるいは両方を使うかを決めます。
+呼び出せるコマンドの基本形を制限することで、Config モードと Module モードの両方を使った依存関係の解決が可能になります。
+つまり、いろいろなオプションを渡してしまうと、2つあるモードのうち1つだけに制限されてしまい、このコマンドの本来の能力を発揮できないかもしれません。
+この複雑なトピックについて詳細は、この :command:`find_package` のドキュメントを参照してみて下さい。
 
-For both search methods, the user can also set cache variables on the
-:manual:`cmake(1)` command line or in the :manual:`ccmake(1)` or
-:manual:`cmake-gui(1)` UI tools to influence and override where to find
-packages. See the :ref:`User Interaction Guide <Setting Build Variables>`
-for more on how to set cache variables.
+いずれのモードでも、ユーザは :manual:`cmake(1)` のコマンドラインや、:manual:`ccmake(1)` と :manual:`cmake-gui(1)` などの GUI ツールでキャッシュ変数を指定することで、パッケージを探す場所をカスタマイズすることができます。
+この指定方法については :ref:`ユーザ操作ガイド <Setting Build Variables>` を参照して下さい。
 
 .. _Libraries providing Config-file packages:
 
-Config-file packages
---------------------
+Config ファイル
+---------------
 
-The preferred way for a third party to provide executables, libraries,
-headers, and other files for use with CMake is to provide
-:ref:`config files <Config File Packages>`.  These are text files shipped
-with the package, which define CMake targets, variables, commands, and so on.
-The config file is an ordinary CMake script, which is read in by the
-:command:`find_package` command.
+サードパーティが、CMake で使用される実行形式、ライブラリ、ヘッダ、その他のファイルを提供するための方法として推奨されるのが「:ref:`Config ファイル <Config File Packages>`」です。
+これらのファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲット、CMake で参照できる変数、そして CMake コマンドなどを定義します。
+Config ファイルは普通の CMake スクリプトで、:command:`find_package` コマンドによって読み込まれまれます。
 
-The config files can usually be found in a directory whose name matches the
-pattern ``lib/cmake/<PackageName>``, although they may be in other locations
-instead (see :ref:`search procedure`).  The ``<PackageName>`` is usually the
-first argument to the :command:`find_package` command, and it may even be the
-only argument.  Alternative names can also be specified with the ``NAMES``
-option:
+通常 Config ファイルは ``lib/cmake/<PackageName>`` のパタンに従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（:ref:`search procedure` も参照のこと）。
+ここで ``<PackageName>`` は  :command:`find_package` コマンドの先頭オプションです。
+``NAMES`` オプションで、代替えの名前を指定できます：
 
 .. code-block:: cmake
-  :caption: Providing alternative names when finding a package
+  :caption: パッケージを探す際に別名を渡す例
 
   find_package(SomeThing
     NAMES
-      SameThingOtherName   # Another name for the package
-      SomeThing            # Also still look for its canonical name
+      SameThingOtherName   # パッケージのもう一つの名前
+      SomeThing            # 正規の名前でも探す
   )
 
-The config file must be named either ``<PackageName>Config.cmake`` or
-``<LowercasePackageName>-config.cmake`` (the former is used for the remainder
-of this guide, but both are supported).  This file is the entry point
-to the package for CMake.  A separate optional file named
-``<PackageName>ConfigVersion.cmake`` or
-``<LowercasePackageName>-config-version.cmake`` may also exist in the same
-directory.  This file is used by CMake to determine whether the version of
-the package satisfies any version constraint included in the call to
-:command:`find_package`.  It is optional to specify a version when calling
-:command:`find_package`, even if a ``<PackageName>ConfigVersion.cmake``
-file is present.
+The config file must be named either ``<PackageName>Config.cmake`` or ``<LowercasePackageName>-config.cmake`` (the former is used for the remainder of this guide, but both are supported).
+This file is the entry point to the package for CMake.
+A separate optional file named ``<PackageName>ConfigVersion.cmake`` or ``<LowercasePackageName>-config-version.cmake`` may also exist in the same directory.
+This file is used by CMake to determine whether the version of the package satisfies any version constraint included in the call to :command:`find_package`.
+It is optional to specify a version when calling :command:`find_package`, even if a ``<PackageName>ConfigVersion.cmake`` file is present.
 
-If the ``<PackageName>Config.cmake`` file is found and any version constraint
-is satisfied, the :command:`find_package` command considers the package to be
-found, and the entire package is assumed to be complete as designed.
+If the ``<PackageName>Config.cmake`` file is found and any version constraint is satisfied, the :command:`find_package` command considers the package to be found, and the entire package is assumed to be complete as designed.
 
-There may be additional files providing CMake commands or
-:ref:`imported targets` for you to use.  CMake does not enforce any naming
-convention for these files.  They are related to the primary
-``<PackageName>Config.cmake`` file by use of the CMake :command:`include`
-command.  The ``<PackageName>Config.cmake`` file would typically include
-these for you, so they won't usually require any additional step other than
-the call to :command:`find_package`.
+There may be additional files providing CMake commands or :ref:`imported targets` for you to use.
+CMake does not enforce any naming convention for these files.
+They are related to the primary ``<PackageName>Config.cmake`` file by use of the CMake :command:`include` command.
+The ``<PackageName>Config.cmake`` file would typically include these for you, so they won't usually require any additional step other than the call to :command:`find_package`.
 
-If the location of the package is in a
-:ref:`directory known to CMake <search procedure>`, the
-:command:`find_package` call should succeed.  The directories known to CMake
-are platform-specific.  For example, packages installed on Linux with a
-standard system package manager will be found in the ``/usr`` prefix
-automatically.  Packages installed in ``Program Files`` on Windows will
-similarly be found automatically.
+If the location of the package is in a :ref:`directory known to CMake <search procedure>`, the :command:`find_package` call should succeed.
+The directories known to CMake are platform-specific.
+For example, packages installed on Linux with a standard system package manager will be found in the ``/usr`` prefix automatically.
+Packages installed in ``Program Files`` on Windows will similarly be found automatically.
 
-Packages will not be found automatically without help if they are in
-locations not known to CMake, such as ``/opt/mylib`` or ``$HOME/dev/prefix``.
-This is a normal situation, and CMake provides several ways for users to
-specify where to find such libraries.
+Packages will not be found automatically without help if they are in locations not known to CMake, such as ``/opt/mylib`` or ``$HOME/dev/prefix``.
+This is a normal situation, and CMake provides several ways for users to specify where to find such libraries.
 
-The :variable:`CMAKE_PREFIX_PATH` variable may be
-:ref:`set when invoking CMake <Setting Build Variables>`.
-It is treated as a list of base paths in which to search for
-:ref:`config files <Config File Packages>`.  A package installed in
-``/opt/somepackage`` will typically install config files such as
-``/opt/somepackage/lib/cmake/somePackage/SomePackageConfig.cmake``.
-In that case, ``/opt/somepackage`` should be added to
-:variable:`CMAKE_PREFIX_PATH`.
+The :variable:`CMAKE_PREFIX_PATH` variable may be :ref:`set when invoking CMake <Setting Build Variables>`.
+It is treated as a list of base paths in which to search for :ref:`config files <Config File Packages>`.
+A package installed in ``/opt/somepackage`` will typically install config files such as ``/opt/somepackage/lib/cmake/somePackage/SomePackageConfig.cmake``.
+In that case, ``/opt/somepackage`` should be added to :variable:`CMAKE_PREFIX_PATH`.
 
-The environment variable ``CMAKE_PREFIX_PATH`` may also be populated with
-prefixes to search for packages.  Like the ``PATH`` environment variable,
-this is a list, but it needs to use the platform-specific environment variable
-list item separator (``:`` on Unix and ``;`` on Windows).
+The environment variable ``CMAKE_PREFIX_PATH`` may also be populated with prefixes to search for packages.
+Like the ``PATH`` environment variable, this is a list, but it needs to use the platform-specific environment variable list item separator (``:`` on Unix and ``;`` on Windows).
 
-The :variable:`CMAKE_PREFIX_PATH` variable provides convenience in cases
-where multiple prefixes need to be specified, or when multiple packages
-are available under the same prefix.  Paths to packages may also be
-specified by setting variables matching ``<PackageName>_DIR``, such as
-``SomePackage_DIR``.  Note that this is not a prefix, but should be a full
-path to a directory containing a config-style package file, such as
-``/opt/somepackage/lib/cmake/SomePackage`` in the above example.
-See the :command:`find_package` documentation for other CMake variables and
-environment variables that can affect the search.
+The :variable:`CMAKE_PREFIX_PATH` variable provides convenience in cases where multiple prefixes need to be specified, or when multiple packages are available under the same prefix.
+Paths to packages may also be specified by setting variables matching ``<PackageName>_DIR``, such as ``SomePackage_DIR``.
+Note that this is not a prefix, but should be a full path to a directory containing a config-style package file, such as ``/opt/somepackage/lib/cmake/SomePackage`` in the above example.
+See the :command:`find_package` documentation for other CMake variables and environment variables that can affect the search.
 
 .. _Libraries not Providing Config-file Packages:
 
