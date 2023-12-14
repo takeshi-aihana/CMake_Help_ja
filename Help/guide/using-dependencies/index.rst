@@ -58,7 +58,7 @@ CMake では、このようなケースで利用できる :command:`find_package
   つまり、パッケージと ``Find`` モジュールは個別に保守され、異なるスケジュールに従ってリリースされる場合が多いので、簡単に情報が古くなってしまう可能性があります。
 
 この :command:`find_package` コマンドは、受け取ったオプションに応じて、二つあるモードの一方を使うか、あるいは両方を使うかを決めます。
-呼び出せるコマンドの「:ref:`basic signature`」を制限することで、Config モードと Module モードの両方を使った依存関係の解決が可能になります。
+呼び出せるコマンドの「:ref:`basic signature`」を制限することで、両方のモードを使った依存関係の解決が可能になります。
 つまり、いろいろなオプションを渡してしまうと、2つあるモードのうち1つだけに使用が制限されてしまい、このコマンドの本来の能力を発揮できないかもしれません。
 この複雑なトピックについて詳細は、この :command:`find_package` のドキュメントを参照してみて下さい。
 
@@ -87,11 +87,11 @@ Config ファイルは普通の CMake スクリプトで、:command:`find_packag
       SomeThing            # 正規のパッケージ名でも探す
   )
 
-The config file must be named either ``<PackageName>Config.cmake`` or ``<LowercasePackageName>-config.cmake`` (the former is used for the remainder of this guide, but both are supported).
-This file is the entry point to the package for CMake.
-A separate optional file named ``<PackageName>ConfigVersion.cmake`` or ``<LowercasePackageName>-config-version.cmake`` may also exist in the same directory.
-This file is used by CMake to determine whether the version of the package satisfies any version constraint included in the call to :command:`find_package`.
-It is optional to specify a version when calling :command:`find_package`, even if a ``<PackageName>ConfigVersion.cmake`` file is present.
+Config ファイルの名前は ``<PackageName>Config.cmake`` または ``<LowercasePackageName>-config.cmake`` にして下さい（本ガイドでは前者を使用していますが、両方ともサポートしています）。
+このファイルは CMake でのパッケージ検索のエントリ・ポイントになります。
+オプションとして、``<PackageName>ConfigVersion.cmake`` または ``<LowercasePackageName>-config-version.cmake`` という名前のファイルも同じディレクトリにおいて下さい。
+このファイルは、:command:`find_package` コマンドの呼び出しでパッケージのバージョンが指定された際に、バージョンによる制約を満足するかどうかをチェックする際に使用します。
+なお、``<PackageName>ConfigVersion.cmake``  が存在していても、:command:`find_package` コマンドにオプションとして任意のバージョンを渡すことができます。
 
 If the ``<PackageName>Config.cmake`` file is found and any version constraint is satisfied, the :command:`find_package` command considers the package to be found, and the entire package is assumed to be complete as designed.
 
