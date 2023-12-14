@@ -52,10 +52,10 @@ CMake では、このようなケースで利用できる :command:`find_package
 **Module モード**
   全てのパッケージが CMake に対応しているわけではありません。
   多くパッケージが **Config モード** を機能させるのに必要なファイルを提供していません。
-  そのような場合は、プロジェクトまたは CMake で、パッケージ向けの ``Find`` モジュールなるものを用意できます。
-  通常 ``Find`` モジュールは、そのパッケージが何のファイルを配布し、それらをどのようにしてプロジェクト側に提供しているのかを解決する実装を持っています。
-  通常 ``Find`` モジュールはパッケージと別々に提供されているため、検索結果の信頼性はそれほど高くありません。
-  つまり、パッケージと ``Find`` モジュールは個別に保守され、異なるスケジュールに従ってリリースされる場合が多いので、簡単に情報が古くなってしまう可能性があります。
+  そのような場合は、プロジェクトまたは CMake で、パッケージ向けの「:ref:`Find モジュール <Libraries not Providing Config-file Packages>`」なるものを用意できます。
+  通常 Find モジュールは、そのパッケージが何のファイルを配布し、それらをどのようにしてプロジェクト側に提供しているのかを解決する実装を持っています。
+  通常 Find モジュールはパッケージと別々に提供されているため、検索結果の信頼性はそれほど高くありません。
+  つまり、パッケージと Find モジュールは個別に保守され、異なるスケジュールに従ってリリースされる場合が多いので、簡単に情報が古くなってしまう可能性があります。
 
 この :command:`find_package` コマンドは、受け取ったオプションに応じて、二つあるモードの一方を使うか、あるいは両方を使うかを決めます。
 呼び出せるコマンドの「:ref:`basic signature`」を制限することで、両方のモードを使った依存関係の解決が可能になります。
@@ -67,8 +67,8 @@ CMake では、このようなケースで利用できる :command:`find_package
 
 .. _Libraries providing Config-file packages:
 
-Config ファイル
----------------
+パッケージの Config ファイル
+----------------------------
 
 サードパーティが、CMake で使用される実行形式やライブラリ、ヘッダ、その他のファイルを提供する方法として推奨されるのが「:ref:`Config ファイル <Config File Packages>`」です。
 これらのファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲット、CMake で参照できる変数、そして CMake コマンドなどを定義します。
@@ -123,95 +123,75 @@ CMake 変数の :variable:`CMAKE_PREFIX_PATH` は :ref:`CMake を呼び出す際
 
 .. _Libraries not Providing Config-file Packages:
 
-Find Module Files
------------------
+パッケージの Find モジュール
+----------------------------
 
-Packages which do not provide config files can still be found with the
-:command:`find_package` command, if a ``FindSomePackage.cmake`` file is
-available.  These Find module files are different to config files in that:
+:ref:`Config ファイル <Libraries providing Config-file packages>` を提供していないパッケージであっても、Find モジュールのファイル（``Find<PackageName>.cmake``）が利用できれば、依然として :command:`find_package` コマンドで見つけることができます。
+Find モジュールと Config ファイルの違いは次のとおりです：
 
-#. Find module files should not be provided by the package itself.
-#. The availability of a ``Find<PackageName>.cmake`` file does not indicate
-   the availability of the package, or any particular part of the package.
-#. CMake does not search the locations specified in the
-   :variable:`CMAKE_PREFIX_PATH` variable for ``Find<PackageName>.cmake``
-   files.  Instead, CMake searches for such files in the locations given
-   by the :variable:`CMAKE_MODULE_PATH` variable.  It is common for users to
-   set the :variable:`CMAKE_MODULE_PATH` when running CMake, and it is common
-   for CMake projects to append to :variable:`CMAKE_MODULE_PATH` to allow use
-   of local Find module files.
-#. CMake ships ``Find<PackageName>.cmake`` files for some
-   :manual:`third party packages <cmake-modules(7)>`.  These files are a
-   maintenance burden for CMake, and it is not unusual for these to fall
-   behind the latest releases of the packages they are associated with.
-   In general, new Find modules are not added to CMake any more.  Projects
-   should encourage the upstream packages to provide a config file where
-   possible.  If that is unsuccessful, the project should provide its own
-   Find module for the package.
+#. Find モジュールのファイルはパッケージ自身で提供すべきものではない。
+#. Find モジュールのファイル（``Find<PackageName>.cmake``）が利用できることと、そのパッケージ（の一部）が利用できることは同義ではない。
+#. CMake は Find モジュールのファイル（``Find<PackageName>.cmake``）の :variable:`CMAKE_PREFIX_PATH` にリストされた場所は検索しない。
+   代わりに CMake 変数の :variable:`CMAKE_MODULE_PATH` にセットされている場所で Find モジュールのファイルを探す。
+   これら CMake 変数の一般的な使い方は：
 
-See :ref:`Find Modules` for a detailed discussion of how to write a
-Find module file.
+   - ユーザが CMake の実行時に :variable:`CMAKE_MODULE_PATH` をセットする。
+   - CMake のプロジェクトがローカルの Find モジュールの利用を許可するために、そのファイルがある場所を :variable:`CMAKE_MODULE_PATH` に追加する。
+
+#. CMake には、一部の :manual:`サードパーティ製のパッケージ <cmake-modules(7)>` に対する Find モジュールのファイル（``Find<PackageName>.cmake``）を同梱している。
+   ただ CMake にとって、これらのファイルの保守は負担であり、このファイルが実パッケージの最新版から遅れた対応になってしまうことは珍しいことではない。
+   一般に、新しい Find モジュールのファイルが CMake に同梱されることが無くなっている。
+   あなたのプロジェクトで、可能であれば、 パッケージの Config ファイルを提供するよう上流のプロジェクトに働きかける必要がある。
+   さもなくば、あなたのプロジェクトでサードパーティ製パッケージに対応する Find モジュールを独自に提供し続けていく必要がある。
+
+Find モジュールのファイル作成方法について詳細は「:ref:`Find Modules`」を参照して下さい。
 
 .. _Imported Targets from Packages:
 
-Imported Targets
-----------------
+IMPORTED なターゲット
+---------------------
 
-Both config files and Find module files can define :ref:`Imported targets`.
-These will typically have names of the form ``SomePrefix::ThingName``.
-Where these are available, the project should prefer to use them instead of
-any CMake variables that may also be provided.  Such targets typically carry
-usage requirements and apply things like header search paths, compiler
-definitions, etc. automatically to other targets that link to them (e.g. using
-:command:`target_link_libraries`).  This is both more robust and more
-convenient than trying to apply the same things manually using variables.
-Check the documentation for the package or Find module to see what imported
-targets it defines, if any.
+:ref:`Config ファイル <Libraries providing Config-file packages>` と :ref:`Find モジュールのファイル <Libraries not Providing Config-file Packages>` の両方で「:ref:`Imported targets`」を定義できます。
+通常、このターゲット名は ``SomePrefix::ThingName`` の形式に従います。
+このようなターゲットが利用できる場合、プロジェクトは、同様に定義されてる CMake 変数の代わりに、こちらのターゲットを使用することを優先しなければなりません。
+通常、このようなターゲットは「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）を持ち、ヘッダファイルの検索パスやコンパイラの定義などを、それらをリンクする他のターゲット（たとえば :command:`target_link_libraries`）に自動的に適用されます。
+これは、手動で同じように適用することよりも安全で便利です。
+必要であれば、パッケージや Find モジュールのドキュメントを参照して :ref:`Imported targets` を確認してみて下さい。
 
-Imported targets should also encapsulate any configuration-specific paths.
-This includes the location of binaries (libraries, executables), compiler
-flags, and any other configuration-dependent quantities.  Find modules may
-be less reliable in providing these details than config files.
+また :ref:`Imported targets` はビルドシステム固有のいろいろなパスもカプセル化しています。
+つまり、このターゲットにはバイナリ（ライブラリや実行形式）のインストール先やコンパイラのフラグ、そしてその他ビルドシステムに依存した情報が含まれています。
+ただし Find モジュールは、Config ファイルよりも信頼性の低い情報を提供する場合があります。
 
-A complete example which finds a third party package and uses a library
-from it might look like the following:
+たとえばサードパーティ製のパッケージを検索し、そこからライブラリを使用するコードは次のようになります：
 
 .. code-block:: cmake
 
   cmake_minimum_required(VERSION 3.10)
   project(MyExeProject VERSION 1.0.0)
 
-  # Make project-provided Find modules available
+  # このプロジェクトが提供しているローカルの Find モジュールを利用する
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
   find_package(SomePackage REQUIRED)
   add_executable(MyExe main.cpp)
   target_link_libraries(MyExe PRIVATE SomePrefix::LibName)
 
-Note that the above call to :command:`find_package` could be resolved by
-a config file or a Find module.  It uses only the basic arguments supported
-by the :ref:`basic signature`.  A ``FindSomePackage.cmake`` file in the
-``${CMAKE_CURRENT_SOURCE_DIR}/cmake`` directory would allow the
-:command:`find_package` command to succeed using module mode, for example.
-If no such module file is present, the system would be searched for a config
-file.
+この :command:`find_package` コマンドの呼び出しは Config ファイルまたは Find モジュールによって解決される点に注意して下さい。
+この呼び出しは :ref:`basic signature` でサポートしているオプションだけ使います。
+たとえば ``${CMAKE_CURRENT_SOURCE_DIR}/cmake`` にある Find モジュールのファイル（``FindSomePackage.cmake``）を使うと、:command:`find_package` コマンドは Module モードで成功します。
+この Find モジュールのファイルが存在しない場合、CMake は Config ファイルを探します。
 
 
-Downloading And Building From Source With ``FetchContent``
-==========================================================
+``FetchContent`` モジュールを使ってソースからビルドする
+=======================================================
 
-Dependencies do not necessarily have to be pre-built in order to use them
-with CMake.  They can be built from sources as part of the main project.
-The :module:`FetchContent` module provides functionality to download
-content (typically sources, but can be anything) and add it to the main
-project if the dependency also uses CMake.  The dependency's sources will
-be built along with the rest of the project, just as though the sources were
-part of the project's own sources.
+CMake で依存関係を利用するために、必ずしも既存のパッケージが必要であるという訳ではありません。
+依存関係は、プロジェクトの一部としてソースから生成できます。
+:module:`FetchContent` モジュールはコンテンツ（通常はソース・ファイルですが、何でも構いません）をダウンロードし、それをプロジェクトに追加する機能を提供しています。
+これにより、追加されたコンテンツは、あたかもプロジェクトのソースの一部であるかのように、他のソースと共にビルドされます。
 
-The general pattern is that the project should first declare all the
-dependencies it wants to use, then ask for them to be made available.
-The following demonstrates the principle (see :ref:`fetch-content-examples`
-for more):
+The general pattern is that the project should first declare all the dependencies it wants to use, then ask for them to be made available.
+The following demonstrates the principle (see :ref:`fetch-content-examples` for more):
 
 .. code-block:: cmake
 
@@ -228,25 +208,17 @@ for more):
   )
   FetchContent_MakeAvailable(googletest Catch2)
 
-Various download methods are supported, including downloading and extracting
-archives from a URL (a range of archive formats are supported), and a number
-of repository formats including Git, Subversion, and Mercurial.
-Custom download, update, and patch commands can also be used to support
-arbitrary use cases.
+Various download methods are supported, including downloading and extracting archives from a URL (a range of archive formats are supported), and a number of repository formats including Git, Subversion, and Mercurial.
+Custom download, update, and patch commands can also be used to support arbitrary use cases.
 
-When a dependency is added to the project with :module:`FetchContent`, the
-project links to the dependency's targets just like any other target from the
-project.  If the dependency provides namespaced targets of the form
-``SomePrefix::ThingName``, the project should link to those rather than to
-any non-namespaced targets.  See the next section for why this is recommended.
+When a dependency is added to the project with :module:`FetchContent`, the project links to the dependency's targets just like any other target from the project.
+If the dependency provides namespaced targets of the form ``SomePrefix::ThingName``, the project should link to those rather than to any non-namespaced targets.
+See the next section for why this is recommended.
 
-Not all dependencies can be brought into the project this way.  Some
-dependencies define targets whose names clash with other targets from the
-project or other dependencies.  Concrete executable and library targets
-created by :command:`add_executable` and :command:`add_library` are global,
-so each one must be unique across the whole build.  If a dependency would
-add a clashing target name, it cannot be brought directly into the build
-with this method.
+Not all dependencies can be brought into the project this way.
+Some dependencies define targets whose names clash with other targets from the project or other dependencies.
+Concrete executable and library targets created by :command:`add_executable` and :command:`add_library` are global, so each one must be unique across the whole build.
+If a dependency would add a clashing target name, it cannot be brought directly into the build with this method.
 
 ``FetchContent`` And ``find_package()`` Integration
 ===================================================
