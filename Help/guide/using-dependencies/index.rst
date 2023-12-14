@@ -74,7 +74,7 @@ Config ファイル
 これらのファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲット、CMake で参照できる変数、そして CMake コマンドなどを定義します。
 Config ファイルは普通の CMake スクリプトで、:command:`find_package` コマンドによって読み込まれまれます。
 
-通常 Config ファイルは ``lib/cmake/<PackageName>`` のパタンに従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（:ref:`search procedure` も参照して下さい）。
+通常 Config ファイルは ``lib/cmake/<PackageName>`` のパタンに従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（「:ref:`search procedure`」も参照して下さい）。
 ここで ``<PackageName>`` は  :command:`find_package` コマンドの先頭オプションとして渡したパッケージの名前です。
 あるいは ``NAMES`` オプションで、代替えの名前を指定できます：
 
@@ -93,15 +93,16 @@ Config ファイルの名前は ``<PackageName>Config.cmake`` または ``<Lower
 このファイルは、:command:`find_package` コマンドの呼び出しでパッケージのバージョンが指定された際に、バージョンによる制約を満足するかどうかをチェックする際に使用します。
 なお、``<PackageName>ConfigVersion.cmake``  が存在していても、:command:`find_package` コマンドにオプションとして任意のバージョンを渡すことができます。
 
-If the ``<PackageName>Config.cmake`` file is found and any version constraint is satisfied, the :command:`find_package` command considers the package to be found, and the entire package is assumed to be complete as designed.
+検索したいパッケージの ``<PackageName>Config.cmake`` ファイルが存在し、バージョンの制約を満足している場合、:command:`find_package` コマンドはそのパッケージが完全な形で提供されているとみなします。
 
-There may be additional files providing CMake commands or :ref:`imported targets` for you to use.
-CMake does not enforce any naming convention for these files.
-They are related to the primary ``<PackageName>Config.cmake`` file by use of the CMake :command:`include` command.
-The ``<PackageName>Config.cmake`` file would typically include these for you, so they won't usually require any additional step other than the call to :command:`find_package`.
+場合によっては、利用が可能な CMake コマンドや「:ref:`imported targets`」を提供する追加のファイルが存在している場合があります。
+CMake は、このようなファイルには命名規則を強制していません。
+:command:`include` コマンドを使うと、このようなファイルはメインの ``<PackageName>Config.cmake`` ファイルに関連づけされます。
+通常、このようなファイルは ``<PackageName>Config.cmake``  ファイルが自動的に取り込むので、 :command:`find_package` コマンドを呼び出す他に追加の作業はありません。
 
-If the location of the package is in a :ref:`directory known to CMake <search procedure>`, the :command:`find_package` call should succeed.
-The directories known to CMake are platform-specific.
+もし「:ref:`directory known to CMake <search procedure>`」 下にパッケージがあれば、:command:`find_package` コマンドの呼び出しは成功します。
+CMake に認識されるディレクトリはホストのプラットフォーム固有のものになります。
+たとえば、
 For example, packages installed on Linux with a standard system package manager will be found in the ``/usr`` prefix automatically.
 Packages installed in ``Program Files`` on Windows will similarly be found automatically.
 
