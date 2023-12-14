@@ -74,7 +74,7 @@ Config ファイル
 これらのファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲット、CMake で参照できる変数、そして CMake コマンドなどを定義します。
 Config ファイルは普通の CMake スクリプトで、:command:`find_package` コマンドによって読み込まれまれます。
 
-通常 Config ファイルは ``lib/cmake/<PackageName>`` のパタンに従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（「:ref:`search procedure`」も参照して下さい）。
+通常 Config ファイルは ``lib/cmake/<PackageName>`` の書式に従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（「:ref:`search procedure`」も参照して下さい）。
 ここで ``<PackageName>`` は  :command:`find_package` コマンドの先頭オプションとして渡したパッケージの名前です。
 あるいは ``NAMES`` オプションで、代替えの名前を指定できます：
 
@@ -95,32 +95,31 @@ Config ファイルの名前は ``<PackageName>Config.cmake`` または ``<Lower
 
 検索したいパッケージの ``<PackageName>Config.cmake`` ファイルが存在し、バージョンの制約を満足している場合、:command:`find_package` コマンドはそのパッケージが完全な形で提供されているとみなします。
 
-場合によっては、利用が可能な CMake コマンドや「:ref:`imported targets`」を提供する追加のファイルが存在している場合があります。
+場合によっては、プロジェクトで利用できる CMake コマンドや「:ref:`imported targets`」を提供する追加のファイルが存在している場合があります。
 CMake は、このようなファイルには命名規則を強制していません。
 :command:`include` コマンドを使うと、このようなファイルはメインの ``<PackageName>Config.cmake`` ファイルに関連づけされます。
-通常、このようなファイルは ``<PackageName>Config.cmake``  ファイルが自動的に取り込むので、 :command:`find_package` コマンドを呼び出す他に追加の作業はありません。
+通常、このようなファイルはメインの ``<PackageName>Config.cmake`` ファイルが自動的に取り込むので、 :command:`find_package` コマンドを呼び出す他に追加の作業はありません。
 
-もし「:ref:`directory known to CMake <search procedure>`」 下にパッケージがあれば、:command:`find_package` コマンドの呼び出しは成功します。
-CMake に認識されるディレクトリはホストのプラットフォーム固有のものになります。
-たとえば、
-For example, packages installed on Linux with a standard system package manager will be found in the ``/usr`` prefix automatically.
-Packages installed in ``Program Files`` on Windows will similarly be found automatically.
+もしパッケージが :ref:`CMake に既知のディレクトリ下 <search procedure>` にあれば、:command:`find_package` コマンドの呼び出しは成功します。
+CMake に認識される場所は、ホストのプラットフォーム固有のディレクトリやフォルダです。
+たとえば、Linux 系のプラットフォーム標準のパッケージ・マネージャを使ってインストールされたパッケージならば、自動的に ``/usr`` を Prefix としたディレクトリ下にあります。
+Windows 系のプラットフォームで ``Program Files`` フォルダにインストールされているパッケージも同様に自動的に見つけます。
 
-Packages will not be found automatically without help if they are in locations not known to CMake, such as ``/opt/mylib`` or ``$HOME/dev/prefix``.
-This is a normal situation, and CMake provides several ways for users to specify where to find such libraries.
+``/opt/mylib`` とか ``$HOME/dev/prefix`` などのような CMake が認識していない場所にパッケージがある場合、「なんらかのヘルプ」無しで自動的にパッケージを見つけることはできません。
+そのため CMake はパッケージを見つける場所を指定する方法をいくつか提供しています。
 
-The :variable:`CMAKE_PREFIX_PATH` variable may be :ref:`set when invoking CMake <Setting Build Variables>`.
-It is treated as a list of base paths in which to search for :ref:`config files <Config File Packages>`.
-A package installed in ``/opt/somepackage`` will typically install config files such as ``/opt/somepackage/lib/cmake/somePackage/SomePackageConfig.cmake``.
-In that case, ``/opt/somepackage`` should be added to :variable:`CMAKE_PREFIX_PATH`.
+CMake 変数の :variable:`CMAKE_PREFIX_PATH` は :ref:`CMake を呼び出す際にセット <Setting Build Variables>` されます。
+この変数の値は :ref:`Config ファイル <Config File Packages>` を探すためのベース・ディレクトリを要素とする :ref:`リスト <CMake Language Lists>` として扱います。
+たとえば ``/opt/somepackage`` 下にインストールされたパッケージは、``/opt/somepackage/lib/cmake/somePackage/SomePackageConfig.cmake`` という Config ファイルをインストールします。
+その場合 Prefix の一つとして ``/opt/somepackage`` を :variable:`CMAKE_PREFIX_PATH` に追加しておく必要があります。
 
-The environment variable ``CMAKE_PREFIX_PATH`` may also be populated with prefixes to search for packages.
-Like the ``PATH`` environment variable, this is a list, but it needs to use the platform-specific environment variable list item separator (``:`` on Unix and ``;`` on Windows).
+この ``CMAKE_PREFIX_PATH`` にはパッケージを探す際に参照する Prefix をセットします。
+環境変数の ``PATH`` と同様に、これは :ref:`リスト <CMake Language Lists>` ですが、ホストのプラットフォーム固有のディレクトリ区切り文字（Windows 系プラットフォームの場合は ``;``、UNIX 系プラットフォームの場合は ``:``）を使って下さい。
 
-The :variable:`CMAKE_PREFIX_PATH` variable provides convenience in cases where multiple prefixes need to be specified, or when multiple packages are available under the same prefix.
-Paths to packages may also be specified by setting variables matching ``<PackageName>_DIR``, such as ``SomePackage_DIR``.
-Note that this is not a prefix, but should be a full path to a directory containing a config-style package file, such as ``/opt/somepackage/lib/cmake/SomePackage`` in the above example.
-See the :command:`find_package` documentation for other CMake variables and environment variables that can affect the search.
+複数の Prefix 配下を探したい場合とか、複数のパッケージが同じ Prefix 配下にインストールされているような場合に、この :variable:`CMAKE_PREFIX_PATH` は便利です。
+パッケージを指すパスも ``<PackageName>_DIR`` の書式に従った変数（たとえば ``SomePackage_DIR``）をセットすることで指定できます。
+ただし、この変数には Prefix ではなく、Config ファイル系を配置したディレクトリへの絶対パス（先の例だと ``/opt/somepackage/lib/cmake/SomePackage``）をセットするという点が違うので注意して下さい。
+パッケージやファイルの検索に影響を与えそうなその他の CMake 変数や環境変数については、:command:`find_package` コマンドのドキュメントを参照して下さい。
 
 .. _Libraries not Providing Config-file Packages:
 
