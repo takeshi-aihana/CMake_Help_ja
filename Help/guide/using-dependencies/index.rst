@@ -190,7 +190,8 @@ CMake で依存関係を利用するために、必ずしも既存のパッケ�
 :module:`FetchContent` モジュールはコンテンツ（通常はソース・ファイルですが、何でも構いません）をダウンロードし、それをプロジェクトに追加する機能を提供しています。
 これにより、追加されたコンテンツは、あたかもプロジェクトのソースの一部であるかのように、他のソースと共にビルドされます。
 
-The general pattern is that the project should first declare all the dependencies it wants to use, then ask for them to be made available.
+一般的なケースは、まずプロジェクトは利用する全ての依存関係を抽出し、それらを利用できるようにするために CMake に要求します。
+
 The following demonstrates the principle (see :ref:`fetch-content-examples` for more):
 
 .. code-block:: cmake
