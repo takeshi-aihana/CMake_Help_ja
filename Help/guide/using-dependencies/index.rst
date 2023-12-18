@@ -232,7 +232,7 @@ CMake プロジェクトは :command:`find_package` コマンド、または :mo
 
 プロジェクトは、:command:`FetchContent_Declare` コマンドの ``FIND_PACKAGE_ARGS`` オプションを使用して、:command:`find_package` コマンドか :module:`FetchContent` モジュールかのどちらの方法で依存関係を受け入れたのかを宣言することができます。
 :command:`FetchContent_MakeAvailable` コマンドは、この ``FIND_PACKAGE_ARGS`` の引数を利用し、まず最初に :command:`find_package` コマンドを呼び出して依存関係の解決を試みます。
-依存関係を解決できなかった場合は、（前述のとおり）代わりにソースから依存関係を生成します。
+依存関係を解決できなかった場合は、（前述のとおり）ソースから依存関係を生成します。
 
 .. code-block:: cmake
 
@@ -255,11 +255,11 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
 
 また、この操作は :variable:`FETCHCONTENT_TRY_FIND_PACKAGE_MODE` 変数を使って利用できます。
 この変数に ``NEVER`` をセットすると :command:`find_package` コマンドの呼び出しは行いません。
-この変数に ``ALWAYS`` をセットすると、``FIND_PACKAGE_ARGS`` オプションを指定しなくても :command:`find_package` コマンドの呼び出しを試みます（``ALWAYS`` は注意して使う必要があります）。
+この変数に ``ALWAYS`` をセットすると、``FIND_PACKAGE_ARGS`` オプションを指定しなくても :command:`find_package` コマンドの呼び出しを試みます（この ``ALWAYS`` は注意して使う必要があります）。
 
 またはプロジェクトは、特定の依存関係をソースから生成する必要があると判断する場合があります。
 これは、依存関係のパッチの適用が必要か、または未だリリースしていないバージョンが必要か、あるいは全ての依存関係をソースから生成する必要かというポリシーを解決する場合に使われる方法です。
-プロジェクトでは、:command:`FetchContent_Declare` コマンドに ``OVERRIDE_FIND_PACKAGE`` オプションを追加することで、この判断を強制できます。
+プロジェクトでは、:command:`FetchContent_Declare` コマンドに ``OVERRIDE_FIND_PACKAGE`` オプションを渡すことで、この判断を強制できます。
 その際は、依存関係を解決するために :command:`find_package` コマンドを呼び出すと :command:`FetchContent_MakeAvailable` コマンドにリダイレクトされます。
 
 .. code-block:: cmake
@@ -284,15 +284,14 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
 
 .. versionadded:: 3.24
 
-The preceding section discussed techniques that projects can use to specify their dependencies.
-Ideally, the project shouldn't really care where a dependency comes from, as long as it provides the things it expects (often just some imported targets).
-The project says what it needs and may also specify where to get it from, in the absence of any other details, so that it can still be built out-of-the-box.
+前のセクションでは、プロジェクトがその依存関係を指定するために使う方法について説明しました。
+プロジェクトは、期待されているもの（多くの場合はインポートしたターゲットの一部）を提供する限り、依存関係がどこから要求されているのかあまり気にする必要が無いことが理想です。
+.. The project says what it needs and may also specify where to get it from, in the absence of any other details, so that it can still be built out-of-the-box.（FIXME: 意味不明）
 
-The developer, on the other hand, may be much more interested in controlling *how* a dependency is provided to the project.
-You might want to use a particular version of a package that you built yourself.
-You might want to use a third party package manager.
-You might want to redirect some requests to a different URL on a system you control for security or performance reasons.
-CMake supports these sort of scenarios through :ref:`dependency_providers`.
+
+一方、開発者の場合は、プロジェクトに「依存関係を提供する方法」について興味があるかもしれません。
+たとえば、自分がビルドしたパッケージの特定のバージョンを使用したいとか、サードパーティのパッケージ・マネージャを使用したいとか、セキュリティやパフォーマンス上の理由から一部のビルド・リクエストをビルドシステムの別の URL にリダイレクトしたいとか。
+CMake は、このようなケースを「:ref:`dependency_providers`」でサポートしています。
 
 A dependency provider can be set to intercept :command:`find_package` and :command:`FetchContent_MakeAvailable` calls.
 The provider is given an opportunity to satisfy such requests before falling back to the built-in implementation if the provider doesn't fulfill it.
