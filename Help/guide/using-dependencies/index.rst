@@ -275,50 +275,38 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
   # 次の呼び出しは自動的に FetchContent_MakeAvailable(Catch2) の呼び出しにリダイレクトされる
   find_package(Catch2)
 
-さらに高度な使い方については、CMake 変数の :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` を参照して下さい。
+さらに高度な使い方については CMake 変数の :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` を参照して下さい。
 
 .. _dependency_providers_overview:
 
-Dependency Providers
+依存関係のプロバイダ
 ====================
 
 .. versionadded:: 3.24
 
-The preceding section discussed techniques that projects can use to specify
-their dependencies.  Ideally, the project shouldn't really care where a
-dependency comes from, as long as it provides the things it expects (often
-just some imported targets).  The project says what it needs and may also
-specify where to get it from, in the absence of any other details, so that it
-can still be built out-of-the-box.
+The preceding section discussed techniques that projects can use to specify their dependencies.
+Ideally, the project shouldn't really care where a dependency comes from, as long as it provides the things it expects (often just some imported targets).
+The project says what it needs and may also specify where to get it from, in the absence of any other details, so that it can still be built out-of-the-box.
 
-The developer, on the other hand, may be much more interested in controlling
-*how* a dependency is provided to the project.  You might want to use a
-particular version of a package that you built yourself.  You might want
-to use a third party package manager.  You might want to redirect some
-requests to a different URL on a system you control for security or
-performance reasons.  CMake supports these sort of scenarios through
-:ref:`dependency_providers`.
+The developer, on the other hand, may be much more interested in controlling *how* a dependency is provided to the project.
+You might want to use a particular version of a package that you built yourself.
+You might want to use a third party package manager.
+You might want to redirect some requests to a different URL on a system you control for security or performance reasons.
+CMake supports these sort of scenarios through :ref:`dependency_providers`.
 
-A dependency provider can be set to intercept :command:`find_package` and
-:command:`FetchContent_MakeAvailable` calls.  The provider is given an
-opportunity to satisfy such requests before falling back to the built-in
-implementation if the provider doesn't fulfill it.
+A dependency provider can be set to intercept :command:`find_package` and :command:`FetchContent_MakeAvailable` calls.
+The provider is given an opportunity to satisfy such requests before falling back to the built-in implementation if the provider doesn't fulfill it.
 
-Only one dependency provider can be set, and it can only be set at a very
-specific point early in the CMake run.
-The :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` variable lists CMake files
-that will be read while processing the first :command:`project()` call (and
-only that call).  This is the only time a dependency provider may be set.
-At most, one single provider is expected to be used throughout the whole
-project.
+Only one dependency provider can be set, and it can only be set at a very specific point early in the CMake run.
+The :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` variable lists CMake files that will be read while processing the first :command:`project()` call (and only that call).
+This is the only time a dependency provider may be set.
+At most, one single provider is expected to be used throughout the whole project.
 
-For some scenarios, the user wouldn't need to know the details of how the
-dependency provider is set.  A third party may provide a file that can be
-added to :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES`, which will set up
-the dependency provider on the user's behalf.  This is the recommended
-approach for package managers.  The developer can use such a file like so::
+For some scenarios, the user wouldn't need to know the details of how the dependency provider is set.
+A third party may provide a file that can be added to :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES`, which will set up the dependency provider on the user's behalf.
+This is the recommended approach for package managers.
+The developer can use such a file like so::
 
   cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/path/to/package_manager/setup.cmake ...
 
-For details on how to implement your own custom dependency provider, see the
-:command:`cmake_language(SET_DEPENDENCY_PROVIDER)` command.
+For details on how to implement your own custom dependency provider, see the :command:`cmake_language(SET_DEPENDENCY_PROVIDER)` command.
