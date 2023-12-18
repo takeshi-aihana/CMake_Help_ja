@@ -182,11 +182,11 @@ IMPORTED なターゲット
 この Find モジュールのファイルが存在しない場合、CMake は Config ファイルを探します。
 
 
-``FetchContent`` モジュールを使ってソースからビルドする
-=======================================================
+``FetchContent`` モジュールでソースから依存関係を生成する
+=========================================================
 
 CMake で依存関係を利用するために、必ずしも既存のパッケージが必要であるという訳ではありません。
-依存関係は、プロジェクトの一部としてソースから生成できます。
+依存関係は、プロジェクトの一部としてソースからも生成できます。
 :module:`FetchContent` モジュールはコンテンツ（通常はソース・ファイルですが、何でも構いません）をダウンロードし、それをプロジェクトに追加する機能を提供しています。
 これにより、追加されたコンテンツは、あたかもプロジェクトのソースの一部であるかのように、他のソースと共にビルドされます。
 
@@ -209,36 +209,30 @@ CMake で依存関係を利用するために、必ずしも既存のパッケ�
   )
   FetchContent_MakeAvailable(googletest Catch2)
 
-この :module:`FetchContent` は、任意の URL からアーカイブ（さまざまなアーカイブの形式をサポートしています）をダウンロードして展開する他、Git、Subversion、そして Mercurial などたくさんの種類のリポジトリを含め、さまざまなダウンロード機能をサポートしています。
-任意のユースケースに対応できるようにするために、独自のダウンロードやアップデート、そして ``patch`` コマンドも利用できます。
+この :module:`FetchContent` モジュールは、任意の URL からアーカイブ（さまざまなアーカイブの形式をサポートしています）をダウンロードして展開する機能の他に、Git、Subversion、そして Mercurial などたくさんの種類のリポジトリを含め、さまざまなダウンロード機能をサポートしています。
+さらに、任意のユースケースに対応できるようにするために、独自のダウンロードやアップデート、そして ``patch`` コマンドも利用できます。
 
-この :module:`FetchContent` を使ってプロジェクトに依存関係を追加すると、プロジェクトはその他のターゲットと同様に、依存関係のターゲットにリンクします。
-もし依存関係が ``SomePrefix::ThingName`` に従った名前空間付きのターゲットを提供している場合、プロジェクトは名前空間のないターゲットを除くターゲットにリンクする必要があります。
-これが推奨されている理由については、つぎのセクションを参照して下さい。
+このモジュールを使ってプロジェクトに依存関係を追加すると、プロジェクトはその他のターゲットと同様に、その依存関係をターゲットにリンクします。
+もし依存関係が ``SomePrefix::ThingName`` に従った名前空間付きのターゲットを提供している場合、名前空間のあるターゲットにだけリンクする必要があります。
+これが推奨されている理由については、次のセクションを参照して下さい。
 
-この方法で全ての依存関係を組み込めるわけではありません。
+なお、この方法で全ての依存関係をプロジェクトに組み込めるわけではありません。
 依存関係の定義の中には、プロジェクトまたは依存関係のターゲットと名前が衝突するターゲットを定義しているものがあります。
 :command:`add_executable` と :command:`add_library` コマンドで生成した実行形式やライブラリのターゲットはグローバルな名前空間を持つため、それぞれがビルド全体で一意な名前でなければなりません。
-もし任意の依存関係が名前が衝突したターゲットを追加した場合、この方法で依存関係をビルドに組み込むことはできません。
+もし任意の依存関係がそのようなターゲットを追加した場合、この方法で依存関係をプロジェクトに組み込めなくなります。
 
-``FetchContent`` And ``find_package()`` Integration
-===================================================
+``find_package()`` コマンドと ``FetchContent`` モジュールの両方を使う
+=====================================================================
 
 .. versionadded:: 3.24
 
-Some dependencies support being added by either :command:`find_package` or
-:module:`FetchContent`.  Such dependencies must ensure they define the same
-namespaced targets in both installed and built-from-source scenarios.
-A consuming project then links to those namespaced targets and can handle
-both scenarios transparently, as long as the project does not use anything
-else that isn't provided by both methods.
+CMake プロジェクトは :command:`find_package` コマンド、または :module:`FetchContent` モジュールによる依存関係の追加をサポートしています。
+このような依存関係は、パッケージをインストールした場合とソースからビルドした場合の双方のケースで、同じ名前空間を持つターゲットが定義されることを保証する必要があります。
+これにより、この依存関係を使用するプロジェクトは名前空間付きのターゲットにリンクし、双方のケースでシームレスに処理できます。
 
-The project can indicate it is happy to accept a dependency by either method
-using the ``FIND_PACKAGE_ARGS`` option to :command:`FetchContent_Declare`.
-This allows :command:`FetchContent_MakeAvailable` to try satisfying the
-dependency with a call to :command:`find_package` first, using the arguments
-after the ``FIND_PACKAGE_ARGS`` keyword, if any.  If that doesn't find the
-dependency, it is built from source as described previously instead.
+プロジェクトは、:command:`FetchContent_Declare` コマンドの ``FIND_PACKAGE_ARGS`` オプションを使用して、:command:`find_package` コマンドか :module:`FetchContent` モジュールかのどちらの方法で依存関係を受け入れたのかを宣言することができます。
+:command:`FetchContent_MakeAvailable` コマンドは、この ``FIND_PACKAGE_ARGS`` の引数を利用し、まず最初に :command:`find_package` コマンドを呼び出して依存関係の解決を試みます。
+依存関係を解決できなかった場合は、（前述のとおり）代わりにソースから依存関係を生成します。
 
 .. code-block:: cmake
 
@@ -254,27 +248,19 @@ dependency, it is built from source as described previously instead.
   add_executable(ThingUnitTest thing_ut.cpp)
   target_link_libraries(ThingUnitTest GTest::gtest_main)
 
-The above example calls
-:command:`find_package(googletest NAMES GTest) <find_package>` first.
-CMake provides a :module:`FindGTest` module, so if that finds a GTest package
-installed somewhere, it will make it available, and the dependency will not be
-built from source.  If no GTest package is found, it *will* be built from
-source.  In either case, the ``GTest::gtest_main`` target is expected to be
-defined, so we link our unit test executable to that target.
+この例は、まず :command:`find_package(googletest NAMES GTest) <find_package>` コマンドを呼び出します。
+CMake は :module:`FindGTest` というモジュールを提供しているので、どこかにインストールされた GTest パッケージを見つけると、これを有効化するので、ソースから依存関係は生成されません。
+対して GTest パッケージが見つからなかったら、依存関係を「ソースから」生成します。
+いずれの場合でも、``GTest::gtest_main`` というターゲットが定義されているものと期待されるため、ユニットテストの実行形式をそのターゲットにリンクすることになります。
 
-High-level control is also available through the
-:variable:`FETCHCONTENT_TRY_FIND_PACKAGE_MODE` variable.  This can be set to
-``NEVER`` to disable all redirection to :command:`find_package`.  It can be
-set to ``ALWAYS`` to try :command:`find_package` even if ``FIND_PACKAGE_ARGS``
-was not specified (this should be used with caution).
+また、この操作は :variable:`FETCHCONTENT_TRY_FIND_PACKAGE_MODE` 変数を使って利用できます。
+この変数に ``NEVER`` をセットすると :command:`find_package` コマンドの呼び出しは行いません。
+この変数に ``ALWAYS`` をセットすると、``FIND_PACKAGE_ARGS`` オプションを指定しなくても :command:`find_package` コマンドの呼び出しを試みます（``ALWAYS`` は注意して使う必要があります）。
 
-The project might also decide that a particular dependency must be built from
-source.  This might be needed if a patched or unreleased version of the
-dependency is required, or to satisfy some policy that requires all
-dependencies to be built from source.  The project can enforce this by adding
-the ``OVERRIDE_FIND_PACKAGE`` keyword to :command:`FetchContent_Declare`.
-A call to :command:`find_package` for that dependency will then be redirected
-to :command:`FetchContent_MakeAvailable` instead.
+またはプロジェクトは、特定の依存関係をソースから生成する必要があると判断する場合があります。
+これは、依存関係のパッチの適用が必要か、または未だリリースしていないバージョンが必要か、あるいは全ての依存関係をソースから生成する必要かというポリシーを解決する場合に使われる方法です。
+プロジェクトでは、:command:`FetchContent_Declare` コマンドに ``OVERRIDE_FIND_PACKAGE`` オプションを追加することで、この判断を強制できます。
+その際は、依存関係を解決するために :command:`find_package` コマンドを呼び出すと :command:`FetchContent_MakeAvailable` コマンドにリダイレクトされます。
 
 .. code-block:: cmake
 
@@ -286,11 +272,10 @@ to :command:`FetchContent_MakeAvailable` instead.
     OVERRIDE_FIND_PACKAGE
   )
 
-  # The following is automatically redirected to FetchContent_MakeAvailable(Catch2)
+  # 次の呼び出しは自動的に FetchContent_MakeAvailable(Catch2) の呼び出しにリダイレクトされる
   find_package(Catch2)
 
-For more advanced use cases, see the
-:variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` variable.
+さらに高度な使い方については、CMake 変数の :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` を参照して下さい。
 
 .. _dependency_providers_overview:
 
