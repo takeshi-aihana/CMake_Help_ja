@@ -8,7 +8,7 @@
 はじめに
 ========
 
-一般的に「プロジェクト」は他のプロジェクトや、いろいろな目的、そしていろいろな成果物（*Artifacts*）に依存することがよくあります。
+一般的に「プロジェクト」は他のプロジェクトやいろいろな目的、そしていろいろな成果物（*Artifacts*）に依存することがよくあります。
 CMake は、このような「**依存関係**」をビルドに組み込むためのさまざまな方法を提供します。
 これを利用するプロジェクトとユーザは、ニーズにあった最適な方法を柔軟に選択できます。
 
@@ -54,7 +54,7 @@ CMake では、このようなケースで利用できる :command:`find_package
   多くパッケージが **Config モード** を機能させるのに必要なファイルを提供していません。
   そのような場合は、プロジェクトまたは CMake で、パッケージ向けの「:ref:`Find モジュール <Libraries not Providing Config-file Packages>`」なるものを用意できます。
   通常 Find モジュールは、そのパッケージが何のファイルを配布し、それらをどのようにしてプロジェクト側に提供しているのかを解決する実装を持っています。
-  通常 Find モジュールはパッケージと別々に提供されているため、検索結果の信頼性はそれほど高くありません。
+  また通常 Find モジュールはパッケージと別々に提供されているため、検索結果の信頼性はそれほど高くありません。
   つまり、パッケージと Find モジュールは個別に保守され、異なるスケジュールに従ってリリースされる場合が多いので、簡単に情報が古くなってしまう可能性があります。
 
 この :command:`find_package` コマンドは、受け取ったオプションに応じて、二つあるモードの一方を使うか、あるいは両方を使うかを決めます。
@@ -70,11 +70,11 @@ CMake では、このようなケースで利用できる :command:`find_package
 パッケージの Config ファイル
 ----------------------------
 
-サードパーティが、CMake で使用される実行形式やライブラリ、ヘッダ、その他のファイルを提供する方法として推奨されるのが「:ref:`Config ファイル <Config File Packages>`」です。
-これらのファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲット、CMake で参照できる変数、そして CMake コマンドなどを定義します。
-Config ファイルは普通の CMake スクリプトで、:command:`find_package` コマンドによって読み込まれまれます。
+CMake で使用される実行形式やライブラリ、ヘッダ、その他のファイルを提供する方法として、サードパーティに推奨されているのが「:ref:`Config ファイル <Config File Packages>`」です。
+このファイルはパッケージに同梱されているテキスト・ファイルで、CMake でビルドするターゲットや CMake で参照できる変数、そして CMake コマンドなどを定義します。
+Config ファイルは普通の CMake スクリプトで、:command:`find_package` コマンドによって読み込まれます。
 
-通常 Config ファイルは ``lib/cmake/<PackageName>`` の書式に従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（「:ref:`search procedure`」も参照して下さい）。
+通常 Config ファイルは ``lib/cmake/<PackageName>`` に従ったディレクトリの中にありますが、別のディレクトリにある場合もあります（「:ref:`search procedure`」も参照して下さい）。
 ここで ``<PackageName>`` は  :command:`find_package` コマンドの先頭オプションとして渡したパッケージの名前です。
 あるいは ``NAMES`` オプションで、代替えの名前を指定できます：
 
@@ -90,7 +90,7 @@ Config ファイルは普通の CMake スクリプトで、:command:`find_packag
 Config ファイルの名前は ``<PackageName>Config.cmake`` または ``<LowercasePackageName>-config.cmake`` にして下さい（本ガイドでは前者を使用していますが、両方ともサポートしています）。
 このファイルは CMake でのパッケージ検索のエントリ・ポイントになります。
 オプションとして、``<PackageName>ConfigVersion.cmake`` または ``<LowercasePackageName>-config-version.cmake`` という名前のファイルも同じディレクトリにおいて下さい。
-このファイルは、:command:`find_package` コマンドの呼び出しでパッケージのバージョンが指定された際に、バージョンによる制約を満足するかどうかをチェックする際に使用します。
+このファイルは、:command:`find_package` コマンドの呼び出しでパッケージのバージョンが指定された際に、バージョンによる制約を満足しているかどうかをチェックする際に使用します。
 なお、``<PackageName>ConfigVersion.cmake``  が存在していても、:command:`find_package` コマンドにオプションとして任意のバージョンを渡すことができます。
 
 検索したいパッケージの ``<PackageName>Config.cmake`` ファイルが存在し、バージョンの制約を満足している場合、:command:`find_package` コマンドはそのパッケージが完全な形で提供されているとみなします。
@@ -100,15 +100,15 @@ CMake は、このようなファイルには命名規則を強制していま�
 :command:`include` コマンドを使うと、このようなファイルはメインの ``<PackageName>Config.cmake`` ファイルに関連づけされます。
 通常、このようなファイルはメインの ``<PackageName>Config.cmake`` ファイルが自動的に取り込むので、 :command:`find_package` コマンドを呼び出す他に追加の作業はありません。
 
-もしパッケージが :ref:`CMake に既知のディレクトリ下 <search procedure>` にあれば、:command:`find_package` コマンドの呼び出しは成功します。
+もし :ref:`CMake に既知のディレクトリ下 <search procedure>` にパッケージがあれば、:command:`find_package` コマンドの呼び出しは成功します。
 CMake に認識される場所は、ホストのプラットフォーム固有のディレクトリやフォルダです。
 たとえば、Linux 系のプラットフォーム標準のパッケージ・マネージャを使ってインストールされたパッケージならば、自動的に ``/usr`` を Prefix としたディレクトリ下にあります。
 Windows 系のプラットフォームで ``Program Files`` フォルダにインストールされているパッケージも同様に自動的に見つけます。
 
-``/opt/mylib`` とか ``$HOME/dev/prefix`` などのような CMake が認識していない場所にパッケージがある場合、「なんらかのヘルプ」無しで自動的にパッケージを見つけることはできません。
+``/opt/mylib`` とか ``$HOME/dev/prefix`` などのような CMake が認識していない場所にパッケージがある場合、「なんらかのヒント」無しで自動的にパッケージを見つけることはできません。
 そのため CMake はパッケージを見つける場所を指定する方法をいくつか提供しています。
 
-CMake 変数の :variable:`CMAKE_PREFIX_PATH` は :ref:`CMake を呼び出す際にセット <Setting Build Variables>` されます。
+CMake 変数の :variable:`CMAKE_PREFIX_PATH` は :ref:`CMake を呼び出すとセット <Setting Build Variables>` されます。
 この変数の値は :ref:`Config ファイル <Config File Packages>` を探すためのベース・ディレクトリを要素とする :ref:`リスト <CMake Language Lists>` として扱います。
 たとえば ``/opt/somepackage`` 下にインストールされたパッケージは、``/opt/somepackage/lib/cmake/somePackage/SomePackageConfig.cmake`` という Config ファイルをインストールします。
 その場合 Prefix の一つとして ``/opt/somepackage`` を :variable:`CMAKE_PREFIX_PATH` に追加しておく必要があります。
@@ -117,9 +117,9 @@ CMake 変数の :variable:`CMAKE_PREFIX_PATH` は :ref:`CMake を呼び出す際
 環境変数の ``PATH`` と同様に、これは :ref:`リスト <CMake Language Lists>` ですが、ホストのプラットフォーム固有のディレクトリ区切り文字（Windows 系プラットフォームの場合は ``;``、UNIX 系プラットフォームの場合は ``:``）を使って下さい。
 
 複数の Prefix 配下を探したい場合とか、複数のパッケージが同じ Prefix 配下にインストールされているような場合に、この :variable:`CMAKE_PREFIX_PATH` は便利です。
-パッケージを指すパスも ``<PackageName>_DIR`` の書式に従った変数（たとえば ``SomePackage_DIR``）をセットすることで指定できます。
-ただし、この変数には Prefix ではなく、Config ファイル系を配置したディレクトリへの絶対パス（先の例だと ``/opt/somepackage/lib/cmake/SomePackage``）をセットするという点が違うので注意して下さい。
-パッケージやファイルの検索に影響を与えそうなその他の CMake 変数や環境変数については、:command:`find_package` コマンドのドキュメントを参照して下さい。
+パッケージを指すパスも ``<PackageName>_DIR`` に従った変数（たとえば ``SomePackage_DIR``）をセットすることで指定できます。
+ただし、この変数には Prefix ではなく、Config ファイルの類を配置したディレクトリへの絶対パス（先の例だと ``/opt/somepackage/lib/cmake/SomePackage``）をセットする点が違うので注意して下さい。
+パッケージやファイルの検索に影響を与えそうな、その他の CMake 変数や環境変数については、:command:`find_package` コマンドのドキュメントを参照して下さい。
 
 .. _Libraries not Providing Config-file Packages:
 
@@ -190,9 +190,9 @@ CMake で依存関係を利用するために、必ずしも既存のパッケ�
 :module:`FetchContent` モジュールはコンテンツ（通常はソース・ファイルですが、何でも構いません）をダウンロードし、それをプロジェクトに追加する機能を提供しています。
 これにより、追加されたコンテンツは、あたかもプロジェクトのソースの一部であるかのように、他のソースと共にビルドされます。
 
-一般的なケースは、まずプロジェクトは利用する全ての依存関係を抽出し、それらを利用できるようにするために CMake に要求します。
+一般的なケースは、プロジェクトはまず利用する全ての依存関係を抽出し、それらを利用できるようにするために CMake に要求します。
 
-The following demonstrates the principle (see :ref:`fetch-content-examples` for more):
+次は、この原理を例として示したものです（詳細については :ref:`fetch-content-examples` を参照して下さい）：
 
 .. code-block:: cmake
 
@@ -209,17 +209,17 @@ The following demonstrates the principle (see :ref:`fetch-content-examples` for 
   )
   FetchContent_MakeAvailable(googletest Catch2)
 
-Various download methods are supported, including downloading and extracting archives from a URL (a range of archive formats are supported), and a number of repository formats including Git, Subversion, and Mercurial.
-Custom download, update, and patch commands can also be used to support arbitrary use cases.
+この :module:`FetchContent` は、任意の URL からアーカイブ（さまざまなアーカイブの形式をサポートしています）をダウンロードして展開する他、Git、Subversion、そして Mercurial などたくさんの種類のリポジトリを含め、さまざまなダウンロード機能をサポートしています。
+任意のユースケースに対応できるようにするために、独自のダウンロードやアップデート、そして ``patch`` コマンドも利用できます。
 
-When a dependency is added to the project with :module:`FetchContent`, the project links to the dependency's targets just like any other target from the project.
-If the dependency provides namespaced targets of the form ``SomePrefix::ThingName``, the project should link to those rather than to any non-namespaced targets.
-See the next section for why this is recommended.
+この :module:`FetchContent` を使ってプロジェクトに依存関係を追加すると、プロジェクトはその他のターゲットと同様に、依存関係のターゲットにリンクします。
+もし依存関係が ``SomePrefix::ThingName`` に従った名前空間付きのターゲットを提供している場合、プロジェクトは名前空間のないターゲットを除くターゲットにリンクする必要があります。
+これが推奨されている理由については、つぎのセクションを参照して下さい。
 
-Not all dependencies can be brought into the project this way.
-Some dependencies define targets whose names clash with other targets from the project or other dependencies.
-Concrete executable and library targets created by :command:`add_executable` and :command:`add_library` are global, so each one must be unique across the whole build.
-If a dependency would add a clashing target name, it cannot be brought directly into the build with this method.
+この方法で全ての依存関係を組み込めるわけではありません。
+依存関係の定義の中には、プロジェクトまたは依存関係のターゲットと名前が衝突するターゲットを定義しているものがあります。
+:command:`add_executable` と :command:`add_library` コマンドで生成した実行形式やライブラリのターゲットはグローバルな名前空間を持つため、それぞれがビルド全体で一意な名前でなければなりません。
+もし任意の依存関係が名前が衝突したターゲットを追加した場合、この方法で依存関係をビルドに組み込むことはできません。
 
 ``FetchContent`` And ``find_package()`` Integration
 ===================================================
