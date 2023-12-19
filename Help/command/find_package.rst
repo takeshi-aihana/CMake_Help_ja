@@ -16,84 +16,60 @@ find_package
   このガイドは、:module:`FetchContent` モジュールとの関係を含め、``find_package()`` コマンドが CMake の全体像のどこに当てはまるのかについて、より広範な概要を提供しています。
   本ドキュメントの前に、こちらのガイドを事前に目を通しておくことをお勧めします。
 
-Find a package (usually provided by something external to the project), and load its package-specific details.
-Calls to this command can also be intercepted by :ref:`dependency providers <dependency_providers>`.
+パッケージ（通常はプロジェクト外から提供されるもの）を見つけ出し、そのパッケージ固有の詳細をプロジェクトに取り込む。
+このコマンドの呼び出しは「:ref:`依存関係のプロバイダ <dependency_providers>`」によって割り込まれる場合がある。
 
-Search Modes
-^^^^^^^^^^^^
+検索処理のモデル
+^^^^^^^^^^^^^^^^
 
-The command has a few modes by which it searches for packages:
+このコマンドにはパッケージを検索するモードがいくつかあります：
 
-**Module mode**
-  In this mode, CMake searches for a file called ``Find<PackageName>.cmake``,
-  looking first in the locations listed in the :variable:`CMAKE_MODULE_PATH`,
-  then among the :ref:`Find Modules` provided by the CMake installation.
-  If the file is found, it is read and processed by CMake.  It is responsible
-  for finding the package, checking the version, and producing any needed
-  messages.  Some Find modules provide limited or no support for versioning;
-  check the Find module's documentation.
+**Module モード**
+  このモードでは、CMake は ``Find<PackageName>.cmake`` というファイルを探します。
+  その際は、まず最初に CMake 変数の :variable:`CMAKE_MODULE_PATH` にセットされている場所を探し、それから CMake がインストールした :ref:`Find モジュール <Find Modules>` を検索します。
+  もし ``Find<PackageName>.cmake`` ファイルが見つかったら、そのファイルを読み込んで処理します。
+  その際はパッケージを探して、そのバージョンをチェックし、必要なメッセージを出力します。
+  一部の Find モジュールはバージョン管理するものがあります（それぞれの Find モジュールのドキュメントを確認してみて下さい）。
 
-  The ``Find<PackageName>.cmake`` file is not typically provided by the
-  package itself.  Rather, it is normally provided by something external to
-  the package, such as the operating system, CMake itself, or even the project
-  from which the ``find_package()`` command was called.  Being externally
-  provided, :ref:`Find Modules` tend to be heuristic in nature and are
-  susceptible to becoming out-of-date.  They typically search for certain
-  libraries, files and other package artifacts.
+  通常、この ``Find<PackageName>.cmake`` ファイルはパッケージからは提供されません。
+  むしろ OS のディストリビュータ、CMake、あるいは  ``find_package()`` コマンドを呼び出すプロジェクトなど、検索するパッケージ以外の何らかによって提供されるものです。
+  一方、外部から提供される :ref:`Find モジュール <Find Modules>` は「放置される」傾向にあり、その内容は古くなりやすいです。
+  通常、このモードでは特定のライブラリ、特定のファイル、そしてパッケージの類を探します。
 
-  Module mode is only supported by the
-  :ref:`basic command signature <Basic Signature>`.
+  このモードは「:ref:`basic signature`」でしか呼び出せません。
 
-**Config mode**
-  In this mode, CMake searches for a file called
-  ``<lowercasePackageName>-config.cmake`` or ``<PackageName>Config.cmake``.
-  It will also look for ``<lowercasePackageName>-config-version.cmake`` or
-  ``<PackageName>ConfigVersion.cmake`` if version details were specified
-  (see :ref:`version selection` for an explanation of how these separate
-  version files are used).
+**Config モード**
+  このモードでは、CMake は ``<lowercasePackageName>-config.cmake`` または ``<PackageName>Config.cmake`` というファイルを探します。
+  また、バージョンの詳細が指定された場合は ``<lowercasePackageName>-config-version.cmake`` または ``<PackageName>ConfigVersion.cmake`` という Version ファイルも探します（これらのファイルの使い方については「:ref:`version selection`」を参照して下さい）。
 
-  In config mode, the command can be given a list of names to search for
-  as package names.  The locations where CMake searches for the config and
-  version files is considerably more complicated than for Module mode
-  (see :ref:`search procedure`).
+  この Config モードでは、検索するパッケージ名を :ref:`リスト <CMake Language Lists>` として指定できます。
+  CMake が Config ファイルと Version ファイルを探す場所は Module モードの検索よりも複雑です。詳細は「ref:`search procedure`」を参照して下さい。
 
-  The config and version files are typically installed as part of the
-  package, so they tend to be more reliable than Find modules.  They usually
-  contain direct knowledge of the package contents, so no searching or
-  heuristics are needed within the config or version files themselves.
+  通常 Config ファイルと Version ファイルは任意のパッケージの一部としてインストールされるので、Find モジュールよりも信頼性が高い傾向があります。
+  また、これらのファイルにはパッケージの直接的な情報が含まれています。
 
-  Config mode is supported by both the :ref:`basic <Basic Signature>` and
-  :ref:`full <Full Signature>` command signatures.
+  このモードは「:ref:`basic signature`」と「:ref:`full signature`」 の両方から呼び出せます。
 
-**FetchContent redirection mode**
+**FetchContent モジュールへの転送モード**
   .. versionadded:: 3.24
-    A call to ``find_package()`` can be redirected internally to a package
-    provided by the :module:`FetchContent` module.  To the caller, the behavior
-    will appear similar to Config mode, except that the search logic is
-    by-passed and the component information is not used.  See
-    :command:`FetchContent_Declare` and :command:`FetchContent_MakeAvailable`
-    for further details.
+    この ``find_package()`` コマンドの呼び出しを :module:`FetchContent` モジュールが提供しているパッケージに転送できます。
+    コマンドを呼び出した側には、パッケージの検索ロジックをバイパスし、パッケージの情報を利用しないことを除いて、Config モードと同じ動きになります。
+    詳細は :command:`FetchContent_Declare` コマンドと :command:`FetchContent_MakeAvailable` コマンドを参照して下さい。
 
-When not redirected to a package provided by :module:`FetchContent`, the
-command arguments determine whether Module or Config mode is used.  When the
-`basic signature`_ is used, the command searches in Module mode first.
-If the package is not found, the search falls back to Config mode.
-A user may set the :variable:`CMAKE_FIND_PACKAGE_PREFER_CONFIG` variable
-to true to reverse the priority and direct CMake to search using Config mode
-first before falling back to Module mode.  The basic signature can also be
-forced to use only Module mode with a ``MODULE`` keyword.  If the
-`full signature`_ is used, the command only searches in Config mode.
+:module:`FetchContent` モジュールが提供した任意のパッケージに ``find_package()`` コマンドの呼び出しを転送しない場合、このコマンドの引数で Module モードと Config モードのどちらを使うかがを決まります。
+「:ref:`basic signature`」を使うと、このコマンドは最初に Module モードで動きます。
+Module モードでパッケージが見つからなかったら、次は Config モードで探します。
+なお、CMake 変数の :variable:`CMAKE_FIND_PACKAGE_PREFER_CONFIG` でこのモードの順番を逆転させ、Config モードでパッケージが見つからなかったら Module モードで検索させることも可能です。
+また「:ref:`basic signature`」の場合は ``MODUELE`` オプションで Module オードだけ使うよう強制させることもできます。
+対して「:ref:`full signature`」は Config モードしか選択できません。
 
-Where possible, user code should generally look for packages using the
-`basic signature`_, since that allows the package to be found with any mode.
-Project maintainers wishing to provide a config package should understand
-the bigger picture, as explained in :ref:`Full Signature` and all subsequent
-sections on this page.
+できるだけ通常は「ref:`basic signature`」を使ってパッケージを探すようにして下さい。そうすることで、最終的にはどちらかのモードでパッケージが見つかるからです。
+プロジェクトで Config ファイルを提供することを検討しているプロジェクト管理者は、「:ref:`full signature`」とそれに続くセクションで説明されているとおり、このコマンドの全体像を理解しておく必要があります。
 
 .. _`basic signature`:
 
-Basic Signature
-^^^^^^^^^^^^^^^
+コマンドの基本形
+^^^^^^^^^^^^^^^^
 
 .. parsed-literal::
 
@@ -190,8 +166,8 @@ of the ``NO_POLICY_SCOPE`` option.
 
 .. _`full signature`:
 
-Full Signature
-^^^^^^^^^^^^^^
+コマンドの完全形
+^^^^^^^^^^^^^^^^
 
 .. parsed-literal::
 

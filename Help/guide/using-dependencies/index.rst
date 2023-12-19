@@ -260,7 +260,7 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
 またはプロジェクトは、特定の依存関係をソースから生成する必要があると判断する場合があります。
 これは、依存関係のパッチの適用が必要か、または未だリリースしていないバージョンが必要か、あるいは全ての依存関係をソースから生成する必要かというポリシーを解決する場合に使われる方法です。
 プロジェクトでは、:command:`FetchContent_Declare` コマンドに ``OVERRIDE_FIND_PACKAGE`` オプションを渡すことで、この判断を強制できます。
-その際は、依存関係を解決するために :command:`find_package` コマンドを呼び出すと :command:`FetchContent_MakeAvailable` コマンドにリダイレクトされます。
+その際は、依存関係を解決するために :command:`find_package` コマンドを呼び出すと :command:`FetchContent_MakeAvailable` コマンドに転送されます。
 
 .. code-block:: cmake
 
@@ -272,7 +272,7 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
     OVERRIDE_FIND_PACKAGE
   )
 
-  # 次の呼び出しは自動的に FetchContent_MakeAvailable(Catch2) の呼び出しにリダイレクトされる
+  # 次の呼び出しは自動的に FetchContent_MakeAvailable(Catch2) の呼び出しに転送される
   find_package(Catch2)
 
 さらに高度な使い方については CMake 変数の :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` を参照して下さい。
@@ -302,7 +302,7 @@ CMake 変数の :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` には、CMake を�
 ただし、一部のケースでは依存関係のプロバイダの設定について詳細を知る必要はありません。
 また、サードパーティはこの :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` 変数にセットする CMake ファイルを提供するケースがあるかもしれません（これによりプロジェクトのユーザによるセットが不要になります）。
 これはパッケージ・マネージャでも推奨されている方法です。
-開発者は次のようなコマンドラインからもプロバイダをセットできます::
+つまり開発者は次のようなコマンドラインでパッケージ・マネージャ用のプロバイダをセットできます::
 
   cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/path/to/package_manager/setup.cmake ...
 
