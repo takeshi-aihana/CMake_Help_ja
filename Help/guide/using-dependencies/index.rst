@@ -292,17 +292,17 @@ The project says what it needs and may also specify where to get it from, in the
 たとえば、自分がビルドしたパッケージの特定のバージョンを使用したいとか、サードパーティのパッケージ・マネージャを使用したいとか、セキュリティやパフォーマンス上の理由から一部のビルド・リクエストをビルドシステムの別の URL にリダイレクトしたい等です。
 CMake では、このようなケースを「:ref:`依存関係のプロバイダ <dependency_providers>`」（*Dependency Provider*）でサポートしています。
 
-この依存関係のプロバイダは :command:`find_package` と :command:`FetchContent_MakeAvailable` の呼び出しに割り込むようにセットする CMake ファイルです。
+この依存関係のプロバイダは :command:`find_package` と :command:`FetchContent_MakeAvailable` のコマンド呼び出しに割り込むようにセットする CMake ファイルです。
 セットしたプロバイダには依存関係を解決する際に必要なことを処理できる機会が与えられ、そこで解決できない場合は組み込まれた実装に戻ります。
 
 セットできるプロパイダは一つだけで、CMake を実行したあと初期ステージのかなり特定の段階で有効になります。
-CMake 変数の :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` は、CMake を実行した直後の :command:`project()` コマンド呼び出し中に読み込まれる CMake ファイルのリストで、依存関係のプロバイダを有効にできるのは、この段階だけです。
-CMake のプロジェクト全体を通して一つだけプロバイダが使用されることを想定しています。
+CMake 変数の :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` には、CMake を実行した直後の :command:`project()` コマンド呼び出し中に読み込まれる CMake ファイルのリストをセットしますが、依存関係のプロバイダを有効にできるのは、この段階（CMake 変数）だけです。
+なお CMake のプロジェクト全体を通して一つだけプロバイダがセットされることを想定しています。
 
-ただし、一部のケースでは依存関係のプロバイダの設定方法について詳細を知る必要はありません。
+ただし、一部のケースでは依存関係のプロバイダの設定について詳細を知る必要はありません。
 また、サードパーティはこの :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` 変数にセットする CMake ファイルを提供するケースがあるかもしれません（これによりプロジェクトのユーザによるセットが不要になります）。
 これはパッケージ・マネージャでも推奨されている方法です。
-したがって開発者は次のようなコマンドラインから CMake ファイルをセットできます::
+開発者は次のようなコマンドラインからもプロバイダをセットできます::
 
   cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/path/to/package_manager/setup.cmake ...
 
