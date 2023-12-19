@@ -43,7 +43,7 @@ find_package
   また、バージョンの詳細が指定された場合は ``<lowercasePackageName>-config-version.cmake`` または ``<PackageName>ConfigVersion.cmake`` という Version ファイルも探します（これらのファイルの使い方については「:ref:`version selection`」を参照して下さい）。
 
   この Config モードでは、検索するパッケージ名を :ref:`リスト <CMake Language Lists>` として指定できます。
-  CMake が Config ファイルと Version ファイルを探す場所は Module モードの検索よりも複雑です。詳細は「ref:`search procedure`」を参照して下さい。
+  CMake が Config ファイルと Version ファイルを探す場所は Module モードの検索よりも複雑です。詳細は「:ref:`search procedure`」を参照して下さい。
 
   通常 Config ファイルと Version ファイルは任意のパッケージの一部としてインストールされるので、Find モジュールよりも信頼性が高い傾向があります。
   また、これらのファイルにはパッケージの直接的な情報が含まれています。
@@ -81,88 +81,59 @@ Module モードでパッケージが見つからなかったら、次は Config
                [NO_POLICY_SCOPE]
                [BYPASS_PROVIDER])
 
-The basic signature is supported by both Module and Config modes.
-The ``MODULE`` keyword implies that only Module mode can be used to find
-the package, with no fallback to Config mode.
+「コマンドの基本形」は Module モードと Config モードの両モードをサポートしているコマンド呼び出しのシグネチャです。
+``MODULE`` オプションは、パッケージを探す際に Module モードだけ使用でき、パッケージが見つからなくても Config モードでは探しません。
 
-Regardless of the mode used, a ``<PackageName>_FOUND`` variable will be
-set to indicate whether the package was found.  When the package is found,
-package-specific information may be provided through other variables and
-:ref:`Imported Targets` documented by the package itself.  The
-``QUIET`` option disables informational messages, including those indicating
-that the package cannot be found if it is not ``REQUIRED``.  The ``REQUIRED``
-option stops processing with an error message if the package cannot be found.
+どちらのモードでも、パッケージが見つかったかどうかを示す ``<PackageName>_FOUND`` 変数がセットされます。
+見つかったパッケージ固有の情報は別の変数や :ref:`Imported Targets` を介して取得できます。
+``QUIET`` オプションはメッセージの出力を無効にします（ただし ``REQUIRED`` オプションを指定した場合を除く）。
+そして ``REQUIRED`` オプションは、パッケージが見つからなかったらエラー・メッセージを出力してコマンドの処理を停止します。
 
-A package-specific list of required components may be listed after the
-``COMPONENTS`` keyword.  If any of these components are not able to be
-satisfied, the package overall is considered to be not found.  If the
-``REQUIRED`` option is also present, this is treated as a fatal error,
-otherwise execution still continues.  As a form of shorthand, if the
-``REQUIRED`` option is present, the ``COMPONENTS`` keyword can be omitted
-and the required components can be listed directly after ``REQUIRED``.
+``COMPONENTS`` オプションには、必要なパッケージのコンポーネント（ファイル）名を要素とする :ref:`リスト <CMake Language Lists>` を指定します。
+このリストに挙げたコンポーネントのいずれかが見つからなかったら、パッケージが見つからなかったものとみなします。
+その際に ``REQUIRED`` オプションも指定していた場合は致命的なエラーとして扱われます。
+なお省略形として、 ``REQUIRED`` オプションを指定する際は ``COMPONENTS`` オプションを省略し、``REQUIRED`` の後ろにそのままコンポーネントのリストを指定できます。
 
-Additional optional components may be listed after
-``OPTIONAL_COMPONENTS``.  If these cannot be satisfied, the package overall
-can still be considered found, as long as all required components are
-satisfied.
+オプション扱いのコンポーネントのリストは ``OPTIONAL_COMPONENTS`` オプションに指定します。
+たとえこのオプションに追加したコンポーネントのいずれかが見つからなくても、``COMPONENTS`` に指定したコンポーネントが全て見つかっていれば、そのパッケージが見つかったものとみなします。
 
-The set of available components and their meaning are defined by the
-target package.  Formally, it is up to the target package how to
-interpret the component information given to it, but it should follow
-the expectations stated above.  For calls where no components are specified,
-there is no single expected behavior and target packages should clearly
-define what occurs in such cases.  Common arrangements include assuming it
-should find all components, no components or some well-defined subset of the
-available components.
+CMake は、ここで見つかったコンポーネントは全てターゲットのパッケージが定義したものであることを期待します。
+パッケージに与えられたコンポーネントの情報をどのように解釈するかは、そのパッケージ次第ですが、この期待に従う必要があります。
+ここで、コンポーネントを指定せずにこのコマンドを呼び出すと（期待する）検索処理は行われません。
+つまりパッケージは「全てのコンポーネントを見つける」、「全てのコンポーネントを見つけない」、「利用可能なコンポーネントを検索する」といった状況を想定しておく必要があります。
 
 .. versionadded:: 3.24
-  The ``REGISTRY_VIEW`` keyword specifies which registry views should be
-  queried. This keyword is only meaningful on ``Windows`` platforms and will
-  be ignored on all others. Formally, it is up to the target package how to
-  interpret the registry view information given to it.
+  ``REGISTRY_VIEW`` オプションには、どのレジストリ・ビューをクエリするかを指定します。
+  このオプションはホストのプラットフォームが Windows の場合にのみ意味を持ち、その他のプラットフォームでは無視されます。
+  形式的には、パッケージに与えられたレジストリ・ビューの情報をどのように解釈するかはパッケージ次第です。
 
 .. versionadded:: 3.24
-  Specifying the ``GLOBAL`` keyword will promote all imported targets to
-  a global scope in the importing project. Alternatively, this functionality
-  can be enabled by setting the :variable:`CMAKE_FIND_PACKAGE_TARGETS_GLOBAL`
-  variable.
+  ``GLOBAL`` オプションを指定すると、:ref:`Imported Targets` が全てグローバルなスコープに昇格します。
+  もしくは CMake 変数の :variable:`CMAKE_FIND_PACKAGE_TARGETS_GLOBAL` で、この機能を有効にできます。
 
 .. _FIND_PACKAGE_VERSION_FORMAT:
 
-The ``[version]`` argument requests a version with which the package found
-should be compatible. There are two possible forms in which it may be
-specified:
+``[version]`` オプションで、見つかったパッケージと互換性があるバージョンを要求します。
+ここで指定できるバージョンの書式は2つあります：
 
-  * A single version with the format ``major[.minor[.patch[.tweak]]]``, where
-    each component is a numeric value.
-  * A version range with the format ``versionMin...[<]versionMax`` where
-    ``versionMin`` and ``versionMax`` have the same format and constraints
-    on components being integers as the single version.  By default, both end
-    points are included.  By specifying ``<``, the upper end point will be
-    excluded. Version ranges are only supported with CMake 3.19 or later.
+  * 単一のバージョンを指定する場合は ``major[.minor[.patch[.tweak]]]`` （各アイテムは数値）
+  * 任意の範囲を指定する場合は ``versionMin...[<]versionMax`` （where ``versionMin`` and ``versionMax`` have the same format and constraints on components being integers as the single version.）
+    By default, both end points are included.  By specifying ``<``, the upper end point will be excluded.
+    Version ranges are only supported with CMake 3.19 or later.
 
-The ``EXACT`` option requests that the version be matched exactly. This option
-is incompatible with the specification of a version range.
+The ``EXACT`` option requests that the version be matched exactly.
+This option is incompatible with the specification of a version range.
 
-If no ``[version]`` and/or component list is given to a recursive invocation
-inside a find-module, the corresponding arguments are forwarded
-automatically from the outer call (including the ``EXACT`` flag for
-``[version]``).  Version support is currently provided only on a
-package-by-package basis (see the `Version Selection`_ section below).
-When a version range is specified but the package is only designed to expect
-a single version, the package will ignore the upper end point of the range and
-only take the single version at the lower end of the range into account.
+If no ``[version]`` and/or component list is given to a recursive invocation inside a find-module, the corresponding arguments are forwarded automatically from the outer call (including the ``EXACT`` flag for ``[version]``).
+Version support is currently provided only on a package-by-package basis (see the `Version Selection`_ section below).
+When a version range is specified but the package is only designed to expect a single version, the package will ignore the upper end point of the range and only take the single version at the lower end of the range into account.
 
-See the :command:`cmake_policy` command documentation for discussion
-of the ``NO_POLICY_SCOPE`` option.
+See the :command:`cmake_policy` command documentation for discussion of the ``NO_POLICY_SCOPE`` option.
 
 .. versionadded:: 3.24
-  The ``BYPASS_PROVIDER`` keyword is only allowed when ``find_package()`` is
-  being called by a :ref:`dependency provider <dependency_providers>`.
-  It can be used by providers to call the built-in ``find_package()``
-  implementation directly and prevent that call from being re-routed back to
-  itself.  Future versions of CMake may detect attempts to use this keyword
-  from places other than a dependency provider and halt with a fatal error.
+  The ``BYPASS_PROVIDER`` keyword is only allowed when ``find_package()`` is being called by a :ref:`dependency provider <dependency_providers>`.
+  It can be used by providers to call the built-in ``find_package()`` implementation directly and prevent that call from being re-routed back to itself.
+  Future versions of CMake may detect attempts to use this keyword from places other than a dependency provider and halt with a fatal error.
 
 .. _`full signature`:
 
