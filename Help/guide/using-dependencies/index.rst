@@ -285,27 +285,25 @@ CMake は :module:`FindGTest` というモジュールを提供しているの�
 .. versionadded:: 3.24
 
 前のセクションでは、プロジェクトがその依存関係を指定するために使う方法について説明しました。
-プロジェクトは、期待されているもの（多くの場合はインポートしたターゲットの一部）を提供する限り、依存関係がどこから要求されているのかあまり気にする必要が無いことが理想です。
-.. The project says what it needs and may also specify where to get it from, in the absence of any other details, so that it can still be built out-of-the-box.（FIXME: 意味不明）
+プロジェクトでは、期待されているもの（多くの場合はインポートしたターゲットの一部）を提供する限り、依存関係がどこから要求されているのかあまり気にする必要が無いのが理想です。
+The project says what it needs and may also specify where to get it from, in the absence of any other details, so that it can still be built out-of-the-box.（FIXME: 意味不明）
 
+一方、開発者の場合はプロジェクトに依存関係を提供する方法について興味があるかもしれません。
+たとえば、自分がビルドしたパッケージの特定のバージョンを使用したいとか、サードパーティのパッケージ・マネージャを使用したいとか、セキュリティやパフォーマンス上の理由から一部のビルド・リクエストをビルドシステムの別の URL にリダイレクトしたい等です。
+CMake では、このようなケースを「:ref:`依存関係のプロバイダ <dependency_providers>`」（*Dependency Provider*）でサポートしています。
 
-一方、開発者の場合は、プロジェクトに「依存関係を提供する方法」について興味があるかもしれません。
-たとえば、自分がビルドしたパッケージの特定のバージョンを使用したいとか、サードパーティのパッケージ・マネージャを使用したいとか、セキュリティやパフォーマンス上の理由から一部のビルド・リクエストをビルドシステムの別の URL にリダイレクトしたいとか。
-CMake は、このようなケースを「:ref:`dependency_providers`」でサポートしています。
+この依存関係のプロバイダは :command:`find_package` と :command:`FetchContent_MakeAvailable` の呼び出しに割り込むようにセットする CMake ファイルです。
+セットしたプロバイダには依存関係を解決する際に必要なことを処理できる機会が与えられ、そこで解決できない場合は組み込まれた実装に戻ります。
 
-A dependency provider can be set to intercept :command:`find_package` and :command:`FetchContent_MakeAvailable` calls.
-The provider is given an opportunity to satisfy such requests before falling back to the built-in implementation if the provider doesn't fulfill it.
+セットできるプロパイダは一つだけで、CMake を実行したあと初期ステージのかなり特定の段階で有効になります。
+CMake 変数の :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` は、CMake を実行した直後の :command:`project()` コマンド呼び出し中に読み込まれる CMake ファイルのリストで、依存関係のプロバイダを有効にできるのは、この段階だけです。
+CMake のプロジェクト全体を通して一つだけプロバイダが使用されることを想定しています。
 
-Only one dependency provider can be set, and it can only be set at a very specific point early in the CMake run.
-The :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` variable lists CMake files that will be read while processing the first :command:`project()` call (and only that call).
-This is the only time a dependency provider may be set.
-At most, one single provider is expected to be used throughout the whole project.
-
-For some scenarios, the user wouldn't need to know the details of how the dependency provider is set.
-A third party may provide a file that can be added to :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES`, which will set up the dependency provider on the user's behalf.
-This is the recommended approach for package managers.
-The developer can use such a file like so::
+ただし、一部のケースでは依存関係のプロバイダの設定方法について詳細を知る必要はありません。
+また、サードパーティはこの :variable:`CMAKE_PROJECT_TOP_LEVEL_INCLUDES` 変数にセットする CMake ファイルを提供するケースがあるかもしれません（これによりプロジェクトのユーザによるセットが不要になります）。
+これはパッケージ・マネージャでも推奨されている方法です。
+したがって開発者は次のようなコマンドラインから CMake ファイルをセットできます::
 
   cmake -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=/path/to/package_manager/setup.cmake ...
 
-For details on how to implement your own custom dependency provider, see the :command:`cmake_language(SET_DEPENDENCY_PROVIDER)` command.
+依存関係のプロバイダを独自に実装する方法について詳細は :command:`cmake_language(SET_DEPENDENCY_PROVIDER)` コマンドを参照して下さい。
