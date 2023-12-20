@@ -119,22 +119,22 @@ CMake は、ここで見つかったコンポーネントは全てターゲッ�
   * バージョンを単一で指定する場合は ``major[.minor[.patch[.tweak]]]`` （各アイテムは数値）
   * バージョンを任意の範囲で指定する場合は ``versionMin...[<]versionMax`` （``versionMin`` と ``versionMax`` はそれぞれ「バージョンを単一で指定する」場合と同じ書式）
     デフォルトは双方 ``versionMin`` および ``versionMax`` のバージョンを含んだ範囲になる。
-    ここに ``<`` を指定すると ``versionMax`` は含めない範囲になる。
+    ここで ``<`` を指定すると ``versionMax`` は含めない範囲になる。
     このバージョン範囲は CMake のバージョン 3.19 以降でのサポートになる。
 
 ``EXACT`` オプションは、完全に一致するバージョンを要求します。
 このオプションは「バージョンを任意の範囲で指定する」場合と一緒に指定できません（指定しても無視されます）。
 
-このコマンドを「:ref:`Find Modules`」内で再起呼び出しした時に ``[version]`` や ``COMPONENTS`` が指定されていない場合、これらに対応するオプションは、このコマンドをプロジェクト（外部）から呼びだした時のオプションが自動的に転送されます（``[version]`` の ``EXACT`` も同様 ）。
-このバージョン制約の機能は、現在はパッケージ単位でのみのサポートです（この下の `Version Selection`_ セクションを参照のこと ）。
-つまりバージョンの範囲が指定されても、パッケージ側で単一のバージョンを期待する設計になっている場合、バージョン範囲の上限値を無視して、バージョン範囲の下限値だけを受け入れるようになっています。
+このコマンドを ``[version]`` や ``COMPONENTS`` を指定せずに「:ref:`Find Modules`」で再起呼び出しした時は、このコマンドをプロジェクト（外部）から呼び出した時のオプションが自動的に転送されます（``[version]`` の ``EXACT`` も同様 ）。
+このバージョン制約の機能は、現在はパッケージ単位でのみのサポートです（この下の「`Version Selection`_」項を参照のこと ）。
+つまりバージョンの範囲が指定されても、パッケージ自身が単一のバージョンを想定した設計になっている場合、バージョン範囲の ``versionMax`` を無視して、バージョン範囲の ``versionMin`` だけを受け入れるようになっています。
 
 ``NO_POLICY_SCOPE`` オプションの詳細については、:command:`cmake_policy`  コマンドのドキュメントを参照して下さい。
 
 .. versionadded:: 3.24
   ``BYPASS_PROVIDER`` オプションは、「:ref:`依存関係のプロバイダ <dependency_providers>`」が ``find_package()`` コマンドを呼び出した時にだけ指定できます。
   このプロバイダは CMake 内の ``find_package()`` の実装を直接呼び出し、``find_package()`` の実装で呼び出されることがないようにします。
-  CMake の将来のバージョンでは、このオプションをプロバイダ以外から使おうとすると、致命的なエラーで停止する可能性があります。
+  CMake の将来のバージョンでは、このオプションをプロバイダ以外から使おうとすると、致命的なエラーで停止します。
 
 .. _`full signature`:
 
@@ -170,17 +170,16 @@ CMake は、ここで見つかったコンポーネントは全てターゲッ�
                 ONLY_CMAKE_FIND_ROOT_PATH |
                 NO_CMAKE_FIND_ROOT_PATH])
 
-``CONFIG`` オプション、またはこれと同じ意味を持つ ``NO_MODULE`` オプション、あるいは 「:ref:`basic signature`」で指定されていないオプションを指定すると、すべて強制的に「純粋」 Config モードによる検索を行います。
-この「純粋」 Config モードは、Module モードを使った検索はスキップします（スキップしたあとは Config モードで検索を継続します）。
+``CONFIG`` オプション、またはこれと同じ意味を持つ ``NO_MODULE`` オプション、あるいは 「:ref:`basic signature`」に無いオプションを指定すると、すべて強制的に Config モードによる検索を行います。
+この Config モードは、Module モードを使った検索はスキップします。
 
-Config モードによる検索は、パッケージが提供している「:ref:`Config ファイル <Config File Packages>`」を見つけようとします。
+Config モードによる検索は、パッケージが提供している「:ref:`Config ファイル <Config File Packages>`」を探します。
 CMake は、見つかった Config ファイルとその場所（ディレクトリ）を格納するキャッシュ変数の ``<PackageName>_DIR``  を自動的に生成します。
-このコマンドは、デフォルトで ``<PackageName>`` という名前のパッケージを探します。
-なお ``NAMES`` オプションを指定すると、このオプションに渡した名前（文字列）を ``<PackageName>`` の代わりに使います。
+このコマンドのデフォルトは ``<PackageName>`` という名前のパッケージを対象にします。
+なお ``NAMES`` オプションを指定すると、このオプションに渡した名前を ``<PackageName>`` の代わりに使います。
 この名前は、コマンドの呼び出しを :module:`FetchContent` モジュールが提供したパッケージに転送するかを決める際にも使われます。
 
-このコマンドは、指定された ``<PackageName>``（名前）ごとに ``<PackageName>Config.cmake`` または ``<lowercasePackageName>-config.cmake`` のファイルを探します。
-
+このコマンドは、指定した ``<PackageName>`` （パッケージ名）ごとに ``<PackageName>Config.cmake`` または ``<lowercasePackageName>-config.cmake`` に該当する Config ファイルを探します。
 A replacement set of possible configuration file names may be given using the ``CONFIGS`` option.
 The :ref:`search procedure` is specified below.
 Once found, any :ref:`version constraint <version selection>` is checked,
