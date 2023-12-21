@@ -148,8 +148,8 @@
    * |FIND_PACKAGE_ROOT_PREFIX_PATH_XXX|
 
 2. キャッシュ変数で指定したディレクトリを検索する。
-   これは ``-DVAR=value`` を指定した :manual:`cmake(1)` コマンドラインの場合を想定している。
-   ``value`` はセミコロンで区切った :ref:`リスト <CMake Language Lists>` として解釈する。
+   これは :option:`-DVAR=VALUE <cmake -D>` オプションを指定した :manual:`cmake(1)` コマンドラインでの使用を意図している。
+   ``VALUE`` はセミコロンで区切った :ref:`リスト <CMake Language Lists>` として解釈する。
    このステップは、``NO_CMAKE_PATH`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_CMAKE_PATH` を ``FALSE`` にセットした時はスキップする。
 
    * |CMAKE_PREFIX_PATH_XXX|

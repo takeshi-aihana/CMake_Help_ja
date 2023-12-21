@@ -103,7 +103,7 @@ CMake は、ここで見つかったコンポーネントは全てターゲッ�
 つまりパッケージは「全てのコンポーネントを見つける」、「全てのコンポーネントを見つけない」、「利用可能なコンポーネントを検索する」といった状況を想定しておく必要があります。
 
 .. versionadded:: 3.24
-  ``REGISTRY_VIEW`` オプションには、どのレジストリ・ビューをクエリするかを指定します。
+  ``REGISTRY_VIEW`` オプションには、どのレジストリ・ビューを照会するかを指定します。
   このオプションはホストのプラットフォームが Windows の場合にのみ意味を持ち、その他のプラットフォームでは無視されます。
   形式的には、パッケージに与えられたレジストリ・ビューの情報をどのように解釈するかはパッケージ次第です。
 
@@ -174,7 +174,7 @@ CMake は、ここで見つかったコンポーネントは全てターゲッ�
 この Config モードは、Module モードを使った検索はスキップします。
 
 Config モードによる検索では、パッケージが提供している「:ref:`Config ファイル <Config File Packages>`」を探します。
-CMake は、見つかった Config ファイルの場所（ディレクトリ）を格納する ``<PackageName>_DIR`` というキャッシュ変数を自動的に生成します。
+CMake は、見つかった Config ファイルの場所（ディレクトリ）を格納する ``<PackageName>_DIR`` という CMake 変数を自動的に生成します。
 このコマンドは、デフォルトで ``<PackageName>`` という名前のパッケージを検索の対象にします。
 なお ``NAMES`` オプションを指定すると、このオプションに渡した名前を ``<PackageName>`` の代わりに使います。
 この名前は、コマンドの呼び出しを :module:`FetchContent` モジュールが提供したパッケージに転送するかを決める際にも使われます。
@@ -184,9 +184,9 @@ CMake は、見つかった Config ファイルの場所（ディレクトリ）
 検索の手順については「:ref:`search procedure`」を参照して下さい。
 Config ファイルが見つかったら、まず「:ref:`version constraint <version selection>`」をチェックし、それを満足したら Config ファイルを読み込みます。
 Config ファイルはパッケージによって提供されるので、このファイルにはパッケージに含まれているコンポーネントとその格納場所が記載されています。
-見つかった Config ファイルの絶対パスはキャッシュ変数の ``<PackageName>_CONFIG`` に格納されます。
+見つかった Config ファイルの絶対パスは CMake変数の ``<PackageName>_CONFIG`` に格納されます。
 
-適切なバージョンを持つパッケージの検索中に、CMake がチェックする全ての Config ファイルはキャッシュ変数の ``<PackageName>_CONSIDERED_CONFIGS`` に、そしてパッケージのバージョンは ``<PackageName>_CONSIDERED_VERSIONS`` 変数にそれぞれ格納されます。
+適切なバージョンを持つパッケージの検索中に、CMake がチェックする全ての Config ファイルは CMake変数の ``<PackageName>_CONSIDERED_CONFIGS`` に、そしてパッケージのバージョンは ``<PackageName>_CONSIDERED_VERSIONS`` 変数にそれぞれ格納されます。
 
 パッケージの Config ファイルが見つからなかったら、CMake はエラーを発行します（ただし ``QUIET`` オプションを指定した場合は除く）。
 ``REQUIRED`` オプションを指定して、パッケージが見つからなかったら CMake は致命的なエラーを発行し、このコマンドの処理は停止します。
@@ -207,8 +207,8 @@ Config モードの検索詳細
   :module:`FetchContent` モジュール、または CMake 自身が、このディレクトリにファイルを書き込んで ``find_package()`` コマンドの呼び出しを転送する場合があります。
   この :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` で Config ファイルが見つからなかったら、以下で説明する手順に従って検索処理を続行します。
 
-CMake は、任意のパッケージで利用できるインストール先（Prefix）の集合を定義しています。
-それぞれのインストール先（Prefix）のディレクトリ下で、Config ファイルが検索されます。
+CMake は、任意のパッケージで利用できる Prefix を含むインストール先の集合を定義しています。
+それぞれの Prefix を含むインストール先のディレクトリで Config ファイルが検索されます。
 以下の表に、この検索対象のディレクトリを示します。
 各ディレクトリが、ホストのどのプラットフォームに準拠したインストール・ツリーであるかを、Windows (``W``)、UNIX (``U``)、または Apple (``A``) で示します：
 
@@ -245,73 +245,74 @@ Apple の :prop_tgt:`FRAMEWORK` と :prop_tgt:`BUNDLE` をサポートしてい�
 
 .. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
 
-In all cases the ``<name>`` is treated as case-insensitive and corresponds to any of the names specified (``<PackageName>`` or names given by ``NAMES``).
+全てのインストール先で ``<name>`` は大小文字を区別せず扱われ、指定した名前（``<PackageName>`` または ``NAMES`` オプションで指定した名前）で置き換えられます。
 
-Paths with ``lib/<arch>`` are enabled if the :variable:`CMAKE_LIBRARY_ARCHITECTURE` variable is set.
-``lib*`` includes one or more of the values ``lib64``, ``lib32``, ``libx32`` or ``lib`` (searched in that order).
+CMake 変数の :variable:`CMAKE_LIBRARY_ARCHITECTURE`  に ``<arch>`` がセットされている場合は ``lib/<arch>`` を含むディレクトリになります。
+``lib*`` は、 ``lib64``、``lib32``、``libx32`` または ``lib`` のいずれかが1つ以上含まれます（検索はこの順番で行われます）。
 
-* Paths with ``lib64`` are searched on 64 bit platforms if the :prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` property is set to ``TRUE``.
-* Paths with ``lib32`` are searched on 32 bit platforms if the :prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS` property is set to ``TRUE``.
-* Paths with ``libx32`` are searched on platforms using the x32 ABI if the :prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS` property is set to ``TRUE``.
-* The ``lib`` path is always searched.
+* :prop_gbl:`FIND_LIBRARY_USE_LIB64_PATHS` というグローバルなプロパティを ``TRUE`` にすると、64bit のプラットフォームで ``lib64`` を持つディレクトリを検索する
+* :prop_gbl:`FIND_LIBRARY_USE_LIB32_PATHS` というグローバルなプロパティを ``TRUE`` にすると、32bit のプラットフォームで ``lib32`` を持つディレクトリを検索する
+* :prop_gbl:`FIND_LIBRARY_USE_LIBX32_PATHS` というグローバルなプロパティを ``TRUE`` にすると、x32 ABI を使うプラットフォームで ``libx32`` を持つディレクトリを検索する。
+* ``lib`` を持つディレクトリは常に検索する。
 
 .. versionchanged:: 3.24
-  On ``Windows`` platform, it is possible to include registry queries as part of the directories specified through ``HINTS`` and ``PATHS`` keywords, using a :ref:`dedicated syntax <Find Using Windows Registry>`.
-  Such specifications will be ignored on all other platforms.
+  ホストが Windows 系プラットフォームの場合、:ref:`dedicated syntax <Find Using Windows Registry>` を使用して ``HINTS`` と ``PATHS`` オプションで指定した部分的なディレクトリをレジストリの照会に含めることができます。
+  このような仕様は Windows 系以外のプラットフォームで無視されます。
 
-.. versionadded:: 3.24
-  ``REGISTRY_VIEW`` can be specified to manage ``Windows`` registry queries specified as part of ``PATHS`` and ``HINTS``.
+``REGISTRY_VIEW``
+  .. versionadded:: 3.24
+     ``PATHS`` と ``HINTS`` オプションで指定した Windows のレジストリの照会を管理できるようになった。
 
-.. include:: FIND_XXX_REGISTRY_VIEW.txt
+  .. include:: FIND_XXX_REGISTRY_VIEW.txt
 
-If ``PATH_SUFFIXES`` is specified, the suffixes are appended to each (``W``) or (``U``) directory entry one-by-one.
+``PATH_SUFFIXES`` オプションを指定すると、その文字列が (``W``) または (``U``) のインストール先のディレクトリに追加されます。
 
-This set of directories is intended to work in cooperation with projects that provide configuration files in their installation trees.
-Directories above marked with (``W``) are intended for installations on Windows where the prefix may point at the top of an application's installation directory.
-Those marked with (``U``) are intended for installations on UNIX platforms where the prefix is shared by multiple packages.
-This is merely a convention, so all (``W``) and (``U``) directories are still searched on all platforms.
-Directories marked with (``A``) are intended for installations on Apple platforms.
-The :variable:`CMAKE_FIND_FRAMEWORK` and :variable:`CMAKE_FIND_APPBUNDLE` variables determine the order of preference.
+CMake は、各インストール先のディレクトリが Config ファイルを提供するパッケージと連携して使われることを期待します。
+表中で ``W`` が付いているディレクトリは Windows 系プラットフォームへのインストールを対象としたもので、その ``<prefix>`` はアプリケーションがインストールされた先頭ディレクトリを指す場合があります。
+表中で ``U`` が付いているディレクトリは UNIX 系プラットフォームへのインストールを対象としたもので、``<prefix>`` は複数のパッケージで共有されるのが普通です。
+表中で ``W`` または ``U`` が付いているディレクトリは全てのプラットフォームで検索されます。
+表中で ``A`` が付いているディレクトリは Apple 系プラットフォームへのインストールを対象としています。
+このプラットフォームでは、CMake 変数の :variable:`CMAKE_FIND_FRAMEWORK` と :variable:`CMAKE_FIND_APPBUNDLE` によって検索する優先順位が決まります。
 
-The set of installation prefixes is constructed using the following steps.
-If ``NO_DEFAULT_PATH`` is specified all ``NO_*`` options are enabled.
+Config ファイルを検索する際、インストール先の ``<prefix>`` は次の手順で決定します。
+なお ``NO_DEFAULT_PATH`` オプションを指定すると、``NO_*`` 系のオプションが全て有効になります。
 
-1. Search prefixes unique to the current ``<PackageName>`` being found.
-   See policy :policy:`CMP0074`.
+1. ``<PackageName>`` 専用のパスを ``<prefix>`` にする。
+   :policy:`CMP0074` のポリシーを参照のこと。
 
    .. versionadded:: 3.12
 
-   Specifically, search prefixes specified by the following variables, in order:
+   具体的には、次の変数で指定されたパスを ``<prefix>`` にして順番に検索していく：
 
-   a. :variable:`<PackageName>_ROOT` CMake variable,  where ``<PackageName>`` is the case-preserved package name.
+   a. CMake 変数の :variable:`<PackageName>_ROOT` （``<PackageName>`` は大文字・小文字を区別したパッケージ名）。
 
-   b. :variable:`<PACKAGENAME>_ROOT` CMake variable,  where ``<PACKAGENAME>`` is the upper-cased package name.
-      See policy :policy:`CMP0144`.
-
-      .. versionadded:: 3.27
-
-   c. :envvar:`<PackageName>_ROOT` environment variable, where ``<PackageName>`` is the case-preserved package name.
-
-   d. :envvar:`<PACKAGENAME>_ROOT` environment variable, where ``<PACKAGENAME>`` is the upper-cased package name.
-      See policy :policy:`CMP0144`.
+   b. CMake 変数の :variable:`<PACKAGENAME>_ROOT` （``<PACKAGENAME>`` は大文字のパッケージ名）。
+      :policy:`CMP0144` のポリシーを参照のこと。
 
       .. versionadded:: 3.27
 
-   The package root variables are maintained as a stack so if called from within a find module, root paths from the parent's find module will also be searched after paths for the current package.
-   This can be skipped if ``NO_PACKAGE_ROOT_PATH`` is passed or by setting the :variable:`CMAKE_FIND_USE_PACKAGE_ROOT_PATH` to ``FALSE``.
+   c. 環境変数の :envvar:`<PackageName>_ROOT` （``<PackageName>`` は大文字・小文字を区別したパッケージ名）。
 
-2. Search paths specified in cmake-specific cache variables.
-   These are intended to be used on the command line with a :option:`-DVAR=VALUE <cmake -D>`.
-   The values are interpreted as :ref:`semicolon-separated lists <CMake Language Lists>`.
-   This can be skipped if ``NO_CMAKE_PATH`` is passed or by setting the :variable:`CMAKE_FIND_USE_CMAKE_PATH` to ``FALSE``:
+   d. 環境変数の :envvar:`<PACKAGENAME>_ROOT` （``<PACKAGENAME>`` は大文字のパッケージ名）。
+      :policy:`CMP0144` のポリシーを参照のこと。
+
+      .. versionadded:: 3.27
+
+   パッケージの root 変数はスタックとして保持するので、「:ref:`Find モジュール <Libraries not Providing Config-file Packages>`」の中で、このコマンドが呼び出された場合は、まずこのパッケージ固有のディレクトリを検索し、そのあとに Find モジュールからも検索される。
+   このステップは、``NO_PACKAGE_ROOT_PATH`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_PACKAGE_ROOT_PATH` を ``FALSE`` にセットした時はスキップする。
+
+2. キャッシュ変数で指定したパスを ``<prefix>`` にする。
+   これは :option:`-DVAR=VALUE <cmake -D>` オプションを指定した :manual:`cmake(1)` コマンドラインでの使用を意図している。
+   ``VALUE`` はセミコロンで区切った :ref:`リスト <CMake Language Lists>` として解釈する。
+   このステップは、``NO_CMAKE_PATH`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_CMAKE_PATH` を ``FALSE`` にするとスキップできる。
 
    * :variable:`CMAKE_PREFIX_PATH`
    * :variable:`CMAKE_FRAMEWORK_PATH`
    * :variable:`CMAKE_APPBUNDLE_PATH`
 
-3. Search paths specified in cmake-specific environment variables.
-   These are intended to be set in the user's shell configuration, and therefore use the host's native path separator (``;`` on Windows and ``:`` on UNIX).
-   This can be skipped if ``NO_CMAKE_ENVIRONMENT_PATH`` is passed or by setting the :variable:`CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH` to ``FALSE``:
+3. CMake 専用の環境変数で指定したパスを ``<prefix>`` にする。
+   これはユーザが導入したシェルスクリプトの中でインストール先のディレクトリを指定する場合を想定しており、ホストのプラットフォームで有効なパスの区切り文字（Windows 系プラットフォームの場合は ``;``、UNIX 系プラットフォームの場合は ``:``）と使うこと。
+   このステップは、``NO_CMAKE_ENVIRONMENT_PATH`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH` を ``FALSE`` にするとスキップできる。
 
    * ``<PackageName>_DIR``
    * :envvar:`CMAKE_PREFIX_PATH`
