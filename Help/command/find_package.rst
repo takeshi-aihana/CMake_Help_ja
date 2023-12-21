@@ -173,49 +173,47 @@ CMake は、ここで見つかったコンポーネントは全てターゲッ�
 ``CONFIG`` オプション、またはこれと同じ意味を持つ ``NO_MODULE`` オプション、あるいは 「:ref:`basic signature`」に無いオプションを指定すると、すべて強制的に Config モードによる検索を行います。
 この Config モードは、Module モードを使った検索はスキップします。
 
-Config モードによる検索は、パッケージが提供している「:ref:`Config ファイル <Config File Packages>`」を探します。
-CMake は、見つかった Config ファイルとその場所（ディレクトリ）を格納するキャッシュ変数の ``<PackageName>_DIR``  を自動的に生成します。
-このコマンドのデフォルトは ``<PackageName>`` という名前のパッケージを対象にします。
+Config モードによる検索では、パッケージが提供している「:ref:`Config ファイル <Config File Packages>`」を探します。
+CMake は、見つかった Config ファイルの場所（ディレクトリ）を格納する ``<PackageName>_DIR`` というキャッシュ変数を自動的に生成します。
+このコマンドは、デフォルトで ``<PackageName>`` という名前のパッケージを検索の対象にします。
 なお ``NAMES`` オプションを指定すると、このオプションに渡した名前を ``<PackageName>`` の代わりに使います。
 この名前は、コマンドの呼び出しを :module:`FetchContent` モジュールが提供したパッケージに転送するかを決める際にも使われます。
 
-このコマンドは、指定した ``<PackageName>`` （パッケージ名）ごとに ``<PackageName>Config.cmake`` または ``<lowercasePackageName>-config.cmake`` に該当する Config ファイルを探します。
-A replacement set of possible configuration file names may be given using the ``CONFIGS`` option.
-The :ref:`search procedure` is specified below.
-Once found, any :ref:`version constraint <version selection>` is checked,
-and if satisfied, the configuration file is read and processed by CMake.
-Since the file is provided by the package it already knows the location of package contents.
-The full path to the configuration file is stored in the cmake variable ``<PackageName>_CONFIG``.
-このコマンドは、指定された名前ごとに、<PackageName>Config.cmake または < lowercasePackageName>-config.cmake というファイルを検索します。 CONFIGS オプションを使用して、可能な構成ファイル名の置換セットを指定できます。 Config Mode の検索手順を以下に示します。 見つかった場合は、バージョン制約がチェックされ、満たされている場合は、構成ファイルが CMake によって読み取られて処理されます。 ファイルはパッケージによって提供されるため、パッケージの内容の場所がすでにわかっています。 構成ファイルへの絶対パスは、cmake 変数 <PackageName>_CONFIG に保存されます。
+このコマンドは、指定した ``<PackageName>`` （パッケージ名）ごとに ``<PackageName>Config.cmake`` または ``<lowercasePackageName>-config.cmake`` 形式の Config ファイルを探します。
+``CONFIGS`` オプションを使って、この Config ファイルの形式を置き換えることができます。
+検索の手順については「:ref:`search procedure`」を参照して下さい。
+Config ファイルが見つかったら、まず「:ref:`version constraint <version selection>`」をチェックし、それを満足したら Config ファイルを読み込みます。
+Config ファイルはパッケージによって提供されるので、このファイルにはパッケージに含まれているコンポーネントとその格納場所が記載されています。
+見つかった Config ファイルの絶対パスはキャッシュ変数の ``<PackageName>_CONFIG`` に格納されます。
 
-All configuration files which have been considered by CMake while searching for the package with an appropriate version are stored in the ``<PackageName>_CONSIDERED_CONFIGS`` variable, and the associated versions in the ``<PackageName>_CONSIDERED_VERSIONS`` variable.
+適切なバージョンを持つパッケージの検索中に、CMake がチェックする全ての Config ファイルはキャッシュ変数の ``<PackageName>_CONSIDERED_CONFIGS`` に、そしてパッケージのバージョンは ``<PackageName>_CONSIDERED_VERSIONS`` 変数にそれぞれ格納されます。
 
-If the package configuration file cannot be found CMake will generate an error describing the problem unless the ``QUIET`` argument is specified.
-If ``REQUIRED`` is specified and the package is not found a fatal error is generated and the configure step stops executing.
-If ``<PackageName>_DIR`` has been set to a directory not containing a configuration file CMake will ignore it and search from scratch.
+パッケージの Config ファイルが見つからなかったら、CMake はエラーを発行します（ただし ``QUIET`` オプションを指定した場合は除く）。
+``REQUIRED`` オプションを指定して、パッケージが見つからなかったら CMake は致命的なエラーを発行し、このコマンドの処理は停止します。
+``<PackageName>_DIR`` に格納された Config ファイルが存在しなかったら CMake はそれを無視し、最初に戻って次のパッケージの検索を行います。
 
-Package maintainers providing CMake package configuration files are encouraged to name and install them such that the :ref:`search procedure` outlined below will find them without requiring use of additional options.
+Config ファイルを提供するパッケージを保守する人は、「:ref:`search procedure`」で説明している追加のオプションを使わずに、Config ファイルを見つけられるようにファイルに適切な名前を付けてインストールされるようにして下さい。
 
 .. _`search procedure`:
 
-Config Mode Search Procedure
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Config モードの検索詳細
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-  When Config mode is used, this search procedure is applied regardless of  whether the :ref:`full <full signature>` or :ref:`basic <basic signature>` signature was given.
+  Config モードで実行時、「:ref:`basic signature`」や「:ref:`full signature`」の呼び出し方に関係なく、ここで説明している手順が適用されます。
 
 .. versionadded:: 3.24
-  All calls to ``find_package()`` (even in Module mode) first look for a config package file in the :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` directory.
-  The :module:`FetchContent` module, or even the project itself, may write files to that location to redirect ``find_package()`` calls to content already provided by the project.
-  If no config package file is found in that location, the search proceeds with the logic described below.
+  Module モードも含め、``find_package()`` コマンドの呼び出しは全て、まず CMake 変数の :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` が指すディレクトリから Config ファイルの検索を行います。
+  :module:`FetchContent` モジュール、または CMake 自身が、このディレクトリにファイルを書き込んで ``find_package()`` コマンドの呼び出しを転送する場合があります。
+  この :variable:`CMAKE_FIND_PACKAGE_REDIRECTS_DIR` で Config ファイルが見つからなかったら、以下で説明する手順に従って検索処理を続行します。
 
-CMake constructs a set of possible installation prefixes for the package.
-Under each prefix several directories are searched for a configuration file.
-The tables below show the directories searched.
-Each entry is meant for installation trees following Windows (``W``), UNIX (``U``), or Apple (``A``) conventions:
+CMake は、任意のパッケージで利用できるインストール先（Prefix）の集合を定義しています。
+それぞれのインストール先（Prefix）のディレクトリ下で、Config ファイルが検索されます。
+以下の表に、この検索対象のディレクトリを示します。
+各ディレクトリが、ホストのどのプラットフォームに準拠したインストール・ツリーであるかを、Windows (``W``)、UNIX (``U``)、または Apple (``A``) で示します：
 
 ==================================================================== ==========
- Entry                                                               Convention
+ インストール先                                                       サポート
 ==================================================================== ==========
  ``<prefix>/``                                                          W
  ``<prefix>/(cmake|CMake)/``                                            W
@@ -232,10 +230,10 @@ Each entry is meant for installation trees following Windows (``W``), UNIX (``U`
 
 .. [#] .. versionadded:: 3.25
 
-On systems supporting macOS :prop_tgt:`FRAMEWORK` and :prop_tgt:`BUNDLE`, the following directories are searched for Frameworks or Application Bundles containing a configuration file:
+Apple の :prop_tgt:`FRAMEWORK` と :prop_tgt:`BUNDLE` をサポートしているシステムでは、次のインストール先で Config ファイルを含むフレームワークやアプリのバンドル [#hint_for_framework_and_bundle_of_ios]_ を探します：
 
 =========================================================== ==========
- Entry                                                      Convention
+ インストール先                                              サポート
 =========================================================== ==========
  ``<prefix>/<name>.framework/Resources/``                      A
  ``<prefix>/<name>.framework/Resources/CMake/``                A
@@ -244,6 +242,8 @@ On systems supporting macOS :prop_tgt:`FRAMEWORK` and :prop_tgt:`BUNDLE`, the fo
  ``<prefix>/<name>.app/Contents/Resources/``                   A
  ``<prefix>/<name>.app/Contents/Resources/CMake/``             A
 =========================================================== ==========
+
+.. [#hint_for_framework_and_bundle_of_ios] 「`Frameworkとは＠Qiita <https://qiita.com/gdate/items/b49ef26824504bb61856#framework%E3%81%A8%E3%81%AF>`_」参照。
 
 In all cases the ``<name>`` is treated as case-insensitive and corresponds to any of the names specified (``<PackageName>`` or names given by ``NAMES``).
 
