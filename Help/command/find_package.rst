@@ -332,7 +332,7 @@ Config ファイルを検索する際、インストール先の ``<prefix>`` �
 6. CMake の「:ref:`User Package Registry`」に格納されているパスを ``<prefix>`` にする。
    このステップは、``NO_CMAKE_PACKAGE_REGISTRY`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_PACKAGE_REGISTRY` を ``FALSE`` にセットするか、または廃止になった CMake 変数の :variable:`CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY` を ``TRUE`` にセットした時はスキップする。
 
-   この「:ref:`User Package Registry`」についてて詳細は :manual:`cmake-packages(7)` を参照のこと。
+   この「:ref:`User Package Registry`」について詳細は :manual:`cmake-packages(7)` を参照のこと。
 
 7. ホストのプラットフォーム・ファイルで定義されている CMake 変数にセットしたパスを ``<prefix>`` にする。
    ``NO_CMAKE_INSTALL_PREFIX`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_INSTALL_PREFIX` を ``FALSE`` にセットした時は、:variable:`CMAKE_INSTALL_PREFIX` と :variable:`CMAKE_STAGING_PREFIX` にセットしたパスを ``<prefix>`` にした検索をスキップする。
@@ -345,10 +345,10 @@ Config ファイルを検索する際、インストール先の ``<prefix>`` �
    これらの変数に含まれるディレクトリは、通常はソフトウェアをインストールした場所である。
    たとえば UNIX 系プラットフォームの場合だと ``/usr/local`` である。
 
-8. Search paths stored in the CMake :ref:`System Package Registry`.
-   This can be skipped if ``NO_CMAKE_SYSTEM_PACKAGE_REGISTRY`` is passed or by setting the :variable:`CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY` variable to ``FALSE`` or the deprecated variable :variable:`CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY` to ``TRUE``.
+8. CMake の「:ref:`System Package Registry`」に格納されているパスを ``<prefix>`` にする。
+   このステップは、``NO_CMAKE_SYSTEM_PACKAGE_REGISTRY`` オプションを指定するか、または CMake 変数の :variable:`CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY` を ``FALSE`` にセットするか、または廃止になった CMake 変数の :variable:`CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY` を ``TRUE`` にセットした時はスキップする。
 
-   See the :manual:`cmake-packages(7)` manual for details on the system package registry.
+   この「:ref:`System Package Registry`」について詳細は :manual:`cmake-packages(7)` を参照のこと。
 
 9. ``PATHS`` オプションで指定したパスを ``<prefix>`` にする。
    これらのディレクトリは、通常はハードコードしたヒントに相当する。
