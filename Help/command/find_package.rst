@@ -275,14 +275,14 @@ CMake は、各インストール先のディレクトリが Config ファイル
 このプラットフォームでは、CMake 変数の :variable:`CMAKE_FIND_FRAMEWORK` と :variable:`CMAKE_FIND_APPBUNDLE` によって検索する優先順位が決まります。
 
 Config ファイルを検索する際、インストール先の ``<prefix>`` は次の手順で決定します。
-なお ``NO_DEFAULT_PATH`` オプションを指定すると、``NO_*`` 系のオプションが全て有効になります。
+なお ``NO_DEFAULT_PATH`` オプションを指定すると、``NO_*`` 系のオプションが全て有効になります：
 
 1. パッケージ専用のパスを ``<prefix>`` にする。
    :policy:`CMP0074` のポリシーを参照のこと。
 
    .. versionadded:: 3.12
 
-   具体的には、次の変数で指定されたパスを ``<prefix>`` にして順番に検索していく：
+   具体的には、次の変数で指定されたパスを ``<prefix>`` にして順番にインストール先を検索していく：
 
    a. CMake 変数の :variable:`<PackageName>_ROOT` （``<PackageName>`` は大文字・小文字を区別したパッケージ名）。
 
@@ -342,7 +342,7 @@ Config ファイルを検索する際、インストール先の ``<prefix>`` �
    * :variable:`CMAKE_SYSTEM_FRAMEWORK_PATH`
    * :variable:`CMAKE_SYSTEM_APPBUNDLE_PATH`
 
-   これらの変数に含まれるディレクトリは、通常はソフトウェアをインストールした場所である。
+   これらの変数に含まれるパスは、通常はソフトウェアをインストールした場所である。
    たとえば UNIX 系プラットフォームの場合だと ``/usr/local`` である。
 
 8. CMake の「:ref:`System Package Registry`」に格納されているパスを ``<prefix>`` にする。
