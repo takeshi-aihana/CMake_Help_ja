@@ -48,7 +48,7 @@ find_package
   通常 Config ファイルと Version ファイルは任意のパッケージの一部としてインストールされるので、Find モジュールよりも信頼性が高い傾向があります。
   また、これらのファイルにはパッケージの直接的な情報が含まれています。
 
-  このモードは「:ref:`basic signature`」と「:ref:`full signature`」 の両方から呼び出せます。
+  このモードは「:ref:`basic signature`」と「:ref:`full signature`」の両方から呼び出せます。
 
 **FetchContent モジュールへの転送モード**
   .. versionadded:: 3.24
@@ -353,35 +353,36 @@ Config ファイルを検索する際、インストール先の ``<prefix>`` �
 9. ``PATHS`` オプションで指定したパスを ``<prefix>`` にする。
    これらのディレクトリは、通常はハードコードしたヒントに相当する。
 
-The :variable:`CMAKE_IGNORE_PATH`, :variable:`CMAKE_IGNORE_PREFIX_PATH`, :variable:`CMAKE_SYSTEM_IGNORE_PATH` and :variable:`CMAKE_SYSTEM_IGNORE_PREFIX_PATH` variables can also cause some of the above locations to be ignored.
+また CMake 変数の :variable:`CMAKE_IGNORE_PATH` や :variable:`CMAKE_IGNORE_PREFIX_PATH` や :variable:`CMAKE_SYSTEM_IGNORE_PATH` や :variable:`CMAKE_SYSTEM_IGNORE_PREFIX_PATH` を使って、上記の ``<prefix>`` の一部を無視させることができます。.
 
 .. versionadded:: 3.16
-   Added the ``CMAKE_FIND_USE_<CATEGORY>`` variables to globally disable various search locations.
+   いろいろなインストール先をグローバルに無効にするために CMake 変数の ``CMAKE_FIND_USE_<CATEGORY>`` を追加した。
 
 .. include:: FIND_XXX_ROOT.txt
 .. include:: FIND_XXX_ORDER.txt
 
-By default the value stored in the result variable will be the path at which the file is found.
-The :variable:`CMAKE_FIND_PACKAGE_RESOLVE_SYMLINKS` variable may be set to ``TRUE`` before calling ``find_package`` in order to resolve symbolic links and store the real path to the file.
+デフォルトで、このコマンドが返す値は Config ファイルが見つかったパスです。
+そのパスの中に含まれているシンボリックリンクを解決して実パスを返してもらいたい場合は、このコマンドを呼び出す前に CMake 変数の :variable:`CMAKE_FIND_PACKAGE_RESOLVE_SYMLINKS` を ``TRUE`` にセットしておいて下さい。
 
-Every non-REQUIRED ``find_package`` call can be disabled or made REQUIRED:
+次のいずれかで、``REQUIRED`` オプションを指定しない ``find_package`` コマンドの呼び出しを全て無効にして呼び出さないようにしたり、逆に ``REQUIRED`` オプションを指定した呼び出しに変更することができます：
 
-* Setting the :variable:`CMAKE_DISABLE_FIND_PACKAGE_<PackageName>` variable  to ``TRUE`` disables the package.
-  This also disables redirection to a package provided by :module:`FetchContent`.
+* CMake 変数の :variable:`CMAKE_DISABLE_FIND_PACKAGE_<PackageName>` を ``TRUE`` にすると ``<PackageName>`` に対する ``find_package`` コマンドの呼び出しが無効になる。
+  これにより :module:`FetchContent` モジュールへの ``<PackageName>`` の転送も無効になる。
 
-* Setting the :variable:`CMAKE_REQUIRE_FIND_PACKAGE_<PackageName>` variable to ``TRUE`` makes the package REQUIRED.
+* CMake 変数の :variable:`CMAKE_REQUIRE_FIND_PACKAGE_<PackageName>` を ``TRUE`` にすると ``<PackageName>`` に対する ``find_package`` コマンドの呼び出しで ``REQUIRED`` オプションを自動的に指定する。
 
-Setting both variables to ``TRUE`` simultaneously is an error.
+これらの変数を同時に ``TRUE`` にするとエラーが発行されます。
 
 .. _`version selection`:
 
-Config Mode Version Selection
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Config モードでバージョンの選択
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-  When Config mode is used, this version selection process is applied regardless of whether the :ref:`full <full signature>` or :ref:`basic <basic signature>` signature was given.
+  Config モードの場合、パッケージ・バージョンのチェックは「:ref:`basic signature`」または「:ref:`full signature`」のどちらから呼び出されたかに関係なく実施されます。
 
-When the ``[version]`` argument is given, Config mode will only find a version of the package that claims compatibility with the requested version (see :ref:`format specification <FIND_PACKAGE_VERSION_FORMAT>`).
+``[version]`` オプションを指定すると、Config モードは、指定したバージョンと互換性があるパッケージだけ探します（:ref:`バージョンの指定の仕方 <FIND_PACKAGE_VERSION_FORMAT>` も参照して下さい）。
+
 If the ``EXACT`` option is given, only a version of the package claiming an exact match of the requested version may be found.
 CMake does not establish any convention for the meaning of version numbers.
 Package version numbers are checked by "version" files provided by the packages themselves or by :module:`FetchContent`.
