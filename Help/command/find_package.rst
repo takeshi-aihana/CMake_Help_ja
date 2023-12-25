@@ -375,108 +375,105 @@ Config ファイルを検索する際、インストール先の ``<prefix>`` �
 
 .. _`version selection`:
 
-Config モードでバージョンの選択
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Config モードでバージョンをチェックする
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
   Config モードの場合、パッケージ・バージョンのチェックは「:ref:`basic signature`」または「:ref:`full signature`」のどちらから呼び出されたかに関係なく実施されます。
 
-``[version]`` オプションを指定すると、Config モードは、指定したバージョンと互換性があるパッケージだけ探します（:ref:`バージョンの指定の仕方 <FIND_PACKAGE_VERSION_FORMAT>` も参照して下さい）。
-
-If the ``EXACT`` option is given, only a version of the package claiming an exact match of the requested version may be found.
-CMake does not establish any convention for the meaning of version numbers.
-Package version numbers are checked by "version" files provided by the packages themselves or by :module:`FetchContent`.
-For a candidate package configuration file ``<config-file>.cmake`` the corresponding version file is located next to it and named either ``<config-file>-version.cmake`` or
-``<config-file>Version.cmake``.
-If no such version file is available then the configuration file is assumed to not be compatible with any requested version.
-A basic version file containing generic version matching code can be created using the :module:`CMakePackageConfigHelpers` module.
-When a version file is found it is loaded to check the requested version number.
-The version file is loaded in a nested scope in which the following variables have been defined:
+``[version]`` オプションを指定すると、Config モードは、指定したバージョンと互換性があるパッケージだけ探します（「:ref:`バージョンの指定の仕方 <FIND_PACKAGE_VERSION_FORMAT>`」 も参照して下さい）。
+その際に ``EXACT`` オプションも指定すると、指定したバージョンと完全に一致するパッケージだけ探します。
+CMake はパッケージのバージョン番号が意味することについて、いかなる規則も定めていません。
+パッケージのバージョン番号は、パッケージ自身または :module:`FetchContent` モジュールによって提供されている「バージョン」ファイルを使ってチェックされます。
+候補となるパッケージの Config ファイル（``<config-file>.cmake``）に対して、これに対応するバージョン・ファイルは ``<config-file>-version.cmake`` または ``<config-file>Version.cmake`` のいずれかのファイルです。
+もし、これらのバージョン・ファイルが存在していない場合、指定したバージョンとは互換性が無いと判断します。
+:module:`CMakePackageConfigHelpers` モジュールを使って簡単なバージョン・ファイルを作成できます。
+バージョン・ファイルが見つかったら、そのファイルを読み込んで指定したバージョン番号をチェクします。
+読み込まれたバージョン・ファイルの内容は、次のバージョン変数に格納されます：
 
 ``PACKAGE_FIND_NAME``
-  The ``<PackageName>``
+  パッケージ名 ``<PackageName>``
 ``PACKAGE_FIND_VERSION``
-  Full requested version string
+  ``[version]`` オプションに渡されたバージョン番号を表す完全な文字列。
 ``PACKAGE_FIND_VERSION_MAJOR``
-  Major version if requested, else 0
+  バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MINOR``
-  Minor version if requested, else 0
+  バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_PATCH``
-  Patch version if requested, else 0
+  バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_TWEAK``
-  Tweak version if requested, else 0
+  バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_COUNT``
-  Number of version components, 0 to 4
+  バージョン番号を構成するコンポーネントの数（0 〜 4）
 
-When a version range is specified, the above version variables will hold values based on the lower end of the version range.
-This is to preserve compatibility with packages that have not been implemented to expect version ranges.
-In addition, the version range will be described by the following variables:
+バージョンを任意の範囲で指定した場合、上記のバージョン変数には最小バージョンの値がそれぞれ格納されます。
+これは、バージョン範囲を想定していないパッケージとの互換性を維持するための仕様です。
+さらに、このバージョン範囲の詳細は次の変数で参照できます：
 
 ``PACKAGE_FIND_VERSION_RANGE``
-  Full requested version range string
+  バージョン範囲を表す完全な文字列。
 ``PACKAGE_FIND_VERSION_RANGE_MIN``
-  This specifies whether the lower end point of the version range should be included or excluded.
-  Currently, the only supported value for this variable is ``INCLUDE``.
+  バージョン範囲で最小バージョンを含める（``INClUDE``）か、または含めない（``EXCLUDE``）かを指定する。
+  現在は ``INCLUDE`` のみサポートしている。
 ``PACKAGE_FIND_VERSION_RANGE_MAX``
-  This specifies whether the upper end point of the version range should be included or excluded.
-  The supported values for this variable are  ``INCLUDE`` and ``EXCLUDE``.
-
+  バージョン範囲で最大バージョンを含める（``INClUDE``）か、または含めない（``EXCLUDE``）かを指定する。
 ``PACKAGE_FIND_VERSION_MIN``
-  Full requested version string of the lower end point of the range
+  バージョン範囲で最小バージョンを表す完全な文字列。
 ``PACKAGE_FIND_VERSION_MIN_MAJOR``
-  Major version of the lower end point if requested, else 0
+  最小バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MIN_MINOR``
-  Minor version of the lower end point if requested, else 0
+  最小バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MIN_PATCH``
-  Patch version of the lower end point if requested, else 0
+  最小バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MIN_TWEAK``
-  Tweak version of the lower end point if requested, else 0
+  最小バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MIN_COUNT``
-  Number of version components of the lower end point, 0 to 4
+  最小バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）
 
 ``PACKAGE_FIND_VERSION_MAX``
-  Full requested version string of the upper end point of the range 
+  バージョン範囲で最大バージョンを表す完全な文字列。
 ``PACKAGE_FIND_VERSION_MAX_MAJOR``
-  Major version of the upper end point if requested, else 0
+  最大バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MAX_MINOR``
-  Minor version of the upper end point if requested, else 0
+  最大バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MAX_PATCH``
-  Patch version of the upper end point if requested, else 0
+  最大バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MAX_TWEAK``
-  Tweak version of the upper end point if requested, else 0
+  最大バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MAX_COUNT``
-  Number of version components of the upper end point, 0 to 4
+  最大バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）
 
-Regardless of whether a single version or a version range is specified, the variable ``PACKAGE_FIND_VERSION_COMPLETE`` will be defined and will hold the full requested version string as specified.
+バージョンを単一で指定するか、または範囲で指定するかに関係なく、``PACKAGE_FIND_VERSION_COMPLETE`` 変数には、指定したバージョンの完全な文字列が格納されます。
 
-The version file checks whether it satisfies the requested version and sets these variables:
+CMake はバージョン・ファイルの内容が、指定したバージョンを満足しているかどうかをチェックし、次に示す変数にその結果を格納します：
 
 ``PACKAGE_VERSION``
-  Full provided version string
+  指定したバージョンを表す完全な文字列。
 ``PACKAGE_VERSION_EXACT``
-  True if version is exact match
+  バージョンが完全に一致する場合は ``TRUE``。
 ``PACKAGE_VERSION_COMPATIBLE``
-  True if version is compatible
+  バージョンに互換性がある場合は ``TRUE``。
 ``PACKAGE_VERSION_UNSUITABLE``
-  True if unsuitable as any version
+  どのバージョンも満足していなかったら ``TRUE``。
 
-These variables are checked by the ``find_package`` command to determine whether the configuration file provides an acceptable version.
-They are not available after the ``find_package`` call returns.  If the version is acceptable the following variables are set:
+これらの変数の値が、パッケージの Config ファイルで定義されているバージョンを満足しているかを ``find_packagd`` コマンドによってチェックし判定します。
+``find_packagd`` コマンドの呼び出しから戻ったあと、これらの変数は参照できなくなるので注意して下さい。
+判定を満足したバージョンだったら、次の変数にその情報を格納し：
 
 ``<PackageName>_VERSION``
-  Full provided version string
+  パッケージのバージョンを表す完全な文字列。
 ``<PackageName>_VERSION_MAJOR``
-  Major version if provided, else 0
+  パッケージのバージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_VERSION_MINOR``
-  Minor version if provided, else 0
+  パッケージのバージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_VERSION_PATCH``
-  Patch version if provided, else 0
+  パッケージのバージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_VERSION_TWEAK``
-  Tweak version if provided, else 0
+  パッケージのバージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_VERSION_COUNT``
-  Number of version components, 0 to 4
+  パッケージのバージョン番号を構成するコンポーネントの数（0 〜 4）
 
-and the corresponding package configuration file is loaded.
+対応する Config ファイルを読み込みます。
 When multiple package configuration files are available whose version files claim compatibility with the version requested it is unspecified which one is chosen: unless the variable :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` is set no attempt is made to choose a highest or closest version number.
 
 To control the order in which ``find_package`` checks for compatibility use the two variables :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` and :variable:`CMAKE_FIND_PACKAGE_SORT_DIRECTION`.
