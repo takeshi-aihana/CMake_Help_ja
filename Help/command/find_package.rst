@@ -474,20 +474,21 @@ CMake はバージョン・ファイルの内容が、指定したバージョ�
   パッケージのバージョン番号を構成するコンポーネントの数（0 〜 4）
 
 対応する Config ファイルを読み込みます。
-When multiple package configuration files are available whose version files claim compatibility with the version requested it is unspecified which one is chosen: unless the variable :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` is set no attempt is made to choose a highest or closest version number.
+この時、複数の Config ファイルが見つかり、それぞれが指定したバージョンとの互換性を主張している場合、どの Config ファイルが選択されるかは不明です。
+ただし、CMake 変数の :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` がセットされていれば、最も大きなバージョン番号または番号が最も近いバージョンの選択を試みます。
 
-To control the order in which ``find_package`` checks for compatibility use the two variables :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` and :variable:`CMAKE_FIND_PACKAGE_SORT_DIRECTION`.
-For instance in order to select the highest version one can set
+この ``find_packge`` コマンドによるバージョン・チェックを制御するには、CMake 変数の :variable:`CMAKE_FIND_PACKAGE_SORT_ORDER` と :variable:`CMAKE_FIND_PACKAGE_SORT_DIRECTION` を使います。
+たとえば最も大きなバージョン番号を選択するようにするには：
 
 .. code-block:: cmake
 
   SET(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
   SET(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
-before calling ``find_package``.
+を ``find_package`` コマンドを呼び出す前にセットしておきます。
 
-Package File Interface Variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Config ファイルのいろいろな変数
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When loading a find module or package configuration file ``find_package`` defines variables to provide information about the call arguments (and restores their original state before returning):
 
