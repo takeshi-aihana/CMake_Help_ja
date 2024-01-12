@@ -408,7 +408,7 @@ CMake はパッケージのバージョン番号が意味することについ�
 
 バージョンを任意の範囲で指定した場合、上記のバージョン変数には最小バージョンの値がそれぞれ格納されます。
 これは、バージョン範囲を想定していないパッケージとの互換性を維持するための仕様です。
-さらに、このバージョン範囲の詳細は次の変数で参照できます：
+このバージョン範囲の詳細は次の変数で参照できます：
 
 ``PACKAGE_FIND_VERSION_RANGE``
   バージョン範囲を表す完全な文字列。
@@ -428,7 +428,7 @@ CMake はパッケージのバージョン番号が意味することについ�
 ``PACKAGE_FIND_VERSION_MIN_TWEAK``
   最小バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``PACKAGE_FIND_VERSION_MIN_COUNT``
-  最小バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）
+  最小バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）。
 
 ``PACKAGE_FIND_VERSION_MAX``
   バージョン範囲で最大バージョンを表す完全な文字列。
@@ -489,77 +489,75 @@ CMake はバージョン・ファイルの内容が、指定したバージョ�
 Config ファイルのいろいろな変数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When loading a find module or package configuration file ``find_package`` defines variables to provide information about the call arguments (and restores their original state before returning):
+``find_pacakge`` コマンドは :ref:`Find モジュール <Find Modules>` や Config ファイルを読み込むと、その引数（パッケージやバージョンなど）に関する情報を格納するための「バージョン変数」をいろいろ定義します（そしてコマンドから戻る前に、それらを使って引数を元の状態に戻します）：
 
 ``CMAKE_FIND_PACKAGE_NAME``
-  The ``<PackageName>`` which is searched for
+  検索する ``<PackageName>``。
 ``<PackageName>_FIND_REQUIRED``
-  True if ``REQUIRED`` option was given
+  ``REQUIRED`` オプションを指定した場合は ``TRUE``。
 ``<PackageName>_FIND_QUIETLY``
-  True if ``QUIET`` option was given
+  ``QUIET`` オプションを指定した場合は ``TRUE``。
 ``<PackageName>_FIND_REGISTRY_VIEW``
-  The requested view if ``REGISTRY_VIEW`` option was given
+  ``REGISTRY_VIEW`` オプションを指定した場合は、要求したレジストリ・ビュー。
 ``<PackageName>_FIND_VERSION``
-  Full requested version string
+  バージョン番号を表す完全な文字列。
 ``<PackageName>_FIND_VERSION_MAJOR``
-  Major version if requested, else 0
+  バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MINOR``
-  Minor version if requested, else 0
+  バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_PATCH``
-  Patch version if requested, else 0
+  バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_TWEAK``
-  Tweak version if requested, else 0
+  バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_COUNT``
-  Number of version components, 0 to 4
+  バージョン番号を構成するコンポーネントの数（0 〜 4）。
 ``<PackageName>_FIND_VERSION_EXACT``
-  True if ``EXACT`` option was given
+  ``EXACT`` オプションを指定した場合は ``TRUE``。
 ``<PackageName>_FIND_COMPONENTS``
-  List of specified components (required and optional)
+  指定したコンポーネントの :ref:`リスト <CMake Language Lists>` （要求された場合）。
 ``<PackageName>_FIND_REQUIRED_<c>``
-  True if component ``<c>`` is required,
-  false if component ``<c>`` is optional
+  コンポーネントとして ``<c>``  を要求した場合は ``TRUE``、あるいはコンポーネントとして ``<c>`` がオプションの場合は ``FALSE``。
 
-When a version range is specified, the above version variables will hold values based on the lower end of the version range.
-This is to preserve compatibility with packages that have not been implemented to expect version ranges.
-In addition, the version range will be described by the following variables:
+バージョンを任意の範囲で指定した場合、上記のバージョン変数には最小バージョンの値がそれぞれ格納されます。
+これは、バージョン範囲を想定していないパッケージとの互換性を維持するための仕様です。
+バージョン範囲の詳細は次の変数で参照できます：
 
 ``<PackageName>_FIND_VERSION_RANGE``
-  Full requested version range string
+  バージョン範囲を表す完全な文字列。
 ``<PackageName>_FIND_VERSION_RANGE_MIN``
-  This specifies whether the lower end point of the version range is included or excluded.  Currently, ``INCLUDE`` is the only supported value.
+  バージョン範囲で最小バージョンを含める（``INClUDE``）か、または含めない（``EXCLUDE``）かを指定する。
+  現在は ``INCLUDE`` のみサポートしている。
 ``<PackageName>_FIND_VERSION_RANGE_MAX``
-  This specifies whether the upper end point of the version range is included or excluded.
-  The possible values for this variable are ``INCLUDE`` or ``EXCLUDE``.
-
+  バージョン範囲で最大バージョンを含める（``INClUDE``）か、または含めない（``EXCLUDE``）かを指定する。
 ``<PackageName>_FIND_VERSION_MIN``
-  Full requested version string of the lower end point of the range
+  バージョン範囲で最小バージョンを表す完全な文字列。
 ``<PackageName>_FIND_VERSION_MIN_MAJOR``
-  Major version of the lower end point if requested, else 0
+  最小バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MIN_MINOR``
-  Minor version of the lower end point if requested, else 0
+  最小バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MIN_PATCH``
-  Patch version of the lower end point if requested, else 0
+  最小バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MIN_TWEAK``
-  Tweak version of the lower end point if requested, else 0
+  最小バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MIN_COUNT``
-  Number of version components of the lower end point, 0 to 4
+  最小バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）。
 
 ``<PackageName>_FIND_VERSION_MAX``
-  Full requested version string of the upper end point of the range
+  バージョン範囲で最大バージョンを表す完全な文字列。
 ``<PackageName>_FIND_VERSION_MAX_MAJOR``
-  Major version of the upper end point if requested, else 0
+  最大バージョンの ``major`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MAX_MINOR``
-  Minor version of the upper end point if requested, else 0
+  最大バージョンの ``minor`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MAX_PATCH``
-  Patch version of the upper end point if requested, else 0
+  最大バージョンの ``patch`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MAX_TWEAK``
-  Tweak version of the upper end point if requested, else 0
+  最大バージョンの ``tweak`` 番号（要求された場合）、それ以外は 0。
 ``<PackageName>_FIND_VERSION_MAX_COUNT``
-  Number of version components of the upper end point, 0 to 4
+  最大バージョンのバージョン番号を構成するコンポーネントの数（0 〜 4）
 
-Regardless of whether a single version or a version range is specified, the variable ``<PackageName>_FIND_VERSION_COMPLETE`` will be defined and will hold the full requested version string as specified.
+バージョンを単一で指定するか、または範囲で指定するかに関係なく、``<PackageName>_FIND_VERSION_COMPLETE`` 変数には、指定したバージョンの完全な文字列が格納されます。
 
-In Module mode the loaded find module is responsible to honor the request detailed by these variables; see the find module for details.
-In Config mode ``find_package`` handles ``REQUIRED``, ``QUIET``, and ``[version]`` options automatically but leaves it to the package configuration file to handle components in a way that makes sense
-for the package.
-The package configuration file may set ``<PackageName>_FOUND`` to false to tell ``find_package`` that component requirements are not satisfied.
+Module モードで読み込んだモジュールは、これらの変数を介して要求された情報を尊重し、正しく扱わなければなりません。
+詳細は :ref:`Find モジュール <Find Modules>` を参照して下さい。
+Config モードの場合、``find_pacakge`` コマンドは自動的に ``REQUIRED`` と ``QUIET`` と ``[version]`` オプションを処理しますが、それ以外はパッケージの Config ファイルに従ってパッケージ毎の方法で処理させます。
+なお、コンポーネントに要求した条件を満足しなかったという結果になったら、Config ファイルは変数の ``<PackageName>_FOUND`` に ``False`` をセットして ``find_package`` コマンドに返します。
