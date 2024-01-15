@@ -76,12 +76,12 @@ foreach
 
 .. versionadded:: 3.17
 
-``<lists>`` はセミコロン文字（"``;``"）または空白で区切られたリスト型の変数を要素とする :ref:`リスト <CMake Language Lists>` です。
-この呼び出しは、次のように ``<loop_var>`` に各リスト型の変数を順番に格納しながらループを繰り返します（FIXME: 英語の意味が不明で日本語にできないい）：
+``<lists>`` はセミコロン文字（"``;``"）または空白で区切られた :ref:`リスト <CMake Language Lists>` 型変数の並びです。
+この呼び出しは、``<loop_var>...`` に渡した変数に、次のルールに従って、``<lists>`` で対応する変数の要素を順番に格納しながらループを繰り返します（FIXME：以下、意味不明）：
 
-- if the only ``loop_var`` given, then it sets a series of ``loop_var_N`` variables to the current item from the corresponding list;
-- if multiple variable names passed, their count should match the lists variables count;
-- if any of the lists are shorter, the corresponding iteration variable is not defined for the current iteration.
+- ``<loop_var>...`` に単体の ``<loop_var>`` が与えられたら、``<loop_var>_N`` の形式（``N`` はリスト型変数に対応する番号で、0, 1 ... として付与される）として ``<lists>`` の変数を順番に参照できる
+- ``<loop_var>...`` に複数の ``<A> <B> <C>...`` が与えられたら、``<lists>`` の変数を ``<A> <B> <C>...`` の順で参照できる
+- ``<loop_var>...`` の個数が ``<lists>`` の個数よりも少ない場合、足りない変数は参照できない
   
 .. code-block:: cmake
 
