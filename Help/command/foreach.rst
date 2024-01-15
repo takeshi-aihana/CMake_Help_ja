@@ -10,42 +10,42 @@ foreach
   endforeach()
 
 ``<items>`` はセミコロン文字（"``;``"）または空白で区切られた要素の :ref:`リスト <CMake Language Lists>` です。
-``foreach`` と、これに対応する ``endforeach`` の間にある全てのコマンドは呼び出されずに記録されます。
-``endforeach`` コマンドが評価された時点で、記録されていた一連のコマンドが ``<items>`` 内のアイテム毎に1回だけ呼び出されます（ループ呼び出し）。
+まず ``foreach`` と、これに対応する ``endforeach`` の間にある個々のコマンドは呼び出されずに記録されます。
+``endforeach`` コマンドが評価された時点で、記録されていた全てのコマンドが ``<items>`` 内のアイテム毎に1回だけ呼び出されます（ループ呼び出し）。
 ループの開始時に、``<loop_var>`` 変数が現在のアイテムの値にセットされます。
 
-``<loop_var>`` 変数のスコープはループ呼び出しのスコープと同じになります。
+``<loop_var>`` 変数のスコープはループ呼び出しのスコープ（``foreach`` から ``endforeach`` の間）と同じになります。
 詳細は :policy:`CMP0124` のポリシーを参照して下さい。
 
 :command:`break` と :command:`continue` コマンドは通常のループ呼び出しから抜け出す手段を提供します。
 
-command:`endforeach` コマンドではオプションである ``<loop_var>`` 変数を参照できます。
-この変数を使用する際は、この ``foreach`` コマンドの開始時の引数をそのまま繰り返していく必要があります。
+:command:`endforeach` コマンドではオプションである ``<loop_var>`` 変数を参照できます。
+この変数を使用する場合は、この ``foreach`` コマンド開始時の引数を文字通り繰り返し使用して下さい。
 
 .. code-block:: cmake
 
   foreach(<loop_var> RANGE <stop>)
 
-In this variant, ``foreach`` iterates over the numbers 0, 1, ... up to (and including) the nonnegative integer ``<stop>``.
+この呼び出しは ``<loop_var>`` を 0, 1, ..., ``<stop>`` まで正の整数単位でインクリメントしながらループを繰り返します。
 
 .. code-block:: cmake
 
   foreach(<loop_var> RANGE <start> <stop> [<step>])
 
-In this variant, ``foreach`` iterates over the numbers from ``<start>`` up to at most ``<stop>`` in steps of ``<step>``.
-If ``<step>`` is not specified, then the step size is 1.
-The three arguments ``<start>`` ``<stop>`` ``<step>`` must all be nonnegative integers, and ``<stop>`` must not be smaller than ``<start>``; otherwise you enter the danger zone of undocumented behavior that may change in future releases.
+この呼び出しは ``<loop_var>`` を ``<start>`` から最大 ``<stop>`` まで ``<step>`` の間隔でインクリメントしながらループを繰り返します。
+``<step>`` を指定しない場合は、間隔は 1 です。
+この３つの引数 ``<start>`` と ``<stop>`` と ``<step>`` は全て正の整数であり、``<stop>`` は ``<start>`` よりも大きくして下さい（そうしないと、将来のリリースで変更される可能性がある仕様に知らずに抵触してしまう場合があります）。
 
 .. code-block:: cmake
 
   foreach(<loop_var> IN [LISTS [<lists>]] [ITEMS [<items>]])
 
-In this variant, ``<lists>`` is a whitespace or semicolon separated list of list-valued variables.
-The ``foreach`` command iterates over each item in each given list.
-The ``<items>`` following the ``ITEMS`` keyword are processed as in the first variant of the ``foreach`` command.
-The forms ``LISTS A`` and ``ITEMS ${A}`` are equivalent.
+``<lists>`` はセミコロン文字（"``;``"）または空白で区切られた要素の :ref:`リスト <CMake Language Lists>` を格納した変数です。
+この呼び出しは ``<loop_var>`` にリストの要素を順番に格納しながらループを繰り返します。
+``ITEMS`` に続く ``<items>`` はリストと解釈してループを繰り返します。
+``LISTS A`` と ``ITEM ${A}`` の書き方は同じ意味です。
 
-The following example shows how the ``LISTS`` option is processed:
+次の例は、``LISTS`` オプションがどのように処理されるかを示します：
 
 .. code-block:: cmake
 
@@ -58,7 +58,7 @@ The following example shows how the ``LISTS`` option is processed:
       message(STATUS "X=${X}")
   endforeach()
 
-yields::
+の結果は次のとおりです::
 
   -- X=0
   -- X=1
@@ -76,13 +76,13 @@ yields::
 
 .. versionadded:: 3.17
 
-In this variant, ``<lists>`` is a whitespace or semicolon separated list of list-valued variables.
-The ``foreach`` command iterates over each list simultaneously setting the iteration variables as follows:
+``<lists>`` はセミコロン文字（"``;``"）または空白で区切られたリスト型の変数を要素とする :ref:`リスト <CMake Language Lists>` です。
+この呼び出しは、次のように ``<loop_var>`` に各リスト型の変数を順番に格納しながらループを繰り返します（FIXME: 英語の意味が不明で日本語にできないい）：
 
 - if the only ``loop_var`` given, then it sets a series of ``loop_var_N`` variables to the current item from the corresponding list;
 - if multiple variable names passed, their count should match the lists variables count;
 - if any of the lists are shorter, the corresponding iteration variable is not defined for the current iteration.
-
+  
 .. code-block:: cmake
 
   list(APPEND English one two three four)
@@ -96,7 +96,7 @@ The ``foreach`` command iterates over each list simultaneously setting the itera
       message(STATUS "en=${en}, ba=${ba}")
   endforeach()
 
-yields::
+の結果は次のとおりです::
 
   -- num_0=one, num_1=satu
   -- num_0=two, num_1=dua
