@@ -1,7 +1,7 @@
 function
 --------
 
-Start recording a function for later invocation as a command.
+あとでコマンドとして呼び出す「関数」の定義の記録を開始する。
 
 .. code-block:: cmake
 
@@ -9,27 +9,24 @@ Start recording a function for later invocation as a command.
     <commands>
   endfunction()
 
-Defines a function named ``<name>`` that takes arguments named
-``<arg1>``, ...  The ``<commands>`` in the function definition
-are recorded; they are not executed until the function is invoked.
+``<arg1>``, ... などの引数を受け取る ``<name>`` という名前の「関数」の定義を開始します。
+この定義の中にある ``<commands>`` が記録されます。
+これらのコマンドは、関数を呼び出すまで実行されません。
 
-Per legacy, the :command:`endfunction` command admits an optional
-``<name>`` argument. If used, it must be a verbatim repeat of the
-argument of the opening ``function`` command.
+従来どおり :command:`endfunction` コマンドでは ``<name>`` を参照できます。
+その場合、``function`` コマンドの引数をそのまま繰り返す必要があります。
 
-A function opens a new scope: see :command:`set(var PARENT_SCOPE)` for
-details.
+定義した関数は新しいスコープを作成します： 詳細は  :command:`set(var PARENT_SCOPE)` を参照して下さい。
 
-See the :command:`cmake_policy()` command documentation for the behavior
-of policies inside functions.
+関数の内部のポリシーについては :command:`cmake_policy()` コマンドを参照して下さい。
 
-See the :command:`macro()` command documentation for differences
-between CMake functions and macros.
+CMake が提供する関数とマクロの違いについては :command:`macro()` コマンドを参照して下さい。
 
-Invocation
-^^^^^^^^^^
+関数の呼び出し
+^^^^^^^^^^^^^^
 
-The function invocation is case-insensitive. A function defined as
+関数の呼び出しは大文字と小文字を区別しません。
+例えば次の関数は：
 
 .. code-block:: cmake
 
@@ -37,7 +34,7 @@ The function invocation is case-insensitive. A function defined as
     <commands>
   endfunction()
 
-can be invoked through any of
+以下のいずれかの方法で呼び出すことが可能です：
 
 .. code-block:: cmake
 
@@ -46,35 +43,25 @@ can be invoked through any of
   FOO()
   cmake_language(CALL foo)
 
-and so on. However, it is strongly recommended to stay with the
-case chosen in the function definition. Typically functions use
-all-lowercase names.
+ただし大小文字にかかわらず、関数の定義にある ``<name>`` をそのまま使うことを強く推奨します。
+また ``<name>`` は、全て小文字にするのが通例になっています。
 
 .. versionadded:: 3.18
-  The :command:`cmake_language(CALL ...)` command can also be used to
-  invoke the function.
+  :command:`cmake_language(CALL ...)` コマンドで関数を呼び出すことができるようになった。
 
-Arguments
-^^^^^^^^^
+関数の引数
+^^^^^^^^^^
 
-When the function is invoked, the recorded ``<commands>`` are first
-modified by replacing formal parameters (``${arg1}``, ...) with the
-arguments passed, and then invoked as normal commands.
+関数を呼び出すと、まず ``<command>`` に含まれている仮引数（``${arg1}``, ``${arg2}``, ``${arg3}``, ...）を、実際に渡された引数で置き換えてから、通常のコマンドとして呼び出します。
 
-In addition to referencing the formal parameters you can reference the
-``ARGC`` variable which will be set to the number of arguments passed
-into the function as well as ``ARGV0``, ``ARGV1``, ``ARGV2``, ...  which
-will have the actual values of the arguments passed in.  This facilitates
-creating functions with optional arguments.
+さらに、関数に渡した引数の個数が格納される ``ARGC`` 変数や、実際に引数に渡された値が格納された ``ARGV0``、``ARGV1``、``ARGV2``、... などの変数も参照できます。
+これにより、オプションの引数を利用した関数を簡単に作成できます。
 
-Furthermore, ``ARGV`` holds the list of all arguments given to the
-function and ``ARGN`` holds the list of arguments past the last expected
-argument.  Referencing to ``ARGV#`` arguments beyond ``ARGC`` have
-undefined behavior.  Checking that ``ARGC`` is greater than ``#`` is
-the only way to ensure that ``ARGV#`` was passed to the function as an
-extra argument.
+また ``ARGV`` 変数は関数に渡された全ての引数を要素とする :ref:`リスト <CMake Language Lists>` を保持し、 ``ARGN`` 変数は関数に渡された引数のうち「必須ではない」全ての引数を要素とする :ref:`リスト <CMake Language Lists>` を保持しています。
+``ARGC`` （引数の総数）を超えた ``ARGV#`` を参照すると、未定義の結果になります。
+``ARGC`` が ``#`` よりも大きいかどうかを確認することが、``ARGV#`` が関数に渡された追加の引数であることを確認する唯一の方法です。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`cmake_parse_arguments`
