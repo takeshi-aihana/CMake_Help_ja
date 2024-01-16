@@ -1,23 +1,21 @@
 get_cmake_property
 ------------------
 
-Get a global property of the CMake instance.
+CMake インスタンスからグローバルなプロパティを取得する。
 
 .. code-block:: cmake
 
   get_cmake_property(<var> <property>)
 
-Gets a global property from the CMake instance.  The value of
-the ``<property>`` is stored in the variable ``<var>``.
-If the property is not found, ``<var>`` will be set to ``NOTFOUND``.
-See the :manual:`cmake-properties(7)` manual for available properties.
+CMake のインスタンスからグローバルなプロパティを一つ取得します。
+取得した ``<property>`` の値が ``<var>`` という変数に格納されます。
+プロパティが見つからなかったら、``<var>`` には ``NOTFOUND`` が格納されます。
+ここで指定できるプロパティについては :manual:`cmake-properties(7)` を参照して下さい。
 
-In addition to global properties, this command (for historical reasons)
-also supports the :prop_dir:`VARIABLES` and :prop_dir:`MACROS` directory
-properties.  It also supports a special ``COMPONENTS`` global property that
-lists the components given to the :command:`install` command.
+このコマンドは、グローバルなプロパティに加えて（歴史的な理由により） :prop_dir:`VARIABLES` や :prop_dir:`MACROS` も取得できます。
+また :command:`install` コマンドに指定したコンポーネントの :ref:`リスト <CMake Language Lists>` である特殊な ``COMPONENTS`` プロパティも取得できます。
 
-See Also
+参考情報
 ^^^^^^^^
 
-* the :command:`get_property` command ``GLOBAL`` option
+* :command:`get_property` コマンドの ``GLOBAL`` オプション
