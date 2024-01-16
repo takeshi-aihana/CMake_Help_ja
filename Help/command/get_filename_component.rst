@@ -1,41 +1,36 @@
 get_filename_component
 ----------------------
 
-Get a specific component of a full filename.
+完全なファイル名から特定の要素を取得する。
 
 .. versionchanged:: 3.20
-  This command has been superseded by the :command:`cmake_path` command, except
-  for ``REALPATH``, which is now offered by :command:`file(REAL_PATH)`, and
-  ``PROGRAM``, now available in :command:`separate_arguments(PROGRAM)`.
+  このコマンドは :command:`cmake_path` コマンドに置き換えられた（ただし例外として ``REALPATH`` は :command:`file(REAL_PATH)` を使い、``PROGRAM`` は :command:`separate_arguments(PROGRAM)` を使う）。
+
 
 .. versionchanged:: 3.24
-  The undocumented feature offering the capability to query the ``Windows``
-  registry is superseded by
-  :ref:`cmake_host_system_information(QUERY WINDOWS_REGISTRY)<Query Windows registry>`
-  command.
+  Windows レジストリをクエリする機能は :ref:`cmake_host_system_information(QUERY WINDOWS_REGISTRY)<Query Windows registry>` コマンドで置き換えられた。
 
 .. code-block:: cmake
 
   get_filename_component(<var> <FileName> <mode> [CACHE])
 
-Sets ``<var>`` to a component of ``<FileName>``, where ``<mode>`` is one of:
+``<FileName>`` の任意の要素を取得して ``<var>`` に格納します。取得する要素を表す ``<mode>`` には、次のいずれかを指定して下さい：
 
 ::
 
- DIRECTORY = Directory without file name
- NAME      = File name without directory
- EXT       = File name longest extension (.b.c from d/a.b.c)
- NAME_WE   = File name with neither the directory nor the longest extension
- LAST_EXT  = File name last extension (.c from d/a.b.c)
- NAME_WLE  = File name with neither the directory nor the last extension
- PATH      = Legacy alias for DIRECTORY (use for CMake <= 2.8.11)
+ DIRECTORY = ファイル名を含めないディレクトリ
+ NAME      = ディレクトリを含めないファイル名
+ EXT       = 最長の拡張子（たとえば d/a.b.c ならば .b.c）
+ NAME_WE   = ディレクトリや最長の拡張子を除いた部分
+ LAST_EXT  = 最短の拡張子（たとえば d/a.b.c ならば .c）
+ NAME_WLE  = ディレクトリや最短の拡張子を除いた部分
+ PATH      = ディレクトリ部分（CMake <= バージョン 2.8.11 向け）
 
 .. versionadded:: 3.14
-  Added the ``LAST_EXT`` and ``NAME_WLE`` modes.
+  要素として ``LAST_EXT`` と ``NAME_WLE`` を追加した。
 
-Paths are returned with forward slashes and have no trailing slashes.
-If the optional ``CACHE`` argument is specified, the result variable is
-added to the cache.
+取得した要素の先頭には "``/``" （スラッシュ）が付いてますが、末尾に "``/``" （スラッシュ）は付きません。
+``CACHE`` オプションを指定すると、``<var>`` はキャッシュ変数になります。
 
 .. code-block:: cmake
 
@@ -43,34 +38,28 @@ added to the cache.
 
 .. versionadded:: 3.4
 
-Sets ``<var>`` to the absolute path of ``<FileName>``, where ``<mode>`` is one
-of:
+``<FileName>`` からパスを取得して ``<var>`` に格納します。``<mode>`` には、次のいずれかを指定して下さい：
 
 ::
 
- ABSOLUTE  = Full path to file
- REALPATH  = Full path to existing file with symlinks resolved
+ ABSOLUTE  = ファイルの絶対パス
+ REALPATH  = シンボリックリンクが解決されたファイルの絶対パス
 
-If the provided ``<FileName>`` is a relative path, it is evaluated relative
-to the given base directory ``<dir>``.  If no base directory is
-provided, the default base directory will be
-:variable:`CMAKE_CURRENT_SOURCE_DIR`.
+``<FileName>`` が相対パスの場合、``<dir>`` を起点としたパスとして評価します。
+``<dire>`` を指定しない場合、デフォルトの起点は :variable:`CMAKE_CURRENT_SOURCE_DIR` です。
 
-Paths are returned with forward slashes and have no trailing slashes.  If the
-optional ``CACHE`` argument is specified, the result variable is added to the
-cache.
+取得したパスの先頭には "``/``" （スラッシュ）が付いてますが、末尾に "``/``" （スラッシュ）は付きません。
+``CACHE`` オプションを指定すると、``<var>`` はキャッシュ変数になります。
 
 .. code-block:: cmake
 
   get_filename_component(<var> <FileName> PROGRAM [PROGRAM_ARGS <arg_var>] [CACHE])
 
-The program in ``<FileName>`` will be found in the system search path or
-left as a full path.  If ``PROGRAM_ARGS`` is present with ``PROGRAM``, then
-any command-line arguments present in the ``<FileName>`` string are split
-from the program name and stored in ``<arg_var>``.  This is used to
-separate a program name from its arguments in a command line string.
+``<FileName>`` に含まれているプログラム名はシステムの検索パスまたは絶対パスのままです。
+``PROGRAM_ARGS`` が ``PROGRAM`` と一緒に存在している場合、``<FileName>`` の中にあるコマンドライン引数はプログラムから分離され、``<arg_var>`` 変数に格納されます。
+これによりプログラム名とその引数をそれぞれ別個に参照できます。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`cmake_path`
