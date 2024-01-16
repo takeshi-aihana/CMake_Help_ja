@@ -1,41 +1,34 @@
 get_directory_property
 ----------------------
 
-Get a property of ``DIRECTORY`` scope.
+``DIRECTORY`` スコープのプロパティを取得する。
 
 .. code-block:: cmake
 
   get_directory_property(<variable> [DIRECTORY <dir>] <prop-name>)
 
-Stores a property of directory scope in the named ``<variable>``.
+取得したディレクトリ・スコープのプロパティを ``<variable>`` という変数に格納します。
 
-The ``DIRECTORY`` argument specifies another directory from which
-to retrieve the property value instead of the current directory.
-Relative paths are treated as relative to the
-current source directory.  CMake must already know about the directory,
-either by having added it through a call to :command:`add_subdirectory`
-or being the top level directory.
+``DIRECTORY`` オプションには、現在のディレクトリの代わりにプロパティを取得するディレクトリを指定します。
+相対パスを指定すると、現在のディレクトリに対する相対ディレクトリとして扱います。
+CMake は :command:`add_subdirectory` コマンドを呼び出してディレクトリを追加するか、またはプロジェクト最上位のディレクトリを起点として、指定したディレクトリを認識している必要があります。
 
 .. versionadded:: 3.19
-  ``<dir>`` may reference a binary directory.
+  ``<dir>`` は、ビルド・ディレクトリを参照できるようになった。
 
-If the property is not defined for the nominated directory scope,
-an empty string is returned.  In the case of ``INHERITED`` properties,
-if the property is not found for the nominated directory scope,
-the search will chain to a parent scope as described for the
-:command:`define_property` command.
+指定したディレクトリ・スコープでプロパティが何も定義されていない場合、空の文字列が格納されます。
+``INHERITED`` プロパティを指定してディレクトリ・スコープからプロパティが見つからなかったら、:command:`define_property` コマンドで説明したように、親スコープからプロパティを見つけます。
 
 .. code-block:: cmake
 
   get_directory_property(<variable> [DIRECTORY <dir>]
                          DEFINITION <var-name>)
 
-Get a variable definition from a directory.  This form is useful to
-get a variable definition from another directory.
+ディレクトリから変数の定義を取得します。
+この呼び出し方は別のディレクトリから変数の定義を取得する際に便利です。
 
-
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`define_property`
-* the more general :command:`get_property` command
+* さらに汎用的な :command:`get_property` コマンド
