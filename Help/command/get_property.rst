@@ -19,7 +19,7 @@ get_property
                PROPERTY <name>
                [SET | DEFINED | BRIEF_DOCS | FULL_DOCS])
 
-任意のスコープにある任意のオブジェクトからプロパティを一つ取得します。
+ディレクトリなど任意のスコープにある任意のオブジェクトから、名前の付いた属性値（**プロパティ**）を一つ取得します。
 
 このコマンドの最初の引数は、取得した結果を格納する変数です。
 二番目の引数には、プロパティを取得するスコープを指定します。
@@ -29,73 +29,77 @@ get_property
   このスコープは一意であり、プロパティの名前は指定できない。
 
 ``DIRECTORY``
-  Scope defaults to the current directory but another directory (already processed by CMake) may be named by the full or relative path ``<dir>``.
-  Relative paths are treated as relative to the current source directory.
-  See also the :command:`get_directory_property` command.
+  スコープのデフォルトは現在のディレクトリであるが、別のディレクトリ（CMake が既に読み込んだ絶対パスまたは相対パス）を ``<dir>`` に指定できる。
+  相対パスの場合は :variable:`CMAKE_CURRENT_SOURCE_DIR` を起点したディレクトリとして扱う。
+  :command:`get_directory_property` コマンドも参照のこと。
 
   .. versionadded:: 3.19
-    ``<dir>`` may reference a binary directory.
+    ``<dir>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
 
 ``TARGET``
-  Scope must name one existing target.
-  See also the :command:`get_target_property` command.
+  スコープとして ``<target>`` に既存のターゲットを一つ指定する。
+  :command:`get_target_property` コマンドも参照のこと。
 
 ``SOURCE``
-  Scope must name one source file.  By default, the source file's property will be read from the current source directory's scope.
+  スコープとして ``<source>`` に一個のソースファイルを指定する。
+  デフォルトで、:variable:`CMAKE_CURRENT_SOURCE_DIR` にあるソース・ファイルからプロパティを取得する。
 
   .. versionadded:: 3.18
-    Directory scope can be overridden with one of the following sub-options:
+    ``DIRECTORY`` スコープに、次のサブオプションが追加された：
 
     ``DIRECTORY <dir>``
-      The source file property will be read from the ``<dir>`` directory's scope.
-      CMake must already know about the directory, either by having added it through a call to :command:`add_subdirectory` or ``<dir>`` being the top level directory.
-      Relative paths are treated as relative to the current source directory.
+      ``SOURCE`` スコープで取得するプロパティは ``<dir>`` に指定したディレクトリのソース・ファイルから取得する。
+      ただし ``<dir>`` に指定できるのは、:command:`add_subdirectory` コマンドやプロジェクト最上位のディレクトリとして、既に CMake が認識しているディレクトリにすること。
+      相対パスは :variable:`CMAKE_CURRENT_SOURCE_DIR` を起点したディレクトリとして扱う。
 
       .. versionadded:: 3.19
-        ``<dir>`` may reference a binary directory.
+        ``<dir>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
 
     ``TARGET_DIRECTORY <target>``
-      The source file property will be read from the directory scope in which ``<target>`` was created (``<target>`` must therefore already exist).
+      ``SOURCE`` スコープのプロパティを ``<target>`` にあるディレクトリのソース・ファイルから読み込む（この ``<target>`` ディレクトリは既に存在しているディレクトリを指定すること）。
 
-  See also the :command:`get_source_file_property` command.
+  :command:`get_source_file_property` コマンドも参照のこと。
 
 ``INSTALL``
   .. versionadded:: 3.1
 
-  Scope must name one installed file path.
+  スコープとして ``file`` にインストール済みのファイルのパスを一つ指定する。
 
 ``TEST``
-  Scope must name one existing test.
-  See also the :command:`get_test_property` command.
+  スコープとして ``<test>`` には既存のテストを一つ指定する。
+  :command:`get_test_property` コマンドも参照のこと。
 
   .. versionadded:: 3.28
-    Directory scope can be overridden with the following sub-option:
+    ``DIRECTORY`` スコープに、次のサブオプションが追加された：
 
     ``DIRECTORY <dir>``
-      The test property will be read from the ``<dir>`` directory's scope.
-      CMake must already know about the directory, either by having added it through a call to :command:`add_subdirectory` or ``<dir>`` being the top level directory.
-      Relative paths are treated as relative to the current source directory.
-      ``<dir>`` may reference a binary directory.
+      ``TEST`` スコープで取得するプロパティは ``<dir>`` に指定したディレクトリのテストから取得する。
+      ただし ``<dir>`` に指定できるのは、 :command:`add_subdirectory` コマンドやプロジェクト最上位のディレクトリとして、既に CMake が認識しているディレクトリにすること。
+      相対パスは 
+      相対パスは :variable:`CMAKE_CURRENT_SOURCE_DIR` を起点したディレクトリとして扱う。
+
+      .. versionadded:: 3.19
+        ``<dir>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
 
 ``CACHE``
-  Scope must name one cache entry.
+  スコープとして ``<entry>`` には既存のキャッシュ変数を一つ指定する。
 
 ``VARIABLE``
-  Scope is unique and does not accept a name.
+  このスコープは一意であり、プロパティの名前は指定できない。
 
-The required ``PROPERTY`` option is immediately followed by the name of the property to get.
-If the property is not set an empty value is returned, although some properties support inheriting from a parent scope if defined to behave that way (see :command:`define_property`).
+必須の ``PROPERTY`` オプションに続く ``<name>`` には、取得するプロパティの名前を指定します。
+プロパティが存在しない場合は空の値が返されますが、明示的に空の値がセットされているようなプロパティの場合は親にあたるスコープから値を継承できます（:command:`define_property` コマンドを参照のこと）。
 
-If the ``SET`` option is given the variable is set to a boolean value indicating whether the property has been set.
-If the ``DEFINED`` option is given the variable is set to a boolean value indicating whether the property has been defined such as with the :command:`define_property` command.
+``SET`` オプションを指定すると、``<variable>``  には、そのプロパティがセットされているかどうかを示す論理値が返されます。
+``DEFINED`` オプションを指定すると、``<variable>`` には、:command:`define_property` コマンドで定義されたプロパティかどうかを示す論理値が返されます。
 
-If ``BRIEF_DOCS`` or ``FULL_DOCS`` is given then the variable is set to a string containing documentation for the requested property.
-If documentation is requested for a property that has not been defined ``NOTFOUND`` is returned.
+``BRIEF_DOCS`` または ``FULL_DOCS`` プロパティを指定すると、``<variable>`` はそのプロパティのドキュメントを含む文字列が返されます。
+この時に、定義されていないプロパティのドキュメントを要求すると ``<variable>`` には ``NOTFOUND`` が返されます。
 
 .. note::
 
-  The :prop_sf:`GENERATED` source file property may be globally visible.
-  See its documentation for details.
+  :prop_sf:`GENERATED` なソース・ファイルのプロパティが ``GLOBAL`` スコープに表示される場合があります。
+  詳細は、そのドキュメントを参照して下さい。
 
 See Also
 ^^^^^^^^

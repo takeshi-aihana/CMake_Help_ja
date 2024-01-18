@@ -46,7 +46,7 @@ get_filename_component
  REALPATH  = シンボリックリンクが解決されたファイルの絶対パス
 
 ``<FileName>`` が相対パスの場合、``<dir>`` を起点としたパスとして評価します。
-``<dire>`` を指定しない場合、デフォルトの起点は :variable:`CMAKE_CURRENT_SOURCE_DIR` です。
+``<dir>`` を指定しない場合、デフォルトの起点は :variable:`CMAKE_CURRENT_SOURCE_DIR` です。
 
 取得したパスの先頭には "``/``" （スラッシュ）が付いてますが、末尾に "``/``" （スラッシュ）は付きません。
 ``CACHE`` オプションを指定すると、``<var>`` はキャッシュ変数になります。
