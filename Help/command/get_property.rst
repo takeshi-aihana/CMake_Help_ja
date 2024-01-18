@@ -101,7 +101,7 @@ get_property
   :prop_sf:`GENERATED` なソース・ファイルのプロパティが ``GLOBAL`` スコープに表示される場合があります。
   詳細は、そのドキュメントを参照して下さい。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`define_property`

@@ -1,96 +1,76 @@
 if
 --
 
-Conditionally execute a group of commands.
+コマンドのグループを条件付きで実行する。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. code-block:: cmake
 
   if(<condition>)
     <commands>
-  elseif(<condition>) # optional block, can be repeated
+  elseif(<condition>) # オプションのブロック（複数指定が可能）
     <commands>
-  else()              # optional block
+  else()              # オプションのブロック
     <commands>
   endif()
 
-Evaluates the ``condition`` argument of the ``if`` clause according to the
-`Condition syntax`_ described below. If the result is true, then the
-``commands`` in the ``if`` block are executed.
-Otherwise, optional ``elseif`` blocks are processed in the same way.
-Finally, if no ``condition`` is true, ``commands`` in the optional ``else``
-block are executed.
+このドキュメントにある「`条件式の構文`_」に従って、``if`` 句の ``<condition>`` を評価します。
+評価した結果が ``TRUE`` の場合、``if`` 句の中にある ``<commands>`` ブロックが実行されます。
+それ以外はオプションである ``elseif`` 句が同じように処理されます。
+そして最後に ``<condition>`` が ``TRUE`` でなければ、オプションである ``else`` 句の ``<commands>`` が実行されます。
 
-Per legacy, the :command:`else` and :command:`endif` commands admit
-an optional ``<condition>`` argument.
-If used, it must be a verbatim
-repeat of the argument of the opening
-``if`` command.
+従来どおり、:command:`else` と :command:`endif` コマンドはオプションで ``<condition>`` を引数として受け取れます。
+その場合、最初の ``if`` コマンドの引数をそのまま繰り返すようにして下さい。
 
 .. _`Condition Syntax`:
 
-Condition Syntax
-^^^^^^^^^^^^^^^^
+条件式の構文
+^^^^^^^^^^^^
 
-The following syntax applies to the ``condition`` argument of
-the ``if``, ``elseif`` and :command:`while` clauses.
+次に示す構文ルールは、``if`` や :command:`endif` 句、そして :command:`while` 句の ``<condition>`` に適用されます。
 
-Compound conditions are evaluated in the following order of precedence:
+複数の条件式は次の優先順位にで評価されます：
 
-1. `Parentheses`_.
+1. カッコ（`Parentheses`_）
 
-2. Unary tests such as `EXISTS`_, `COMMAND`_, and `DEFINED`_.
+2. 単項テスト（`EXISTS`_、`COMMAND`_、`DEFINED`_）
 
-3. Binary tests such as `EQUAL`_, `LESS`_, `LESS_EQUAL`_, `GREATER`_,
-   `GREATER_EQUAL`_, `STREQUAL`_, `STRLESS`_, `STRLESS_EQUAL`_,
-   `STRGREATER`_, `STRGREATER_EQUAL`_, `VERSION_EQUAL`_, `VERSION_LESS`_,
-   `VERSION_LESS_EQUAL`_, `VERSION_GREATER`_, `VERSION_GREATER_EQUAL`_,
-   `PATH_EQUAL`_, and `MATCHES`_.
+3. 二単テスト（`EQUAL`_、`LESS`_、`LESS_EQUAL`_、`GREATER`_、`GREATER_EQUAL`_,、`STREQUAL`_、`STRLESS`_、`STRLESS_EQUAL`_、`STRGREATER`_、`STRGREATER_EQUAL`_、`VERSION_EQUAL`_、`VERSION_LESS`_、`VERSION_LESS_EQUAL`_、`VERSION_GREATER`_、`VERSION_GREATER_EQUAL`_、`PATH_EQUAL`_、`MATCHES`_）
 
-4. Unary logical operator `NOT`_.
+4. 単項論理演算子の `NOT`_
 
-5. Binary logical operators `AND`_ and `OR`_, from left to right,
-   without any short-circuit.
+5. 二項論理演算子の `AND`_ と `OR`_ （左から右へ最短で評価していく）
 
-Basic Expressions
-"""""""""""""""""
+基本的な式
+""""""""""
 
 .. signature:: if(<constant>)
   :target: constant
 
-  True if the constant is ``1``, ``ON``, ``YES``, ``TRUE``, ``Y``,
-  or a non-zero number (including floating point numbers).
-  False if the constant is ``0``, ``OFF``,
-  ``NO``, ``FALSE``, ``N``, ``IGNORE``, ``NOTFOUND``, the empty string,
-  or ends in the suffix ``-NOTFOUND``.  Named boolean constants are
-  case-insensitive.  If the argument is not one of these specific
-  constants, it is treated as a variable or string (see `Variable Expansion`_
-  further below) and one of the following two forms applies.
+  True if the constant is ``1``, ``ON``, ``YES``, ``TRUE``, ``Y``, or a non-zero number (including floating point numbers).
+  False if the constant is ``0``, ``OFF``, ``NO``, ``FALSE``, ``N``, ``IGNORE``, ``NOTFOUND``, the empty string, or ends in the suffix ``-NOTFOUND``.
+  Named boolean constants are case-insensitive.  If the argument is not one of these specific constants, it is treated as a variable or string （詳細は「`変数の展開`_」を参照のこと）and one of the following two forms applies.
 
 .. signature:: if(<variable>)
   :target: variable
 
-  True if given a variable that is defined to a value that is not a false
-  constant.  False otherwise, including if the variable is undefined.
+  True if given a variable that is defined to a value that is not a false constant.
+  False otherwise, including if the variable is undefined.
   Note that macro arguments are not variables.
-  :ref:`Environment Variables <CMake Language Environment Variables>` also
-  cannot be tested this way, e.g. ``if(ENV{some_var})`` will always evaluate
-  to false.
+  :ref:`Environment Variables <CMake Language Environment Variables>` also cannot be tested this way, e.g. ``if(ENV{some_var})`` will always evaluate to false.
 
 .. signature:: if(<string>)
   :target: string
 
   A quoted string always evaluates to false unless:
 
-  * The string's value is one of the true constants, or
-  * Policy :policy:`CMP0054` is not set to ``NEW`` and the string's value
-    happens to be a variable name that is affected by :policy:`CMP0054`'s
-    behavior.
+  * The string's value is one of the true constants, or 
+  * Policy :policy:`CMP0054` is not set to ``NEW`` and the string's value happens to be a variable name that is affected by :policy:`CMP0054`'s behavior.
 
-Logic Operators
-"""""""""""""""
+論理式の操作
+""""""""""""
 
 .. signature:: if(NOT <condition>)
 
@@ -109,18 +89,15 @@ Logic Operators
 .. signature:: if((condition) AND (condition OR (condition)))
   :target: parentheses
 
-  The conditions inside the parenthesis are evaluated first and then
-  the remaining condition is evaluated as in the other examples.
-  Where there are nested parenthesis the innermost are evaluated as part
-  of evaluating the condition that contains them.
+  The conditions inside the parenthesis are evaluated first and then the remaining condition is evaluated as in the other examples.
+  Where there are nested parenthesis the innermost are evaluated as part of evaluating the condition that contains them.
 
-Existence Checks
-""""""""""""""""
+存在するかどうかのチェック
+""""""""""""""""""""""""""
 
 .. signature:: if(COMMAND <command-name>)
 
-  True if the given name is a command, macro or function that can be
-  invoked.
+  True if the given name is a command, macro or function that can be invoked.
 
 .. signature:: if(POLICY <policy-id>)
 
@@ -128,31 +105,24 @@ Existence Checks
 
 .. signature:: if(TARGET <target-name>)
 
-  True if the given name is an existing logical target name created
-  by a call to the :command:`add_executable`, :command:`add_library`,
-  or :command:`add_custom_target` command that has already been invoked
-  (in any directory).
+  True if the given name is an existing logical target name created by a call to the :command:`add_executable`, :command:`add_library`, or :command:`add_custom_target` command that has already been invoked (in any directory).
 
 .. signature:: if(TEST <test-name>)
 
   .. versionadded:: 3.3
 
-  True if the given name is an existing test name created by the
-  :command:`add_test` command.
+  True if the given name is an existing test name created by the :command:`add_test` command.
 
 .. signature:: if(DEFINED <name>|CACHE{<name>}|ENV{<name>})
 
-  True if a variable, cache variable or environment variable
-  with given ``<name>`` is defined. The value of the variable
-  does not matter. Note the following caveats:
+  True if a variable, cache variable or environment variable with given ``<name>`` is defined.
+  The value of the variable does not matter. Note the following caveats:
 
   * Macro arguments are not variables.
-  * It is not possible to test directly whether a `<name>` is a non-cache
-    variable.  The expression ``if(DEFINED someName)`` will evaluate to true
-    if either a cache or non-cache variable ``someName`` exists.  In
-    comparison, the expression ``if(DEFINED CACHE{someName})`` will only
-    evaluate to true if a cache variable ``someName`` exists.  Both expressions
-    need to be tested if you need to know whether a non-cache variable exists:
+  * It is not possible to test directly whether a `<name>` is a non-cache variable.
+    The expression ``if(DEFINED someName)`` will evaluate to true if either a cache or non-cache variable ``someName`` exists.
+    In comparison, the expression ``if(DEFINED CACHE{someName})`` will only evaluate to true if a cache variable ``someName`` exists.
+    Both expressions need to be tested if you need to know whether a non-cache variable exists:
     ``if(DEFINED someName AND NOT DEFINED CACHE{someName})``.
 
  .. versionadded:: 3.14
@@ -165,62 +135,52 @@ Existence Checks
 
   True if the given element is contained in the named list variable.
 
-File Operations
-"""""""""""""""
+ファイルの操作
+""""""""""""""
 
 .. signature:: if(EXISTS <path-to-file-or-directory>)
 
-  True if the named file or directory exists and is readable.  Behavior
-  is well-defined only for explicit full paths (a leading ``~/`` is not
-  expanded as a home directory and is considered a relative path).
-  Resolves symbolic links, i.e. if the named file or directory is a
-  symbolic link, returns true if the target of the symbolic link exists.
+  True if the named file or directory exists and is readable.
+  Behavior is well-defined only for explicit full paths (a leading ``~/`` is not expanded as a home directory and is considered a relative path).
+  Resolves symbolic links, i.e. if the named file or directory is a symbolic link, returns true if the target of the symbolic link exists.
 
   False if the given path is an empty string.
 
 .. signature:: if(<file1> IS_NEWER_THAN <file2>)
   :target: IS_NEWER_THAN
 
-  True if ``file1`` is newer than ``file2`` or if one of the two files doesn't
-  exist.  Behavior is well-defined only for full paths.  If the file
-  time stamps are exactly the same, an ``IS_NEWER_THAN`` comparison returns
-  true, so that any dependent build operations will occur in the event
-  of a tie.  This includes the case of passing the same file name for
-  both file1 and file2.
+  True if ``file1`` is newer than ``file2`` or if one of the two files doesn't exist.
+  Behavior is well-defined only for full paths.
+  If the file time stamps are exactly the same, an ``IS_NEWER_THAN`` comparison returns true, so that any dependent build operations will occur in the event of a tie.
+  This includes the case of passing the same file name for both file1 and file2.
 
 .. signature:: if(IS_DIRECTORY <path>)
 
-  True if ``path`` is a directory.  Behavior is well-defined only
-  for full paths.
+  True if ``path`` is a directory.  Behavior is well-defined only for full paths.
 
   False if the given path is an empty string.
 
 .. signature:: if(IS_SYMLINK <path>)
 
-  True if the given path is a symbolic link.  Behavior is well-defined
-  only for full paths.
+  True if the given path is a symbolic link.  Behavior is well-defined only for full paths.
 
 .. signature:: if(IS_ABSOLUTE <path>)
 
-  True if the given path is an absolute path.  Note the following special
-  cases:
+  True if the given path is an absolute path.  Note the following special cases:
 
   * An empty ``path`` evaluates to false.
-  * On Windows hosts, any ``path`` that begins with a drive letter and colon
-    (e.g. ``C:``), a forward slash or a backslash will evaluate to true.
-    This means a path like ``C:no\base\dir`` will evaluate to true, even
-    though the non-drive part of the path is relative.
-  * On non-Windows hosts, any ``path`` that begins with a tilde (``~``)
-    evaluates to true.
+  * On Windows hosts, any ``path`` that begins with a drive letter and colon (e.g. ``C:``), a forward slash or a backslash will evaluate to true.
+    This means a path like ``C:no\base\dir`` will evaluate to true, even though the non-drive part of the path is relative.
+  * On non-Windows hosts, any ``path`` that begins with a tilde (``~``) evaluates to true.
 
-Comparisons
-"""""""""""
+比較の操作
+""""""""""
 
 .. signature:: if(<variable|string> MATCHES <regex>)
   :target: MATCHES
 
-  True if the given string or variable's value matches the given regular
-  expression.  See :ref:`Regex Specification` for regex format.
+  True if the given string or variable's value matches the given regular expression.
+  See :ref:`Regex Specification` for regex format.
 
   .. versionadded:: 3.9
    ``()`` groups are captured in :variable:`CMAKE_MATCH_<n>` variables.
@@ -228,89 +188,75 @@ Comparisons
 .. signature:: if(<variable|string> LESS <variable|string>)
   :target: LESS
 
-  True if the given string or variable's value parses as a real number
-  (like a C ``double``) and less than that on the right.
+  True if the given string or variable's value parses as a real number (like a C ``double``) and less than that on the right.
 
 .. signature:: if(<variable|string> GREATER <variable|string>)
   :target: GREATER
 
-  True if the given string or variable's value parses as a real number
-  (like a C ``double``) and greater than that on the right.
+  True if the given string or variable's value parses as a real number (like a C ``double``) and greater than that on the right.
 
 .. signature:: if(<variable|string> EQUAL <variable|string>)
   :target: EQUAL
 
-  True if the given string or variable's value parses as a real number
-  (like a C ``double``) and equal to that on the right.
+  True if the given string or variable's value parses as a real number (like a C ``double``) and equal to that on the right.
 
 .. signature:: if(<variable|string> LESS_EQUAL <variable|string>)
   :target: LESS_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value parses as a real number
-  (like a C ``double``) and less than or equal to that on the right.
+  True if the given string or variable's value parses as a real number (like a C ``double``) and less than or equal to that on the right.
 
 .. signature:: if(<variable|string> GREATER_EQUAL <variable|string>)
   :target: GREATER_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value parses as a real number
-  (like a C ``double``) and greater than or equal to that on the right.
+  True if the given string or variable's value parses as a real number (like a C ``double``) and greater than or equal to that on the right.
 
 .. signature:: if(<variable|string> STRLESS <variable|string>)
   :target: STRLESS
 
-  True if the given string or variable's value is lexicographically less
-  than the string or variable on the right.
+  True if the given string or variable's value is lexicographically less than the string or variable on the right.
 
 .. signature:: if(<variable|string> STRGREATER <variable|string>)
   :target: STRGREATER
 
-  True if the given string or variable's value is lexicographically greater
-  than the string or variable on the right.
+  True if the given string or variable's value is lexicographically greater than the string or variable on the right.
 
 .. signature:: if(<variable|string> STREQUAL <variable|string>)
   :target: STREQUAL
 
-  True if the given string or variable's value is lexicographically equal
-  to the string or variable on the right.
+  True if the given string or variable's value is lexicographically equal to the string or variable on the right.
 
 .. signature:: if(<variable|string> STRLESS_EQUAL <variable|string>)
   :target: STRLESS_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value is lexicographically less
-  than or equal to the string or variable on the right.
+  True if the given string or variable's value is lexicographically less than or equal to the string or variable on the right.
 
 .. signature:: if(<variable|string> STRGREATER_EQUAL <variable|string>)
   :target: STRGREATER_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value is lexicographically greater
-  than or equal to the string or variable on the right.
+  True if the given string or variable's value is lexicographically greater than or equal to the string or variable on the right.
 
-Version Comparisons
-"""""""""""""""""""
+バージョンの比較
+""""""""""""""""
 
 .. signature:: if(<variable|string> VERSION_LESS <variable|string>)
   :target: VERSION_LESS
 
-  Component-wise integer version number comparison (version format is
-  ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version
-  component effectively truncates the string at that point.
+  Component-wise integer version number comparison (version format is ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
+  Any non-integer version component or non-integer trailing part of a version component effectively truncates the string at that point.
 
 .. signature:: if(<variable|string> VERSION_GREATER <variable|string>)
   :target: VERSION_GREATER
 
-  Component-wise integer version number comparison (version format is
-  ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version
-  component effectively truncates the string at that point.
+  Component-wise integer version number comparison (version format is ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
+  Any non-integer version component or non-integer trailing part of a version component effectively truncates the string at that point.
 
 .. signature:: if(<variable|string> VERSION_EQUAL <variable|string>)
   :target: VERSION_EQUAL
@@ -340,8 +286,8 @@ Version Comparisons
   Any non-integer version component or non-integer trailing part of a version
   component effectively truncates the string at that point.
 
-Path Comparisons
-""""""""""""""""
+パスの比較
+""""""""""
 
 .. signature:: if(<variable|string> PATH_EQUAL <variable|string>)
   :target: PATH_EQUAL
@@ -373,8 +319,8 @@ Path Comparisons
 
   See :ref:`cmake_path(COMPARE) <Path COMPARE>` for more details.
 
-Variable Expansion
-^^^^^^^^^^^^^^^^^^
+変数の展開
+^^^^^^^^^^
 
 The if command was written very early in CMake's history, predating
 the ``${}`` variable evaluation syntax, and for convenience evaluates
@@ -451,7 +397,7 @@ There is no automatic evaluation for environment or cache
 ``$ENV{<name>}`` or ``$CACHE{<name>}`` wherever the above-documented
 condition syntax accepts ``<variable|string>``.
 
-See also
+参考情報
 ^^^^^^^^
 
 * :command:`else`
