@@ -31,7 +31,7 @@ if
 
 次に示す構文ルールは、``if`` や :command:`endif` 句、そして :command:`while` 句の ``<condition>`` に適用されます。
 
-複数の条件式は次の優先順位にで評価されます：
+複合化した条件式は、次の優先順位で評価されます：
 
 1. カッコ（`Parentheses`_）
 
@@ -43,181 +43,185 @@ if
 
 5. 二項論理演算子の `AND`_ と `OR`_ （左から右へ最短で評価していく）
 
-基本的な式
-""""""""""
+基本的な条件式
+""""""""""""""
 
 .. signature:: if(<constant>)
   :target: constant
 
-  True if the constant is ``1``, ``ON``, ``YES``, ``TRUE``, ``Y``, or a non-zero number (including floating point numbers).
-  False if the constant is ``0``, ``OFF``, ``NO``, ``FALSE``, ``N``, ``IGNORE``, ``NOTFOUND``, the empty string, or ends in the suffix ``-NOTFOUND``.
-  Named boolean constants are case-insensitive.  If the argument is not one of these specific constants, it is treated as a variable or string （詳細は「`変数の展開`_」を参照のこと）and one of the following two forms applies.
+  定数``<constant>`` が ``1`` または ``ON`` または ``YES`` または ``TRUE`` または ``Y``、あるいは ``0`` 以外の数値（浮動小数点）の場合は「真」である。
+  ``<constant>`` が ``0`` または ``OFF`` または ``NO`` または ``FALSE`` または ``N`` または ``IGNORE`` または ``NOTFOUND``、空の文字列、あるいは末尾が ``-NOTFOUND`` で終わっている場合は「偽」である。
+  ``<constant>`` の文字列は大小文字を区別しない。
+  引数がこれらの ``<constant>`` のいずれにも該当しない場合は、変数または文字列（詳細は「`変数の展開`_」を参照のこと）として扱われ、次のルールのいずれかが適用される。
 
 .. signature:: if(<variable>)
   :target: variable
 
-  True if given a variable that is defined to a value that is not a false constant.
-  False otherwise, including if the variable is undefined.
-  Note that macro arguments are not variables.
-  :ref:`Environment Variables <CMake Language Environment Variables>` also cannot be tested this way, e.g. ``if(ENV{some_var})`` will always evaluate to false.
+  変数 ``<variable>`` に「偽」と評価されない定数がセットされている場合は「真」である。
+  それ以外は、``<variable>`` に何もセットされていない場合を含め常に「偽」である。
+  マクロ引数（:command:`macro()`）は変数ではない点に注意すること。
+  また :ref:`CMake の環境変数 <CMake Language Environment Variables>` もこの方法ではテストできない（例えば ``if(ENV{some_var})`` は常に「偽」と評価される）。
 
 .. signature:: if(<string>)
   :target: string
 
-  A quoted string always evaluates to false unless:
+  引用符で囲まれた文字列 ``<string>`` は、次の場合を除いて、常に「偽」である。
 
-  * The string's value is one of the true constants, or 
-  * Policy :policy:`CMP0054` is not set to ``NEW`` and the string's value happens to be a variable name that is affected by :policy:`CMP0054`'s behavior.
+  * ``<string>`` は「真」と評価される定数である。
+  * ポリシーの :policy:`CMP0054` に従って ``<string>`` に ``NEW`` がセットされていないか、または ``<variable>`` が :policy:`CMP0054` の挙動に影響を与える変数名である。
 
-論理式の操作
+論理式の評価
 """"""""""""
 
 .. signature:: if(NOT <condition>)
 
-  True if the condition is not true.
+  ``<condition>`` が「真」でなければ「真」である。
 
 .. signature:: if(<cond1> AND <cond2>)
   :target: AND
 
-  True if both conditions would be considered true individually.
+  ``<cond1>`` と ``<cond2>`` が共に「真」の場合は「真」である。
 
 .. signature:: if(<cond1> OR <cond2>)
   :target: OR
 
-  True if either condition would be considered true individually.
+  ``<cond1>`` と ``<cond2>`` のどちらかが「真」の場合は「真」である。
 
 .. signature:: if((condition) AND (condition OR (condition)))
   :target: parentheses
 
-  The conditions inside the parenthesis are evaluated first and then the remaining condition is evaluated as in the other examples.
-  Where there are nested parenthesis the innermost are evaluated as part of evaluating the condition that contains them.
+  まずカッコ内の ``<condition>`` が最初に評価され、次に残りの ``<condition>`` が評価される。
+  ネストされたカッコがある場合は、最も内側のカッコの中にある ``<condition>`` が、カッコを含む条件の一部として評価される。
 
-存在するかどうかのチェック
-""""""""""""""""""""""""""
+存在するかどうかのテスト
+""""""""""""""""""""""""
 
 .. signature:: if(COMMAND <command-name>)
 
-  True if the given name is a command, macro or function that can be invoked.
+  ``<command-name>`` が CMake から呼び出すことが可能なコマンド、マクロ、あるいは関数の場合は「真」である。
 
 .. signature:: if(POLICY <policy-id>)
 
-  True if the given name is an existing policy (of the form ``CMP<NNNN>``).
+  ``<policy-id>`` が既存のポリシー（``CMP<NNNN>`` 形式）の一つである場合は「真」である。
 
 .. signature:: if(TARGET <target-name>)
 
-  True if the given name is an existing logical target name created by a call to the :command:`add_executable`, :command:`add_library`, or :command:`add_custom_target` command that has already been invoked (in any directory).
+  ``<target-name>`` が、既に（任意のディレクトリで）CMake から呼び出された :command:`add_executable` または :command:`add_library` または :command:`add_custom_target` コマンドで作成・追加された論理ターゲットである場合は「真」である。
 
 .. signature:: if(TEST <test-name>)
 
   .. versionadded:: 3.3
 
-  True if the given name is an existing test name created by the :command:`add_test` command.
+  ``<test-name>`` が :command:`add_test` コマンドで作成・追加されたテスト名である場合は「真」である。
 
 .. signature:: if(DEFINED <name>|CACHE{<name>}|ENV{<name>})
 
-  True if a variable, cache variable or environment variable with given ``<name>`` is defined.
-  The value of the variable does not matter. Note the following caveats:
+  ``<name>`` という名前の変数やキャッシュ変数、または環境変数が定義されている場合は「真」である。
+  変数の値はテストしない。
+  次の注意事項に留意すること：
 
-  * Macro arguments are not variables.
-  * It is not possible to test directly whether a `<name>` is a non-cache variable.
-    The expression ``if(DEFINED someName)`` will evaluate to true if either a cache or non-cache variable ``someName`` exists.
-    In comparison, the expression ``if(DEFINED CACHE{someName})`` will only evaluate to true if a cache variable ``someName`` exists.
-    Both expressions need to be tested if you need to know whether a non-cache variable exists:
-    ``if(DEFINED someName AND NOT DEFINED CACHE{someName})``.
+  * マクロ引数（:command:`macro()`）は変数ではない。
+  * ``<name>`` が **（キャッシュ変数ではない）通常の変数であることを直接テストすることはできない**。
+    ``if(DEFINED someName)`` という式で ``someName`` というキャッシュ変数または通常の変数が定義されている場合は常に「真」である。
+    対して ``if(DEFINED CACHE{someName})`` という式では、``someName`` というキャッシュ変数が定義されている場合にのみ「真」である。
+    **通常の変数が定義されているかどうか** を知る必要がある場合は、両方の条件式をテストする必要がある： ``if(DEFINED someName AND NOT DEFINED CACHE{someName})``
 
  .. versionadded:: 3.14
-  Added support for ``CACHE{<name>}`` variables.
+  ``CACHE{<name>}`` のテストを追加した。
 
 .. signature:: if(<variable|string> IN_LIST <variable>)
   :target: IN_LIST
 
   .. versionadded:: 3.3
 
-  True if the given element is contained in the named list variable.
+  ``<variable>`` または ``<string>`` が :ref:`リスト <CMake Language Lists>` 型の名前付き変数に含まれている場合は「真」である。
 
-ファイルの操作
-""""""""""""""
+ファイルのテスト
+""""""""""""""""
 
 .. signature:: if(EXISTS <path-to-file-or-directory>)
 
-  True if the named file or directory exists and is readable.
-  Behavior is well-defined only for explicit full paths (a leading ``~/`` is not expanded as a home directory and is considered a relative path).
-  Resolves symbolic links, i.e. if the named file or directory is a symbolic link, returns true if the target of the symbolic link exists.
+  ``<path-to-file-or-directory>`` というファイルまたはディレクトリが存在し、CMake で読み取りが可能な場合は「真」である。
+  これは絶対パスで指定した場合にのみ明確にテストできる（すなわち、先頭にある ``~/`` はホームディレクトリとは解釈されず、相対パスとみなされる）。
+  テストする前にシンボリックリンクは解決する（すなわち、``<path-to-file-or-directory>`` がシンボリックリンクの場合、シンボリックリンクのターゲットが存在している場合は「真」である）。
 
-  False if the given path is an empty string.
+  ``<path-to-file-or-directory>`` が空文字の場合は「偽」である。
 
 .. signature:: if(<file1> IS_NEWER_THAN <file2>)
   :target: IS_NEWER_THAN
 
-  True if ``file1`` is newer than ``file2`` or if one of the two files doesn't exist.
-  Behavior is well-defined only for full paths.
-  If the file time stamps are exactly the same, an ``IS_NEWER_THAN`` comparison returns true, so that any dependent build operations will occur in the event of a tie.
-  This includes the case of passing the same file name for both file1 and file2.
+  ``<file1>`` が ``<file2>`` よりも新しいか、または二つのファイルのうちいずれかが存在していない場合は「真」である。
+  これは絶対パスで指定した場合にのみ明確にテストできる。
+  ``<file1>`` と ``<file2>`` のタイムスタンプが全く同じである場合は「真」を返すので、この評価に依存するビルド操作は同時に発生する。
+  このケースは、``<file1>`` と ``<file2>`` の両方に同じファイル名を渡した場合も含まれる。
 
 .. signature:: if(IS_DIRECTORY <path>)
 
-  True if ``path`` is a directory.  Behavior is well-defined only for full paths.
+  ``<path>`` がディレクトリの場合は「真」である。
+  これは絶対パスで指定した場合にのみ明確にテストできる。
 
-  False if the given path is an empty string.
+  ``<path>`` が空文字の場合は「偽」である。
 
 .. signature:: if(IS_SYMLINK <path>)
 
-  True if the given path is a symbolic link.  Behavior is well-defined only for full paths.
+  ``<path>`` がシンボリックリンクの場合は「真」である。
+  これは絶対パスで指定した場合にのみ明確にテストできる。
 
 .. signature:: if(IS_ABSOLUTE <path>)
 
-  True if the given path is an absolute path.  Note the following special cases:
+  ``<path>`` が絶対パスの場合は「真」である。
+  次のような特殊なケースに留意すること：
 
-  * An empty ``path`` evaluates to false.
-  * On Windows hosts, any ``path`` that begins with a drive letter and colon (e.g. ``C:``), a forward slash or a backslash will evaluate to true.
-    This means a path like ``C:no\base\dir`` will evaluate to true, even though the non-drive part of the path is relative.
-  * On non-Windows hosts, any ``path`` that begins with a tilde (``~``) evaluates to true.
+  * ``<path>`` が空文字の場合は「偽」である。
+  * ホストが Windows 系プラットフォームの場合、ドライブ文字とコロンからなるパス名（例えば ``C:``）やスラッシュやバックスラッシュで始まるパス名は全て「真」である。
+    これは、例えば ``C:no\base\dir`` のように、パス名でドライブ文字以外の部分が相対パスであっても「真」として評価されることを意味する。
+  * ホストが Windows 系以外のプラットフォームの場合、先頭がチルダ（``~``）で始まる ``<path>`` は全て「真」である。
 
-比較の操作
-""""""""""
+比較式の評価
+""""""""""""
 
 .. signature:: if(<variable|string> MATCHES <regex>)
   :target: MATCHES
 
-  True if the given string or variable's value matches the given regular expression.
-  See :ref:`Regex Specification` for regex format.
+  ``<string>`` または ``<variable>`` の値が正規表現の ``<regex>`` にマッチする場合は「真」である。
+  利用可能な正規表現については「:ref:`正規表現の仕様 <Regex Specification>`」を参照のこと。
 
   .. versionadded:: 3.9
-   ``()`` groups are captured in :variable:`CMAKE_MATCH_<n>` variables.
+   正規表現のグループ ``()`` は :variable:`CMAKE_MATCH_<n>` 変数で補足し参照できるようになった。
 
 .. signature:: if(<variable|string> LESS <variable|string>)
   :target: LESS
 
-  True if the given string or variable's value parses as a real number (like a C ``double``) and less than that on the right.
+  ``<string>`` または ``<variable>`` の値が実数（C言語の ``double`` 型など）として解析され、右辺の値よりも小さい場合は「真」である。
 
 .. signature:: if(<variable|string> GREATER <variable|string>)
   :target: GREATER
 
-  True if the given string or variable's value parses as a real number (like a C ``double``) and greater than that on the right.
+  ``<string>`` または ``<variable>`` の値が実数（C言語の ``double`` 型など）として解析され、右辺の値よりも大きい場合は「真」である。
 
 .. signature:: if(<variable|string> EQUAL <variable|string>)
   :target: EQUAL
 
-  True if the given string or variable's value parses as a real number (like a C ``double``) and equal to that on the right.
+  ``<string>`` または ``<variable>`` の値が実数（C言語の ``double`` 型など）として解析され、右辺の値と等しい場合は「真」である。
 
 .. signature:: if(<variable|string> LESS_EQUAL <variable|string>)
   :target: LESS_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value parses as a real number (like a C ``double``) and less than or equal to that on the right.
+  ``<string>`` または ``<variable>`` の値が実数（C言語の ``double`` 型など）として解析され、右辺の値以下である場合は「真」である。
 
 .. signature:: if(<variable|string> GREATER_EQUAL <variable|string>)
   :target: GREATER_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value parses as a real number (like a C ``double``) and greater than or equal to that on the right.
+  ``<string>`` または ``<variable>`` の値が実数（C言語の ``double`` 型など）として解析され、右辺の値以上である場合は「真」である。
 
 .. signature:: if(<variable|string> STRLESS <variable|string>)
   :target: STRLESS
 
-  True if the given string or variable's value is lexicographically less than the string or variable on the right.
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` より小さい場合は「真」である。
 
 .. signature:: if(<variable|string> STRGREATER <variable|string>)
   :target: STRGREATER
