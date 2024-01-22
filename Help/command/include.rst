@@ -1,25 +1,21 @@
 include
 -------
 
-Load and run CMake code from a file or module.
+ファイルやモジュールから CMake のコードを読み込んで実行する。
 
 .. code-block:: cmake
 
   include(<file|module> [OPTIONAL] [RESULT_VARIABLE <var>]
                         [NO_POLICY_SCOPE])
 
-Loads and runs CMake code from the file given.  Variable reads and
-writes access the scope of the caller (dynamic scoping).  If ``OPTIONAL``
-is present, then no error is raised if the file does not exist.  If
-``RESULT_VARIABLE`` is given the variable ``<var>`` will be set to the
-full filename which has been included or ``NOTFOUND`` if it failed.
+``<file>`` や ``<module>`` から CMake のコードを読み込んで実行します。
+このコマンドを呼び出した時のスコープ内で、``<var>`` などの変数の読み込みや書き込みを行えます（動的スコープ方式）。
+``OPTIONAL`` を指定すると、``<file>`` や ``<moduleis>`` が見つからなくてもエラーにはなりません。
+``RESULT_VARIABLE`` を指定すると、引数の ``<var>`` は読み込んだファイルのフルパス名がセットされるか、あるいはファイルの読み込みに失敗したら ``NOTFOUND`` がセットされます。
 
-If a module is specified instead of a file, the file with name
-``<modulename>.cmake`` is searched first in :variable:`CMAKE_MODULE_PATH`,
-then in the CMake module directory.  There is one exception to this: if
-the file which calls ``include()`` is located itself in the CMake builtin
-module directory, then first the CMake builtin module directory is searched and
-:variable:`CMAKE_MODULE_PATH` afterwards.  See also policy :policy:`CMP0017`.
+ファイルの代わりにモジュールを渡すと、モジュール・ファイル（``<modulename>.cmake``）を、まず :variable:`CMAKE_MODULE_PATH` から検索し、次に CMake のモジュール・ディレクトリから検索します。
+これには例外が一つあります：
+``include()`` コマンドを呼び出す CMake ファイル自身がモジュール・ディレクトリにある場合、最初にモジュール・ディレクトリを検索し、その後に :variable:`CMAKE_MODULE_PATH` を検索します。
+:policy:`CMP0017` ポリシーも参照して下さい。
 
-See the :command:`cmake_policy` command documentation for discussion of the
-``NO_POLICY_SCOPE`` option.
+``NO_POLICY_SCOPE`` オプションの使い方など詳細は :command:`cmake_policy` コマンドを参照して下さい。

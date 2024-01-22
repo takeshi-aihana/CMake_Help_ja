@@ -3,42 +3,32 @@ include_guard
 
 .. versionadded:: 3.10
 
-Provides an include guard for the file currently being processed by CMake.
+CMake が現在処理している CMake ファイルにインクルード・ガードの機能を提供する。
 
 .. code-block:: cmake
 
   include_guard([DIRECTORY|GLOBAL])
 
-Sets up an include guard for the current CMake file (see the
-:variable:`CMAKE_CURRENT_LIST_FILE` variable documentation).
+現在の CMake ファイルのインクルード・ガード [#include_guard]_ 機能を設定します（CMake ファイルについては :variable:`CMAKE_CURRENT_LIST_FILE` 変数も参照して下さい）。
 
-CMake will end its processing of the current file at the location of the
-``include_guard`` command if the current file has already been
-processed for the applicable scope (see below). This provides functionality
-similar to the include guards commonly used in source headers or to the
-``#pragma once`` directive. If the current file has been processed previously
-for the applicable scope, the effect is as though :command:`return` had been
-called. Do not call this command from inside a function being defined within
-the current file.
+該当するスコープ内で CMake ファイルが既に処理されている場合、``include_gurad`` コマンドを呼び出した時点で処理を終了します。
+これにより、ヘッダファイルで一般的に使用されるインクルード・ガードや ``#pragma once`` 命令と同等の機能を実現します。
+これは、該当するスコープ内で、以前にこの CMake ファイルが処理されていることを検出したら :command:`return` コマンドを呼び出します。
+ただし、:command:`function` の中で ``include_guard`` コマンドを呼び出さないで下さい。
 
-An optional argument specifying the scope of the guard may be provided.
-Possible values for the option are:
+ガードするスコープをオプションとして指定できます。
+指定できる値は次のとおりです：
 
 ``DIRECTORY``
-  The include guard applies within the current directory and below. The file
-  will only be included once within this directory scope, but may be included
-  again by other files outside of this directory (i.e. a parent directory or
-  another directory not pulled in by :command:`add_subdirectory` or
-  :command:`include` from the current file or its children).
+  インクルード・ガードの適用を、現在のディレクトリ以下に限定する。
+  現在のディレクトリにあるファイルは一回だけ読み込めるが、それ以外のディレクトリ [#option_DIRECTORY]_ にあるファイルは再び読み込みことは可能。
 
 ``GLOBAL``
-  The include guard applies globally to the whole build. The current file
-  will only be included once regardless of the scope.
+  インクルード・ガードをビルド全体（グローバル）に適用する。
+  現在のファイルは、スコープにかかわらず一回だけ読み込まれる。
 
-If no arguments given, ``include_guard`` has the same scope as a variable,
-meaning that the include guard effect is isolated by the most recent
-function scope or current directory if no inner function scopes exist.
-In this case the command behavior is the same as:
+オプションを指定しなかった場合、``include_guard`` は任意の変数と同じスコープを持ちます。つまりインクルード・ガードの効果は直近の関数スコープまたは現在のディレクトリのどちらかがが対象になります。
+この場合、``include_guard`` コマンドの動作は次のコードと等価です：
 
 .. code-block:: cmake
 
@@ -46,3 +36,8 @@ In this case the command behavior is the same as:
     return()
   endif()
   set(__CURRENT_FILE_VAR__ TRUE)
+
+.. rubric:: Footnotes
+
+.. [#include_guard] ソースコードのヘッダファイルを２回以上インクルードさせないためにプリプロセッサとして指示する機能。
+.. [#option_DIRECTORY] 現在読み込んでいるファイルなどから :command:`add_subdirectory` や :command:`include` コマンドで追加したりインクルードしていない別のディレクトリ（例えば親ディレクトリ）。
