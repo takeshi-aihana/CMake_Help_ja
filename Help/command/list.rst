@@ -100,9 +100,7 @@ list
 .. signature::
   list(APPEND <list> [<element> ...])
 
-  Appends elements to the list. If no variable named ``<list>`` exists in the
-  current scope its value is treated as empty and the elements are appended to
-  that empty list.
+  Appends elements to the list. If no variable named ``<list>`` exists in the current scope its value is treated as empty and the elements are appended to that empty list.
 
 .. signature::
   list(FILTER <list> <INCLUDE|EXCLUDE> REGEX <regular_expression>)
@@ -112,47 +110,39 @@ list
 Includes or removes items from the list that match the mode's pattern.
 In ``REGEX`` mode, items will be matched against the given regular expression.
 
-For more information on regular expressions look under
-:ref:`string(REGEX) <Regex Specification>`.
+For more information on regular expressions look under :ref:`string(REGEX) <Regex Specification>`.
 
 .. signature::
   list(INSERT <list> <element_index> <element> [<element> ...])
 
-  Inserts elements to the list to the specified index. It is an
-  error to specify an out-of-range index. Valid indexes are 0 to `N`
-  where `N` is the length of the list, inclusive. An empty list
-  has length 0. If no variable named ``<list>`` exists in the
-  current scope its value is treated as empty and the elements are
-  inserted in that empty list.
+  Inserts elements to the list to the specified index.
+  It is an error to specify an out-of-range index.
+  Valid indexes are 0 to `N`   where `N` is the length of the list, inclusive.
+  An empty list  has length 0. If no variable named ``<list>`` exists in the current scope its value is treated as empty and the elements are inserted in that empty list.
 
 .. signature::
   list(POP_BACK <list> [<out-var>...])
 
   .. versionadded:: 3.15
 
-  If no variable name is given, removes exactly one element. Otherwise,
-  with `N` variable names provided, assign the last `N` elements' values
-  to the given variables and then remove the last `N` values from
-  ``<list>``.
+  If no variable name is given, removes exactly one element.
+  Otherwise, with `N` variable names provided, assign the last `N` elements' values to the given variables and then remove the last `N` values from ``<list>``.
 
 .. signature::
   list(POP_FRONT <list> [<out-var>...])
 
   .. versionadded:: 3.15
 
-  If no variable name is given, removes exactly one element. Otherwise,
-  with `N` variable names provided, assign the first `N` elements' values
-  to the given variables and then remove the first `N` values from
-  ``<list>``.
+  If no variable name is given, removes exactly one element.
+  Otherwise, with `N` variable names provided, assign the first `N` elements' values to the given variables and then remove the first `N` values from ``<list>``.
 
 .. signature::
   list(PREPEND <list> [<element> ...])
 
   .. versionadded:: 3.15
 
-  Insert elements to the 0th position in the list. If no variable named
-  ``<list>`` exists in the current scope its value is treated as empty and
-  the elements are prepended to that empty list.
+  Insert elements to the 0th position in the list.
+  If no variable named ``<list>`` exists in the current scope its value is treated as empty and the elements are prepended to that empty list.
 
 .. signature::
   list(REMOVE_ITEM <list> <value> [<value> ...])
@@ -167,9 +157,8 @@ For more information on regular expressions look under
 .. signature::
   list(REMOVE_DUPLICATES <list>)
 
-  Removes duplicated items in the list. The relative order of items
-  is preserved, but if duplicates are encountered,
-  only the first instance is preserved.
+  Removes duplicated items in the list.
+  The relative order of items is preserved, but if duplicates are encountered, only the first instance is preserved.
 
 .. signature::
   list(TRANSFORM <list> <ACTION> [<SELECTOR>]
@@ -177,19 +166,16 @@ For more information on regular expressions look under
 
   .. versionadded:: 3.12
 
-  Transforms the list by applying an ``<ACTION>`` to all or, by specifying a
-  ``<SELECTOR>``, to the selected elements of the list, storing the result
-  in-place or in the specified output variable.
+  Transforms the list by applying an ``<ACTION>`` to all or, by specifying a ``<SELECTOR>``, to the selected elements of the list, storing the result in-place or in the specified output variable.
 
   .. note::
 
-    The ``TRANSFORM`` sub-command does not change the number of elements in the
-    list. If a ``<SELECTOR>`` is specified, only some elements will be changed,
-    the other ones will remain the same as before the transformation.
+    The ``TRANSFORM`` sub-command does not change the number of elements in the  list.
+    If a ``<SELECTOR>`` is specified, only some elements will be changed, the other ones will remain the same as before the transformation.
 
   ``<ACTION>`` specifies the action to apply to the elements of the list.
-  The actions have exactly the same semantics as sub-commands of the
-  :command:`string` command.  ``<ACTION>`` must be one of the following:
+  The actions have exactly the same semantics as sub-commands of the :command:`string` command.
+  ``<ACTION>`` must be one of the following:
 
     :command:`APPEND <string(APPEND)>`, :command:`PREPEND <string(PREPEND)>`
       Append, prepend specified value to each element of the list.
@@ -214,17 +200,14 @@ For more information on regular expressions look under
 
     :command:`GENEX_STRIP <string(GENEX_STRIP)>`
       Strip any
-      :manual:`generator expressions <cmake-generator-expressions(7)>`
-      from each element of the list.
+      :manual:`generator expressions <cmake-generator-expressions(7)>` from each element of the list.
 
       .. signature::
         list(TRANSFORM <list> GENEX_STRIP ...)
         :target: TRANSFORM_GENEX_STRIP
 
     :command:`REPLACE <string(REGEX REPLACE)>`:
-      Match the regular expression as many times as possible and substitute
-      the replacement expression for the match for each element of the list
-      (same semantic as :command:`string(REGEX REPLACE)`).
+      Match the regular expression as many times as possible and substitute the replacement expression for the match for each element of the list (same semantic as :command:`string(REGEX REPLACE)`).
 
       .. signature::
         list(TRANSFORM <list> REPLACE <regular_expression>
@@ -243,8 +226,7 @@ For more information on regular expressions look under
         list(TRANSFORM <list> <ACTION> AT <index> [<index> ...] ...)
 
     ``FOR``
-      Specify a range with, optionally,
-      an increment used to iterate over the range.
+      Specify a range with, optionally, an increment used to iterate over the range.
 
       .. code-block:: cmake
 
@@ -289,24 +271,19 @@ For more information on regular expressions look under
       Sorts a list of pathnames of files by their basenames.
 
     ``NATURAL``
-      Sorts a list of strings using natural order
-      (see ``strverscmp(3)`` manual), i.e. such that contiguous digits
-      are compared as whole numbers.
-      For example: the following list `10.0 1.1 2.1 8.0 2.0 3.1`
-      will be sorted as `1.1 2.0 2.1 3.1 8.0 10.0` if the ``NATURAL``
-      comparison is selected where it will be sorted as
-      `1.1 10.0 2.0 2.1 3.1 8.0` with the ``STRING`` comparison.
+      Sorts a list of strings using natural order (see ``strverscmp(3)`` manual), i.e. such that contiguous digits are compared as whole numbers.
+      For example: the following list `10.0 1.1 2.1 8.0 2.0 3.1` will be sorted as `1.1 2.0 2.1 3.1 8.0 10.0` if the ``NATURAL`` comparison is selected where it will be sorted as `1.1 10.0 2.0 2.1 3.1 8.0` with the ``STRING`` comparison.
 
-  Use the ``CASE`` keyword to select a case sensitive or case insensitive
-  sort mode.  The ``<case>`` option should be one of:
+  Use the ``CASE`` keyword to select a case sensitive or case insensitive sort mode.
+  The ``<case>`` option should be one of:
 
     ``SENSITIVE``
       List items are sorted in a case-sensitive manner.
       This is the default behavior if the ``CASE`` option is not given.
 
     ``INSENSITIVE``
-      List items are sorted case insensitively.  The order of
-      items which differ only by upper/lowercase is not specified.
+      List items are sorted case insensitively.
+      The order of items which differ only by upper/lowercase is not specified.
 
   To control the sort order, the ``ORDER`` keyword can be given.
   The ``<order>`` option should be one of:
