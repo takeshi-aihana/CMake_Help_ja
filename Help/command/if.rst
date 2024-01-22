@@ -52,7 +52,7 @@ if
   定数``<constant>`` が ``1`` または ``ON`` または ``YES`` または ``TRUE`` または ``Y``、あるいは ``0`` 以外の数値（浮動小数点）の場合は「真」である。
   ``<constant>`` が ``0`` または ``OFF`` または ``NO`` または ``FALSE`` または ``N`` または ``IGNORE`` または ``NOTFOUND``、空の文字列、あるいは末尾が ``-NOTFOUND`` で終わっている場合は「偽」である。
   ``<constant>`` の文字列は大小文字を区別しない。
-  引数がこれらの ``<constant>`` のいずれにも該当しない場合は、変数または文字列（詳細は「`変数の展開`_」を参照のこと）として扱われ、次のルールのいずれかが適用される。
+  引数がこれらの ``<constant>`` のいずれにも該当しない場合は、変数または文字列（詳細は「`変数の自動展開`_」を参照のこと）として扱われ、次のルールのいずれかが適用される。
 
 .. signature:: if(<variable>)
   :target: variable
@@ -221,31 +221,31 @@ if
 .. signature:: if(<variable|string> STRLESS <variable|string>)
   :target: STRLESS
 
-  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` より小さい場合は「真」である。
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` の値より小さい場合は「真」である。
 
 .. signature:: if(<variable|string> STRGREATER <variable|string>)
   :target: STRGREATER
 
-  True if the given string or variable's value is lexicographically greater than the string or variable on the right.
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` の値より大きい場合は「真」である。
 
 .. signature:: if(<variable|string> STREQUAL <variable|string>)
   :target: STREQUAL
 
-  True if the given string or variable's value is lexicographically equal to the string or variable on the right.
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` の値と等しい場合は「真」である。
 
 .. signature:: if(<variable|string> STRLESS_EQUAL <variable|string>)
   :target: STRLESS_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value is lexicographically less than or equal to the string or variable on the right.
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` の値以下の場合は「真」である。
 
 .. signature:: if(<variable|string> STRGREATER_EQUAL <variable|string>)
   :target: STRGREATER_EQUAL
 
   .. versionadded:: 3.7
 
-  True if the given string or variable's value is lexicographically greater than or equal to the string or variable on the right.
+  ``<string>`` または ``<variable>`` の値がディクショナリ順に右辺の ``<string>`` または ``<variable>`` の値以上の場合は「真」である。
 
 バージョンの比較
 """"""""""""""""
@@ -253,42 +253,36 @@ if
 .. signature:: if(<variable|string> VERSION_LESS <variable|string>)
   :target: VERSION_LESS
 
-  Component-wise integer version number comparison (version format is ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version component effectively truncates the string at that point.
+  左辺と右辺の「バージョン」を構成する要素（書式は ``major.minor[.patch[.tweak]]`` 形式で、省略した要素は ``0`` として扱う）ごとに整数値の番号を比較し、左辺の ``<variable>`` または ``<version>`` の値が右辺の値よりも小さい場合は「真」である。
+  整数値の要素を持たないバージョンや、バージョンの末尾が整数値ではない場合、そのような要素を比較する時点でバージョンの文字列から切り捨てる。
 
 .. signature:: if(<variable|string> VERSION_GREATER <variable|string>)
   :target: VERSION_GREATER
 
-  Component-wise integer version number comparison (version format is ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version component effectively truncates the string at that point.
+  左辺と右辺の「バージョン」を構成する要素（書式は ``major.minor[.patch[.tweak]]`` 形式で、省略した要素は ``0`` として扱う）ごとに整数値の番号を比較し、左辺の ``<variable>`` または ``<version>`` の値が右辺の値よりも大きい場合は「真」である。
+  整数値の要素を持たないバージョンや、バージョンの末尾が整数値ではない場合、そのような要素を比較する時点でバージョンの文字列から切り捨てる。
 
 .. signature:: if(<variable|string> VERSION_EQUAL <variable|string>)
   :target: VERSION_EQUAL
 
-  Component-wise integer version number comparison (version format is
-  ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version
-  component effectively truncates the string at that point.
+  左辺と右辺の「バージョン」を構成する要素（書式は ``major.minor[.patch[.tweak]]`` 形式で、省略した要素は ``0`` として扱う）ごとに整数値の番号を比較し、左辺の ``<variable>`` または ``<version>`` の値が右辺の値と等しい場合は「真」である。
+  整数値の要素を持たないバージョンや、バージョンの末尾が整数値ではない場合、そのような要素を比較する時点でバージョンの文字列から切り捨てる。
 
 .. signature:: if(<variable|string> VERSION_LESS_EQUAL <variable|string>)
   :target: VERSION_LESS_EQUAL
 
   .. versionadded:: 3.7
 
-  Component-wise integer version number comparison (version format is
-  ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version
-  component effectively truncates the string at that point.
+  左辺と右辺の「バージョン」を構成する要素（書式は ``major.minor[.patch[.tweak]]`` 形式で、省略した要素は ``0`` として扱う）ごとに整数値の番号を比較し、左辺の ``<variable>`` または ``<version>`` の値が右辺の値以下の場合は「真」である。
+  整数値の要素を持たないバージョンや、バージョンの末尾が整数値ではない場合、そのような要素を比較する時点でバージョンの文字列から切り捨てる。
 
 .. signature:: if(<variable|string> VERSION_GREATER_EQUAL <variable|string>)
   :target: VERSION_GREATER_EQUAL
 
   .. versionadded:: 3.7
 
-  Component-wise integer version number comparison (version format is
-  ``major[.minor[.patch[.tweak]]]``, omitted components are treated as zero).
-  Any non-integer version component or non-integer trailing part of a version
-  component effectively truncates the string at that point.
+  左辺と右辺の「バージョン」を構成する要素（書式は ``major.minor[.patch[.tweak]]`` 形式で、省略した要素は ``0`` として扱う）ごとに整数値の番号を比較し、左辺の ``<variable>`` または ``<version>`` の値が右辺の値以上の場合は「真」である。
+  整数値の要素を持たないバージョンや、バージョンの末尾が整数値ではない場合、そのような要素を比較する時点でバージョンの文字列から切り捨てる。
 
 パスの比較
 """"""""""
@@ -298,39 +292,34 @@ if
 
   .. versionadded:: 3.24
 
-  Compares the two paths component-by-component.  Only if every component of
-  both paths match will the two paths compare equal.  Multiple path separators
-  are effectively collapsed into a single separator, but note that backslashes
-  are not converted to forward slashes.  No other
-  :ref:`path normalization <Normalization>` is performed.
+  左辺と右辺のパスをそれを構成する要素ごとに比較する。
+  両方のパスの全ての要素が一致する場合にのみ、二つのパスが同等であるとして「真」を返す。
+  連続するパスの区切り文字（``directory-separator``）は、１つにまとめられるが、バックスラッシュ（``\``）はスラッシュ（``/``）にはまとめられない点に注意すること。
+  :ref:`パスの正規化 <Normalization>` は行わない。
 
-  Component-wise comparison is superior to string-based comparison due to the
-  handling of multiple path separators.  In the following example, the
-  expression evaluates to true using ``PATH_EQUAL``, but false with
-  ``STREQUAL``:
+  要素ごとの比較は、連続するパスの区切り文字（``directory-separator``）を正しく処理できるので、文字列ごとの比較よりも正確である。
+  次の例では、``PATH_EQUAL`` で比較すると「真」を返すが、``STREQUAL`` で比較すると「偽」と評価される：
 
   .. code-block:: cmake
 
-    # comparison is TRUE
+    # 結果は「真」
     if ("/a//b/c" PATH_EQUAL "/a/b/c")
        ...
     endif()
 
-    # comparison is FALSE
+    # 結果は「偽」
     if ("/a//b/c" STREQUAL "/a/b/c")
        ...
     endif()
 
-  See :ref:`cmake_path(COMPARE) <Path COMPARE>` for more details.
+  詳細は :ref:`cmake_path(COMPARE) <Path COMPARE>` コマンドの説明を参照のこと。
 
-変数の展開
-^^^^^^^^^^
+変数の自動展開
+^^^^^^^^^^^^^^
 
-The if command was written very early in CMake's history, predating
-the ``${}`` variable evaluation syntax, and for convenience evaluates
-variables named by its arguments as shown in the above signatures.
-Note that normal variable evaluation with ``${}`` applies before the if
-command even receives the arguments.  Therefore code like
+この ``if`` コマンドは ``${}`` 変数の導入よりも前（CMake プロジェクトの黎明期）に実装されたものであり、便宜上はこれまでの解説にあるとおり、「引数」として渡された変数を評価します。
+ただし ``${}`` 変数の評価は、``if`` コマンドがその変数を **受け取る前に展開されている** という点に留意して下さい。
+したがって、次のようなコードの場合：
 
 .. code-block:: cmake
 
@@ -338,68 +327,57 @@ command even receives the arguments.  Therefore code like
  set(var2 "var1")
  if(${var2})
 
-appears to the if command as
+``if`` コマンドには次のように見えます：
 
 .. code-block:: cmake
 
   if(var1)
 
-and is evaluated according to the ``if(<variable>)`` case documented
-above.  The result is ``OFF`` which is false.  However, if we remove the
-``${}`` from the example then the command sees
+そして ``if(<variable>)`` の比較として評価されます。
+この場合 ``var`` は ``OFF`` なので結果は「偽」になります。
+ただし、このコードから ``${}`` を取り去ると、``if`` コマンドは次のように見えます：
 
 .. code-block:: cmake
 
   if(var2)
 
-which is true because ``var2`` is defined to ``var1`` which is not a false
-constant.
+すなわち ``var2`` は定数の ``"var1"`` として定義されているので「真」を返します。
 
-Automatic evaluation applies in the other cases whenever the
-above-documented condition syntax accepts ``<variable|string>``:
+変数の自動展開は、「`条件式の構文`_」が ``<variable|string>`` を受け入れる場合、常にいろいろなケースで適用されます（FIXME: 意味不明）：
 
-* The left hand argument to `MATCHES`_ is first checked to see if it is
-  a defined variable.  If so, the variable's value is used, otherwise the
-  original value is used.
+* まず最初に `MATCHES`_ の左辺の引数が既に定義されている変数であるかチェックする。
+  定義されている変数だったら、その変数の値を使用する。
+  定義されていなければ、その引数を値としてそのまま使用する。
 
-* If the left hand argument to `MATCHES`_ is missing it returns false
-  without error
+* `MATCHES`_ の左辺に引数が無い場合は、エラーにしないで、「偽」を返す。
 
-* Both left and right hand arguments to `LESS`_, `GREATER`_, `EQUAL`_,
-  `LESS_EQUAL`_, and `GREATER_EQUAL`_, are independently tested to see if
-  they are defined variables.  If so, their defined values are used otherwise
-  the original value is used.
+* `LESS`_ や `GREATER`_ や `EQUAL`_ や `LESS_EQUAL`_ や `GREATER_EQUAL`_ の左辺と右辺の引数が、それぞれ定義されている変数であるか別個にチェックする。
+  定義されている変数だったら、それら変数の値を使用する。
+  定義されていなければ、その引数を値としてそのまま使用する。
 
-* Both left and right hand arguments to `STRLESS`_, `STRGREATER`_,
-  `STREQUAL`_, `STRLESS_EQUAL`_, and `STRGREATER_EQUAL`_ are independently
-  tested to see if they are defined variables.  If so, their defined values are
-  used otherwise the original value is used.
+* `STRLESS`_ や `STRGREATER`_ や `STREQUAL`_ や `STRLESS_EQUAL`_, や `STRGREATER_EQUAL`_ の左辺と右辺の引数が、それぞれ定義されている変数であるか別個にチェックする。
+  定義されている変数だったら、それら変数の値を使用する。
+  定義されていなければ、その引数を値としてそのまま使用する。
 
-* Both left and right hand arguments to `VERSION_LESS`_,
-  `VERSION_GREATER`_, `VERSION_EQUAL`_, `VERSION_LESS_EQUAL`_, and
-  `VERSION_GREATER_EQUAL`_ are independently tested to see if they are defined
-  variables.  If so, their defined values are used otherwise the original value
-  is used.
+* `VERSION_LESS`_ や `VERSION_GREATER`_ や `VERSION_EQUAL`_ や `VERSION_LESS_EQUAL`_ や `VERSION_GREATER_EQUAL`_ の左辺と右辺の引数が、それぞれ定義されている変数であるか別個にチェックする。
+  定義されている変数だったら、それら変数の値を使用する。
+  定義されていなければ、その引数を値としてそのまま使用する。
 
-* The right hand argument to `NOT`_ is tested to see if it is a boolean
-  constant.  If so, the value is used, otherwise it is assumed to be a
-  variable and it is dereferenced.
+* `NOT`_ の右辺の引数が論理型の定数かどうかをチェックする。
+  論理型の定数ならば、その値をそのまま使用する。
+  論理型の定数でなければ、その引数を変数とみなし、その変数の値を使用する。
 
-* The left and right hand arguments to `AND`_ and `OR`_ are independently
-  tested to see if they are boolean constants.  If so, they are used as
-  such, otherwise they are assumed to be variables and are dereferenced.
+* `AND`_ や `OR`_ の左辺と右辺の引数が論理型の定数かどうかを別個にチェックする。
+  論理型の定数ならば、その値をそのまま使用する。
+  論理型の定数でなければ、その引数を変数とみなし、その変数の値を使用する。
 
 .. versionchanged:: 3.1
-  To prevent ambiguity, potential variable or keyword names can be
-  specified in a :ref:`Quoted Argument` or a :ref:`Bracket Argument`.
-  A quoted or bracketed variable or keyword will be interpreted as a
-  string and not dereferenced or interpreted.
-  See policy :policy:`CMP0054`.
+  評価が曖昧にならないようにするため、変数名やキーワードを :ref:`Quoted Argument` や :ref:`Bracket Argument` として指定することができるようになった。
+  これにより、引用符またはカッコで囲んだ変数やキーワードは「文字列」として解釈されるので、逆参照されたり別の値に解釈されることはない。
+  :policy:`CMP0054` のポリシーも参照のこと。
 
-There is no automatic evaluation for environment or cache
-:ref:`Variable References`.  Their values must be referenced as
-``$ENV{<name>}`` or ``$CACHE{<name>}`` wherever the above-documented
-condition syntax accepts ``<variable|string>``.
+:ref:`CMake の環境変数 <CMake Language Environment Variables>` やキャッシュ変数の :ref:`Variable References` に対して自動展開は行いません。
+「`条件式の構文`_」が ``<variable|string>`` を受け入れる場合は、その値を参照する場合は ``$ENV{<name>}`` や ``$CACHE{<name>}`` を使う必要があります。
 
 参考情報
 ^^^^^^^^
