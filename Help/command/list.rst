@@ -1,23 +1,23 @@
 list
 ----
 
-Operations on :ref:`semicolon-separated lists <CMake Language Lists>`.
+:ref:`セミコロンで区切られたリスト <CMake Language Lists>` を操作する。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
-  `Reading`_
+  `リストを読み取る`_
     list(`LENGTH`_ <list> <out-var>)
     list(`GET`_ <list> <element index> [<index> ...] <out-var>)
     list(`JOIN`_ <list> <glue> <out-var>)
     list(`SUBLIST`_ <list> <begin> <length> <out-var>)
 
-  `Search`_
+  `リストを検索する`_
     list(`FIND`_ <list> <value> <out-var>)
 
-  `Modification`_
+  `リストを変更する`_
     list(`APPEND`_ <list> [<element>...])
     list(`FILTER`_ <list> {INCLUDE | EXCLUDE} REGEX <regex>)
     list(`INSERT`_ <list> <index> [<element>...])
@@ -29,88 +29,73 @@ Synopsis
     list(`REMOVE_DUPLICATES`_ <list>)
     list(`TRANSFORM`_ <list> <ACTION> [...])
 
-  `Ordering`_
+  `リストの要素の順番`_
     list(`REVERSE`_ <list>)
     list(`SORT`_ <list> [...])
 
-Introduction
-^^^^^^^^^^^^
+はじめに
+^^^^^^^^
 
-The list subcommands :cref:`APPEND`, :cref:`INSERT`, :cref:`FILTER`,
-:cref:`PREPEND`, :cref:`POP_BACK`, :cref:`POP_FRONT`, :cref:`REMOVE_AT`,
-:cref:`REMOVE_ITEM`, :cref:`REMOVE_DUPLICATES`, :cref:`REVERSE` and
-:cref:`SORT` may create new values for the list within the current CMake
-variable scope.  Similar to the :command:`set` command, the ``list`` command
-creates new variable values in the current scope, even if the list itself is
-actually defined in a parent scope.  To propagate the results of these
-operations upwards, use :command:`set` with ``PARENT_SCOPE``,
-:command:`set` with ``CACHE INTERNAL``, or some other means of value
-propagation.
+このコマンドの :cref:`APPEND`、:cref:`INSERT`、:cref:`FILTER`、:cref:`PREPEND`、:cref:`POP_BACK`、:cref:`POP_FRONT`、:cref:`REMOVE_AT`、:cref:`REMOVE_ITEM`、:cref:`REMOVE_DUPLICATES`、:cref:`REVERSE`、:cref:`SORT` といったサブコマンドは、現在の CMake 変数のスコープの中で「リスト」に新しい要素を作成できます。
+:command:`set` コマンドと同様に、``list`` コマンドはリスト自体が実際には親スコープで定義されたものであっても、現在のスコープに対する値を作成します。
+リストを操作したときの結果を、上位のスコープに伝搬させる場合は、``PARENT_SCOPE`` や ``CACHE INTERNAL`` を指定した :command:`set` コマンド（あるいはその他の手段）を使います。
 
 .. note::
 
-  A list in cmake is a ``;`` separated group of strings.  To create a
-  list, the :command:`set` command can be used.  For example,
-  ``set(var a b c d e)`` creates a list with ``a;b;c;d;e``, and
-  ``set(var "a b c d e")`` creates a string or a list with one item in it.
-  (Note that macro arguments are not variables, and therefore cannot be used
-  in ``LIST`` commands.)
+  CMake の「リスト」はセミコロン（``;``）で区切った文字列を要素とするグループです。
+  リストを生成するには :command:`set` コマンドを使用します。
+  例えば ``set(var a b c d e)`` というコマンドは ``a;b;c;d;e`` というリストを作成し、``set(var "a b c d e")`` というコマンドは文字列または一個の要素からなるリストを作成します。
+  マクロは変数ではないので、``list`` コマンドでは使用できない点に注意して下さい。
 
-  Individual elements may not contain an unequal number of ``[`` and ``]``
-  characters, and may not end in a backslash (``\``).
-  See :ref:`semicolon-separated lists <CMake Language Lists>` for details.
+  それぞれの要素に ``[`` と ``]`` 文字を含めることはできません。さらに要素の末尾をバックスラッシュ (``\``) にすることはできません。
+  詳細は :ref:`セミコロンで区切られたリスト <CMake Language Lists>` を参照して下さい。
 
 .. note::
 
-  When specifying index values, if ``<element index>`` is 0 or greater, it
-  is indexed from the beginning of the list, with 0 representing the
-  first list element.  If ``<element index>`` is -1 or lesser, it is indexed
-  from the end of the list, with -1 representing the last list element.
-  Be careful when counting with negative indices: they do not start from
-  0.  -0 is equivalent to 0, the first list element.
+  リストで「インデックス」を指定する際、 ``<element index>`` が 0 以上の場合、リストの先頭からインデックスが付与され、0 がリストで先頭の要素を表します。
+  ``<element index>`` が -1 以下の場合、リストの末尾からインデックスが付与され、-1 がリストで最後の要素を表します。
+  後者の負のインデックスでカウントする際は注意が必要です： インデックスは 0 から始まりません。
+  -0 の要素は、リストの先頭の要素でインデックスが 0 の要素と等価です。
 
-Reading
-^^^^^^^
+リストを読み取る
+^^^^^^^^^^^^^^^^
 
 .. signature::
   list(LENGTH <list> <output variable>)
 
-  Returns the list's length.
+  ``<list>`` のサイズを返す。
 
 .. signature::
   list(GET <list> <element index> [<element index> ...] <output variable>)
 
-  Returns the list of elements specified by indices from the list.
+  ``<list>`` から ``<element index> ...`` のインデックスを持つ要素 ... をリストで返す。
 
 .. signature:: list(JOIN <list> <glue> <output variable>)
 
   .. versionadded:: 3.12
 
-  Returns a string joining all list's elements using the glue string.
-  To join multiple strings, which are not part of a list,
-  use :command:`string(JOIN)`.
+  ``<glue>`` 文字列を使って、``<list>`` にある全ての要素を連結し、その文字列を返す。
+  なお、リストではない複数の文字列を連結する場合は :command:`string(JOIN)` コマンドを使うこと。
 
 .. signature::
   list(SUBLIST <list> <begin> <length> <output variable>)
 
   .. versionadded:: 3.12
 
-  Returns a sublist of the given list.
-  If ``<length>`` is 0, an empty list will be returned.
-  If ``<length>`` is -1 or the list is smaller than ``<begin>+<length>`` then
-  the remaining elements of the list starting at ``<begin>`` will be returned.
+  ``<list>`` のサブリストを返す。
+  ``<length>`` が 0 の場合は空のリストを返す。
+  ``<length>`` が -1、またはリストのサイズが ``<begin>+<length>`` よりも小さい場合、``<begin>`` から始まる残りの要素をリストで返す。
 
-Search
-^^^^^^
+リストを検索する
+^^^^^^^^^^^^^^^^
 
 .. signature::
   list(FIND <list> <value> <output variable>)
 
-  Returns the index of the element specified in the list
-  or ``-1`` if it wasn't found.
+  ``<list>`` から ``<value>`` と同じ要素のインデックスを返す。または見つからなければ ``-1`` を返す。
 
-Modification
-^^^^^^^^^^^^
+リストを変更する
+^^^^^^^^^^^^^^^^
 
 .. signature::
   list(APPEND <list> [<element> ...])
@@ -274,8 +259,8 @@ For more information on regular expressions look under
         list(TRANSFORM <list> <ACTION> REGEX <regular_expression> ...)
 
 
-Ordering
-^^^^^^^^
+リストの要素の順番
+^^^^^^^^^^^^^^^^^^
 
 .. signature::
   list(REVERSE <list>)
