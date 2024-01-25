@@ -20,7 +20,6 @@ math
 
 .. versionadded:: 3.13
   評価結果は ``OUTPUT_FORMAT`` オプションに指定した ``<format>`` で整形されるようになった。``<format>`` には次のいずれかを指定すること：
-  he result is formatted according to the option ``OUTPUT_FORMAT``, where ``<format>`` is one of
 
   ``HEXADECIMAL``
     16進数表記（先頭の文字が "``0x``"）にする。

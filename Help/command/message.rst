@@ -63,7 +63,7 @@ message
 
 ``DEBUG``
   プロジェクトをビルドするだけのユーザではなく、プロジェクトに取り組んでいる開発者を対象とした詳細な情報をログする。
-  こえらのメッセージは、プロジェクトをビルドしているユーザには興味あるものではなく、多くの場合は内部にある実装の詳細に密接に関係する情報である。
+  これらのメッセージは、プロジェクトをビルドしているユーザには興味あるものではなく、多くの場合は内部にある実装の詳細に密接に関係する情報である。
 
 ``TRACE``
   非常に低レベルの実装詳細を含んだきめの細かい情報をログする。
@@ -72,20 +72,19 @@ message
 .. versionadded:: 3.15
   ``NOTICE`` と ``VERBOSE`` と ``DEBUG`` と ``TRACE`` レベルが追加された。
 
-:manual:`cmake(1)` コマンドラインは ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンとスペース（"``--`` "）を付けて、標準出力にログします。
+:manual:`CMake コマンドライン <cmake(1)>` は ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンとスペース（"``--`` "）を付けて、標準出力にログします。
 それ以外のレベルのメッセージは全て標準エラー出力にログされ、先頭にハイフン（"``--``"）は付与されません。
-All other message types are sent to stderr and are not prefixed with hyphens.
-The :manual:`CMake GUI <cmake-gui(1)>` displays all messages in its log area.
-The :manual:`curses interface <ccmake(1)>` shows ``STATUS`` to ``TRACE`` messages one at a time on a status line and other messages in an interactive pop-up box.
-The :option:`--log-level <cmake --log-level>` command-line option to each of these tools can be used to control which messages will be shown.
+:manual:`CMake GUI インタフェース <cmake-gui(1)>` はログ表示エリアに全てのメッセージを表示します。
+:manual:`CMake Curses インタフェース <ccmake(1)>` は、ステータス行に ``STATUS`` から ``TRACE`` レベルのメッセージを1個ずつ表示し、その他のメッセージはポップアップ・ダイアログに表示します。
+これらの CMake ツールで :option:`--log-level <cmake --log-level>` オプションを使うと、どのメッセージをログするかフィルタリングできます。
 
 .. versionadded:: 3.17
-  To make a log level persist between CMake runs, the :variable:`CMAKE_MESSAGE_LOG_LEVEL` variable can be set instead.
-  Note that the command line option takes precedence over the cache variable.
+  CMake の実行時にログのレベルを保持するための CMake 変数 :variable:`CMAKE_MESSAGE_LOG_LEVEL` が導入された。
+  コマンドライン・オプションはキャッシュ変数よりも優先されることに注意すること。
 
 .. versionadded:: 3.16
-  Messages of log levels ``NOTICE`` and below will have each line preceded by the content of the :variable:`CMAKE_MESSAGE_INDENT` variable (converted to a single string by concatenating its list items).
-  For ``STATUS`` to ``TRACE`` messages, this indenting content will be inserted after the hyphens.
+  ``NOTICE`` 以下のレベルのメッセージは、各メッセージの先頭に CMake 変数 :variable:`CMAKE_MESSAGE_INDENT` の内容をログするようになった（リストの要素を連結することで単一の文字列にする）。
+  ``STATUS`` から ``TRACE`` レベルのメッセージの場合、この内容はハイフン（"``--``"）の後ろに挿入される。
 
 .. versionadded:: 3.17
   Messages of log levels ``NOTICE`` and below can also have each line preceded with context of the form ``[some.context.example]``.
