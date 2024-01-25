@@ -83,13 +83,14 @@ message
   コマンドライン・オプションはキャッシュ変数よりも優先されることに注意すること。
 
 .. versionadded:: 3.16
-  ``NOTICE`` 以下のレベルのメッセージは、各メッセージの先頭に CMake 変数 :variable:`CMAKE_MESSAGE_INDENT` の内容をログするようになった（リストの要素を連結することで単一の文字列にする）。
+  ``NOTICE`` 以下のレベルのメッセージの先頭に CMake 変数 :variable:`CMAKE_MESSAGE_INDENT` （:ref:`リスト <CMake Language Lists>` 型）の内容をログするようになった（リストの要素を連結することで単一の文字列にする）。
   ``STATUS`` から ``TRACE`` レベルのメッセージの場合、この内容はハイフン（"``--``"）の後ろに挿入される。
 
 .. versionadded:: 3.17
-  Messages of log levels ``NOTICE`` and below can also have each line preceded with context of the form ``[some.context.example]``.
-  The content between the square brackets is obtained by converting the :variable:`CMAKE_MESSAGE_CONTEXT` list variable to a dot-separated string.
-  The message context will always appear before any indenting content but after any automatically added leading hyphens.
+  ``NOTICE`` 以下のレベルのメッセージの先頭に ``[some.context.example]`` 形式のコンテキストを挿入できるようになった。
+  "``[``" と "``]``" の中にある文字列は、CMake 変数 :variable:`CMAKE_MESSAGE_CONTEXT` （:ref:`リスト <CMake Language Lists>` 型）の要素をドット文字（"``.``"）で連結したもの。
+  このコンテキストは先頭のハイフン（"``--``"）とインデントされたメッセージとの間に挿入される。
+  デフォルトではコンテキストは挿入されない。
   By default, message context is not shown, it has to be explicitly enabled by giving the :option:`cmake --log-context` command-line option or by setting the :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` variable to true.
   See the :variable:`CMAKE_MESSAGE_CONTEXT` documentation for usage examples.
 
