@@ -1,124 +1,106 @@
 message
 -------
 
-Log a message.
+メッセージをログする。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
-  `General messages`_
+  `一般的なメッセージ`_
     message([<mode>] "message text" ...)
 
-  `Reporting checks`_
+  `チェックした結果を報告するメッセージ`_
     message(<checkState> "message text" ...)
 
-  `Configure Log`_
+  `Configure ログのメッセージ`_
     message(CONFIGURE_LOG <text>...)
 
-General messages
-^^^^^^^^^^^^^^^^
+一般的なメッセージ
+^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   message([<mode>] "message text" ...)
 
-Record the specified message text in the log.  If more than one message
-string is given, they are concatenated into a single message with no
-separator between the strings.
+ログに ``"message text"`` を記録します。
+複数の ``"message text" ...`` を渡すと、区切り文字を挿入せずに一個のメッセージに連結して記録します。
 
-The optional ``<mode>`` keyword determines the type of message, which
-influences the way the message is handled:
+``<mode>`` オプションでログするメッセージのレベル（種類）を指定します。このオプションはメッセージの処理方法に影響します：
 
 ``FATAL_ERROR``
-  CMake Error, stop processing and generation.
+  CMake のエラー。
+  ビルド処理やファイルの生成を停止する。
 
-  The :manual:`cmake(1)` executable will return a non-zero
-  :ref:`exit code <CMake Exit Code>`.
+  :manual:`cmake(1)` コマンドは 0 以外の「:ref:`終了コード <CMake Exit Code>`」を返す。
 
 ``SEND_ERROR``
-  CMake Error, continue processing, but skip generation.
+  CMake のエラー。
+  ビルド処理は続行するが、ファイルの生成はスキップする。
 
 ``WARNING``
-  CMake Warning, continue processing.
+  CMake のワーニング。
+  ビルド処理は続行する。
 
 ``AUTHOR_WARNING``
-  CMake Warning (dev), continue processing.
+  CMake のワーニング（dev）。
+  ビルド処理は続行する。
 
 ``DEPRECATION``
-  CMake Deprecation Error or Warning if variable
-  :variable:`CMAKE_ERROR_DEPRECATED` or :variable:`CMAKE_WARN_DEPRECATED`
-  is enabled, respectively, else no message.
+  CMake 変数の :variable:`CMAKE_ERROR_DEPRECATED` または :variable:`CMAKE_WARN_DEPRECATED` が有効な場合は、CMake の非推奨エラーまたはワーニングをログし、それ以外のメッセージはログしない。
 
-(none) or ``NOTICE``
-  Important message printed to stderr to attract user's attention.
+(none) または ``NOTICE``
+  ユーザの注意を引くために、重要なメッセージを標準エラー出力にログする。
 
 ``STATUS``
-  The main interesting messages that project users might be interested in.
-  Ideally these should be concise, no more than a single line, but still
-  informative.
+  ユーザが関心を持つであろう情報をログする。
+  理想的には、1行分の簡潔なメッセージにすること。
 
 ``VERBOSE``
-  Detailed informational messages intended for project users.  These messages
-  should provide additional details that won't be of interest in most cases,
-  but which may be useful to those building the project when they want deeper
-  insight into what's happening.
+  ユーザを対象とした詳細な情報をログする。
+  これらのメッセージは、ほとんどの場合は直接ビルドとは関係のない追加の情報を提供するためのもので、開発者にとっては何が起こっているのか深い洞察が必要なケースに役立つ詳細情報になる場合がある。
 
 ``DEBUG``
-  Detailed informational messages intended for developers working on the
-  project itself as opposed to users who just want to build it.  These messages
-  will not typically be of interest to other users building the project and
-  will often be closely related to internal implementation details.
+  プロジェクトをビルドするだけのユーザではなく、プロジェクトに取り組んでいる開発者を対象とした詳細な情報をログする。
+  こえらのメッセージは、プロジェクトをビルドしているユーザには興味あるものではなく、多くの場合は内部にある実装の詳細に密接に関係する情報である。
 
 ``TRACE``
-  Fine-grained messages with very low-level implementation details.  Messages
-  using this log level would normally only be temporary and would expect to be
-  removed before releasing the project, packaging up the files, etc.
+  非常に低レベルの実装詳細を含んだきめの細かい情報をログする。
+  このレベルのメッセージは、通常は一時的な情報であり、プロジェクトのリリースやパッケージ化などを行う前に削除されることが想定されている。
 
 .. versionadded:: 3.15
-  Added the ``NOTICE``, ``VERBOSE``, ``DEBUG``, and ``TRACE`` levels.
+  ``NOTICE`` と ``VERBOSE`` と ``DEBUG`` と ``TRACE`` レベルが追加された。
 
-The CMake command-line tool displays ``STATUS`` to ``TRACE`` messages on stdout
-with the message preceded by two hyphens and a space.  All other message types
-are sent to stderr and are not prefixed with hyphens.  The
-:manual:`CMake GUI <cmake-gui(1)>` displays all messages in its log area.
-The :manual:`curses interface <ccmake(1)>` shows ``STATUS`` to ``TRACE``
-messages one at a time on a status line and other messages in an
-interactive pop-up box.  The :option:`--log-level <cmake --log-level>`
-command-line option to each of these tools can be used to control which
-messages will be shown.
+:manual:`cmake(1)` コマンドラインは ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンとスペース（"``--`` "）を付けて、標準出力にログします。
+それ以外のレベルのメッセージは全て標準エラー出力にログされ、先頭にハイフン（"``--``"）は付与されません。
+All other message types are sent to stderr and are not prefixed with hyphens.
+The :manual:`CMake GUI <cmake-gui(1)>` displays all messages in its log area.
+The :manual:`curses interface <ccmake(1)>` shows ``STATUS`` to ``TRACE`` messages one at a time on a status line and other messages in an interactive pop-up box.
+The :option:`--log-level <cmake --log-level>` command-line option to each of these tools can be used to control which messages will be shown.
 
 .. versionadded:: 3.17
-  To make a log level persist between CMake runs, the
-  :variable:`CMAKE_MESSAGE_LOG_LEVEL` variable can be set instead.
+  To make a log level persist between CMake runs, the :variable:`CMAKE_MESSAGE_LOG_LEVEL` variable can be set instead.
   Note that the command line option takes precedence over the cache variable.
 
 .. versionadded:: 3.16
-  Messages of log levels ``NOTICE`` and below will have each line preceded
-  by the content of the :variable:`CMAKE_MESSAGE_INDENT` variable (converted to
-  a single string by concatenating its list items).  For ``STATUS`` to ``TRACE``
-  messages, this indenting content will be inserted after the hyphens.
+  Messages of log levels ``NOTICE`` and below will have each line preceded by the content of the :variable:`CMAKE_MESSAGE_INDENT` variable (converted to a single string by concatenating its list items).
+  For ``STATUS`` to ``TRACE`` messages, this indenting content will be inserted after the hyphens.
 
 .. versionadded:: 3.17
-  Messages of log levels ``NOTICE`` and below can also have each line preceded
-  with context of the form ``[some.context.example]``.  The content between the
-  square brackets is obtained by converting the :variable:`CMAKE_MESSAGE_CONTEXT`
-  list variable to a dot-separated string.  The message context will always
-  appear before any indenting content but after any automatically added leading
-  hyphens. By default, message context is not shown, it has to be explicitly
-  enabled by giving the :option:`cmake --log-context`
-  command-line option or by setting the :variable:`CMAKE_MESSAGE_CONTEXT_SHOW`
-  variable to true.  See the :variable:`CMAKE_MESSAGE_CONTEXT` documentation for
-  usage examples.
+  Messages of log levels ``NOTICE`` and below can also have each line preceded with context of the form ``[some.context.example]``.
+  The content between the square brackets is obtained by converting the :variable:`CMAKE_MESSAGE_CONTEXT` list variable to a dot-separated string.
+  The message context will always appear before any indenting content but after any automatically added leading hyphens.
+  By default, message context is not shown, it has to be explicitly enabled by giving the :option:`cmake --log-context` command-line option or by setting the :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` variable to true.
+  See the :variable:`CMAKE_MESSAGE_CONTEXT` documentation for usage examples.
 
-CMake Warning and Error message text displays using a simple markup
-language.  Non-indented text is formatted in line-wrapped paragraphs
-delimited by newlines.  Indented text is considered pre-formatted.
+CMake Warning and Error message text displays using a simple markup language.
+Non-indented text is formatted in line-wrapped paragraphs delimited by newlines.
+Indented text is considered pre-formatted.
 
 
-Reporting checks
-^^^^^^^^^^^^^^^^
+チェックした結果を報告するメッセージ
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.17
 
@@ -196,8 +178,8 @@ Output from the above would appear something like the following::
   --   Finding partB - not found
   -- Finding my things - missing components: B
 
-Configure Log
-^^^^^^^^^^^^^
+Configure ログのメッセージ
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.26
 
@@ -244,7 +226,7 @@ If no project is currently being configured, such as in
 :ref:`cmake -P <Script Processing Mode>` script mode,
 this command does nothing.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`cmake_language(GET_MESSAGE_LOG_LEVEL)`
