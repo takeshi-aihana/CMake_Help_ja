@@ -84,27 +84,26 @@ CMake で「関数」と「マクロ」の違いについては「:ref:`Macro vs
 引数で注意すること
 ^^^^^^^^^^^^^^^^^^
 
-Since ``ARGN``, ``ARGC``, ``ARGV``, ``ARGV0`` etc. are not variables, you will NOT be able to use commands like
+``ARGN`` と ``ARGC``、``ARGV``、そして ``ARGV0``、``ARGV1`` ... は変数ではないので、次のような使い方はできません：
 
 .. code-block:: cmake
 
- if(ARGV1) # ARGV1 is not a variable 
- if(DEFINED ARGV2) # ARGV2 is not a variable
- if(ARGC GREATER 2) # ARGC is not a variable
- foreach(loop_var IN LISTS ARGN) # ARGN is not a variable
+ if(ARGV1) # ARGV1 は変数ではない
+ if(DEFINED ARGV2) # ARGV2 は変数ではない
+ if(ARGC GREATER 2) # ARGC は変数ではない
+ foreach(loop_var IN LISTS ARGN) # ARGN は変数ではない
 
-In the first case, you can use ``if(${ARGV1})``.
-In the second and third case, the proper way to check if an optional variable was passed to the macro is to use ``if(${ARGC} GREATER 2)``.
-In the last case, you can use ``foreach(loop_var ${ARGN})`` but this will skip empty arguments.
-If you need to include them, you can use 
+最初の例では ``if(${ARGV1})`` のように書く必要があります。
+二番目と三番目の例で、オプションを格納した変数を適切に比較する方法は ``if(DEFINED ${ARGV2})`` や ``if(${ARGC} GREATER 2)`` です。
+最後の例では ``foreach(loop_var ${ARGN})`` でも良いですが、空の場合はループがスキップされてしまうので、次の方がより安全です：
 
 .. code-block:: cmake
 
  set(list_var "${ARGN}")
  foreach(loop_var IN LISTS list_var)
 
-Note that if you have a variable with the same name in the scope from which the macro is called, using unreferenced names will use the existing variable instead of the arguments.
-For example:
+マクロを実行するスコープの中に同じ名前の変数がある場合、参照されていない名前を使用すると、引数の代わりに既存の変数が使われてしまうので注意して下さい。
+たとえば：
 
 .. code-block:: cmake
 
@@ -120,8 +119,8 @@ For example:
 
  foo(a b c)
 
-Will loop over ``a;b;c`` and not over ``x;y;z`` as one might have expected.
-If you want true CMake variables and/or better CMake scope control you should look at the function command.
+この例で、``bar`` マクロは ``x;y;z`` ではなく ``a;b;c`` を受け取ってループします。
+CMake 変数や、適切なスコープの制御が必要な場合は、``function`` コマンドを使うようにして下さい。
 
 参考情報
 ^^^^^^^^
