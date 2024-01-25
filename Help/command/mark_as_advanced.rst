@@ -1,28 +1,20 @@
 mark_as_advanced
 ----------------
 
-Mark cmake cached variables as advanced.
+CMake のキャシュ変数に Advanced 属性をセットする。
 
 .. code-block:: cmake
 
   mark_as_advanced([CLEAR|FORCE] <var1> ...)
 
-Sets the advanced/non-advanced state of the named
-cached variables.
+名前を持つキャッシュ変数に Advanced か Advanced でないかを表す属性をセットします。
 
-An advanced variable will not be displayed in any
-of the cmake GUIs unless the ``show advanced`` option is on.
-In script mode, the advanced/non-advanced state has no effect.
+Advanced な属性の変数は ``show advanced`` オプションを ON にしない限り、:manual:`cmake-gui <cmake-gui(1)>` には表示されません。
+この属性は、CMake スクリプトの中では効果はありません。
 
-If the keyword ``CLEAR`` is given
-then advanced variables are changed back to unadvanced.
-If the keyword ``FORCE`` is given
-then the variables are made advanced.
-If neither ``FORCE`` nor ``CLEAR`` is specified,
-new values will be marked as advanced, but if a
-variable already has an advanced/non-advanced state,
-it will not be changed.
+``CLEAR`` オプションを指定すると、Advanced な属性を持つ変数は Advanced ではない属性に戻ります。
+``FORCE`` オプションを指定すると、強制的に Advanced な属性になります。
+``FORCE`` や ``CLEAR`` のいずれのオプションを指定しない場合、新規に作成した変数は Advanced 属性になりますが、既存の変数の属性は変更されません。
 
 .. versionchanged:: 3.17
-  Variables passed to this command which are not already in the cache
-  are ignored. See policy :policy:`CMP0102`.
+  このコマンドに渡された変数が、未だキャッシュに存在していなかったら無視する（詳細は :policy:`CMP0102` ポリシーを参照のこと）。

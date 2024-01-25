@@ -1,39 +1,35 @@
 math
 ----
 
-Evaluate a mathematical expression.
+算術式を評価する。
 
 .. code-block:: cmake
 
   math(EXPR <variable> "<expression>" [OUTPUT_FORMAT <format>])
 
-Evaluates a mathematical ``<expression>`` and sets ``<variable>`` to the
-resulting value.  The result of the expression must be representable as a
-64-bit signed integer. Floating point inputs are invalid e.g. ``1.1 * 10``.
-Non-integer results e.g. ``3 / 2`` are truncated.
+算術式の ``<expression>`` を評価し、その結果を ``<variable>`` に格納します。
+``<expression>`` の評価結果は 64ビットの符号付き整数として表現できるようにして下さい。
+浮動小数点数を含む算術式は無効です（例えば ``1.1 * 10``）。
+整数ではない結果は切り捨てられます（例えば ``3 / 2`` の評価結果）。
 
-The mathematical expression must be given as a string (i.e. enclosed in
-double quotation marks). An example is ``"5 * (10 + 13)"``.
-Supported operators are ``+``, ``-``, ``*``, ``/``, ``%``, ``|``, ``&``,
-``^``, ``~``, ``<<``, ``>>``, and ``(...)``; they have the same meaning
-as in C code.
+``<expression>`` は一個の文字列として、二重引用符で囲んで指定して下さい（例えば ``"5 * (10 + 13)"``）。
+サポートしている演算子は ``+``、``-``、``*``、``/``、``%``、``|``、``&``、``^``、``~``、``<<``、``>>``、``(...)`` です（これら意味はＣ言語の演算子と同じ）。
 
 .. versionadded:: 3.13
-  Hexadecimal numbers are recognized when prefixed with ``0x``, as in C code.
+  Ｃ言語のように、先頭に ``0x`` を付けると16進数として認識されるようになった。
 
 .. versionadded:: 3.13
-  The result is formatted according to the option ``OUTPUT_FORMAT``,
-  where ``<format>`` is one of
+  評価結果は ``OUTPUT_FORMAT`` オプションに指定した ``<format>`` で整形されるようになった。``<format>`` には次のいずれかを指定すること：
+  he result is formatted according to the option ``OUTPUT_FORMAT``, where ``<format>`` is one of
 
   ``HEXADECIMAL``
-    Hexadecimal notation as in C code, i. e. starting with "0x".
+    16進数表記（先頭の文字が "``0x``"）にする。
   ``DECIMAL``
-    Decimal notation. Which is also used if no ``OUTPUT_FORMAT`` option
-    is specified.
+    10進数表記にする（これが ``OUTPUT_FORMAT`` オプションを指定しなかった場合のデフォルト）。
 
-For example
+このコマンドの例：
 
 .. code-block:: cmake
 
-  math(EXPR value "100 * 0xA" OUTPUT_FORMAT DECIMAL)      # value is set to "1000"
-  math(EXPR value "100 * 0xA" OUTPUT_FORMAT HEXADECIMAL)  # value is set to "0x3e8"
+  math(EXPR value "100 * 0xA" OUTPUT_FORMAT DECIMAL)      # value には "1000" が格納される
+  math(EXPR value "100 * 0xA" OUTPUT_FORMAT HEXADECIMAL)  # value には "0x3e8" が格納される
