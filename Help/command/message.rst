@@ -181,11 +181,11 @@ configure ログのメッセージ
 
   message(CONFIGURE_LOG <text>...)
 
-``<text>`` を使って「:ref:`configure-log message event <message configure-log event>` 」をログします。
+``<text>`` を使って「:ref:`configure スクリプトのログ・イベント <message configure-log event>` 」をログします。
 慣例により、``<text>`` に複数行のメッセージを含める場合は、先頭行のメッセージはイベントのサマリにして下さい。
 
 このモードの目的は ``configure`` スクリプトによるシステムの調査やキャッシュ変数を併用して一回しか実行しない操作をログすることですが、自動的にログしてくれる :command:`try_compile` や :command:`try_run` コマンドでは実行されないので注意が必要です。
-プロジェクトで CMake を実行するたびに、このモードを呼び出すことは避けるようにして下さい。
+また、プロジェクトで CMake を実行するたびに、このモードを呼び出すようなことは避けるようにして下さい。
 例えば：
 
 .. code-block:: cmake
@@ -199,7 +199,7 @@ configure ログのメッセージ
     # 調査結果をキャッシュしておくので、再びシステムの調査を実行することはない
     set(MY_CHECK_RESULT "${MY_CHECK_RESULT}" CACHE INTERNAL "My Check")
 
-    # cmake-configure-log コマンドで調査の詳細をログする
+    # CONFIGURE_LOG モードでキャシュした結果をログする
     message(CONFIGURE_LOG
       "My Check Result: ${MY_CHECK_RESULT}\n"
       "${details}"

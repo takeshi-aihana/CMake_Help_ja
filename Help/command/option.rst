@@ -1,18 +1,16 @@
 option
 ------
 
-Provide a boolean option that the user can optionally select.
+ユーザが任意に選択できる論理型のオプション変数を定義する。
 
 .. code-block:: cmake
 
   option(<variable> "<help_text>" [value])
 
-If no initial ``<value>`` is provided, boolean ``OFF`` is the default value.
-If ``<variable>`` is already set as a normal or cache variable,
-then the command does nothing (see policy :policy:`CMP0077`).
+``<value>`` の初期値が定義されていない場合は、論理型の ``OFF`` がデフォルト値になります。
+``<variable>`` が既に通常の変数、またはキャッシュ変数として定義されている場合、このコマンドは何も実行しない（:policy:`CMP0077` のポリシーを参照のこと）。
 
-For options that depend on the values of other options, see
-the module help for :module:`CMakeDependentOption`.
+他のオプション値に依存するオプションについては  :module:`CMakeDependentOption` モジュールのヘルプを参照して下さい。
 
-In CMake project mode, a boolean cache variable is created with the option
-value. In CMake script mode, a boolean variable is set with the option value.
+CMake でプロジェクトをビルドする際は、このオプションの値を使用して論理型のキャッシュ変数を作成します。
+CMake でスクリプトを実行する際は、論理型の変数にこのオプションの値が格納されます。
