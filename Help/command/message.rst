@@ -11,7 +11,7 @@ message
   `一般的なメッセージ`_
     message([<mode>] "message text" ...)
 
-  `チェックした結果を報告するメッセージ`_
+  `テストした結果を報告するメッセージ`_
     message(<checkState> "message text" ...)
 
   `Configure ログのメッセージ`_
@@ -73,7 +73,7 @@ message
   ``NOTICE`` と ``VERBOSE`` と ``DEBUG`` と ``TRACE`` レベルが追加された。
 
 :manual:`CMake コマンドライン <cmake(1)>` は ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンとスペース（"``--`` "）を付けて、標準出力にログします。
-それ以外のレベルのメッセージは全て標準エラー出力にログされ、先頭にハイフン（"``--``"）は付与されません。
+それ以外のレベルのメッセージは全て標準エラー出力にログされ、先頭にハイフン（"``--``"）は付与しません。
 :manual:`CMake GUI インタフェース <cmake-gui(1)>` はログ表示エリアに全てのメッセージを表示します。
 :manual:`CMake Curses インタフェース <ccmake(1)>` は、ステータス行に ``STATUS`` から ``TRACE`` レベルのメッセージを1個ずつ表示し、その他のメッセージはポップアップ・ダイアログに表示します。
 これらの CMake ツールで :option:`--log-level <cmake --log-level>` オプションを使うと、どのメッセージをログするかフィルタリングできます。
@@ -90,86 +90,80 @@ message
   ``NOTICE`` 以下のレベルのメッセージの先頭に ``[some.context.example]`` 形式のコンテキストを挿入できるようになった。
   "``[``" と "``]``" の中にある文字列は、CMake 変数 :variable:`CMAKE_MESSAGE_CONTEXT` （:ref:`リスト <CMake Language Lists>` 型）の要素をドット文字（"``.``"）で連結したもの。
   このコンテキストは先頭のハイフン（"``--``"）とインデントされたメッセージとの間に挿入される。
-  デフォルトではコンテキストは挿入されない。
-  By default, message context is not shown, it has to be explicitly enabled by giving the :option:`cmake --log-context` command-line option or by setting the :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` variable to true.
-  See the :variable:`CMAKE_MESSAGE_CONTEXT` documentation for usage examples.
+  デフォルトではコンテキストを挿入しない。
+  そのため、オプション付きで :option:`cmake --log-context` コマンドラインを実行するか、CMake 変数の :variable:`CMAKE_MESSAGE_CONTEXT_SHOW` を ``TRUE`` にすることでコンテキストの挿入を明示的にすること。
+  CMake 変数 :variable:`CMAKE_MESSAGE_CONTEXT` に記載した使用例を参照のこと。
 
-CMake Warning and Error message text displays using a simple markup language.
-Non-indented text is formatted in line-wrapped paragraphs delimited by newlines.
-Indented text is considered pre-formatted.
+CMake のワーニングやエラーのメッセージは単純なマークアップ言語を使ってログしています。
+インデントがないメッセージは、改行文字で区切られ、改行した段落の中で整形されています。
+インデントがあるメッセージは事前に整形されたものとみなされます。
 
 
-チェックした結果を報告するメッセージ
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+テストした結果を報告するメッセージ
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.17
 
-A common pattern in CMake output is a message indicating the start of some
-sort of check, followed by another message reporting the result of that check.
-For example:
+CMake がログするメッセージの典型的なパタンは、何か変数やファイルの状態をテストする旨のメッセージのあとに、その結果を報告する別のメッセージが続くというものです。
+例えば：
 
 .. code-block:: cmake
 
-  message(STATUS "Looking for someheader.h")
-  #... do the checks, set checkSuccess with the result
+  message(STATUS "Looking for someheader.h") # テストを開始するメッセージ
+  #... someheader.h があるかテストし、その結果を checkSuccess に格納する
   if(checkSuccess)
-    message(STATUS "Looking for someheader.h - found")
+    message(STATUS "Looking for someheader.h - found")   # テストした結果のメッセージ
   else()
-    message(STATUS "Looking for someheader.h - not found")
+    message(STATUS "Looking for someheader.h - not found") # テストした結果のメッセージ
   endif()
 
-This can be more robustly and conveniently expressed using the ``CHECK_...``
-keyword form of the ``message()`` command:
+このようなログは ``message()`` コマンドの ``CHECK_...`` キーワードを使用すると、より安全で便利になります：
 
 .. code-block:: cmake
 
   message(<checkState> "message" ...)
 
-where ``<checkState>`` must be one of the following:
+``<checkState>``  には、以下のいずれかを指定します： 
 
   ``CHECK_START``
-    Record a concise message about the check about to be performed.
+    これから実施するテストの簡単なメッセージをログする。
 
   ``CHECK_PASS``
-    Record a successful result for a check.
+    テストが成功したときの結果をログする。
 
   ``CHECK_FAIL``
-    Record an unsuccessful result for a check.
+    テストが失敗したときの結果をログする。
 
-When recording a check result, the command repeats the message from the most
-recently started check for which no result has yet been reported, then some
-separator characters and then the message text provided after the
-``CHECK_PASS`` or ``CHECK_FAIL`` keyword.  Check messages are always reported
-at ``STATUS`` log level.
+これらのキーワードを使ってテストした結果を記録する時は、テストを開始した直後から、いくつかの区切り文字と ``CHECK_PASS`` または ``CHECK_FAIL`` のキーワード、そしてメッセージの本体からなるログを繰り返します。
+なお、これらのメッセージは常に ``STATUS`` レベルです。
 
-Checks may be nested and every ``CHECK_START`` should have exactly one
-matching ``CHECK_PASS`` or ``CHECK_FAIL``.
-The :variable:`CMAKE_MESSAGE_INDENT` variable can also be used to add
-indenting to nested checks if desired.  For example:
+テストはネストすることができ、その場合は ``CHECK_START`` 毎に対応した ``CHECK_PASS`` または ``CHECK_FAIL`` の結果が一個だけログされるようにします。
+CMake 変数の :variable:`CMAKE_MESSAGE_INDENT` もネストしたテストのログで利用できます。
+例えば：
 
 .. code-block:: cmake
 
-  message(CHECK_START "Finding my things")
-  list(APPEND CMAKE_MESSAGE_INDENT "  ")
+  message(CHECK_START "Finding my things") # 親テストの開始を伝えるメッセージ
+  list(APPEND CMAKE_MESSAGE_INDENT "  ")   # インデントを追加する
   unset(missingComponents)
 
-  message(CHECK_START "Finding partA")
-  # ... do check, assume we find A
-  message(CHECK_PASS "found")
+  message(CHECK_START "Finding partA")     # 子テストAの開始を伝えるメッセージ
+  # ... テストする
+  message(CHECK_PASS "found")              # 子テストAの結果を伝えるメッセージ
 
-  message(CHECK_START "Finding partB")
-  # ... do check, assume we don't find B
+  message(CHECK_START "Finding partB")     # 子テストBの開始を伝えるメッセージ
+  # ... テストする
   list(APPEND missingComponents B)
-  message(CHECK_FAIL "not found")
+  message(CHECK_FAIL "not found")          # 子テストBの結果を伝えるメッセージ
 
-  list(POP_BACK CMAKE_MESSAGE_INDENT)
+  list(POP_BACK CMAKE_MESSAGE_INDENT)      # インデントを削除する
   if(missingComponents)
-    message(CHECK_FAIL "missing components: ${missingComponents}")
+    message(CHECK_FAIL "missing components: ${missingComponents}") # 親テストの結果を伝えるメッセージ
   else()
-    message(CHECK_PASS "all components found")
+    message(CHECK_PASS "all components found")                     # 親テストの結果を伝えるメッセージ
   endif()
 
-Output from the above would appear something like the following::
+この ``message()`` コマンドのログは次のようになります::
 
   -- Finding my things
   --   Finding partA
@@ -178,7 +172,7 @@ Output from the above would appear something like the following::
   --   Finding partB - not found
   -- Finding my things - missing components: B
 
-Configure ログのメッセージ
+configure ログのメッセージ
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.26
@@ -187,34 +181,31 @@ Configure ログのメッセージ
 
   message(CONFIGURE_LOG <text>...)
 
-Record a :ref:`configure-log message event <message configure-log event>`
-with the specified ``<text>``.  By convention, if the text contains more
-than one line, the first line should be a summary of the event.
+``<text>`` を使って「:ref:`configure-log message event <message configure-log event>` 」をログします。
+慣例により、``<text>`` に複数行のメッセージを含める場合は、先頭行のメッセージはイベントのサマリにして下さい。
 
-This mode is intended to record the details of a system inspection check
-or other one-time operation guarded by a cache entry, but that is not
-performed using :command:`try_compile` or :command:`try_run`, which
-automatically log their details.  Projects should avoid calling it every
-time CMake runs.  For example:
+このモードの目的は ``configure`` スクリプトによるシステムの調査やキャッシュ変数を併用して一回しか実行しない操作をログすることですが、自動的にログしてくれる :command:`try_compile` や :command:`try_run` コマンドでは実行されないので注意が必要です。
+プロジェクトで CMake を実行するたびに、このモードを呼び出すことは避けるようにして下さい。
+例えば：
 
 .. code-block:: cmake
 
   if (NOT DEFINED MY_CHECK_RESULT)
-    # Print check summary in configure output.
+    # configure の出力で、テストのサマリをログする
     message(CHECK_START "My Check")
 
-    # ... perform system inspection, e.g., with execute_process ...
+    # ... システムの調査を実施する（例えば、テスト用のプログラムを使うなどして ...）
 
-    # Cache the result so we do not run the check again.
+    # 調査結果をキャッシュしておくので、再びシステムの調査を実行することはない
     set(MY_CHECK_RESULT "${MY_CHECK_RESULT}" CACHE INTERNAL "My Check")
 
-    # Record the check details in the cmake-configure-log.
+    # cmake-configure-log コマンドで調査の詳細をログする
     message(CONFIGURE_LOG
       "My Check Result: ${MY_CHECK_RESULT}\n"
       "${details}"
     )
 
-    # Print check result in configure output.
+    # configure の出力の中に調査結果をログする
     if(MY_CHECK_RESULT)
       message(CHECK_PASS "passed")
     else()
@@ -222,9 +213,7 @@ time CMake runs.  For example:
     endif()
   endif()
 
-If no project is currently being configured, such as in
-:ref:`cmake -P <Script Processing Mode>` script mode,
-this command does nothing.
+未だプロジェクトで ``configure`` が実行されていない場合は、このコマンドは何も行いません（たとえば :ref:`cmake -P <Script Processing Mode>` を実行した時など）。
 
 参考情報
 ^^^^^^^^
