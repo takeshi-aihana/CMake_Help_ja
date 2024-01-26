@@ -1,41 +1,32 @@
 return
 ------
 
-Return from a file, directory or function.
+:command:`include` したファイルやディレクトリ、または呼び出した関数から戻る。
 
 .. code-block:: cmake
 
   return([PROPAGATE <var-name>...])
 
-When this command is encountered in an included file (via :command:`include` or
-:command:`find_package`), it causes processing of the current file to stop
-and control is returned to the including file.  If it is encountered in a
-file which is not included by another file, e.g. a ``CMakeLists.txt``,
-deferred calls scheduled by :command:`cmake_language(DEFER)` are invoked and
-control is returned to the parent directory if there is one.
+このコマンドが :command:`include` や :command:`find_package` コマンドで読み込んだファイルやモジュールの中で呼び出されると、現在の処理を停止して、制御を読み込み元のファイルに返します。
+このコマンドが :command:`include` や :command:`find_package` コマンドで読み込でいないファイルの中で呼び出されると（たとえば ``CMakeLists.txt`` や :command:`cmake_language(DEFER)` コマンドで遅延呼び出しがスケジューリングされている場合）、親ディレクトリが存在していれば、そこに制御を返します。
 
-If ``return()`` is called in a function, control is returned to the caller
-of that function.  Note that a :command:`macro`, unlike a :command:`function`,
-is expanded in place and therefore cannot handle ``return()``.
+関数の中で ``return()`` コマンドを呼び出すと、制御はその関数の呼び出し元に返します。
+:command:`function` コマンドとは異なり、:command:`macro` コマンドの中で ``return()`` コマンドを呼び出しても正しく処理できない点に注意して下さい。
 
-Policy :policy:`CMP0140` controls the behavior regarding the arguments of the
-command.  All arguments are ignored unless that policy is set to ``NEW``.
+:policy:`CMP0140` というポリシーで、コマンドのオプションに関する動作を定義しています。
+このポリシーに ``NEW`` を設定しない限り、``return()`` コマンドに渡された全てのオプションは無視されます。
 
 ``PROPAGATE``
   .. versionadded:: 3.25
 
-  This option sets or unsets the specified variables in the parent directory or
-  function caller scope. This is equivalent to :command:`set(PARENT_SCOPE)` or
-  :command:`unset(PARENT_SCOPE)` commands, except for the way it interacts
-  with the :command:`block` command, as described below.
+  このオプションは、親ディレクトリや関数の呼び出し元のスコープ内で定義された ``<var-name> ...`` をセットしたり解除する。
+  これは、:command:`block` コマンドを使う場合を除き、:command:`set(PARENT_SCOPE)` や :command:`unset(PARENT_SCOPE)` コマンドの呼び出しとそれぞれ同じである。
 
-  The ``PROPAGATE`` option can be very useful in conjunction with the
-  :command:`block` command.  A ``return`` will propagate the
-  specified variables through any enclosing block scopes created by the
-  :command:`block` commands.  Inside a function, this ensures the variables
-  are propagated to the function's caller, regardless of any blocks within
-  the function.  If not inside a function, it ensures the variables are
-  propagated to the parent file or directory scope. For example:
+  このオプションは、:command:`block` コマンドと併用すると非常に便利である。
+  ``return()`` コマンドは、``<var-name> ...`` の変数を、:command:`block` コマンドで囲んだブロック・スコープ内で伝搬する。
+  :command:`function` コマンドの場合は、そのブロックに関係なく、変数はその関数の呼び出し元に確実に伝搬する。
+  関数の外で ``return()`` コマンドを呼び出した場合、変数は親ファイルやディレクトリのスコープに確実に伝搬する。
+  例えば：
 
   .. code-block:: cmake
     :caption: CMakeLists.txt
@@ -47,23 +38,23 @@ command.  All arguments are ignored unless that policy is set to ``NEW``.
 
     block(SCOPE_FOR VARIABLES)
       add_subdirectory(subDir)
-      # var1 has the value "block-nested"
+      # var1 の値は "block-nested"
     endblock()
 
-    # var1 has the value "top-value"
+    # var1 の値は "top-value"
 
   .. code-block:: cmake
     :caption: subDir/CMakeLists.txt
 
     function(multi_scopes result_var1 result_var2)
       block(SCOPE_FOR VARIABLES)
-        # This would only propagate out of the immediate block, not to
-        # the caller of the function.
+        # 変数はブロック内でのみ伝搬し、
+        # この関数の呼び出し元には伝搬しない
         #set(${result_var1} "new-value" PARENT_SCOPE)
         #unset(${result_var2} PARENT_SCOPE)
 
-        # This propagates the variables through the enclosing block and
-        # out to the caller of the function.
+        # 変数を囲むブロックを介し
+        # 変数が関数の呼び出し元に伝搬する
         set(${result_var1} "new-value")
         unset(${result_var2})
         return(PROPAGATE ${result_var1} ${result_var2})
@@ -74,7 +65,7 @@ command.  All arguments are ignored unless that policy is set to ``NEW``.
     set(var2 "another-value")
 
     multi_scopes(var1 var2)
-    # Now var1 will hold "new-value" and var2 will be unset
+    # ここで var1 の値は "new-value"、var2 の値はなし
 
     block(SCOPE_FOR VARIABLES)
       # This return() will set var1 in the directory scope that included us
@@ -85,7 +76,7 @@ command.  All arguments are ignored unless that policy is set to ``NEW``.
       return(PROPAGATE var1)
     endblock()
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`block`
