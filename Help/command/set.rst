@@ -66,16 +66,16 @@ set
 
   ``<docstring>`` には、:manual:`cmake-gui(1)` のユーザに提示するオプションのサマリを文字列として指定して下さい。
 
-  このコマンドを呼び出す前にキャッシュ・エントリが存在していない場合、または ``FORCE`` オプションを指定した場合、キャッシュ・エントリを作成して ``<value>`` をセットする。
+  このコマンドを呼び出す前にキャッシュ・エントリが存在していない場合、または ``FORCE`` オプションを指定した場合、キャッシュ・エントリを作成して ``<value>`` をセットします。
 
   .. note::
 
-    The content of the cache variable will not be directly accessible if a normal variable of the same name already exists (see :ref:`rules of variable evaluation <CMake Language Variables>`).
-    If policy :policy:`CMP0126` is set to ``OLD``, any normal variable binding in the current scope will be removed.
+    既に同じ名前を持つ通常の変数が存在している場合は、キャッシュ変数が指すキャッシュ・エントリに直接アクセスすることはできない（「:ref:`rules of variable evaluation <CMake Language Variables>`」を参照のこと）。
+    :policy:`CMP0126` のポリシーが ``OLD`` にセットされている場合、現在のスコープにある通常の変数との割当が全て削除される。
 
-  It is possible for the cache entry to exist prior to the call but have no type set if it was created on the :manual:`cmake(1)` command line by a user through the :option:`-D\<var\>=\<value\> <cmake -D>` option without specifying a type.
-  In this case the ``set`` command will add the type.
-  Furthermore, if the ``<type>`` is ``PATH`` or ``FILEPATH`` and the ``<value>`` provided on the command line is a relative path, then the ``set`` command will treat the path as relative to the current working directory and convert it to an absolute path.
+  コマンドラインの :manual:`cmake(1)` で ``<type>`` を指定せずに、:option:`-D\<var\>=\<value\> <cmake -D>` オプションを使用してキャッシュ変数とキャッシュ・エントリを作成すると、型が設定されていないキャッシュ・エントリになる場合があります。
+  そのような場合は、この ``set`` コマンドで追加できます。
+  また、``<type>`` が ``PATH`` または ``FILEPATH`` で、``<value>`` が相対パスの場合、``set`` コマンドは現在の作業ディレクトリからの相対パスとして扱い、それを元に絶対パスに変換します。
 
 環境変数の場合
 ^^^^^^^^^^^^^^
@@ -84,14 +84,15 @@ set
   set(ENV{<variable>} [<value>])
   :target: ENV
 
-  Sets an :manual:`Environment Variable <cmake-env-variables(7)>` to the given value.
-  Subsequent calls of ``$ENV{<variable>}`` will return this new value.
+  :manual:`環境変数 <cmake-env-variables(7)>` の ``<variable>`` に ``<value>`` をセットします。
+  環境変数を ``$ENV{<variable>}`` の形式で参照すると、セットした値が返ってきます。
 
-  This command affects only the current CMake process, not the process from which CMake was called, nor the system environment at large, nor the environment of subsequent build or test processes.
+  このコマンドの呼び出しは、現在実行中の CMake プロセスにのみ作用し、CMake の呼び出し元やプラットフォームの環境、これ以降の別のプロセス（ビルドやテスト）には影響しません。
 
-  If no argument is given after ``ENV{<variable>}`` or if ``<value>`` is an empty string, then this command will clear any existing value of the environment variable.
+  ``ENV{<variable>}`` の後ろに引数がない場合、または ``<value>`` が空の文字列の場合、このコマンドはその環境変数にセットされている既存の値を全てクリアします。
 
-  Arguments after ``<value>`` are ignored. If extra arguments are found, then an author warning is issued.
+  ``<value>`` の後ろにある引数は全て無視します。
+  余分な引数を検出したらワーニングを発行します。
 
 参考情報
 ^^^^^^^^

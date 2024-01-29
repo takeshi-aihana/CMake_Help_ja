@@ -1,22 +1,21 @@
 set_directory_properties
 ------------------------
 
-Set properties of the current directory and subdirectories.
+現在のディレクトリとそのサブディレクトリのプロパティをセットする。
 
 .. code-block:: cmake
 
   set_directory_properties(PROPERTIES prop1 value1 [prop2 value2] ...)
 
-Sets properties of the current directory and its subdirectories in key-value pairs.
+現在のディレクトリとそのサブディレクトリに key-value ペア形式で構成されるプロパティ（``prop1 value1 prop2 value2 ...``）をセットします。
 
-See also the :command:`set_property(DIRECTORY)` command.
+:command:`set_property(DIRECTORY)` コマンドも参照して下さい。
 
-See :ref:`Directory Properties` for the list of properties known to CMake
-and their individual documentation for the behavior of each property.
+CMake で認識しているプロパティの一覧と、各プロパティの作用については「:ref:`Directory Properties`」を参照して下さい。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`define_property`
 * :command:`get_directory_property`
-* the more general :command:`set_property` command
+* より汎用的な :command:`set_property` コマンド
