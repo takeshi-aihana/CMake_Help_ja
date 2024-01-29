@@ -72,7 +72,7 @@ message
 .. versionadded:: 3.15
   ``NOTICE`` と ``VERBOSE`` と ``DEBUG`` と ``TRACE`` レベルが追加された。
 
-:manual:`CMake コマンドライン <cmake(1)>` は ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンとスペース（"``--`` "）を付けて、標準出力にログします。
+:manual:`CMake コマンドライン <cmake(1)>` は ``STATUS`` から ``TRACE`` レベルのメッセージを、``"message text"`` の前に2個のハイフンと空白（"``--`` "）を付けて、標準出力にログします。
 それ以外のレベルのメッセージは全て標準エラー出力にログされ、先頭にハイフン（"``--``"）は付与しません。
 :manual:`CMake GUI インタフェース <cmake-gui(1)>` はログ表示エリアに全てのメッセージを表示します。
 :manual:`CMake Curses インタフェース <ccmake(1)>` は、ステータス行に ``STATUS`` から ``TRACE`` レベルのメッセージを1個ずつ表示し、その他のメッセージはポップアップ・ダイアログに表示します。
