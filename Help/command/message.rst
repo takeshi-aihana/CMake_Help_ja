@@ -199,7 +199,7 @@ configure ログのメッセージ
     # 調査結果をキャッシュしておくので、再びシステムの調査を実行することはない
     set(MY_CHECK_RESULT "${MY_CHECK_RESULT}" CACHE INTERNAL "My Check")
 
-    # CONFIGURE_LOG モードでキャシュした結果をログする
+    # CONFIGURE_LOG モードでキャッシュした結果をログする
     message(CONFIGURE_LOG
       "My Check Result: ${MY_CHECK_RESULT}\n"
       "${details}"

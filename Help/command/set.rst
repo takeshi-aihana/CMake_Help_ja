@@ -1,129 +1,99 @@
 set
 ---
 
-Set a normal, cache, or environment variable to a given value.
-See the :ref:`cmake-language(7) variables <CMake Language Variables>`
-documentation for the scopes and interaction of normal variables
-and cache entries.
+通常の変数やキャッシュ変数や環境変数に特定の値をセットする。
+（通常の変数とキャッシュ変数の間にある作用の違いやそれぞれのスコープについては「:ref:`CMake のいろいろな変数 <CMake Language Variables>`」を参照のこと）。
 
-Signatures of this command that specify a ``<value>...`` placeholder
-expect zero or more arguments.  Multiple arguments will be joined as
-a :ref:`semicolon-separated list <CMake Language Lists>` to form the
-actual variable value to be set.
+``<value> ...`` を指定する場合は、0個以上の引数が必要である
+（この複数の引数は「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」として、それぞれセットする値が結合されているものとする）。
 
-Set Normal Variable
-^^^^^^^^^^^^^^^^^^^
+通常の変数の場合
+^^^^^^^^^^^^^^^^
 
 .. signature::
   set(<variable> <value>... [PARENT_SCOPE])
   :target: normal
 
-  Set or unset ``<variable>`` in the current function or directory scope:
+  現在の関数またはディレクトリのスコープの中で、``<variable>`` に値をセットしたり解除します：
 
-  * If at least one ``<value>...`` is given, set the variable to that value.
-  * If no value is given, unset the variable.  This is equivalent to
-    :command:`unset(<variable>) <unset>`.
+  * ``<value>`` が与えられたら ``<variable>`` に ``<value>`` をセットする。
+  * ``<value>`` が与えられなかったら ``<variable>`` の値を解除する（これは :command:`unset(<variable>) <unset>` コマンドの呼び出しと同じ）。
 
-  If the ``PARENT_SCOPE`` option is given the variable will be set in
-  the scope above the current scope.  Each new directory or :command:`function`
-  command creates a new scope.  A scope can also be created with the
-  :command:`block` command. ``set(PARENT_SCOPE)`` will set the value
-  of a variable into the parent directory, calling function, or
-  encompassing scope (whichever is applicable to the case at hand).
-  The previous state of the variable's value stays the same in the
-  current scope (e.g., if it was undefined before, it is still undefined
-  and if it had a value, it is still that value).
+  ``PARENT_SCOPE`` オプションを指定すると、``<variable>`` は現在のスコープよりも上のスコープの中で値をセットします。
+  新しいディレクトリを作成する、または :command:`function` コマンドを呼び出す度に、新しいスコープを生成します。
+  スコープは  :command:`block` コマンドを使って生成することもできます。
+  ``set(PARENT_SCOPE)`` の呼び出しは、親ディレクトリや、関数の呼び出し元、包含するブロックなどそれぞれ対応するスコープに対して値をセットすることを意味します。
+  ``<variable>`` にセットした値の前の状態は、現在のスコープのままです（例えば、変数の一つ前が未定義だった場合のスコープは未定義であり、値がセットされていたらその値のままです）。
 
-  The :command:`block(PROPAGATE)` and :command:`return(PROPAGATE)` commands
-  can be used as an alternate method to the :command:`set(PARENT_SCOPE)`
-  and :command:`unset(PARENT_SCOPE)` commands to update the parent scope.
+  :command:`block(PROPAGATE)` と :command:`return(PROPAGATE)` コマンドは、親のスコープに対して呼び出す :command:`set(PARENT_SCOPE)` と :command:`unset(PARENT_SCOPE)` の代替として使用できます。
 
 .. include:: UNSET_NOTE.txt
 
-Set Cache Entry
-^^^^^^^^^^^^^^^
+キャッシュ変数の場合
+^^^^^^^^^^^^^^^^^^^^
 
 .. signature::
   set(<variable> <value>... CACHE <type> <docstring> [FORCE])
   :target: CACHE
 
-  Sets the given cache ``<variable>`` (cache entry).  Since cache entries
-  are meant to provide user-settable values this does not overwrite
-  existing cache entries by default.  Use the ``FORCE`` option to
-  overwrite existing entries.
+  キャッシュ変数の ``<variable>`` に値をセットします（**キャッシュ・エントリ**）。
+  キャッシュ変数は、ユーザが選択が可能な設定値をプロジェクトに提供することを目的としているため、**デフォルトではキャッシュ・エントリを上書きしません**。
+  従って既存のキャッシュ・エントリを上書きする場合は ``FORCE`` オプションを使います。
 
-  The ``<type>`` must be specified as one of:
+  キャッシュ・エントリの型を表す ``<type>`` オプションには、以下のいずれかを指定して下さい：
 
     ``BOOL``
-      Boolean ``ON/OFF`` value.
-      :manual:`cmake-gui(1)` offers a checkbox.
+      論理値の ``ON/OFF`` をセットする。
+      :manual:`cmake-gui(1)` の場合はチェックボックスを使う。
 
     ``FILEPATH``
-      Path to a file on disk.
-      :manual:`cmake-gui(1)` offers a file dialog.
+      ローカルのファイルのパス名をセットする。
+      :manual:`cmake-gui(1)` の場合はファイル・ダイアログを使う。
 
     ``PATH``
-      Path to a directory on disk.
-      :manual:`cmake-gui(1)` offers a file dialog.
+      ローカルのディレクトリのパス名をセットとする。
+      :manual:`cmake-gui(1)` の場合はファイル・ダイアログを使う。
 
     ``STRING``
-      A line of text.
-      :manual:`cmake-gui(1)` offers a text field or a drop-down selection
-      if the :prop_cache:`STRINGS` cache entry property is set.
-
+      文字列をセットする。
+      :manual:`cmake-gui(1)` の場合で :prop_cache:`STRINGS` 型のキャッシュ・エントリのプロパティがセットされている場合は、テキスト・フィールドやドロップダウン・セレクタを使う。
+      
     ``INTERNAL``
-      A line of text.
-      :manual:`cmake-gui(1)` does not show internal entries.
-      They may be used to store variables persistently across runs.
-      Use of this type implies ``FORCE``.
+      文字列をセットする。
+      :manual:`cmake-gui(1)` の場合は、この型のキャッシュ・エントリは表示しない。
+      これは CMake を実行する度に変数を永続的に保存する際に使用する。
+      この型を指定した場合は ``FORCE`` オプションを追加すること。
 
-  The ``<docstring>`` must be specified as a line of text
-  providing a quick summary of the option
-  for presentation to :manual:`cmake-gui(1)` users.
+  ``<docstring>`` には、:manual:`cmake-gui(1)` のユーザに提示するオプションのサマリを文字列として指定して下さい。
 
-  If the cache entry does not exist prior to the call or the ``FORCE``
-  option is given then the cache entry will be set to the given value.
+  このコマンドを呼び出す前にキャッシュ・エントリが存在していない場合、または ``FORCE`` オプションを指定した場合、キャッシュ・エントリを作成して ``<value>`` をセットする。
 
   .. note::
 
-    The content of the cache variable will not be directly accessible
-    if a normal variable of the same name already exists
-    (see :ref:`rules of variable evaluation <CMake Language Variables>`).
-    If policy :policy:`CMP0126` is set to ``OLD``, any normal variable
-    binding in the current scope will be removed.
+    The content of the cache variable will not be directly accessible if a normal variable of the same name already exists (see :ref:`rules of variable evaluation <CMake Language Variables>`).
+    If policy :policy:`CMP0126` is set to ``OLD``, any normal variable binding in the current scope will be removed.
 
-  It is possible for the cache entry to exist prior to the call but
-  have no type set if it was created on the :manual:`cmake(1)` command
-  line by a user through the :option:`-D\<var\>=\<value\> <cmake -D>` option
-  without specifying a type.  In this case the ``set`` command will add the
-  type.  Furthermore, if the ``<type>`` is ``PATH`` or ``FILEPATH``
-  and the ``<value>`` provided on the command line is a relative path,
-  then the ``set`` command will treat the path as relative to the
-  current working directory and convert it to an absolute path.
+  It is possible for the cache entry to exist prior to the call but have no type set if it was created on the :manual:`cmake(1)` command line by a user through the :option:`-D\<var\>=\<value\> <cmake -D>` option without specifying a type.
+  In this case the ``set`` command will add the type.
+  Furthermore, if the ``<type>`` is ``PATH`` or ``FILEPATH`` and the ``<value>`` provided on the command line is a relative path, then the ``set`` command will treat the path as relative to the current working directory and convert it to an absolute path.
 
-Set Environment Variable
-^^^^^^^^^^^^^^^^^^^^^^^^
+環境変数の場合
+^^^^^^^^^^^^^^
 
 .. signature::
   set(ENV{<variable>} [<value>])
   :target: ENV
 
-  Sets an :manual:`Environment Variable <cmake-env-variables(7)>`
-  to the given value.
+  Sets an :manual:`Environment Variable <cmake-env-variables(7)>` to the given value.
   Subsequent calls of ``$ENV{<variable>}`` will return this new value.
 
-  This command affects only the current CMake process, not the process
-  from which CMake was called, nor the system environment at large,
-  nor the environment of subsequent build or test processes.
+  This command affects only the current CMake process, not the process from which CMake was called, nor the system environment at large, nor the environment of subsequent build or test processes.
 
-  If no argument is given after ``ENV{<variable>}`` or if ``<value>`` is
-  an empty string, then this command will clear any existing value of the
-  environment variable.
+  If no argument is given after ``ENV{<variable>}`` or if ``<value>`` is an empty string, then this command will clear any existing value of the environment variable.
 
-  Arguments after ``<value>`` are ignored. If extra arguments are found,
-  then an author warning is issued.
+  Arguments after ``<value>`` are ignored. If extra arguments are found, then an author warning is issued.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`unset`

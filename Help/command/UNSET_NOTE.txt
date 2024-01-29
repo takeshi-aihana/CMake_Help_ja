@@ -1,9 +1,7 @@
 .. note::
 
-  When evaluating :ref:`Variable References` of the form ``${VAR}``, CMake
-  first searches for a normal variable with that name.  If no such normal
-  variable exists, CMake will then search for a cache entry with that name.
-  Because of this, **unsetting a normal variable can expose a cache variable
-  that was previously hidden**.  To force a variable reference of the form
-  ``${VAR}`` to return an empty string, use ``set(<variable> "")``, which
-  clears the normal variable but leaves it defined.
+  ``${VAR}`` 形式で変数の参照や評価をする場合、CMake は最初にその名前を持つ通常の変数を探す。
+  通常の変数が見つからなかったら、次はその名前を持つキャッシュ変数を探す。
+  そのため、**通常の変数の値を解除すると、それまで隠されていたキャッシュ変数が公開される可能性がある**。
+  ``${VAR}`` 形式で変数を参照した際に、強制的に空の文字列を返すようにするには ``set(<variable> "")`` を使用する。
+  これにより通常の変数はクリアされますが、値は定義されたままになる。

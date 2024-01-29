@@ -1,7 +1,7 @@
 mark_as_advanced
 ----------------
 
-CMake のキャシュ変数に Advanced 属性をセットする。
+CMake のキャッシュ変数に Advanced 属性をセットする。
 
 .. code-block:: cmake
 
