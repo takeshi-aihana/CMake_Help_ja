@@ -24,10 +24,11 @@ set_property
 次のいずれかを指定して下さい：
 
 ``GLOBAL``
-  スコープは一つだけで重複させることはできない。
-  名前は付与できない。
+  「:ref:`グローバルのプロパティ <Global Properties>`」が対象。
+  このスコープは一つだけしかなく、名前は付与できない。
 
 ``DIRECTORY``
+  「:ref:`ディレクトリのプロパティ <Directory Properties>`」が対象。
   デフォルトは現在の作業ディレクトリ。
   CMake が認識している他のディレクトリ（絶対パスまたは相対パス）もスコープに指定できる。
   なお相対パスは :variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとしてパスを計算する。
@@ -37,12 +38,14 @@ set_property
     ``<dir>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
 
 ``TARGET``
+  「:ref:`ターゲットのプロパティ <Target Properties>`」が対象。
   0個以上のビルド・ターゲットをスコープに指定できる。
   :command:`set_target_properties` コマンドも参照のこと。
 
-  ただし :ref:`Alias Targets` にプロパティはセットできない。
+  ただし「:ref:`Alias Targets`」にプロパティはセットできない。
 
 ``SOURCE``
+  「:ref:`ソース・ファイルのプロパティ <Source File Properties>`」が対象。
   0個以上の既存のソース・ファイルをスコープに指定できる。
   このコマンドを呼び出した ``CMakeLists.txt`` と同じディレクトリに追加したソース・ファイルが対象である。
 
@@ -50,69 +53,72 @@ set_property
     次のサブ・オプションの一つ、または両方を使って、他のディレクトリ・スコープで Visibility をセットできるようになった。
 
     ``DIRECTORY <dirs>...``
-      指定した ``<dir>`` ディレクトリごとのスコープでソース・ファイルに対するプロパティがセットされる。
-      ``<dir>`` は :command:`add_subdirectory` コマンドの呼び出しを通してディレクトリを追加するか、:variable:`CMAKE_CURRENT_SOURCE_DIR` であることにより、CMake が既に認識しているディレクトリを指定して下さい。
+      ``<dirs>`` のディレクトリごとのスコープでソース・ファイルに対するプロパティをセットする。
+      ``<dirs>`` には :command:`add_subdirectory` コマンドで追加したディレクトリか、:variable:`CMAKE_CURRENT_SOURCE_DIR` を指定する（つまり CMake が既に認識しているディレクトリ）。
       なお相対パスは :variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとしてパスを計算する。
 
       .. versionadded:: 3.19
-        ``<dir>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
+        ``<dirs>`` に :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できるようになった。
 
     ``TARGET_DIRECTORY <targets>...``
-      The source file property will be set in each of the directory scopes where any of the specified ``<targets>`` were created (the ``<targets>`` must therefore already exist).
+      ソース・ファイルのプロパティを、 ``<targets> ...`` が作成したディレクトリのスコープごとにセットする（すなわち、既に ``<target>`` が存在している必要があり）。
 
-  See also the :command:`set_source_files_properties` command.
+  :command:`set_source_files_properties` コマンドも参照のこと。
 
 ``INSTALL``
+  「:ref:`インストールしたファイルのプロパティ <Installed File Properties>`」が対象。
+
   .. versionadded:: 3.1
 
-  Scope may name zero or more installed file paths.
-  These are made available to CPack to influence deployment.
+  0個以上のインストールしたファイル（のパス）をスコープに指定できる。
+  これらのプロパティはインストール先に展開する際も影響があるので、:manual:`cpack <cpack(1)>` で利用できる。
 
-  Both the property key and value may use generator expressions.
-  Specific properties may apply to installed files and/or directories.
+  プロパティのキーと値は共に :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使うことができる。
+  特定のプロパティはインストール済みのファイルやディレクトリ（または両方）に適用される場合がある。
 
-  Path components have to be separated by forward slashes, must be normalized and are case sensitive.
+  ``<file>`` のパス名を構成する要素はスラッシュ（``/``）で区切り、:ref:`正規化 <Normalization>` しておくこと（さらに、大文字と小文字を区別するので注意のこと）。
 
-  To reference the installation prefix itself with a relative path use ``.``.
+  相対パスでインストール先の ``<prefix>`` を参照する場合はドット（``.``）を使うこと。
 
-  Currently installed file properties are only defined for the WIX generator where the given paths are relative to the installation prefix.
+  現在インストールされているファイルのプロパティは、パス名がインストール先の ``<prefix>`` を基準とする WIX ジェネレータ（:cpack_gen:`CPack WIX Generator`）に対してのみ定義される（FIXME: 意味不明）。
 
 ``TEST``
-  Scope is limited to the directory the command is called in.
-  It may name zero or more existing tests. See also command :command:`set_tests_properties`.
+  「:ref:`テストのプロパティ <Test Properties>`」が対象。
+  プロパティのスコープは :manual:`ctest(1)` コマンドが呼び出されるディレクトリに制限される。
+  0個以上のテストをスコープに指定できる。
+  :command:`set_tests_properties` コマンドも参照のこと。
 
-  Test property values may be specified using :manual:`generator expressions <cmake-generator-expressions(7)>` for tests created by the :command:`add_test(NAME)` signature.
+  このプロパティの値は  :command:`add_test(NAME)` コマンドで生成されたテストの :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使って指定できる。
 
   .. versionadded:: 3.28
 
-    Visibility can be set in other directory scopes using the following sub-option:
+    次のサブ・オプションを使って、他のディレクトリ・スコープで Visibility をセットできるようになった。
 
     ``DIRECTORY <dir>``
-      The test property will be set in the ``<dir>`` directory's scope.
-      CMake must already know about this directory, either by having added it through a call to :command:`add_subdirectory` or it being the top level source directory.
-      Relative paths are treated as relative to the current source directory.
+      テストのプロパティを ``<dir>`` のディレクトリのスコープでセットする。
+      ``<dir>`` には :command:`add_subdirectory` コマンドで追加したディレクトリか、:variable:`CMAKE_CURRENT_SOURCE_DIR` を指定する（つまり CMake が既に認識しているディレクトリ）。
+      なお相対パスは :variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとしてパスを計算する。
       ``<dir>`` には :variable:`CMAKE_CURRENT_BINARY_DIR` を指定できる。
 
 ``CACHE``
-  Scope must name zero or more existing cache entries.
+  「:ref:`キャッシュ変数のプロパティ <Cache Entry Properties>`」が対象。
+  0個以上の既存のキャッシュ・エントリをスコープに指定できる。
 
-The required ``PROPERTY`` option is immediately followed by the name of the property to set.
-Remaining arguments are used to compose the property value in the form of a semicolon-separated list.
+必須の ``PROPERTY`` オプションの直後は、セットするプロパティの名前と値が続き、それ以降は「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」の書式で同様にプロパティの名前とその値のペアが続きます。
 
-If the ``APPEND`` option is given the list is appended to any existing property value (except that empty values are ignored and not appended).
-If the ``APPEND_STRING`` option is given the string is appended to any existing property value as string, i.e. it results in a longer string and not a list of strings.
-When using ``APPEND`` or ``APPEND_STRING`` with a property defined to support ``INHERITED`` behavior (see :command:`define_property`), no inheriting occurs when finding the initial value to append to.
-If the property is not already directly set in the nominated scope, the command will behave as though ``APPEND`` or ``APPEND_STRING`` had not been given.
+``APPEND`` オプションを指定すると、ここで指定した「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」は既存のプロパティの定義の後ろに追加されます（ただし空の値は追加しません）。
+``APPEND_STRING`` オプションを指定すると、指定したプロパティの値は文字列として追加されます（すなわち文字列のリストではなく、より長い文字列に連結して追加されます）。
+``INHERITED`` をサポートするプロパティ（:command:`define_property` コマンド参照）に対して ``APPEND`` や ``APPEND_STRING`` を指定すると、追加するプロパティの値を見つける時に継承は行われません（FIXME: 意味不明）。
+``APPEND`` や ``APPEND_STRING`` オプションを指定した時、対象のスコープで、まだプロパティが（継承ではなく）直接セットされていない場合、これらのオプションを無視します。
 
 .. note::
 
-  The :prop_sf:`GENERATED` source file property may be globally visible.
-  See its documentation for details.
+  :prop_sf:`GENERATED` なソース・ファイルのプロパティはグローバルで表示される場合がある。
+  詳細は、このドキュメントを参照のこと。
 
 参考情報
 ^^^^^^^^
 
 * :command:`define_property`
 * :command:`get_property`
-* The :manual:`cmake-properties(7)` manual for a list of properties
-  in each scope.
+* :manual:`スコープごとのプロパティの一覧 <cmake-properties(7)>`
