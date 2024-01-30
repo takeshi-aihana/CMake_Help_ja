@@ -1,14 +1,14 @@
 string
 ------
 
-String operations.
+CMake の中で文字列を操作する。
 
-Synopsis
-^^^^^^^^
+概要
+^^^^
 
 .. parsed-literal::
 
-  `Search and Replace`_
+  `検索と置換`_
     string(`FIND`_ <string> <substring> <out-var> [...])
     string(`REPLACE`_ <match-string> <replace-string> <out-var> <input>...)
     string(`REGEX MATCH`_ <match-regex> <out-var> <input>...)
@@ -56,8 +56,8 @@ Synopsis
     string(JSON <out-var> [ERROR_VARIABLE <error-var>]
            `EQUAL <JSON EQUAL_>`_ <json-string1> <json-string2>)
 
-Search and Replace
-^^^^^^^^^^^^^^^^^^
+検索と置換
+^^^^^^^^^^
 
 Search and Replace With Plain Strings
 """""""""""""""""""""""""""""""""""""
