@@ -8,14 +8,14 @@ CMake の中で文字列を操作する。
 
 .. parsed-literal::
 
-  `検索と置換`_
+  `文字列を検索し置換する`_
     string(`FIND`_ <string> <substring> <out-var> [...])
     string(`REPLACE`_ <match-string> <replace-string> <out-var> <input>...)
     string(`REGEX MATCH`_ <match-regex> <out-var> <input>...)
     string(`REGEX MATCHALL`_ <match-regex> <out-var> <input>...)
     string(`REGEX REPLACE`_ <match-regex> <replace-expr> <out-var> <input>...)
 
-  `Manipulation`_
+  `文字列を加工する`_
     string(`APPEND`_ <string-var> [<input>...])
     string(`PREPEND`_ <string-var> [<input>...])
     string(`CONCAT`_ <out-var> [<input>...])
@@ -59,132 +59,111 @@ CMake の中で文字列を操作する。
 検索と置換
 ^^^^^^^^^^
 
-Search and Replace With Plain Strings
-"""""""""""""""""""""""""""""""""""""
+文字列を検索し置換する
+""""""""""""""""""""""
 
 .. signature::
   string(FIND <string> <substring> <output_variable> [REVERSE])
 
-  Return the position where the given ``<substring>`` was found in
-  the supplied ``<string>``.  If the ``REVERSE`` flag was used, the command
-  will search for the position of the last occurrence of the specified
-  ``<substring>``.  If the ``<substring>`` is not found, a position of -1 is
-  returned.
+  ``<string>`` の中で ``<substring>`` が **最初に** 出現する位置を返します。
+  ``REVERSE`` オプションを指定すると、``<string>`` の中で ``<substring>`` が **最後に** 出現する位置を返します。
+  ``<substring>`` が見つからなかったら、-1 を返します。
 
-  The ``string(FIND)`` subcommand treats all strings as ASCII-only characters.
-  The index stored in ``<output_variable>`` will also be counted in bytes,
-  so strings containing multi-byte characters may lead to unexpected results.
+  この ``string(FIND)`` サブコマンドでは ASCII のみを文字として扱います。
+  したがって ``<output_variable>`` に返された ``<substring>`` の位置（``<string>`` の中でのインデックス）はバイト単位でカウントします。
+  そのためマルチバイト文字を含む文字列の場合は想定しない結果になる場合があります。
 
 .. signature::
   string(REPLACE <match_string>
          <replace_string> <output_variable>
          <input> [<input>...])
 
-  Replace all occurrences of ``<match_string>`` in the ``<input>``
-  with ``<replace_string>`` and store the result in the ``<output_variable>``.
+  ``<input>`` の中にあるすべての ``<match_string>`` を ``<replace_string>`` で置き換えて、その結果を ``<output_variable>`` に格納します。
 
-Search and Replace With Regular Expressions
-"""""""""""""""""""""""""""""""""""""""""""
+正規表現を使った文字列の検索と置換
+""""""""""""""""""""""""""""""""""
 
 .. signature::
   string(REGEX MATCH <regular_expression>
          <output_variable> <input> [<input>...])
 
-  Match the ``<regular_expression>`` once and store the match in the
-  ``<output_variable>``.
-  All ``<input>`` arguments are concatenated before matching.
-  Regular expressions are specified in the subsection just below.
+  ``<regular_expression>`` にマッチした結果を ``<output_variable>`` に格納します。
+  引数の ``<input> ...`` は検索する前にすべて連結します。
+  正規表現のパタンについては、このセクションにある「:ref:`Regex Specification`」を参照して下さい。
 
 .. signature::
   string(REGEX MATCHALL <regular_expression>
          <output_variable> <input> [<input>...])
 
-  Match the ``<regular_expression>`` as many times as possible and store the
-  matches in the ``<output_variable>`` as a list.
-  All ``<input>`` arguments are concatenated before matching.
+  ``<regular_expression>`` にマッチした全ての結果を「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」にして ``<output_variable>`` に格納します。
+  引数の ``<input> ...`` は検索する前にすべて連結します。
 
 .. signature::
   string(REGEX REPLACE <regular_expression>
          <replacement_expression> <output_variable>
          <input> [<input>...])
 
-  Match the ``<regular_expression>`` as many times as possible and substitute
-  the ``<replacement_expression>`` for the match in the output.
-  All ``<input>`` arguments are concatenated before matching.
+  ``<regular_expression>`` にマッチした全ての結果を ``<replacement_expression>`` で置き換えます。
+  引数の ``<input> ...`` は検索する前にすべて連結します。
 
-  The ``<replacement_expression>`` may refer to parenthesis-delimited
-  subexpressions of the match using ``\1``, ``\2``, ..., ``\9``.  Note that
-  two backslashes (``\\1``) are required in CMake code to get a backslash
-  through argument parsing.
+  この ``<replacement_expression>`` は、``\1`` や ``\2``, ..., ``\9`` とカッコ（``()``）を使ってマッチした部分文字列を参照できます。
+  一個のバックスラッシュ（``\``）にマッチさせたい場合は、二個のバックスラッシュ（``\\1``）が必要である点に留意して下さい。
 
 .. _`Regex Specification`:
 
-Regex Specification
-"""""""""""""""""""
+正規表現の仕様
+""""""""""""""
 
-The following characters have special meaning in regular expressions:
+以下の文字は「正規表現（*Regular Expression*）」のパタンにおいて特別な意味があります：
 
 ``^``
-  Matches at beginning of input
+  ``<input>`` の先頭にマッチする。
 ``$``
-  Matches at end of input
+  ``<input>`` の末尾にマッチする。
 ``.``
-  Matches any single character
+  ``<input>`` にある一個の文字にマッチする。
 ``\<char>``
-  Matches the single character specified by ``<char>``.  Use this to
-  match special regex characters, e.g. ``\.`` for a literal ``.``
-  or ``\\`` for a literal backslash ``\``.  Escaping a non-special
-  character is unnecessary but allowed, e.g. ``\a`` matches ``a``.
+  ``<char>`` という一個のリテラルの文字にマッチする。
+  これを使用して、特殊な文字にマッチする（  例えば： ``\.`` は一個のリテラルの文字にマッチし、``\\`` は一個のバックスラッシュ（``\``）にマッチする）。
+  一般的に特殊文字以外のエスケープは不要である（ただし利用はできる： ``\a`` は ``a`` にマッチする）。
 ``[ ]``
-  Matches any character(s) inside the brackets
+  カッコの中にある任意の文字にマッチする。
 ``[^ ]``
-  Matches any character(s) not inside the brackets
+  カッコの中にない任意の文字にマッチする。
 ``-``
-  Inside brackets, specifies an inclusive range between
-  characters on either side e.g. ``[a-f]`` is ``[abcdef]``
-  To match a literal ``-`` using brackets, make it the first
-  or the last character e.g. ``[+*/-]`` matches basic
-  mathematical operators.
+  カッコの中では、この両端にある文字の範囲を表す（例えば：. ``[a-f]`` は ``[abcdef]``）。
+  リテラルの ``-`` にマッチさせるには、カッコを使用して、それを最初または最後に置く（例えば： ``[+*/-]`` は基本演算子のいずれかにマッチする）。
 ``*``
-  Matches preceding pattern zero or more times
+  これより前にある正規表現パタンに０回以上マッチする。
 ``+``
-  Matches preceding pattern one or more times
+  これより前にある正規表現パタンに１回以上マッチする。
 ``?``
-  Matches preceding pattern zero or once only
+  これより前にある正規表現パタンに０回または１回だけマッチする。
 ``|``
-  Matches a pattern on either side of the ``|``
+  これのどちらか側にあるいずれかの正規表現のパタンにマッチする。
 ``()``
-  Saves a matched subexpression, which can be referenced
-  in the ``REGEX REPLACE`` operation.
+  正規表現パタンにマッチした部分文字列を保存する（保存したものは ``REGEX REPLACE`` 操作で参照できる）。
 
   .. versionadded:: 3.9
-    All regular expression-related commands, including e.g.
-    :command:`if(MATCHES)`, save subgroup matches in the variables
-    :variable:`CMAKE_MATCH_<n>` for ``<n>`` 0..9.
+    正規表現を利用する全てのコマンド（:command:`if(MATCHES)` など）が、正規表現パタンにマッチした部分文字列を保存して、CMake 変数の :variable:`CMAKE_MATCH_<n>` （``<n>`` は 0..9） で参照できるようになった。
 
-``*``, ``+`` and ``?`` have higher precedence than concatenation.  ``|``
-has lower precedence than concatenation.  This means that the regular
-expression ``^ab+d$`` matches ``abbd`` but not ``ababd``, and the regular
-expression ``^(ab|cd)$`` matches ``ab`` but not ``abd``.
+``*`` と ``+`` と ``?`` による検索は、文字列の連結よりも優先順位が高いです。
+``|`` による検索は、文字列の連結よりも優先順位が低いです。
 
-CMake language :ref:`Escape Sequences` such as ``\t``, ``\r``, ``\n``,
-and ``\\`` may be used to construct literal tabs, carriage returns,
-newlines, and backslashes (respectively) to pass in a regex.  For example:
+この仕様を使った例： ``^ab+d$`` という正規表現パタンは ``abbd`` にマッチしますが、``ababd`` にはマッチしません。``^(ab|cd)$`` という正規表現パタンは ``ab`` にマッチしますが、``abd`` にはマッチしません。
 
-* The quoted argument ``"[ \t\r\n]"`` specifies a regex that matches
-  any single whitespace character.
-* The quoted argument ``"[/\\]"`` specifies a regex that matches
-  a single forward slash ``/`` or backslash ``\``.
-* The quoted argument ``"[A-Za-z0-9_]"`` specifies a regex that matches
-  any single "word" character in the C locale.
-* The quoted argument ``"\\(\\a\\+b\\)"`` specifies a regex that matches
-  the exact string ``(a+b)``.  Each ``\\`` is parsed in a quoted argument
-  as just ``\``, so the regex itself is actually ``\(\a\+\b\)``.  This
-  can alternatively be specified in a :ref:`bracket argument` without
-  having to escape the backslashes, e.g. ``[[\(\a\+\b\)]]``.
+``\t`` や ``\r`` や ``\n`` や ``\\`` といった制御文字（エスケープ・シーケンス）を使用すると、順にタブ文字、キャリッジリターン文字、改行文字、バックスラッシュのリテラルを表現するパタンを構築できます。
+例えば：
 
-Manipulation
-^^^^^^^^^^^^
+* 引用符で囲んだ ``"[ \t\r\n]"`` は一個の空白文字にマッチする正規表現パタンである。
+* 引用符で囲んだ ``"[/\\]"`` は一個のスラッシュ（``/``）またはバックスラッシュ（``\``）にマッチする正規表現パタンである。
+* 引用符で囲んだ ``"[A-Za-z0-9_]"`` はＣロケールで一個の単語にマッチする正規表現パタンである。
+* 引用符で囲んだ ``"\\(\\a\\+b\\)"`` は文字列の ``(a+b)`` と完全にマッチする正規表現パタンである。
+  この中にある ``\\`` はただのスペース（``\``）と認識されるので、このパタンは正確には ``"\(\a\+\b\)"`` である。
+  これは、バックスラッシュをエスケープするかわりに :ref:`bracket argument` を使って ``"[[\(\a\+\b\)]]"`` で表現できる。
+
+文字列を加工する
+^^^^^^^^^^^^^^^^
 
 .. signature::
   string(APPEND <string_variable> [<input>...])
