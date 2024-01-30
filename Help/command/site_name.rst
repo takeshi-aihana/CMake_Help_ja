@@ -1,12 +1,12 @@
 site_name
 ---------
 
-Set the given variable to the name of the computer.
+コンピュータの名前をセットする。
 
 .. code-block:: cmake
 
   site_name(variable)
 
-On UNIX-like platforms, if the variable ``HOSTNAME`` is set, its value
-will be executed as a command expected to print out the host name,
-much like the ``hostname`` command-line tool.
+``variable`` の値をホスト名にセットします。
+
+なお CMake を実行するホストが UNIX 系のプラットフォームで、環境変数の ``HOSTNAME`` が既に定義されている場合は、``hostname`` コマンドライン・ツールと同様に、ホスト名を出力するだけです。
