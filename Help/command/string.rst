@@ -28,13 +28,13 @@ CMake の中で文字列を操作する。
     string(`GENEX_STRIP`_ <string> <out-var>)
     string(`REPEAT`_ <string> <count> <out-var>)
 
-  `Comparison`_
+  `文字列を比較する`_
     string(`COMPARE`_ <op> <string1> <string2> <out-var>)
 
-  `Hashing`_
+  `文字列のハッシュ値を計算する`_
     string(`\<HASH\>`_ <out-var> <input>)
 
-  `Generation`_
+  `文字を変換する`_
     string(`ASCII`_ <number>... <out-var>)
     string(`HEX`_ <string> <out-var>)
     string(`CONFIGURE`_ <string> <out-var> [...])
@@ -43,7 +43,7 @@ CMake の中で文字列を操作する。
     string(`TIMESTAMP`_ <out-var> [<format string>] [UTC])
     string(`UUID`_ <out-var> ...)
 
-  `JSON`_
+  `文字列を JSON 化する`_
     string(JSON <out-var> [ERROR_VARIABLE <error-var>]
            {`GET <JSON GET_>`_ | `TYPE <JSON TYPE_>`_ | `LENGTH <JSON LENGTH_>`_ | `REMOVE <JSON REMOVE_>`_}
            <json-string> <member|index> [<member|index> ...])
@@ -114,7 +114,7 @@ CMake の中で文字列を操作する。
 正規表現の仕様
 """"""""""""""
 
-以下の文字は「正規表現（*Regular Expression*）」のパタンにおいて特別な意味があります：
+ここにある文字は「正規表現（*Regular Expression*）」のパタンにおいて特別な意味を持ちます：
 
 ``^``
   ``<input>`` の先頭にマッチする。
@@ -124,14 +124,14 @@ CMake の中で文字列を操作する。
   ``<input>`` にある一個の文字にマッチする。
 ``\<char>``
   ``<char>`` という一個のリテラルの文字にマッチする。
-  これを使用して、特殊な文字にマッチする（  例えば： ``\.`` は一個のリテラルの文字にマッチし、``\\`` は一個のバックスラッシュ（``\``）にマッチする）。
-  一般的に特殊文字以外のエスケープは不要である（ただし利用はできる： ``\a`` は ``a`` にマッチする）。
+  これを利用して、特殊な文字にマッチすることが可能である（例えば： ``\.`` は一個のリテラルの文字にマッチし、``\\`` は一個のバックスラッシュ（``\``）にマッチする）。
+  一般的に特殊文字以外のエスケープは不要である（ただし利用は可能： 例えば ``\a`` は ``a`` にマッチする）。
 ``[ ]``
   カッコの中にある任意の文字にマッチする。
 ``[^ ]``
   カッコの中にない任意の文字にマッチする。
 ``-``
-  カッコの中では、この両端にある文字の範囲を表す（例えば：. ``[a-f]`` は ``[abcdef]``）。
+  カッコの中では、この両端にある文字でパタンの範囲を表す（例えば：. ``[a-f]`` は ``[abcdef]``）。
   リテラルの ``-`` にマッチさせるには、カッコを使用して、それを最初または最後に置く（例えば： ``[+*/-]`` は基本演算子のいずれかにマッチする）。
 ``*``
   これより前にある正規表現パタンに０回以上マッチする。
@@ -170,91 +170,79 @@ CMake の中で文字列を操作する。
 
   .. versionadded:: 3.4
 
-  Append all the ``<input>`` arguments to the string.
+  ``<string_variable>`` に格納された文字列の最後に、全ての ``<input>...`` を追加します。
 
 .. signature::
   string(PREPEND <string_variable> [<input>...])
 
   .. versionadded:: 3.10
 
-  Prepend all the ``<input>`` arguments to the string.
+  ``<string_variable>`` に格納された文字列の先頭に、全ての ``<input>...`` を追加します。
 
 .. signature::
   string(CONCAT <output_variable> [<input>...])
 
-  Concatenate all the ``<input>`` arguments together and store
-  the result in the named ``<output_variable>``.
+  全ての ``<input>...`` を連結して、その結果を ``<output_variable>`` に格納する。
 
 .. signature::
   string(JOIN <glue> <output_variable> [<input>...])
 
   .. versionadded:: 3.12
 
-  Join all the ``<input>`` arguments together using the ``<glue>``
-  string and store the result in the named ``<output_variable>``.
+  ``<glue>`` の文字列を使って、全ての ``<input>...`` を連結し、その結果を ``<output_variable>`` に格納する。
 
-  To join a list's elements, prefer to use the ``JOIN`` operator
-  from the :command:`list` command.  This allows for the elements to have
-  special characters like ``;`` in them.
+  :ref:`リスト <CMake Language Lists>` の要素を連結する場合は、:command:`list(JOIN)` コマンドを使用すること推奨します。
+  これにより、要素に ``;`` のような特殊文字を含めることができます。
 
 .. signature::
   string(TOLOWER <string> <output_variable>)
 
-  Convert ``<string>`` to lower characters.
+  ``<string>`` を小文字に変換します。
 
 .. signature::
   string(TOUPPER <string> <output_variable>)
 
-  Convert ``<string>`` to upper characters.
+  ``<string>`` を大文字に変換します。
 
 .. signature::
   string(LENGTH <string> <output_variable>)
 
-  Store in an ``<output_variable>`` a given string's length in bytes.
-  Note that this means if ``<string>`` contains multi-byte characters,
-  the result stored in ``<output_variable>`` will *not* be
-  the number of characters.
+  ``<string>`` の長さをバイト単位でカウントして ``<output_variable>`` に格納します。
+  もし ``<string>`` にマルチバイトの文字が含まれている場合、``<output_variable>`` に格納された結果は正しい文字数ではないので注意して下さい。
 
 .. signature::
   string(SUBSTRING <string> <begin> <length> <output_variable>)
 
-  Store in an ``<output_variable>`` a substring of a given ``<string>``.  If
-  ``<length>`` is ``-1`` the remainder of the string starting at ``<begin>``
-  will be returned.
+  ``<string>`` の部分文字列を ``<output_variable>`` に格納します。
+  ``<length>`` が ``-1`` 場合は、``<begin>`` で始まる ``<string>`` の残りの部分文字列を返します。
 
   .. versionchanged:: 3.2
-    If ``<string>`` is shorter than ``<length>``
-    then the end of the string is used instead.
-    Previous versions of CMake reported an error in this case.
+    ``<string>`` の長さが ``<length>`` より短い場合は、``<string>`` の末尾の部分文字列を返すようになった。
+    CMake の以前のバージョンではエラーを報告していた。
 
-  Both ``<begin>`` and ``<length>`` are counted in bytes, so care must
-  be exercised if ``<string>`` could contain multi-byte characters.
+  ``<begin>`` と ``<length>`` の両方はどちらもバイト単位でカウントするので、``<string>`` にマルチバイトの文字が含まれている場合は注意が必要です。
 
 .. signature::
   string(STRIP <string> <output_variable>)
 
-  Store in an ``<output_variable>`` a substring of a given ``<string>``
-  with leading and trailing spaces removed.
+  ``<string>`` の先頭と末尾の空白文字を取り除いた部分文字列を ``<output_variable>`` に格納します。
 
 .. signature::
   string(GENEX_STRIP <string> <output_variable>)
 
   .. versionadded:: 3.1
 
-  Strip any :manual:`generator expressions <cmake-generator-expressions(7)>`
-  from the input ``<string>`` and store the result
-  in the ``<output_variable>``.
+  ``<string>`` から「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を取り除き、その結果を ``<output_variable>`` に格納します。
 
 .. signature::
   string(REPEAT <string> <count> <output_variable>)
 
   .. versionadded:: 3.15
 
-  Produce the output string as the input ``<string>``
-  repeated ``<count>`` times.
+  ``<string>`` を ``<count>`` 回繰り返した文字列を ``<output_variable>`` に格納します。
 
-Comparison
-^^^^^^^^^^
+文字列を比較する
+^^^^^^^^^^^^^^^^
 
 .. _COMPARE:
 
@@ -266,102 +254,93 @@ Comparison
   string(COMPARE LESS_EQUAL <string1> <string2> <output_variable>)
   string(COMPARE GREATER_EQUAL <string1> <string2> <output_variable>)
 
-  Compare the strings and store true or false in the ``<output_variable>``.
+  ``<string1>`` と ``<string2>`` を比較して、オプションとして指定した演算子に応じた結果（true または false）を ``<output_variable>`` に格納します。
 
   .. versionadded:: 3.7
-    Added the ``LESS_EQUAL`` and ``GREATER_EQUAL`` options.
+    ``LESS_EQUAL`` と ``GREATER_EQUAL`` のオプションを追加した。
 
 .. _`Supported Hash Algorithms`:
 
-Hashing
-^^^^^^^
+文字列のハッシュ値を計算する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. signature::
   string(<HASH> <output_variable> <input>)
   :target: <HASH>
 
-  Compute a cryptographic hash of the ``<input>`` string.
-  The supported ``<HASH>`` algorithm names are:
+  ``<input>`` の文字列に対する暗号化ハッシュ値を計算します。
+  サポートしている ``<HASH>`` アルゴリズムは次のとおりです：
 
   ``MD5``
-    Message-Digest Algorithm 5, RFC 1321.
+    Message-Digest アルゴリズム 5（RFC 1321）
   ``SHA1``
-    US Secure Hash Algorithm 1, RFC 3174.
+    US Secure Hash アルゴリズム 1（RFC 3174）
   ``SHA224``
-    US Secure Hash Algorithms, RFC 4634.
+    US Secure Hash アルゴリズム（RFC 4634）
   ``SHA256``
-    US Secure Hash Algorithms, RFC 4634.
+    US Secure Hash アルゴリズム（RFC 4634）
   ``SHA384``
-    US Secure Hash Algorithms, RFC 4634.
+    US Secure Hash アルゴリズム（RFC 4634）
   ``SHA512``
-    US Secure Hash Algorithms, RFC 4634.
+    US Secure Hash アルゴリズム（RFC 4634）
   ``SHA3_224``
-    Keccak SHA-3.
+    Keccak SHA-3
   ``SHA3_256``
-    Keccak SHA-3.
+    Keccak SHA-3
   ``SHA3_384``
-    Keccak SHA-3.
+    Keccak SHA-3
   ``SHA3_512``
-    Keccak SHA-3.
+    Keccak SHA-3
 
   .. versionadded:: 3.8
-    Added the ``SHA3_*`` hash algorithms.
+    ``SHA3_*`` 系のハッシュアルゴリズムを追加した。
 
-Generation
-^^^^^^^^^^
+文字を変換する
+^^^^^^^^^^^^^^
 
 .. signature::
   string(ASCII <number> [<number> ...] <output_variable>)
 
-  Convert all numbers into corresponding ASCII characters.
+  全ての ``<number> ...`` を対応する ASCII 文字に変換します。
 
 .. signature::
   string(HEX <string> <output_variable>)
 
   .. versionadded:: 3.18
 
-  Convert each byte in the input ``<string>`` to its hexadecimal representation
-  and store the concatenated hex digits in the ``<output_variable>``.
-  Letters in the output (``a`` through ``f``) are in lowercase.
+  ``<string>`` にある各バイトを16進数表記に変換し、連結した16新表記の文字列を ``<output_variable>`` に格納します。
+  16進数表記の文字（``a`` から ``f``） は小文字です。
 
 .. signature::
   string(CONFIGURE <string> <output_variable>
          [@ONLY] [ESCAPE_QUOTES])
 
-  Transform a ``<string>`` like :command:`configure_file` transforms a file.
+  :command:`configure_file`  コマンドの変換のように ``<string>`` を変換します。
 
 .. signature::
   string(MAKE_C_IDENTIFIER <string> <output_variable>)
 
-  Convert each non-alphanumeric character in the input ``<string>`` to an
-  underscore and store the result in the ``<output_variable>``.  If the first
-  character of the ``<string>`` is a digit, an underscore will also be
-  prepended to the result.
+  ``<string>`` の中にある英数字以外の文字をアンダースコアに変換し、その結果を ``<output_variable>`` に格納します。
+  ``<string>`` の最初の文字が数字の場合、変換結果の先頭はアンダースコアになります。
 
 .. signature::
   string(RANDOM [LENGTH <length>] [ALPHABET <alphabet>]
          [RANDOM_SEED <seed>] <output_variable>)
 
-  Return a random string of given ``<length>`` consisting of
-  characters from the given ``<alphabet>``.  Default length is 5 characters
-  and default alphabet is all numbers and upper and lower case letters.
-  If an integer ``RANDOM_SEED`` is given, its value will be used to seed the
-  random number generator.
+  ``<alphabet>`` の文字種で構成される長さが ``<length>`` のランダムな文字列を生成して返します。
+  デフォルトの長さは5文字で、デフォルトの文字種は英数字（大文字と小文字）です。
+  ``RANDOM_SEED`` オプションを指定すると、``<seed>`` を乱数ジェネレータのシードに使用します。
 
 .. signature::
   string(TIMESTAMP <output_variable> [<format_string>] [UTC])
 
-  Write a string representation of the current date
-  and/or time to the ``<output_variable>``.
+  Write a string representation of the current date and/or time to the ``<output_variable>``.
 
-  If the command is unable to obtain a timestamp, the ``<output_variable>``
-  will be set to the empty string ``""``.
+  If the command is unable to obtain a timestamp, the ``<output_variable>`` will be set to the empty string ``""``.
 
-  The optional ``UTC`` flag requests the current date/time representation to
-  be in Coordinated Universal Time (UTC) rather than local time.
+  The optional ``UTC`` flag requests the current date/time representation to be in Coordinated Universal Time (UTC) rather than local time.
 
-  The optional ``<format_string>`` may contain the following format
-  specifiers:
+  The optional ``<format_string>`` may contain the following format specifiers:
 
   ``%%``
     .. versionadded:: 3.8
@@ -439,16 +418,14 @@ Generation
   ``%z``
     .. versionadded:: 3.26
 
-    The offset of the time zone from UTC, in hours and minutes,
-    with format ``+hhmm`` or ``-hhmm``.
+    The offset of the time zone from UTC, in hours and minutes, with format ``+hhmm`` or ``-hhmm``.
 
   ``%Z``
     .. versionadded:: 3.26
 
     The time zone name.
 
-  Unknown format specifiers will be ignored and copied to the output
-  as-is.
+  Unknown format specifiers will be ignored and copied to the output as-is.
 
   If no explicit ``<format_string>`` is given, it will default to:
 
@@ -458,8 +435,7 @@ Generation
     %Y-%m-%dT%H:%M:%SZ   for UTC.
 
   .. versionadded:: 3.8
-    If the ``SOURCE_DATE_EPOCH`` environment variable is set,
-    its value will be used instead of the current time.
+    If the ``SOURCE_DATE_EPOCH`` environment variable is set, its value will be used instead of the current time.
     See https://reproducible-builds.org/specs/source-date-epoch/ for details.
 
 .. signature::
@@ -468,20 +444,15 @@ Generation
 
   .. versionadded:: 3.1
 
-  Create a universally unique identifier (aka GUID) as per RFC4122
-  based on the hash of the combined values of ``<namespace>``
-  (which itself has to be a valid UUID) and ``<name>``.
-  The hash algorithm can be either ``MD5`` (Version 3 UUID) or
-  ``SHA1`` (Version 5 UUID).
-  A UUID has the format ``xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx``
-  where each ``x`` represents a lower case hexadecimal character.
-  Where required, an uppercase representation can be requested
-  with the optional ``UPPER`` flag.
+  Create a universally unique identifier (aka GUID) as per RFC4122 based on the hash of the combined values of ``<namespace>`` (which itself has to be a valid UUID) and ``<name>``.
+  The hash algorithm can be either ``MD5`` (Version 3 UUID) or ``SHA1`` (Version 5 UUID).
+  A UUID has the format ``xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`` where each ``x`` represents a lower case hexadecimal character.
+  Where required, an uppercase representation can be requested with the optional ``UPPER`` flag.
 
 .. _JSON:
 
-JSON
-^^^^
+文字列を JSON 化する
+^^^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.19
 
