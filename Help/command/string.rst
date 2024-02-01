@@ -43,7 +43,7 @@ CMake の中で文字列を操作する。
     string(`TIMESTAMP`_ <out-var> [<format string>] [UTC])
     string(`UUID`_ <out-var> ...)
 
-  `文字列を JSON 化する`_
+  `JSON 形式を扱う`_
     string(JSON <out-var> [ERROR_VARIABLE <error-var>]
            {`GET <JSON GET_>`_ | `TYPE <JSON TYPE_>`_ | `LENGTH <JSON LENGTH_>`_ | `REMOVE <JSON REMOVE_>`_}
            <json-string> <member|index> [<member|index> ...])
@@ -293,7 +293,7 @@ CMake の中で文字列を操作する。
     Keccak SHA-3
 
   .. versionadded:: 3.8
-    ``SHA3_*`` 系のハッシュアルゴリズムを追加した。
+    ``SHA3_*`` 系の Hash アルゴリズムを追加した。
 
 文字を変換する
 ^^^^^^^^^^^^^^
@@ -301,7 +301,7 @@ CMake の中で文字列を操作する。
 .. signature::
   string(ASCII <number> [<number> ...] <output_variable>)
 
-  全ての ``<number> ...`` を対応する ASCII 文字に変換します。
+  全ての ``<number> ...`` の文字を対応する ASCII 文字に変換します。
 
 .. signature::
   string(HEX <string> <output_variable>)
@@ -309,7 +309,7 @@ CMake の中で文字列を操作する。
   .. versionadded:: 3.18
 
   ``<string>`` にある各バイトを16進数表記に変換し、連結した16新表記の文字列を ``<output_variable>`` に格納します。
-  16進数表記の文字（``a`` から ``f``） は小文字です。
+  16進数表記の文字（``a`` から ``f``） は小文字になります。
 
 .. signature::
   string(CONFIGURE <string> <output_variable>
@@ -327,116 +327,116 @@ CMake の中で文字列を操作する。
   string(RANDOM [LENGTH <length>] [ALPHABET <alphabet>]
          [RANDOM_SEED <seed>] <output_variable>)
 
-  ``<alphabet>`` の文字種で構成される長さが ``<length>`` のランダムな文字列を生成して返します。
-  デフォルトの長さは5文字で、デフォルトの文字種は英数字（大文字と小文字）です。
+  ``<alphabet>`` の文字種で構成され、長さが ``<length>`` のランダムな文字列を生成して返します。
+  デフォルトの長さは5文字で、デフォルトの文字種は英数字（大文字と小文字の両方）です。
   ``RANDOM_SEED`` オプションを指定すると、``<seed>`` を乱数ジェネレータのシードに使用します。
 
 .. signature::
   string(TIMESTAMP <output_variable> [<format_string>] [UTC])
 
-  Write a string representation of the current date and/or time to the ``<output_variable>``.
+  現在の日付および／または時刻の文字列表現を ``<output_variable>`` に格納します。
 
-  If the command is unable to obtain a timestamp, the ``<output_variable>`` will be set to the empty string ``""``.
+  このコマンドがタイムスタンプを取得できない場合、``<output_variable>`` には空の文字列（``""``）を格納します。
 
-  The optional ``UTC`` flag requests the current date/time representation to be in Coordinated Universal Time (UTC) rather than local time.
+  ``UTC`` オプションを指定すると、現在の日付／時刻の表現が現在時刻ではなく、協定世界時（UTC）として要求します。
 
-  The optional ``<format_string>`` may contain the following format specifiers:
+  ``<format_string>`` には、次に示す書式指定子を含めることができます：
 
   ``%%``
     .. versionadded:: 3.8
 
-    A literal percent sign (%).
+    リテラルとしてのパーセント記号（``%``）を表す。
 
   ``%d``
-    The day of the current month (01-31).
+    月の初めからカウントした現在の日（``01``〜``31``）を表す。
 
   ``%H``
-    The hour on a 24-hour clock (00-23).
+    24時間制で、現在の時（``00``〜``23``）を表す。
 
   ``%I``
-    The hour on a 12-hour clock (01-12).
+    12時間制で、現在の時（``01``〜``12``）を表す。
 
   ``%j``
-    The day of the current year (001-366).
+    年の初めからカウントした日（``001``〜``366``）を表す。
 
   ``%m``
-    The month of the current year (01-12).
+    月（``01``〜``12``）を表す。
 
   ``%b``
     .. versionadded:: 3.7
 
-    Abbreviated month name (e.g. Oct).
+    月の略称（例えば Oct）を表す。
 
   ``%B``
     .. versionadded:: 3.10
 
-    Full month name (e.g. October).
+    月の完全な名前（例えば October）を表す。
 
   ``%M``
-    The minute of the current hour (00-59).
+    現在の分（``01``〜``59``）を表す。
 
   ``%s``
     .. versionadded:: 3.6
 
-    Seconds since midnight (UTC) 1-Jan-1970 (UNIX time).
+    1970年1月1日の午前0時（UTC）からの秒数（UNIX 時間）を表す。
 
   ``%S``
-    The second of the current minute.  60 represents a leap second. (00-60)
+    現在の秒（``01``〜``60``）を表す。``60`` は閏秒を表す。
 
   ``%f``
     .. versionadded:: 3.23
 
-    The microsecond of the current second (000000-999999).
+    現在のマイクロ秒（``000000``〜``999999``）を表す。
 
   ``%U``
-    The week number of the current year (00-53).
+    年の初めからカウントした週番号（``00``〜``53``）を表す。
 
   ``%V``
     .. versionadded:: 3.22
 
-    The ISO 8601 week number of the current year (01-53).
+    ISO 8601 形式での年の始めからカウントした週番号（``01``〜``53``）を表す。
 
   ``%w``
-    The day of the current week. 0 is Sunday. (0-6)
+    週の初めからカウントした日（``0``〜``6``）を表す。日曜日が ``0``。
 
   ``%a``
     .. versionadded:: 3.7
 
-    Abbreviated weekday name (e.g. Fri).
+    曜日の略称（例えば Fri）を表す。
 
   ``%A``
     .. versionadded:: 3.10
 
-    Full weekday name (e.g. Friday).
+    曜日の完全な名前（例えば Friday）を表す。
 
   ``%y``
-    The last two digits of the current year (00-99).
+    西暦の下2桁（``00``〜``99``）を表す。
 
   ``%Y``
-    The current year.
+    現在の年を表す。
 
   ``%z``
     .. versionadded:: 3.26
 
-    The offset of the time zone from UTC, in hours and minutes, with format ``+hhmm`` or ``-hhmm``.
+    UTC からのタイムゾーンのオフセット値（時と分ごと）を表す。形式は ``+hhmm`` または ``-hhmm``。
 
   ``%Z``
     .. versionadded:: 3.26
 
-    The time zone name.
+    タイムゾーンの名前。
 
-  Unknown format specifiers will be ignored and copied to the output as-is.
+  これ以外の不明な書式指定子は無視され、そのまま ``<output_variable>`` に格納します。
 
-  If no explicit ``<format_string>`` is given, it will default to:
+  明示的に ``<format_string>`` を指定しない場合、デフォルトの文字列表現は次のとおりです：
 
   ::
 
-    %Y-%m-%dT%H:%M:%S    for local time.
-    %Y-%m-%dT%H:%M:%SZ   for UTC.
+    %Y-%m-%dT%H:%M:%S    現在地の時間
+    %Y-%m-%dT%H:%M:%SZ   UTC の時間
 
   .. versionadded:: 3.8
-    If the ``SOURCE_DATE_EPOCH`` environment variable is set, its value will be used instead of the current time.
-    See https://reproducible-builds.org/specs/source-date-epoch/ for details.
+    環境変数 ``SOURCE_DATE_EPOCH`` が設定されている場合、現在の時刻の代わりにその値を使用する。
+    詳細は https://reproducible-builds.org/specs/source-date-epoch/ を参照のこと。
 
 .. signature::
   string(UUID <output_variable> NAMESPACE <namespace> NAME <name>
@@ -444,51 +444,43 @@ CMake の中で文字列を操作する。
 
   .. versionadded:: 3.1
 
-  Create a universally unique identifier (aka GUID) as per RFC4122 based on the hash of the combined values of ``<namespace>`` (which itself has to be a valid UUID) and ``<name>``.
-  The hash algorithm can be either ``MD5`` (Version 3 UUID) or ``SHA1`` (Version 5 UUID).
-  A UUID has the format ``xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`` where each ``x`` represents a lower case hexadecimal character.
-  Where required, an uppercase representation can be requested with the optional ``UPPER`` flag.
+  UUID として有効な ``<namespace>`` と ``<name>`` の値を組み合わせて計算したハッシュ値に基づいて、RFC4122 に従い、汎用一意別子（別名は GUID）を生成します。
+  Hash アルゴリズムは ``MD5`` (Version 3 UUID) または ``SHA1`` (Version 5 UUID) のいずれかを使用します。
+  UUID の書式は ``xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`` （``x`` は 16進形式の小文字）です。
+  ``UPPER`` オプションを指定すると16進形式の大文字を要求できます。
 
 .. _JSON:
 
-文字列を JSON 化する
-^^^^^^^^^^^^^^^^^^^^
+JSON 形式を扱う
+^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.19
 
-Functionality for querying a JSON string.
+JSON 形式の文字列をクエリするサブコマンドが追加された。
 
 .. note::
-  In each of the following JSON-related subcommands, if the optional
-  ``ERROR_VARIABLE`` argument is given, errors will be reported in
-  ``<error-variable>`` and the ``<out-var>`` will be set to
-  ``<member|index>-[<member|index>...]-NOTFOUND`` with the path elements
-  up to the point where the error occurred, or just ``NOTFOUND`` if there
-  is no relevant path.  If an error occurs but the ``ERROR_VARIABLE``
-  option is not present, a fatal error message is generated.  If no error
-  occurs, the ``<error-variable>`` will be set to ``NOTFOUND``.
+  ここにある JSON 関連のサブコマンドで、``ERROR_VARIABLE`` オプションが指定されている時、エラーは ``<error-variable>`` に格納され、``<out-var>`` にはエラーが発生した時点までのパス（関連するパスがない場合は単に ``NOTFOUND``）が付いた ``<member|index>-[<member|index>...]-NOTFOUND`` が格納される。
+  エラーが発生したが、``ERROR_VARIABLE`` オプションが指定されていない場合は、致命的なエラーになる。
+  エラーが発生しなかった場合、``<error-variable>`` には ``NOTFOUND`` が格納される。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-variable>]
          GET <json-string> <member|index> [<member|index> ...])
   :target: JSON GET
 
-  Get an element from ``<json-string>`` at the location given
-  by the list of ``<member|index>`` arguments.
-  Array and object elements will be returned as a JSON string.
-  Boolean elements will be returned as ``ON`` or ``OFF``.
-  Null elements will be returned as an empty string.
-  Number and string types will be returned as strings.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` から要素を一つ取得して ``<out-var>`` に格納します。
+  配列とオブジェクトの要素は JSON 文字列になります。
+  論理型の要素は ``ON`` または ``OFF`` のいずれかになります。
+  Null の要素は空の文字列になります。
+  数値型と文字列型の要素はすべて文字列になります。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-variable>]
          TYPE <json-string> <member|index> [<member|index> ...])
   :target: JSON TYPE
 
-  Get the type of an element in ``<json-string>`` at the location
-  given by the list of ``<member|index>`` arguments. The ``<out-var>``
-  will be set to one of ``NULL``, ``NUMBER``, ``STRING``, ``BOOLEAN``,
-  ``ARRAY``, or ``OBJECT``.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` から要素の型を一つ取得して ``<out-var>`` に格納します。
+  要素の型は ``NULL``、``NUMBER``、``STRING``、``BOOLEAN``、``ARRAY`` または ``OBJECT`` のいずれかです。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-var>]
@@ -496,47 +488,39 @@ Functionality for querying a JSON string.
          [<member|index> ...] <index>)
   :target: JSON MEMBER
 
-  Get the name of the ``<index>``-th member in ``<json-string>``
-  at the location given by the list of ``<member|index>`` arguments.
-  Requires an element of object type.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` 内で ``<index>`` 番目のメンバの名前を取得して ``<out-var>`` に格納します。
+  オブジェクト型の要素が必要になります。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-variable>]
          LENGTH <json-string> [<member|index> ...])
   :target: JSON LENGTH
 
-  Get the length of an element in ``<json-string>`` at the location
-  given by the list of ``<member|index>`` arguments.
-  Requires an element of array or object type.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` から要素の長さを取得して ``<out-var>`` に格納します。
+  配列またはオブジェクト型の要素が必要になります。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-variable>]
          REMOVE <json-string> <member|index> [<member|index> ...])
   :target: JSON REMOVE
 
-  Remove an element from ``<json-string>`` at the location
-  given by the list of ``<member|index>`` arguments. The JSON string
-  without the removed element will be stored in ``<out-var>``.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` から要素を一つ削除します。
+  任意の要素を削除した JSON 文字列を ``<out-var>`` に格納します。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-variable>]
          SET <json-string> <member|index> [<member|index> ...] <value>)
   :target: JSON SET
 
-  Set an element in ``<json-string>`` at the location
-  given by the list of ``<member|index>`` arguments to ``<value>``.
-  The contents of ``<value>`` should be valid JSON.
-  If ``<json-string>`` is an array, ``<value>`` can be appended to the end of
-  the array by using a number greater or equal to the array length as the
-  ``<member|index>`` argument.
+  ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` 内の要素の値を ``<value>`` にします。
+  ``<value>`` は有効な JSON にして下さい。
+  もし ``<json-string>`` が配列の場合、この配列のサイズ以上の数値を ``<member|index>`` で使用することで、``<value>`` を配列の末尾に追加できます。
 
 .. signature::
   string(JSON <out-var> [ERROR_VARIABLE <error-var>]
          EQUAL <json-string1> <json-string2>)
   :target: JSON EQUAL
 
-  Compare the two JSON objects given by ``<json-string1>``
-  and ``<json-string2>`` for equality.  The contents of ``<json-string1>``
-  and ``<json-string2>`` should be valid JSON.  The ``<out-var>``
-  will be set to a true value if the JSON objects are considered equal,
-  or a false value otherwise.
+  ``<json-string1>`` と ``<json-string2>`` の 2つの JSON オブジェクトが等しいかどうか比較します。
+  ``<json-string1>`` と ``<json-string2>`` は有効な JSON にして下さい。
+  これら二つの JSON オブジェクトを等しいとみなした場合、``<out-var>`` には true 値を格納し、それ以外は false 値を格納します。
