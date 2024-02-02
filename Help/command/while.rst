@@ -1,7 +1,7 @@
 while
 -----
 
-Evaluate a group of commands while a condition is true
+条件が true の間、コマンドのグループを評価する。
 
 .. code-block:: cmake
 
@@ -9,22 +9,17 @@ Evaluate a group of commands while a condition is true
     <commands>
   endwhile()
 
-All commands between while and the matching :command:`endwhile` are recorded
-without being invoked.  Once the :command:`endwhile` is evaluated, the
-recorded list of commands is invoked as long as the ``<condition>`` is true.
+この ``while`` と対になる :command:`endwhile` の間にあるコマンドは、呼び出されずに記録されます。
+``endwhile`` コマンドが評価された後、``<condition>`` が ``TRUE`` である間、記録されていた全てのコマンドが呼び出されます。
 
-The ``<condition>`` has the same syntax and is evaluated using the same logic
-as described at length for the :command:`if` command.
+``<condition>`` は、:command:`if` コマンドの場合と同じ構文 :ref:`<Condition Syntax>` をもつ条件式です。
 
-The commands :command:`break` and :command:`continue` provide means to
-escape from the normal control flow.
+:command:`break` と :command:`continue` コマンドは通常の制御フローから抜け出す手段を提供します。
 
-Per legacy, the :command:`endwhile` command admits
-an optional ``<condition>`` argument.
-If used, it must be a verbatim repeat of the argument of the opening
-``while`` command.
+従来どおり、:command:`endwhile` コマンドはオプションで ``<condition>`` を引数として受け取れます。
+その場合、最初の ``while`` コマンドの引数をそのまま繰り返すようにして下さい。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`break`
