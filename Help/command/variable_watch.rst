@@ -1,48 +1,41 @@
 variable_watch
 --------------
 
-Watch the CMake variable for change.
+CMake 変数へのアクセスを監視する。
 
 .. code-block:: cmake
 
   variable_watch(<variable> [<command>])
 
-If the specified ``<variable>`` changes and no ``<command>`` is given,
-a message will be printed to inform about the change.
+``<command>`` が指定されていない時に、``<variable>`` がアクセス（読み込みまたは書き込み）されたら、その旨を知らせるメッセージを出力します。
 
-If ``<command>`` is given, this command will be executed instead.
-The command will receive the following arguments:
+``<command>`` を指定すると、メッセージを出力する代わりに、その ``<command>`` を実行します。
+``<command>`` は次に示す引数を受け取ります：
 ``COMMAND(<variable> <access> <value> <current_list_file> <stack>)``
 
 ``<variable>``
- Name of the variable being accessed.
+ 監視している変数名。
 
 ``<access>``
- One of ``READ_ACCESS``, ``UNKNOWN_READ_ACCESS``, ``MODIFIED_ACCESS``,
- ``UNKNOWN_MODIFIED_ACCESS``, or ``REMOVED_ACCESS``.  The ``UNKNOWN_``
- values are only used when the variable has never been set.  Once set,
- they are never used again during the same CMake run, even if the
- variable is later unset.
+ ``READ_ACCESS``、``UNKNOWN_READ_ACCESS``、``MODIFIED_ACCESS``、``UNKNOWN_MODIFIED_ACCESS``、または ``REMOVED_ACCESS`` のいずれか。
+ ``UNKNOWN_`` 系は ``<variable>`` に一度も値がセットされていない場合にのみ指定できる。
+ これを指定したあと、``<variable>`` が :command:`unset` されたら同じ CMake の実行プロセス中は監視しなくなる。
 
 ``<value>``
- The value of the variable.  On a modification, this is the new
- (modified) value of the variable.  On removal, the value is empty.
+ ``<variable>`` の値。
+ ``<variable>`` が変更されたら、この値が ``<variable>`` の新しい値になる。
+ ``<variable>`` が削除されたら、この値は空である。
 
 ``<current_list_file>``
- Full path to the file doing the access.
+ 変数を参照したファイルの絶対パス。
 
 ``<stack>``
- List of absolute paths of all files currently on the stack of file
- inclusion, with the bottom-most file first and the currently
- processed file (that is, ``current_list_file``) last.
+ 現在スタックにプッシュされている全てのファイルの絶対パスを要素した :ref:`リスト <CMake Language Lists>`。
+ このリストの先頭の要素は最下位のファイルで、最後の要素は現在処理中のファイル（すなわち ``current_list_file``）である。
 
-Note that for some accesses such as :command:`list(APPEND)`, the watcher
-is executed twice, first with a read access and then with a write one.
-Also note that an :command:`if(DEFINED)` query on the variable does not
-register as an access and the watcher is not executed.
+:command:`list(APPEND)` コマンドような一部の処理では、この ``variable_watch`` コマンドが二回呼び出されるので注意して下さい（一回目は読み取りの監視、二回目は書き込みの監視です）。
+また、``<variable>`` に対して :command:`if(DEFINED)` コマンドを実行しても、アクセスされたとはみなされず、この ``variable_watch`` コマンドが実行されない点にも注意して下さい。
 
-Only non-cache variables can be watched using this command.  Access to
-cache variables is never watched.  However, the existence of a cache
-variable ``var`` causes accesses to the non-cache variable ``var`` to
-not use the ``UNKNOWN_`` prefix, even if a non-cache variable ``var``
-has never existed.
+このコマンドで監視できる変数は、通常の変数だけです。
+キャッシュ変数のアクセスは監視しません。
+なお、キャッシュ変数 ``var`` が存在する一方で、通常変数の ``var`` が存在していない場合に、通常変数の ``var`` へのアクセスは ``UNKNOWN_`` 系の ``<acess>`` には扱われません。
