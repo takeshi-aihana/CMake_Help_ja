@@ -459,8 +459,8 @@ JSON 形式を扱う
 JSON 形式の文字列をクエリするサブコマンドが追加された。
 
 .. note::
-  ここにある JSON 関連のサブコマンドで、``ERROR_VARIABLE`` オプションが指定されている時、エラーは ``<error-variable>`` に格納され、``<out-var>`` にはエラーが発生した時点までのパス（関連するパスがない場合は単に ``NOTFOUND``）が付いた ``<member|index>-[<member|index>...]-NOTFOUND`` が格納される。
-  エラーが発生したが、``ERROR_VARIABLE`` オプションが指定されていない場合は、致命的なエラーになる。
+  ここにある JSON 関連のサブコマンドを呼び出す際に ``ERROR_VARIABLE`` オプションが指定されている場合、エラーは ``<error-variable>`` に格納され、``<out-var>`` にはエラーが発生した時点までのパス（関連するパスがない場合は単に ``NOTFOUND``）が付いた ``<member|index>-[<member|index>...]-NOTFOUND`` が格納される。
+  エラーが発生したが、``ERROR_VARIABLE`` オプションが指定されていない場合は致命的なエラーになる。
   エラーが発生しなかった場合、``<error-variable>`` には ``NOTFOUND`` が格納される。
 
 .. signature::
@@ -513,7 +513,7 @@ JSON 形式の文字列をクエリするサブコマンドが追加された。
   :target: JSON SET
 
   ``<member|index> ...`` のリストで指定された場所にある ``<json-string>`` 内の要素の値を ``<value>`` にします。
-  ``<value>`` は有効な JSON にして下さい。
+  ``<value>`` には有効な JSON オブジェクトを指定して下さい。
   もし ``<json-string>`` が配列の場合、この配列のサイズ以上の数値を ``<member|index>`` で使用することで、``<value>`` を配列の末尾に追加できます。
 
 .. signature::
@@ -522,5 +522,5 @@ JSON 形式の文字列をクエリするサブコマンドが追加された。
   :target: JSON EQUAL
 
   ``<json-string1>`` と ``<json-string2>`` の 2つの JSON オブジェクトが等しいかどうか比較します。
-  ``<json-string1>`` と ``<json-string2>`` は有効な JSON にして下さい。
+  ``<json-string1>`` と ``<json-string2>`` には有効な JSON オブジェクトを指定して下さい。
   これら二つの JSON オブジェクトを等しいとみなした場合、``<out-var>`` には true 値を格納し、それ以外は false 値を格納します。

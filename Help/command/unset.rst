@@ -1,41 +1,36 @@
 unset
 -----
 
-Unset a variable, cache variable, or environment variable.
+通常の変数やキャッシュ変数、環境変数にセットされた値を解除する。
 
-Unset Normal Variable or Cache Entry
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+通常の変数の値やキャッシュ・エントリを解除する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   unset(<variable> [CACHE | PARENT_SCOPE])
 
-Removes a normal variable from the current scope, causing it
-to become undefined.  If ``CACHE`` is present, then a cache variable
-is removed instead of a normal variable.
+現在のスコープから通常の変数の ``<variable>`` を削除して、未定義の状態にします。
+``CACHE`` オプションを指定した場合は、通常の変数の代わりに、キャシュ変数の ``<variable>`` が指すキャシュ・エントリを削除します。
 
-If ``PARENT_SCOPE`` is present then the variable is removed from the scope
-above the current scope.  See the same option in the :command:`set` command
-for further details.
+``PARENT_SCOPE`` オプションを指定した場合、対象となるスコープは現在よりも上のスコープの変数を削除します。
+スコープの詳細は :command:`set` コマンドを参照して下さい。
 
 .. include:: UNSET_NOTE.txt
 
-Unset Environment Variable
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+環境変数の値を解除する
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   unset(ENV{<variable>})
 
-Removes ``<variable>`` from the currently available
-:manual:`Environment Variables <cmake-env-variables(7)>`.
-Subsequent calls of ``$ENV{<variable>}`` will return the empty string.
+現在利用できる :manual:`環境変数 <cmake-env-variables(7)>` から ``<variable>`` を削除します。
+このコマンドを実行したあとに ``$ENV{<variable>}`` を呼び出すと、空の文字列を返します。
 
-This command affects only the current CMake process, not the process
-from which CMake was called, nor the system environment at large,
-nor the environment of subsequent build or test processes.
+このコマンドの呼び出しは、現在実行中の CMake プロセスにのみ作用し、CMake の呼び出し元やプラットフォームの環境、これ以降の別のプロセス（ビルドやテスト）には影響しません。
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`set`
