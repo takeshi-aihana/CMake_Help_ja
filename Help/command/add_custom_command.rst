@@ -42,7 +42,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
   最初の出力コマンドに ``COMMAND`` と ``DEPENDS`` オプションの値を追加する。
   このコマンドを事前に呼び出しておいて、既に出力先のファイルが存在している必要がある。
 
-  以前の呼び出しで :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使って出力先を指定していた場合は、今回の呼び出しでも同じ出力先にすること。
+  以前の呼び出しで「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使って出力先を指定していた場合は、今回の呼び出しでも同じ出力先にすること。
   この場合、定義した独自コマンドと依存関係は全てのビルド構成に適用される。
 
   このオプションを指定した場合、現在は ``COMMENT``、``MAIN_DEPENDENCY``、``WORKING_DIRECTORY`` のオプションを無視する（将来的に変更される可能性あり）。
@@ -63,7 +63,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
   :ref:`Makefile Generators` の場合は ``make clean`` 時に ``BYPRODUCTS`` と :prop_sf:`GENERATED` プロパティ付きのファイルを削除する。
 
   .. versionadded:: 3.20
-    ``BYPRODUCTS`` オプションの引数は、制限された一連の :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使用できるようになった。
+    ``BYPRODUCTS`` オプションの引数は、制限された一連の「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使用できるようになった。
     ただし :ref:`Target-dependent expressions <Target-Dependent Queries>` は利用できない。
 
 ``COMMAND``
