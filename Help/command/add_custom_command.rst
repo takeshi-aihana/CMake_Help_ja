@@ -1,14 +1,14 @@
 add_custom_command
 ------------------
 
-Add a custom build rule to the generated build system.
+ビルドシステムに独自のビルド・ルールを追加する。
 
-There are two main signatures for ``add_custom_command``.
+この ``add_custom_command`` コマンドの目的は二つあります。
 
-Generating Files
-^^^^^^^^^^^^^^^^
+ファイルを生成する
+^^^^^^^^^^^^^^^^^^
 
-The first signature is for adding a custom command to produce an output:
+CMake 実行時に「新たなファイルを出力する」コマンドを追加します：
 
 .. code-block:: cmake
 
@@ -29,124 +29,81 @@ The first signature is for adding a custom command to produce an output:
                      [COMMAND_EXPAND_LISTS]
                      [DEPENDS_EXPLICIT_ONLY])
 
-This defines a command to generate specified ``OUTPUT`` file(s).
-A target created in the same directory (``CMakeLists.txt`` file)
-that specifies any output of the custom command as a source file
-is given a rule to generate the file using the command at build time.
+これは ``OUTPUT`` オプションに指定したファイルを、ビルド時に出力する独自コマンド ``COMMAND`` を定義します。
+この ``add_custom_command`` を呼び出している ``CMakeLists.txt`` と同じディレクトリに生成されるターゲットに、ファイルを出力するためのルールが追加されます。
 
-Do not list the output in more than one independent target that
-may build in parallel or the instances of the rule may conflict.
-Instead, use the :command:`add_custom_target` command to drive the
-command and make the other targets depend on that one.  See the
-`Example: Generating Files for Multiple Targets`_ below.
+並列ビルドにより、このルールが他と衝突する可能性があるので、独立した複数のターゲットで同じ ``OUTPUT`` を指定しないようにして下さい。
+そのような場合は :command:`add_custom_target` コマンドを使って、複数のターゲットの間で依存関係を明示して、個別に出力するにようにして下さい。
+詳細は `Example: Generating Files for Multiple Targets`_ のサンプルを参照して下さい。
 
-The options are:
+このモードのオプションは次のとおりです：
 
 ``APPEND``
-  Append the ``COMMAND`` and ``DEPENDS`` option values to the custom
-  command for the first output specified.  There must have already
-  been a previous call to this command with the same output.
+  最初の出力コマンドに ``COMMAND`` と ``DEPENDS`` オプションの値を追加する。
+  このコマンドを事前に呼び出しておいて、既に出力先のファイルが存在している必要がある。
 
-  If the previous call specified the output via a generator expression,
-  the output specified by the current call must match in at least one
-  configuration after evaluating generator expressions.  In this case,
-  the appended commands and dependencies apply to all configurations.
+  以前の呼び出しで :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使って出力先を指定していた場合は、今回の呼び出しでも同じ出力先にすること。
+  この場合、定義した独自コマンドと依存関係は全てのビルド構成に適用される。
 
-  The ``COMMENT``, ``MAIN_DEPENDENCY``, and ``WORKING_DIRECTORY``
-  options are currently ignored when APPEND is given, but may be
-  used in the future.
+  このオプションを指定した場合、現在は ``COMMENT``、``MAIN_DEPENDENCY``、``WORKING_DIRECTORY`` のオプションを無視する（将来的に変更される可能性あり）。
 
 ``BYPRODUCTS``
   .. versionadded:: 3.2
 
-  Specify the files the command is expected to produce but whose
-  modification time may or may not be newer than the dependencies.
-  If a byproduct name is a relative path it will be interpreted
-  relative to the build tree directory corresponding to the
-  current source directory.
-  Each byproduct file will be marked with the :prop_sf:`GENERATED`
-  source file property automatically.
+  この ``add_custom_command`` によって出力されるファイルの変更時刻が、依存関係によって新しい場合と古い場合とでバラバラになることがある。
+  このオプションで指定した ``files ...`` が相対パスの場合は、:variable:`CMAKE_CURRENT_SOURCE_DIR` をベース・ディレクトリとして絶対パスを計算する。
+  このオプションで指定した ``files ...`` には :prop_sf:`GENERATED` というソース・ファイルのプロパティが自動的に付与される。
 
-  *See policy* :policy:`CMP0058` *for the motivation behind this feature.*
+  *この機能の背景については* :policy:`CMP0058` *ポリシーを参照して下さい* 。
 
-  Explicit specification of byproducts is supported by the
-  :generator:`Ninja` generator to tell the ``ninja`` build tool
-  how to regenerate byproducts when they are missing.  It is
-  also useful when other build rules (e.g. custom commands)
-  depend on the byproducts.  Ninja requires a build rule for any
-  generated file on which another rule depends even if there are
-  order-only dependencies to ensure the byproducts will be
-  available before their dependents build.
+  このオプションによる ``files ...`` の明示的な指定は :generator:`Ninja` ジェネレータでサポートされており、``files ...`` が存在していない場合の生成方法をジェネレータに指示する。
+  他のビルド・ルールが ``files ...`` に依存している場合に便利である。
+  Ninja ジェネレータは、依存ファイルがビルドされる前に ``files ...`` が確実に利用できるようにするために、順序のみの依存関係がある場合でも、別のルールが依存する生成ファイルに対してビルド ルールが必要である（FIXME: 意味不明）
 
-  The :ref:`Makefile Generators` will remove ``BYPRODUCTS`` and other
-  :prop_sf:`GENERATED` files during ``make clean``.
+  :ref:`Makefile Generators` の場合は ``make clean`` 時に ``BYPRODUCTS`` と :prop_sf:`GENERATED` プロパティ付きのファイルを削除する。
 
   .. versionadded:: 3.20
-    Arguments to ``BYPRODUCTS`` may use a restricted set of
-    :manual:`generator expressions <cmake-generator-expressions(7)>`.
-    :ref:`Target-dependent expressions <Target-Dependent Queries>` are not
-    permitted.
+    ``BYPRODUCTS`` オプションの引数は、制限された一連の :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使用できるようになった。
+    ただし :ref:`Target-dependent expressions <Target-Dependent Queries>` は利用できない。
 
 ``COMMAND``
   Specify the command-line(s) to execute at build time.
-  If more than one ``COMMAND`` is specified they will be executed in order,
-  but *not* necessarily composed into a stateful shell or batch script.
-  (To run a full script, use the :command:`configure_file` command or the
-  :command:`file(GENERATE)` command to create it, and then specify
-  a ``COMMAND`` to launch it.)
-  The optional ``ARGS`` argument is for backward compatibility and
-  will be ignored.
+  If more than one ``COMMAND`` is specified they will be executed in order, but *not* necessarily composed into a stateful shell or batch script.
+  (To run a full script, use the :command:`configure_file` command or the :command:`file(GENERATE)` command to create it, and then specify a ``COMMAND`` to launch it.)
+  The optional ``ARGS`` argument is for backward compatibility and will be ignored.
 
-  If ``COMMAND`` specifies an executable target name (created by the
-  :command:`add_executable` command), it will automatically be replaced
-  by the location of the executable created at build time if either of
-  the following is true:
+  If ``COMMAND`` specifies an executable target name (created by the :command:`add_executable` command), it will automatically be replaced by the location of the executable created at build time if either of the following is true:
 
-  * The target is not being cross-compiled (i.e. the
-    :variable:`CMAKE_CROSSCOMPILING` variable is not set to true).
+  * The target is not being cross-compiled (i.e. the :variable:`CMAKE_CROSSCOMPILING` variable is not set to true).
   * .. versionadded:: 3.6
-      The target is being cross-compiled and an emulator is provided (i.e.
-      its :prop_tgt:`CROSSCOMPILING_EMULATOR` target property is set).
-      In this case, the contents of :prop_tgt:`CROSSCOMPILING_EMULATOR` will be
-      prepended to the command before the location of the target executable.
+      The target is being cross-compiled and an emulator is provided (i.e. its :prop_tgt:`CROSSCOMPILING_EMULATOR` target property is set).
+      In this case, the contents of :prop_tgt:`CROSSCOMPILING_EMULATOR` will be prepended to the command before the location of the target executable.
 
-  If neither of the above conditions are met, it is assumed that the
-  command name is a program to be found on the ``PATH`` at build time.
+  If neither of the above conditions are met, it is assumed that the command name is a program to be found on the ``PATH`` at build time.
 
-  Arguments to ``COMMAND`` may use
-  :manual:`generator expressions <cmake-generator-expressions(7)>`.
-  Use the :genex:`TARGET_FILE` generator expression to refer to the location
-  of a target later in the command line (i.e. as a command argument rather
-  than as the command to execute).
+  Arguments to ``COMMAND`` may use :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  Use the :genex:`TARGET_FILE` generator expression to refer to the location of a target later in the command line (i.e. as a command argument rather than as the command to execute).
 
-  Whenever one of the following target based generator expressions are used as
-  a command to execute or is mentioned in a command argument, a target-level
-  dependency will be added automatically so that the mentioned target will be
-  built before any target using this custom command
-  (see policy :policy:`CMP0112`).
+  Whenever one of the following target based generator expressions are used as a command to execute or is mentioned in a command argument, a target-level dependency will be added automatically so that the mentioned target will be built before any target using this custom command (see policy :policy:`CMP0112`).
 
     * ``TARGET_FILE``
     * ``TARGET_LINKER_FILE``
     * ``TARGET_SONAME_FILE``
     * ``TARGET_PDB_FILE``
 
-  This target-level dependency does NOT add a file-level dependency that would
-  cause the custom command to re-run whenever the executable is recompiled.
-  List target names with the ``DEPENDS`` option to add such file-level
-  dependencies.
+  This target-level dependency does NOT add a file-level dependency that would cause the custom command to re-run whenever the executable is recompiled.
+  List target names with the ``DEPENDS`` option to add such file-level dependencies.
 
 
 ``COMMENT``
-  Display the given message before the commands are executed at
-  build time.
+  Display the given message before the commands are executed at build time.
 
   .. versionadded:: 3.26
     Arguments to ``COMMENT`` may use
     :manual:`generator expressions <cmake-generator-expressions(7)>`.
 
 ``DEPENDS``
-  Specify files on which the command depends.  Each argument is converted
-  to a dependency as follows:
+  Specify files on which the command depends.  Each argument is converted to a dependency as follows:
 
   1. If the argument is the name of a target (created by the
      :command:`add_custom_target`, :command:`add_executable`, or
@@ -478,8 +435,8 @@ is built.
 
 .. _`add_custom_command(TARGET)`:
 
-Build Events
-^^^^^^^^^^^^
+イベントのビルド
+^^^^^^^^^^^^^^^^
 
 The second signature adds a custom command to a target such as a
 library or executable.  This is useful for performing an operation
@@ -585,7 +542,7 @@ Ninja Multi-Config
   generator's cross-config capabilities. See the generator documentation
   for more information.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`add_custom_target`
