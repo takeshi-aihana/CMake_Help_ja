@@ -1,6 +1,5 @@
-.. |more_see_also| replace:: See the :manual:`cmake-buildsystem(7)` manual
-   for more on defining buildsystem properties.
+.. |more_see_also| replace:: ビルドシステムのプロパティについて詳細は :manual:`cmake-buildsystem(7)` を参照して下さい。
 
-Arguments to |command_name| may use generator expressions
-with the syntax ``$<...>``. See the :manual:`cmake-generator-expressions(7)`
-manual for available expressions.  |more_see_also|
+この |command_name| コマンドに渡す ``<definition> ...`` には ``$<...>`` の :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できます。
+利用できるジェネレータ式にについては :manual:`cmake-generator-expressions(7)` を参照して下さい。
+|more_see_also|

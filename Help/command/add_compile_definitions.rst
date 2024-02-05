@@ -3,31 +3,28 @@ add_compile_definitions
 
 .. versionadded:: 3.12
 
-Add preprocessor definitions to the compilation of source files.
+プリプロセッサの定義をソース・ファイルのコンパイルに追加する。
 
 .. code-block:: cmake
 
   add_compile_definitions(<definition> ...)
 
-Adds preprocessor definitions to the compiler command line.
+プリプロセッサの定義の ``<definition> ...`` をコンパイラのコマンドラインに追加します。
 
-The preprocessor definitions are added to the :prop_dir:`COMPILE_DEFINITIONS`
-directory property for the current ``CMakeLists`` file. They are also added to
-the :prop_tgt:`COMPILE_DEFINITIONS` target property for each target in the
-current ``CMakeLists`` file.
+現在の ``CMakeLists.txt`` ファイルの :prop_dir:`COMPILE_DEFINITIONS` というディレクトリ・プロパティに ``<definition> ...`` を追加します。
+また、現在の ``CMakeLists.txt`` ファイルにある全てのビルド・ターゲットの :prop_tgt:`COMPILE_DEFINITIONS` というターゲット・プロパティにも ``<definition> ...`` を追加します。
 
-Definitions are specified using the syntax ``VAR`` or ``VAR=value``.
-Function-style definitions are not supported. CMake will automatically
-escape the value correctly for the native build system (note that CMake
-language syntax may require escapes to specify some values).
+プリプロセッサの定義は、``VAR`` または ``VAR=value`` のような構文にして下さい。
+関数スタイルの定義はサポートしていません。
+CMake は、ネイティブのビルドシステムに対してプリプロセッサの定義を自動的にエスケープします（CMake 言語の構文は、一部のプリプロセッサ定義を扱う際にエスケープが必要になる場合があるので注意して下さい）。
 
 .. versionadded:: 3.26
-  Any leading ``-D`` on an item will be removed.
+  プリプロセッサ定義の先頭にある ``-D`` は追加せずに削除するようになった。
 
 .. |command_name| replace:: ``add_compile_definitions``
 .. include:: GENEX_NOTE.txt
 
-See Also
+参考情報
 ^^^^^^^^
 
-* The command :command:`target_compile_definitions` adds target-specific definitions.
+* :command:`target_compile_definitions` コマンドはターゲット（アーキテクチャ）専用の定義を追加する。
