@@ -1,34 +1,32 @@
 add_compile_options
 -------------------
 
-Add options to the compilation of source files.
+いろいろなオプションをソース・ファイルのコンパイルに追加する。
 
 .. code-block:: cmake
 
   add_compile_options(<option> ...)
 
-Adds options to the :prop_dir:`COMPILE_OPTIONS` directory property.
-These options are used when compiling targets from the current
-directory and below.
+``<option> ...`` を :prop_dir:`COMPILE_OPTIONS` というディレクトリ・プロパティに追加します。
+これにより、オプションは現在のディレクトリとその配下でターゲットをコンパイルする際に使用されます。
 
 .. note::
 
-  These options are not used when linking.
-  See the :command:`add_link_options` command for that.
+  これらのオプションはターゲットのリンク時には使われない。
+  これについては :command:`add_link_options` コマンドを参照のこと。
 
-Arguments
-^^^^^^^^^
+引数
+^^^^
 
 .. |command_name| replace:: ``add_compile_options``
 .. include:: GENEX_NOTE.txt
 
 .. include:: OPTIONS_SHELL.txt
 
-Example
-^^^^^^^
+サンプル
+^^^^^^^^
 
-Since different compilers support different options, a typical use of
-this command is in a compiler-specific conditional clause:
+コンパイラごとにサポートするオプションが異なるため、次のように、このコマンドはコンパイラ固有の条件ブロックで使用するのが一般的です：
 
 .. code-block:: cmake
 
@@ -40,28 +38,22 @@ this command is in a compiler-specific conditional clause:
       add_compile_options(-Wall -Wextra -Wpedantic)
   endif()
 
-To set per-language options, use the :genex:`$<COMPILE_LANGUAGE>`
-or :genex:`$<COMPILE_LANGUAGE:languages>` generator expressions.
+プログラミング言語ごとにコンパイラのオプションを指定する場合は、:genex:`$<COMPILE_LANGUAGE>` や :genex:`$<COMPILE_LANGUAGE:languages>` などの :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を使って下さい。
 
-See Also
+参考情報
 ^^^^^^^^
 
-* This command can be used to add any options. However, for
-  adding preprocessor definitions and include directories it is recommended
-  to use the more specific commands :command:`add_compile_definitions`
-  and :command:`include_directories`.
+* このコマンドを使って任意のコンパイラ・オプションを追加できる。
+  ただし、プリプロセッサの定義を追加したディレクトリをインクルードする場合は、さらに特化したコマンドである :command:`add_compile_definitions` と :command:`include_directories` を使うことを推奨している。
 
-* The command :command:`target_compile_options` adds target-specific options.
+* :command:`target_compile_options` コマンドはターゲット（アーキテクチャ）専用のオプションを追加する。
 
-* This command adds compile options for all languages.
-  Use the :genex:`COMPILE_LANGUAGE` generator expression to specify
-  per-language compile options.
+* このコマンドは全てのプログラミング言語に共通なコンパイラ・オプションを追加する。
+  プログラミング言語ごとのコンパイラ・オプションを指定する場合は :genex:`COMPILE_LANGUAGE` というジェネレータ式を使うこと。
 
-* The source file property :prop_sf:`COMPILE_OPTIONS` adds options to one
-  source file.
+* ソース・ファイルのプロパティ :prop_sf:`COMPILE_OPTIONS` は一個のソース・ファイルにオプションを追加する。
 
-* :command:`add_link_options` adds options for linking.
+* :command:`add_link_options` コマンドはリンクのオプションを追加する。
 
-* :variable:`CMAKE_<LANG>_FLAGS` and :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>`
-  add language-wide flags passed to all invocations of the compiler.
-  This includes invocations that drive compiling and those that drive linking.
+* CMake 変数の :variable:`CMAKE_<LANG>_FLAGS` と :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>` は、コンパイラのすべての呼び出しに渡すプログラミング言語ごとのフラグを追加する。
+  これにはコンパイルとリンクの両方のステージが含まれる。

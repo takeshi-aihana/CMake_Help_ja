@@ -1,5 +1,5 @@
 .. |more_see_also| replace:: ビルドシステムのプロパティについて詳細は :manual:`cmake-buildsystem(7)` を参照して下さい。
 
-この |command_name| コマンドに渡す ``<definition> ...`` には ``$<...>`` の :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できます。
+この |command_name| コマンドに渡す引数には ``$<...>`` の :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できます。
 利用できるジェネレータ式にについては :manual:`cmake-generator-expressions(7)` を参照して下さい。
 |more_see_also|
