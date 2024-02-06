@@ -191,21 +191,21 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 ``USES_TERMINAL``
   .. versionadded:: 3.2
 
-  The command will be given direct access to the terminal if possible.
-  With the :generator:`Ninja` generator, this places the command in the ``console`` :prop_gbl:`pool <JOB_POOLS>`.
+  ``COMMAND`` のコマンドラインは、可能であれば、端末（``console``）に直接アクセスできる。
+  これにより :generator:`Ninja` ジェネレータは、コマンドを ``console`` の  :prop_gbl:`JOB_POOLS` に配置できる。
 
 ``VERBATIM``
-  All arguments to the commands will be escaped properly for the build tool so that the invoked command receives each argument unchanged.
-  Note that one level of escapes is still used by the CMake language processor before add_custom_command even sees the arguments.
-  Use of ``VERBATIM`` is recommended as it enables correct behavior.
-  When ``VERBATIM`` is not given the behavior is platform specific because there is no protection of tool-specific special characters.
+  ``COMMAND`` のコマンドラインに対するすべての引数 ``args1 args2 ...`` がビルド・ツールのために適切にエスケープされるので、呼び出されるコマンドラインは加工されていない「素」の引数を受け取れる。
+  ただし、この ``add_custom_command`` コマンドが引数を受け取るよりも前に :manual:`CMake language <cmake-language(7)>` のプリプロセッサによって一段目のエスケープが解釈されている点に注意すること。
+  正しく解釈するためには、この ``VERBATIM`` オプションの使用が推奨されている。
+  この ``VERBATIM`` オプションを指定しない場合、引数を解釈する結果は CMake を実行するプラットフォームに依存する。
 
 ``WORKING_DIRECTORY``
-  Execute the command with the given current working directory.
-  If it is a relative path it will be interpreted relative to the build tree directory corresponding to the current source directory.
+  ``COMMAND`` のコマンドラインを ``dir`` のディレクトリで実行する。
+  ``dir`` に相対パスを指定すると、:variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとした絶対パスとして解釈される。
 
   .. versionadded:: 3.13
-    Arguments to ``WORKING_DIRECTORY`` may use :manual:`generator expressions <cmake-generator-expressions(7)>`.
+    ``WORKING_DIRECTORY`` オプションに渡す引数に :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できるようになった。
 
 ``DEPFILE``
   .. versionadded:: 3.7
