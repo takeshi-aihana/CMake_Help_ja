@@ -267,7 +267,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 
   上記以外のジェネレータで、 この ``DEPFILE`` オプションを使うとエラーになる。
 
-  ``depfile`` を相対パスで指定すると :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとして解釈され、さらに ``depfile`` の中に記述した相対パスも :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとしてパスを計算する。
+  ``depfile`` を相対パスで指定すると :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとして解釈され、さらに ``depfile`` の中の ``pathname`` などに記述した相対パスも :variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとしてパスを計算する。
   :policy:`CMP0116` のポリシーも参照のこと（このオプションは :ref:`Makefile Generators` や :ref:`Visual Studio Generators`、そして :generator:`Xcode` ジェネレータに対して常に ``NEW`` の機能として扱われる）。
 
 ``DEPENDS_EXPLICIT_ONLY``
@@ -301,7 +301,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
   add_library(myLib out.c)
 
 ``someTool`` を実行し ``out.c`` を生成するコマンドラインを ``add_custom_command`` で追加し、ライブラリの一部としてそのファイルをコンパイルしています。
-これは、``in.txt`` ファイルが変更されるたびに再実行します。
+このコマンドラインは ``in.txt`` ファイルが変更されるたびに実行されます。
 
 .. versionadded:: 3.20
   「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使って、ビルド構成ごとに出力を指定できるようになった。
@@ -360,7 +360,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 .. _`add_custom_command(TARGET)`:
 
 いろいろなイベントを追加する
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 二つ目は、ライブラリや実行形式といったターゲットに「独自（*Custom*）」コマンドを追加します。
 これはターゲットをビルドする前後で何か処理したい場合に便利です。
