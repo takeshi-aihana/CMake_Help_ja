@@ -393,7 +393,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
   ソース・ファイルがコンパイルされた後、またはバイナリにリンクする前、あるいは静的ライブラリをアーカイブする前に、定義した独自コマンドを実行する。
   これは、 :command:`add_custom_target` で定義したターゲットでは指定できない。
 ``POST_BUILD``
-  ターゲット内の他の全てのルールが実行された後に、定義した独自コマンドを実行する。
+  ターゲット内にある他のルールが全て実行された後に、定義した独自コマンドを実行する。
 
 Projects should always specify one of the above three keywords when using the ``TARGET`` form.
 For backward compatibility reasons, ``POST_BUILD`` is assumed if no such keyword is given, but projects should explicitly provide one of the keywords to make clear the behavior they expect.
