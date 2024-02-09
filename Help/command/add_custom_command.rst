@@ -363,7 +363,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 二つ目は、ライブラリや実行形式といったターゲットに「独自（*Custom*）」コマンドを定義します。
-これはターゲットをビルドする前後で何か処理したい場合に便利です。
+これはターゲットをビルドする前後で何か処理する「イベント」を追加したい場合に便利です。
 ここで定義した独自コマンドはターゲットの一部となり、ターゲットをビルドする時にだけ実行されます。
 ターゲットが既に存在している場合、この独自コマンドは実行されません。
 
@@ -382,7 +382,7 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 この ``add_custom_command`` は、``<target>`` のビルドに関連付けられる新しい独自コマンドを定義します。
 ``<target>`` には現在のディレクトリの ``CMakeLists.txt`` でビルドされるターゲットを指定して下さい（他のディレクトリにあるターゲットは指定できません）。
 
-定義した独自コマンドがいつ実行されるかは、次のどれかのサブオプションが指定されているかによって決まります：
+定義した独自コマンドがいつ実行されるかは、次のサブオプションのどれが指定されているかによって決まります：
 
 ``PRE_BUILD``
   このサブオプションには :ref:`Visual Studio Generators` 専用の動作が含まれている。
@@ -395,23 +395,23 @@ CMake 実行時に「新たなファイルを出力する」コマンドを追�
 ``POST_BUILD``
   ターゲット内にある他のルールが全て実行された後に、定義した独自コマンドを実行する。
 
-Projects should always specify one of the above three keywords when using the ``TARGET`` form.
-For backward compatibility reasons, ``POST_BUILD`` is assumed if no such keyword is given, but projects should explicitly provide one of the keywords to make clear the behavior they expect.
+``TARGET`` オプションを指定する際は、常に上記のサブオプションのいずれかを指定して下さい。
+上記のサブオプションを指定しない場合、下位互換性の理由から ``POST_BUILD`` が指定されたものとみなしますが、期待する動作を明確にするために上記のサブオプションを明示的に指定するようにして下さい。
 
 .. note::
-  Because generator expressions can be used in custom commands, it is possible to define ``COMMAND`` lines or whole custom commands which evaluate to empty strings for certain configurations.
-  For **Visual Studio 12 2013 (and newer)** generators these command lines or custom commands will be omitted for the specific configuration and no "empty-string-command" will be added.
+  独自コマンドでは「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を利用できるので、特定のビルド構成では「意図的」に空の文字列になる ``COMMAND`` オプションのコマンドラインや独自コマンドが定義できる。
+  一方、 **Visual Studio 12 2013 以上** のジェネレータの場合、特定のビルド構成では ``COMMAND`` のコマンドラインや独自コマンドが省略されてしまうので、このような意図的な空の文字列は追加されない。
 
-  This allows to add individual build events for every configuration.
+  これにより、ビルド構成ごとに独自のコマンドを追加できる。
 
 .. versionadded:: 3.21
-  Support for target-dependent generator expressions.
+  ターゲット依存のジェネレータ式をサポートするようになった。
 
-例：イベントを追加する
-^^^^^^^^^^^^^^^^^^^^^^
+例：リンク後にイベントを追加する
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A ``POST_BUILD`` event may be used to post-process a binary after linking.
-For example, the code:
+``POST_BUILD`` サブオプションは、リンクした後の実行形式の後処理で利用できます。
+たとえば、次のコードは：
 
 .. code-block:: cmake
 
@@ -422,12 +422,11 @@ For example, the code:
                        -o "$<TARGET_FILE:myExe>.hash"
     VERBATIM)
 
-will run ``someHasher`` to produce a ``.hash`` file next to the executable
-after linking.
+リンク後に ``someHasher`` を実行して ``.hash`` ファイルを生成する「イベント」を ``add_custom_command`` で追加しています。
 
 .. versionadded:: 3.20
-  One may use generator expressions to specify per-configuration byproducts.
-  For example, the code:
+  「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使用して、ビルド構成ごとの出力を指定できる。
+  たとえば、次のコードは：
 
   .. code-block:: cmake
 
@@ -440,18 +439,16 @@ after linking.
       VERBATIM)
     add_executable(myExe myExe.c "myPlugin-hash-$<CONFIG>.c")
 
-  will run ``someHasher`` after linking ``myPlugin``, e.g. to produce a ``.c``
-  file containing code to check the hash of ``myPlugin`` that the ``myExe``
-  executable can use to verify it before loading.
+  ``myPlugin`` をリンクした後に ``someHaher`` を実行して、``myPlugin`` のハッシュ値をチェックするコードが記載された ``.c`` ファイルを出力する。
+  これにより、そのあとにビルドする実行形式 ``myExe`` はハッシュ値を検証できる。
 
 Ninja Multi-Config
 ^^^^^^^^^^^^^^^^^^
 
 .. versionadded:: 3.20
 
-  ``add_custom_command`` supports the :generator:`Ninja Multi-Config`
-  generator's cross-config capabilities. See the generator documentation
-  for more information.
+  ``add_custom_command`` コマンドが :generator:`Ninja Multi-Config` ジェネレータの cross-config の機能をサポートするにようなった。
+  詳細は、このジェネレータのドキュメントを参照のこと。
 
 参考情報
 ^^^^^^^^
