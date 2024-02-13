@@ -91,72 +91,57 @@ add_custom_target
   They will be brought up to date when the target is built.
 
   .. versionchanged:: 3.16
-    A target-level dependency is added if any dependency is a byproduct of a target or any of its build events in the same directory to ensure the byproducts will be available before this target is built.
+    依存関係が同じディレクトリ内のターゲットまたはそのビルド イベントの ``BYPRODUCTS`` として引数に指定されている場合、「ターゲット・レベル」の依存関係が追加され、それらはこのターゲットがビルドされる前にビルドされ利用できるようになった。
 
-  Use the :command:`add_dependencies` command to add dependencies on other targets.
+  :command:`add_dependencies` コマンドを使って、このターゲットとの依存関係を他のターゲットに追加できる。
 
 ``COMMAND_EXPAND_LISTS``
   .. versionadded:: 3.8
 
-  Lists in ``COMMAND`` arguments will be expanded, including those
-  created with
-  :manual:`generator expressions <cmake-generator-expressions(7)>`,
-  allowing ``COMMAND`` arguments such as
-  ``${CC} "-I$<JOIN:$<TARGET_PROPERTY:foo,INCLUDE_DIRECTORIES>,;-I>" foo.cc``
-  to be properly expanded.
+  ``COMMAND`` オプションに指定したコマンドラインの文字列を、:manual:`ジェネレータ式 <cmake-generator-expressions(7)>` も含めすべて展開する。
+  これにより、たとえば ``${CC} "-I$<JOIN:$<TARGET_PROPERTY:foo,INCLUDE_DIRECTORIES>,;-I>" foo.cc`` のようなコマンドラインを適切に実行することができる。
 
 ``JOB_POOL``
   .. versionadded:: 3.15
 
-  Specify a :prop_gbl:`pool <JOB_POOLS>` for the :generator:`Ninja`
-  generator. Incompatible with ``USES_TERMINAL``, which implies
-  the ``console`` pool.
-  Using a pool that is not defined by :prop_gbl:`JOB_POOLS` causes
-  an error by ninja at build time.
+  :generator:`Ninja` ジェネレータ向けに :prop_gbl:`JOB_POOLS` というプロパティを指定する。
+  ``USES_TERMINAL`` オプションとは互換性はない。
+  :prop_gbl:`JOB_POOLS` のプロパティで定義されていないプールを使用するとビルド時にエラーになる。
 
 ``JOB_SERVER_AWARE``
   .. versionadded:: 3.28
 
-  Specify that the command is GNU Make job server aware.
+  この ``COMMAND`` のコマンドラインが GNU Make のジョブ・サーバ対応であることを CMake に伝える。
 
-  For the :generator:`Unix Makefiles`, :generator:`MSYS Makefiles`, and
-  :generator:`MinGW Makefiles` generators this will add the ``+`` prefix to the
-  recipe line. See the `GNU Make Documentation`_ for more information.
+  :generator:`Unix Makefiles`、:generator:`MSYS Makefiles`、:generator:`MinGW Makefiles` のジェネレータを使用すると、レシピ行の先頭に ``+`` が追加される。
+  詳細は `GNU Make Documentation`_ を参照のこと。
 
-  This option is silently ignored by other generators.
+  このオプションは、他のジェネレータによって暗黙的に無視される。
 
 .. _`GNU Make Documentation`: https://www.gnu.org/software/make/manual/html_node/MAKE-Variable.html
 
 ``SOURCES``
-  Specify additional source files to be included in the custom target.
-  Specified source files will be added to IDE project files for
-  convenience in editing even if they have no build rules.
+  ここで追加したターゲットに含める追加のソース・ファイルを指定する。
+  このオプションに指定したソース・ファイルは、ビルド・ルールが無くても編集できるように IDE のプロジェクト・ファイルに追加される。
 
 ``VERBATIM``
-  All arguments to the commands will be escaped properly for the
-  build tool so that the invoked command receives each argument
-  unchanged.  Note that one level of escapes is still used by the
-  CMake language processor before ``add_custom_target`` even sees
-  the arguments.  Use of ``VERBATIM`` is recommended as it enables
-  correct behavior.  When ``VERBATIM`` is not given the behavior
-  is platform specific because there is no protection of
-  tool-specific special characters.
+  ``COMMAND`` のコマンドラインに対するすべての引数 ``args1 args2 ...`` がビルド・ツールのために適切にエスケープされるので、呼び出されるコマンドラインは加工されていない「素」の引数を受け取れる。
+  ただし、この ``add_custom_command`` コマンドが引数を受け取るよりも前に :manual:`CMake language <cmake-language(7)>` のプリプロセッサによって一段目のエスケープが解釈されている点に注意すること。
+  正しく解釈するためには、この ``VERBATIM`` オプションの使用が推奨されている。
+  この ``VERBATIM`` オプションを指定しない場合、引数を解釈する結果は CMake を実行するプラットフォームに依存する。
 
 ``USES_TERMINAL``
   .. versionadded:: 3.2
 
-  The command will be given direct access to the terminal if possible.
-  With the :generator:`Ninja` generator, this places the command in
-  the ``console`` :prop_gbl:`pool <JOB_POOLS>`.
+  ``COMMAND`` のコマンドラインは、可能であれば、端末（``console``）に直接アクセスできる。
+  これにより :generator:`Ninja` ジェネレータは、コマンドを ``console`` の  :prop_gbl:`JOB_POOLS` に配置できる。
 
 ``WORKING_DIRECTORY``
-  Execute the command with the given current working directory.
-  If it is a relative path it will be interpreted relative to the
-  build tree directory corresponding to the current source directory.
+  ``COMMAND`` のコマンドラインを ``dir`` のディレクトリで実行する。
+  ``dir`` に相対パスを指定すると、:variable:`CMAKE_CURRENT_BINARY_DIR` をベース・ディレクトリとした絶対パスとして解釈される。
 
   .. versionadded:: 3.13
-    Arguments to ``WORKING_DIRECTORY`` may use
-    :manual:`generator expressions <cmake-generator-expressions(7)>`.
+    ``WORKING_DIRECTORY`` オプションに渡す引数に :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できるようになった。
 
 Ninja Multi-Config
 ^^^^^^^^^^^^^^^^^^
