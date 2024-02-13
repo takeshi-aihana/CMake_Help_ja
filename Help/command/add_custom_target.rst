@@ -86,9 +86,8 @@ add_custom_target
     ``COMMENT`` オプションに渡す引数に :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できるようになった。
 
 ``DEPENDS``
-  この ``add_custom_target`` コマンドを呼び出している  ``CMakeLists.txt`` の中で、:command:`add_custom_command` コマンドを使って追加したコマンドライン
-  Reference files and outputs of custom commands created with :command:`add_custom_command` command calls in the same directory (``CMakeLists.txt`` file).
-  They will be brought up to date when the target is built.
+  この ``add_custom_target`` コマンドを呼び出している  ``CMakeLists.txt`` の中で、:command:`add_custom_command` コマンドを使って追加したコマンドラインが参照したり、出力するファイルを指定する。
+  それらは、ここで追加したターゲットのビルド時に最新状態になる。
 
   .. versionchanged:: 3.16
     依存関係が同じディレクトリ内のターゲットまたはそのビルド イベントの ``BYPRODUCTS`` として引数に指定されている場合、「ターゲット・レベル」の依存関係が追加され、それらはこのターゲットがビルドされる前にビルドされ利用できるようになった。
