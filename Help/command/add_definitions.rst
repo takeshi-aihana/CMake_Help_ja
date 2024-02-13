@@ -1,28 +1,28 @@
 add_definitions
 ---------------
 
-Add ``-D`` define flags to the compilation of source files.
+コンパイル時に ``-D`` の定義フラグを追加する。
 
 .. code-block:: cmake
 
   add_definitions(-DFOO -DBAR ...)
 
-Adds definitions to the compiler command line for targets in the current directory, whether added before or after this command is invoked, and for the ones in sub-directories added after.
-This command can be used to add any flags, but it is intended to add preprocessor definitions.
+``CMakeLists.txt`` がある現在のディレクトリ内にあるターゲットと、後から追加したサブディレクトリ内のターゲットに対するコンパイラ・オプションに ``-DFOO -DBAR ...`` の定義フラグを追加します。
+このコマンドは任意の定義フラグを追加する以外に、プリプロセッサ定義を追加する際にも利用できます。
 
 .. note::
 
-  This command has been superseded by alternatives:
+  このコマンドは、次のコマンドでそれぞれ置き換えられた：
 
-  * Use :command:`add_compile_definitions` to add preprocessor definitions.
-  * Use :command:`include_directories` to add include directories.
-  * Use :command:`add_compile_options` to add other options.
+  * プリプロセッサ定義を追加する場合は、:command:`add_compile_definitions` コマンドを使うこと。
+  * インクルード・ディレクトリを追加する場合は :command:`include_directories` コマンドを使うこと。
+  * その他のオプションを追加する場合は :command:`add_compile_options` コマンドを使うこと。
 
-Flags beginning in ``-D`` or ``/D`` that look like preprocessor definitions are automatically added to the :prop_dir:`COMPILE_DEFINITIONS` directory property for the current directory.
-Definitions with non-trivial values may be left in the set of flags instead of being converted for reasons of backwards compatibility.
-See documentation of the :prop_dir:`directory <COMPILE_DEFINITIONS>`, :prop_tgt:`target <COMPILE_DEFINITIONS>`, :prop_sf:`source file <COMPILE_DEFINITIONS>` ``COMPILE_DEFINITIONS`` properties for details on adding preprocessor definitions to specific scopes and configurations.
+``-D`` や ``/D`` で始まるフラグは、``CMakeLists.txt`` がある現在のディレクトリの :prop_dir:`COMPILE_DEFINITIONS` プロパティに自動的に追加されます。
+これにより（CMake の下位互換性の理由から）まれに重要な値を含んだ定義フラグが変換されずに残されてしまう場合があります。
+特定のスコープやビルド構成で、プリプロセッサ定義を追加する方法について詳細については、:prop_dir:`ディレクトリ <COMPILE_DEFINITIONS>` や :prop_tgt:`ターゲット <COMPILE_DEFINITIONS>` や  :prop_sf:`ソース・ファイル <COMPILE_DEFINITIONS>` の ``COMPILE_DEFINITIONS`` プロパティのドキュメントを参照して下さい。
 
 参考情報
 ^^^^^^^^
 
-* The :manual:`cmake-buildsystem(7)` manual for more on defining   buildsystem properties.
+* ビルドシステムのプロパティ定義について詳細は :manual:`cmake-buildsystem(7)` を参照のこと。
