@@ -44,7 +44,7 @@ add_library
 
 デフォルトでライブラリのファイルは、このコマンドを呼び出したソースツリーに対応したビルドツリーに相当するディレクトリに作成されます。
 この場所を変更する方法については :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` というターゲット・プロパティのドキュメントを参照して下さい。
-``<name>`` を最終的にビルドされるファイル名に変更する方法については :prop_tgt:`OUTPUT_NAME` というターゲット・プロパティのドキュメントを参照して下さい。
+``<name>`` を、最終的にビルドされるファイル名に変更する方法については :prop_tgt:`OUTPUT_NAME` というターゲット・プロパティのドキュメントを参照して下さい。
 
 ``EXCLUDE_FROM_ALL`` オプションを指定すると、対応するプロパティがビルドしたターゲットに付与されます。
 詳細は :prop_tgt:`EXCLUDE_FROM_ALL` というターゲット・プロパティを参照して下さい。
@@ -53,37 +53,30 @@ add_library
 
 ソース・ファイルの一部が前処理されて変更されている時に、IDE から処理する前のソース・ファイルにアクセスできるようにする方法については :prop_sf:`HEADER_FILE_ONLY` というプロパティも参照して下さい。
 
-Object Libraries
-^^^^^^^^^^^^^^^^
+オブジェクト・ライブラリ
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   add_library(<name> OBJECT [<source>...])
 
-Creates an :ref:`Object Library <Object Libraries>`.  An object library
-compiles source files but does not archive or link their object files into a
-library.  Instead other targets created by ``add_library`` or
-:command:`add_executable` may reference the objects using an expression of the
-form :genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` as a source, where
-``objlib`` is the object library name.  For example:
+:ref:`オブジェクト・ライブラリ <Object Libraries>` をターゲットとして追加します。
+これはソース・ファイルをコンパイルするだけで、そこで生成されたオブジェクト・ファイルをアーカイブしたり、他のライブラリにリンクしたりすることはありません。
+この ``add_library`` や :command:`add_executable` コマンドでビルドした別のターゲットは、:genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` のジェネレータ式（``objlib`` はオブジェクト・ライブラリの名前）を利用して、オブジェクト・ファイルをソース・ファイルの一部として参照できます。
+たとえば、次のコマンドを実行すると：
 
 .. code-block:: cmake
 
   add_library(... $<TARGET_OBJECTS:objlib> ...)
   add_executable(... $<TARGET_OBJECTS:objlib> ...)
 
-will include objlib's object files in a library and an executable
-along with those compiled from their own sources.  Object libraries
-may contain only sources that compile, header files, and other files
-that would not affect linking of a normal library (e.g. ``.txt``).
-They may contain custom commands generating such sources, but not
-``PRE_BUILD``, ``PRE_LINK``, or ``POST_BUILD`` commands.  Some native build
-systems (such as Xcode) may not like targets that have only object files, so
-consider adding at least one real source file to any target that references
-:genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>`.
+``objlib`` というオブジェクト・ライブラリが、別のソースからコンパイルされる実行形式のオブジェクト・ファイルに含まれます。
+生成されるオブジェクト・ライブラリには、コンパイルするソース・ファイル、ヘッダ・ファイル、そして通常のライブラリとしてリンクには影響を与えないその他のファイル（例えば ``.txt``）だけが含まれます。
+これらには、:ref:`add_custom_command <add_custom_command(TARGET)>` コマンドでそのようなソースを生成する独自のコマンドが含まれている場合がありますが、``PRE_BUILD`` や ``PRE_LINK`` や ``POST_BUILD`` が指定されたコマンドは含まれません。
+オブジェクト・ファイルしか持たないターゲットを好まない Xcode といった一部のターゲットのビルドシステムでは、 :genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` のジェネレータ式を参照するターゲットに、少なくとも1個の実ソース・ファイルを追加することを検討してみて下さい。
 
 .. versionadded:: 3.12
-  Object libraries can be linked to with :command:`target_link_libraries`.
+  :command:`target_link_libraries` コマンドでオブジェクト・ライブラリをリンクできるようになった。
 
 Interface Libraries
 ^^^^^^^^^^^^^^^^^^^
