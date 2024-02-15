@@ -742,7 +742,7 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 疑似ターゲット
 ==============
 
-ビルドの構成の中には、ビルドシステムのログを表示しないで、代わりに外部との依存関係、別名（エイリアス）、またはビルドの対象外の成果物の情報だけ表示するものがあります。
+ビルドの構成の中には、ビルドシステムのログを表示しないで、代わりに外部との依存関係、エイリアス（別名）、またはビルド対象外の成果物の情報だけ表示するものがあります。
 「**疑似ターゲット**」は、ビルドシステムの生成中は何も表示されません。
 
 .. _`Imported Targets`:
@@ -750,9 +750,9 @@ CMake はデフォルトで標準的なビルドの構成をいくつか定義�
 IMPORTED なターゲット
 ---------------------
 
-:prop_tgt:`IMPORTED` なターゲットは既存の依存関係（*pre-existing dependency*）を表します。
+:prop_tgt:`IMPORTED` なターゲットは「既存の依存関係（*pre-existing dependency*）」を表します。
 通常、このようなターゲットは上流のパッケージによって定義され、変更不可として扱われる必要があります。
-:prop_tgt:`IMPORTED` なターゲットは、他の通常のターゲットと同様に、:command:`target_compile_definitions`、:command:`target_include_directories`、:command:`target_compile_options`、あるいは :command:`target_link_libraries` といったコマンドを使って、そのターゲット・プロパティを変更できます。
+この :prop_tgt:`IMPORTED` なターゲットは、他の通常のターゲットと同様に、:command:`target_compile_definitions`、:command:`target_include_directories`、:command:`target_compile_options`、あるいは :command:`target_link_libraries` といったコマンドを使って、そのターゲット・プロパティを変更できます。
 
 :prop_tgt:`IMPORTED` なターゲットには、:prop_tgt:`INTERFACE_INCLUDE_DIRECTORIES`、:prop_tgt:`INTERFACE_COMPILE_DEFINITIONS`、:prop_tgt:`INTERFACE_COMPILE_OPTIONS`、:prop_tgt:`INTERFACE_LINK_LIBRARIES`、:prop_tgt:`INTERFACE_POSITION_INDEPENDENT_CODE` など、「:ref:`バイナリのターゲット <Binary Targets>`」と同じ「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*） [#hint_for_build_specification]_ のプロパティが設定されている場合があります。
 
@@ -761,7 +761,7 @@ IMPORTED なターゲット
 
 :prop_tgt:`IMPORTED` なターゲットは、それが定義されたディレクトリが有効なスコープになります。
 スコープのサブディレクトリからアクセスしたり利用することも可能ですが、スコープの親ディレクトリや兄弟ディレクトリからはアクセスできません。
-このスコープは CMake 変数のスコープと似ています。
+このスコープは CMake 変数のスコープと扱いが似ています。
 
 さらに、ビルドシステムからグローバルにアクセスが可能な ``GLOBAL`` で :prop_tgt:`IMPORTED` なターゲットを定義することも可能です。
 
@@ -769,11 +769,11 @@ IMPORTED なターゲット
 
 .. _`Alias Targets`:
 
-ALIAS ターゲット
-----------------
+ALIAS なターゲット
+------------------
 
-``ALIAS`` （エイリアス）ターゲットは読み取り専用のコンテキストで、「:ref:`バイナリのターゲット <Binary Targets>`」の名前と同じように扱うことができる別の名前（エイリアス）です。
-この ``ALIAS`` ターゲットの主な使い途としては、たとえばライブラリと一緒に行う実行形式の単体テストがあります。このテストは、同じビルドシステムの一部であったり、あるいはユーザが生成した構成に基づいて別々にビルドされる場合があります。
+``ALIAS`` （エイリアス）なターゲットは読み取り専用のコンテキストであり、「:ref:`バイナリのターゲット <Binary Targets>`」と同じように扱うことができるターゲットの別名です。
+この ``ALIAS`` なターゲットの主な用途は、たとえばライブラリと一緒に実施する実行形式の単体テストがあります。このテストは、同じビルドシステムの一部であったり、あるいはユーザが生成した構成に基づいて別々にビルドされる場合があります。
 
 .. code-block:: cmake
 
@@ -793,9 +793,9 @@ ALIAS ターゲット
   add_executable(exe1 exe1.cpp)
   target_link_libraries(exe1 Upstream::lib1)
 
-``ALIAS`` ターゲットは変更不可で、インストールもエキスポートもできません。
-これらのターゲットはビルドシステムの記述に対して完全にローカルな扱いです。
-:prop_tgt:`ALIASED_TARGET` というターゲット・プロパティの値から、ターゲット名が ``ALIAS`` であるかテストできます：
+``ALIAS`` なターゲットは変更不可で、インストールもエキスポートもできません。
+このターゲットはビルドシステムの記述に対して完全にローカルな扱いです。
+:prop_tgt:`ALIASED_TARGET` というターゲット・プロパティの値から、ターゲット名が ``ALIAS`` であるかでテストできます：
 
 .. code-block:: cmake
 

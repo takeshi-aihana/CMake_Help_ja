@@ -67,22 +67,22 @@ ALIAS な実行形式
 
   add_executable(<name> ALIAS <target>)
 
-Creates an :ref:`Alias Target <Alias Targets>`, such that ``<name>`` can be used to refer to ``<target>`` in subsequent commands.
-The ``<name>`` does not appear in the generated buildsystem as a make target.
-The ``<target>`` may not be an ``ALIAS``.
+後続のコマンドで ``<name>`` で ``<target>`` を参照できるようにする :ref:`ALIAS な実行形式 <Alias Targets>` のターゲットを作成します。
+``<name>`` は、ビルドシステムの中でビルド対象のターゲットとして表示されることはありません。
+``<target>`` は ``ALIAS`` なターゲットではない場合があります。
 
 .. versionadded:: 3.11
-  An ``ALIAS`` can target a ``GLOBAL`` :ref:`Imported Target <Imported Targets>`
+  ``ALIAS`` なターゲットを ``GLOBAL`` で :ref:`IMPORTED なターゲット <Imported Targets>` にすることができるようになった。
 
 .. versionadded:: 3.18
-  An ``ALIAS`` can target a non-``GLOBAL`` Imported Target.
-  Such alias is scoped to the directory in which it is created and subdirectories.
-  The :prop_tgt:`ALIAS_GLOBAL` target property can be used to check if the alias is global or not.
+  ``ALIAS`` なターゲットを ``GLOBAL`` ではない :ref:`IMPORTED なターゲット <Imported Targets>` にすることができるようになった。
+  このようなターゲットのスコープは、ターゲットを生成したディレクトリとそのサブディレクトリに限定される。
+  :prop_tgt:`ALIAS_GLOBAL` というターゲットのプロパティで、``ALIAS`` なターゲットであるかどうかを確認できる。
 
-``ALIAS`` targets can be used as targets to read properties from, executables for custom commands and custom targets.
-They can also be tested for existence with the regular :command:`if(TARGET)` subcommand.
-The ``<name>`` may not be used to modify properties of ``<target>``, that is, it may not be used as the operand of :command:`set_property`, :command:`set_target_properties`, :command:`target_link_libraries` etc.
-An ``ALIAS`` target may not be installed or exported.
+``ALIAS`` なターゲットは、各種プロパティを読み取るターゲットとか、:command:`add_custom_command` や :command:`add_custom_target` で指定する ``COMMAND`` として利用できます。
+さらに :command:`if(TARGET)` コマンドで、これらのターゲッ（実行形式）の存在をテストできます。
+ただし ``<name>`` を使って ``<target>`` のプロパティを変更することはできません。つまり、:command:`set_property` や :command:`set_target_properties` や :command:`target_link_libraries` コマンドなどでオペランドには指定できません。
+``ALIAS`` なターゲットはインスールもエキスポートもできません。
 
 参考情報
 ^^^^^^^^

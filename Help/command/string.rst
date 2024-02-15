@@ -87,7 +87,7 @@ CMake の中で文字列を操作する。
   string(REGEX MATCH <regular_expression>
          <output_variable> <input> [<input>...])
 
-  ``<regular_expression>`` にマッチした結果を ``<output_variable>`` に格納します。
+  引数の ``<input> ...`` に対して ``<regular_expression>`` にマッチした結果を ``<output_variable>`` に格納します。
   引数の ``<input> ...`` は検索する前にすべて連結します。
   正規表現のパタンについては、このセクションにある「:ref:`Regex Specification`」を参照して下さい。
 
@@ -95,7 +95,7 @@ CMake の中で文字列を操作する。
   string(REGEX MATCHALL <regular_expression>
          <output_variable> <input> [<input>...])
 
-  ``<regular_expression>`` にマッチした全ての結果を「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」にして ``<output_variable>`` に格納します。
+  引数の ``<input> ...`` に対して ``<regular_expression>`` にマッチした全ての結果を「:ref:`セミコロンで区切られたリスト <CMake Language Lists>` 」にして ``<output_variable>`` に格納します。
   引数の ``<input> ...`` は検索する前にすべて連結します。
 
 .. signature::
@@ -103,7 +103,7 @@ CMake の中で文字列を操作する。
          <replacement_expression> <output_variable>
          <input> [<input>...])
 
-  ``<regular_expression>`` にマッチした全ての結果を ``<replacement_expression>`` で置き換えます。
+  引数の ``<input> ...`` に対して ``<regular_expression>`` にマッチした全ての結果を ``<replacement_expression>`` で置き換えます。
   引数の ``<input> ...`` は検索する前にすべて連結します。
 
   この ``<replacement_expression>`` は、``\1`` や ``\2``, ..., ``\9`` とカッコ（``()``）を使ってマッチした部分文字列を参照できます。
