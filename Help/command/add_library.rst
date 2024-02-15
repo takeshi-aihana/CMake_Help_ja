@@ -5,9 +5,9 @@ add_library
 
    .. contents::
 
-Add a library to the project using the specified source files.
+ソース・ファイルを指定して、ライブラリをプロジェクトに追加する。
 
-Normal Libraries
+通常のライブラリ
 ^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
@@ -16,63 +16,42 @@ Normal Libraries
               [EXCLUDE_FROM_ALL]
               [<source>...])
 
-Adds a library target called ``<name>`` to be built from the source files
-listed in the command invocation.  The ``<name>``
-corresponds to the logical target name and must be globally unique within
-a project.  The actual file name of the library built is constructed based
-on conventions of the native platform (such as ``lib<name>.a`` or
-``<name>.lib``).
+:ref:`リスト <CMake Language Lists>` されたソース・ファイル ``<source>...`` からビルドする ``<name>`` というライブラリをターゲットとして追加します。
+``<name>`` はターゲットの論理的な名前であり、プロジェクト内で重複しないグローバルな名前にして下さい。
+ターゲットとしてビルドされる実際のファイル名は、ランタイムのプラットフォームに基づいて付与されます（たとえば ``lib<name>.a`` とか ``<name>.lib`` とか）。
 
 .. versionadded:: 3.1
-  Source arguments to ``add_library`` may use "generator expressions" with
-  the syntax ``$<...>``.  See the :manual:`cmake-generator-expressions(7)`
-  manual for available expressions.
+  このコマンドに渡す ``<source>...`` に ``$<...>`` のような :manual:`ジェネレータ式 <cmake-generator-expressions(7)>` を指定できるようになった。
+  利用可能な式について詳細は :manual:`cmake-generator-expressions(7)` を参照のこと。
 
 .. versionadded:: 3.11
-  The source files can be omitted if they are added later using
-  :command:`target_sources`.
+  あとで :command:`target_sources` コマンドで ``<source>...`` を追加する場合、これらの引数を省略できるようになった。
 
-``STATIC``, ``SHARED``, or ``MODULE`` may be given to specify the type of
-library to be created.  ``STATIC`` libraries are archives of object files
-for use when linking other targets.  ``SHARED`` libraries are linked
-dynamically and loaded at runtime.  ``MODULE`` libraries are plugins that
-are not linked into other targets but may be loaded dynamically at runtime
-using dlopen-like functionality.  If no type is given explicitly the
-type is ``STATIC`` or ``SHARED`` based on whether the current value of the
-variable :variable:`BUILD_SHARED_LIBS` is ``ON``.  For ``SHARED`` and
-``MODULE`` libraries the :prop_tgt:`POSITION_INDEPENDENT_CODE` target
-property is set to ``ON`` automatically.
-A ``SHARED`` library may be marked with the :prop_tgt:`FRAMEWORK`
-target property to create an macOS Framework.
+ビルドするライブラリの種類は ``STATIC``、``SHARED``、または ``MODULE`` で指定します。
+``STATIC`` なライブラリは、他のターゲットにリンクする際に使用するオブジェクトのアーカイブです。
+``SHARED`` なライブラリは、実行時に動的にリンクされてロードされます。
+``MODULE`` なライブラリは、他のターゲットにはリンクされないプラグインと呼ばれるもので、``dlopen()`` のような関数を使って実行時に動的にロードされます。
+ライブラリの種類を明示的に指定しない場合は、:variable:`BUILD_SHARED_LIBS` 変数が ``ON`` かどうかに応じて CMake が ``STATIC`` または ``SHARED`` を選択します。
+``SHARED`` と ``MODULE`` のライブラリの場合、自動的に :prop_tgt:`POSITION_INDEPENDENT_CODE` というターゲット・プロパティに ``ON`` がセットされます。
+``SHARED`` ライブラリの場合、macOS 系向けのフレームワークを生成するために :prop_tgt:`FRAMEWORK` というターゲット・プロパティが付与される場合があります。
 
 .. versionadded:: 3.8
-  A ``STATIC`` library may be marked with the :prop_tgt:`FRAMEWORK`
-  target property to create a static Framework.
+  ``STATIC`` ライブラリの場合、静的フレームワークを生成するために :prop_tgt:`FRAMEWORK` というターゲット・プロパティが付与されるようになった。
 
-If a library does not export any symbols, it must not be declared as a
-``SHARED`` library.  For example, a Windows resource DLL or a managed C++/CLI
-DLL that exports no unmanaged symbols would need to be a ``MODULE`` library.
-This is because CMake expects a ``SHARED`` library to always have an
-associated import library on Windows.
+まったくシンボルを外部に公開していないライブラリを ``SHARED`` として指定しないで下さい。
+たとえば、アンマネージドなシンボルを外部に公開していない Windows 系のリソース DLL や C++/CLI の DLL は ``SHARED`` ではなく ``MODULE`` を指定して下さい。
+これは、CMake が Windows 上で ``SHARED`` に関連づけられたインポート・ライブラリ（たとえば、``.lib``）が常に存在しているものと想定しているためです。
 
-By default the library file will be created in the build tree directory
-corresponding to the source tree directory in which the command was
-invoked.  See documentation of the :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY`,
-:prop_tgt:`LIBRARY_OUTPUT_DIRECTORY`, and
-:prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` target properties to change this
-location.  See documentation of the :prop_tgt:`OUTPUT_NAME` target
-property to change the ``<name>`` part of the final file name.
+デフォルトでライブラリのファイルは、このコマンドを呼び出したソースツリーに対応したビルドツリーに相当するディレクトリに作成されます。
+この場所を変更する方法については :prop_tgt:`ARCHIVE_OUTPUT_DIRECTORY` や :prop_tgt:`LIBRARY_OUTPUT_DIRECTORY` や :prop_tgt:`RUNTIME_OUTPUT_DIRECTORY` というターゲット・プロパティのドキュメントを参照して下さい。
+``<name>`` を最終的にビルドされるファイル名に変更する方法については :prop_tgt:`OUTPUT_NAME` というターゲット・プロパティのドキュメントを参照して下さい。
 
-If ``EXCLUDE_FROM_ALL`` is given the corresponding property will be set on
-the created target.  See documentation of the :prop_tgt:`EXCLUDE_FROM_ALL`
-target property for details.
+``EXCLUDE_FROM_ALL`` オプションを指定すると、対応するプロパティがビルドしたターゲットに付与されます。
+詳細は :prop_tgt:`EXCLUDE_FROM_ALL` というターゲット・プロパティを参照して下さい。
 
-See the :manual:`cmake-buildsystem(7)` manual for more on defining
-buildsystem properties.
+ビルドシステムのプロパティ定義について詳細は :manual:`cmake-buildsystem(7)` を参照して下さい。
 
-See also :prop_sf:`HEADER_FILE_ONLY` on what to do if some sources are
-pre-processed, and you want to have the original sources reachable from
-within IDE.
+ソース・ファイルの一部が前処理されて変更されている時に、IDE から処理する前のソース・ファイルにアクセスできるようにする方法については :prop_sf:`HEADER_FILE_ONLY` というプロパティも参照して下さい。
 
 Object Libraries
 ^^^^^^^^^^^^^^^^
@@ -262,7 +241,7 @@ operand of :command:`set_property`, :command:`set_target_properties`,
 :command:`target_link_libraries` etc.  An ``ALIAS`` target may not be
 installed or exported.
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`add_executable`
