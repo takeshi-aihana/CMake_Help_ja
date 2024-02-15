@@ -80,9 +80,9 @@ ALIAS な実行形式
   :prop_tgt:`ALIAS_GLOBAL` というターゲットのプロパティで、``ALIAS`` なターゲットであるかどうかを確認できる。
 
 ``ALIAS`` なターゲットは、各種プロパティを読み取るターゲットとか、:command:`add_custom_command` や :command:`add_custom_target` で指定する ``COMMAND`` として利用できます。
-さらに :command:`if(TARGET)` コマンドで、これらのターゲッ（実行形式）の存在をテストできます。
+さらに :command:`if(TARGET)` コマンドで、これらのターゲット（実行形式）の存在をテストできます。
 ただし ``<name>`` を使って ``<target>`` のプロパティを変更することはできません。つまり、:command:`set_property` や :command:`set_target_properties` や :command:`target_link_libraries` コマンドなどでオペランドには指定できません。
-``ALIAS`` なターゲットはインスールもエキスポートもできません。
+また ``ALIAS`` なターゲットはインスールもエキスポートもできません。
 
 参考情報
 ^^^^^^^^
