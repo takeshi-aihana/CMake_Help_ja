@@ -146,13 +146,13 @@ IMPORTED なライブラリ
   プロジェクトの外部にあるライブラリ・ファイルを参照する。
   :prop_tgt:`IMPORTED_LOCATION` （またはビルド構成ごとの :prop_tgt:`IMPORTED_LOCATION_<CONFIG>`）というターゲット・プロパティは実際にライブラリ・ファイルがある場所を表す。
 
-  * Windows 系以外のプラットフォームで ``SHARED`` ライブラリはリンカやローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
+  * Windows 系以外のプラットフォームの ``SHARED`` ライブラリはリンカやローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
     もし参照するライブラリ・ファイルに ``SONAME`` （または MacOS 系のプラットフォームでは ``@rpath/`` で始まる ``LC_ID_DYLIB`` ）がある場合は、その内容を :prop_tgt:`IMPORTED_SONAME` というターゲット・プロパティにもセットすること。
     参照するライブラリ・ファイルに ``SONAME`` は無いが、ホストのプラットフォームが ``SONAME`` をサポートしている場合は :prop_tgt:`IMPORTED_NO_SONAME` というターゲット・プロパティをセットすること。
 
-  * For a ``SHARED`` library on Windows, the :prop_tgt:`IMPORTED_IMPLIB` target property (or its per-configuration variant :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`) specifies the location of the DLL import library file (``.lib`` or ``.dll.a``) on disk, and the ``IMPORTED_LOCATION`` is the location of the ``.dll`` runtime library (and is optional, but needed by the :genex:`TARGET_RUNTIME_DLLS` generator expression).
+  * Windows 系プラットフォームの ``SHARED`` ライブラリの場合、 :prop_tgt:`IMPORTED_IMPLIB` （またはビルド構成ごとの :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`）というターゲット・プロパティには実際に DLL インポート・ライブラリのファイル（``.lib`` や ``.dll.a``）がある場所を指定し、 ``IMPORTED_LOCATION`` には実際にランタイム・ライブラリのファイル（``.dll``） がある場所を指定する（後者はオプションであるが、:genex:`TARGET_RUNTIME_DLLS` というジェネレータ式で必要になるので指定することを推奨する）。
 
-  Additional usage requirements may be specified in ``INTERFACE_*`` properties.
+  追加する「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）は ``INTERFACE_*`` 系のプロパティで指定することも可能である。
 
   An ``UNKNOWN`` library type is typically only used in the implementation of :ref:`Find Modules`.
   It allows the path to an imported library (often found using the :command:`find_library` command) to be used without having to know what type of library it is.
