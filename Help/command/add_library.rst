@@ -147,7 +147,7 @@ IMPORTED なライブラリ
   :prop_tgt:`IMPORTED_LOCATION` （またはビルド構成ごとの :prop_tgt:`IMPORTED_LOCATION_<CONFIG>`）というターゲット・プロパティは実際にライブラリ・ファイルがある場所を表す。
 
   * Windows 系以外のプラットフォームの ``SHARED`` ライブラリはリンカやローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
-    もし参照するライブラリ・ファイルに ``SONAME`` （または MacOS 系のプラットフォームでは ``@rpath/`` で始まる ``LC_ID_DYLIB`` ）がある場合は、その内容を :prop_tgt:`IMPORTED_SONAME` というターゲット・プロパティにもセットすること。
+    もし参照するライブラリ・ファイルに ``SONAME`` （または MacOS 系のプラットフォームの場合は ``@rpath/`` で始まる ``LC_ID_DYLIB`` ）がある場合は、その内容を :prop_tgt:`IMPORTED_SONAME` というターゲット・プロパティにもセットすること。
     参照するライブラリ・ファイルに ``SONAME`` は無いが、ホストのプラットフォームが ``SONAME`` をサポートしている場合は :prop_tgt:`IMPORTED_NO_SONAME` というターゲット・プロパティをセットすること。
 
   * Windows 系プラットフォームの ``SHARED`` ライブラリの場合、 :prop_tgt:`IMPORTED_IMPLIB` （またはビルド構成ごとの :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`）というターゲット・プロパティには実際に DLL インポート・ライブラリのファイル（``.lib`` や ``.dll.a``）がある場所を指定し、 ``IMPORTED_LOCATION`` には実際にランタイム・ライブラリのファイル（``.dll``） がある場所を指定する（後者はオプションであるが、:genex:`TARGET_RUNTIME_DLLS` というジェネレータ式で必要になるので指定することを推奨する）。
