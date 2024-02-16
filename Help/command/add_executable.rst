@@ -16,7 +16,7 @@ add_executable
                  [EXCLUDE_FROM_ALL]
                  [source1] [source2 ...])
 
-:ref:`リスト <CMake Language Lists>` されたソース・ファイル ``source1 source2 ...`` からビルドする ``<name>`` という実行可能なターゲットを追加します。
+ソース・ファイル ``source1 source2 ...`` の :ref:`リスト <CMake Language Lists>` からビルドする ``<name>`` という実行可能なターゲットを追加します。
 ``<name>`` はターゲットの論理的な名前であり、プロジェクト内で重複しないグローバルな名前にして下さい。
 ターゲットとしてビルドされる実際のファイル名は、ランタイムのプラットフォームに基づいて付与されます（たとえば ``<name>.exe`` とか ``<name>`` とか）。
 

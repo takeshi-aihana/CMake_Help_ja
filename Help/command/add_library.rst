@@ -16,7 +16,7 @@ add_library
               [EXCLUDE_FROM_ALL]
               [<source>...])
 
-:ref:`リスト <CMake Language Lists>` されたソース・ファイル ``<source>...`` からビルドする ``<name>`` というライブラリをターゲットとして追加します。
+ソース・ファイル ``<source>...`` の :ref:`リスト <CMake Language Lists>` からビルドする ``<name>`` というライブラリをターゲットとして追加します。
 ``<name>`` はターゲットの論理的な名前であり、プロジェクト内で重複しないグローバルな名前にして下さい。
 ターゲットとしてビルドされる実際のファイル名は、ランタイムのプラットフォームに基づいて付与されます（たとえば ``lib<name>.a`` とか ``<name>.lib`` とか）。
 
@@ -61,7 +61,7 @@ add_library
   add_library(<name> OBJECT [<source>...])
 
 :ref:`オブジェクト・ライブラリ <Object Libraries>` をターゲットとして追加します。
-これはソース・ファイルをコンパイルするだけで、そこで生成されたオブジェクト・ファイルをアーカイブしたり、他のライブラリにリンクしたりすることはありません。
+これはソース・ファイルをコンパイルするだけで、そこで生成されたオブジェクト・ファイルをアーカイブにしたり、他のライブラリにリンクしたりすることはありません。
 この ``add_library`` や :command:`add_executable` コマンドでビルドした別のターゲットは、:genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` のジェネレータ式（``objlib`` はオブジェクト・ライブラリの名前）を利用して、オブジェクト・ファイルをソース・ファイルの一部として参照できます。
 たとえば、次のコマンドを実行すると：
 
@@ -73,71 +73,56 @@ add_library
 ``objlib`` というオブジェクト・ライブラリが、別のソースからコンパイルされる実行形式のオブジェクト・ファイルに含まれます。
 生成されるオブジェクト・ライブラリには、コンパイルするソース・ファイル、ヘッダ・ファイル、そして通常のライブラリとしてリンクには影響を与えないその他のファイル（例えば ``.txt``）だけが含まれます。
 これらには、:ref:`add_custom_command <add_custom_command(TARGET)>` コマンドでそのようなソースを生成する独自のコマンドが含まれている場合がありますが、``PRE_BUILD`` や ``PRE_LINK`` や ``POST_BUILD`` が指定されたコマンドは含まれません。
-オブジェクト・ファイルしか持たないターゲットを好まない Xcode といった一部のターゲットのビルドシステムでは、 :genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` のジェネレータ式を参照するターゲットに、少なくとも1個の実ソース・ファイルを追加することを検討してみて下さい。
+ただし、オブジェクト・ファイルしか持たないターゲットを好まない Xcode のような一部のターゲットのビルドシステムでは、 :genex:`$\<TARGET_OBJECTS:objlib\> <TARGET_OBJECTS>` のジェネレータ式を参照するターゲットに、少なくとも1個の実ソース・ファイルを追加することを検討してみて下さい。
 
 .. versionadded:: 3.12
   :command:`target_link_libraries` コマンドでオブジェクト・ライブラリをリンクできるようになった。
 
-Interface Libraries
-^^^^^^^^^^^^^^^^^^^
+INTERFACE ライブラリ
+^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   add_library(<name> INTERFACE)
 
-Creates an :ref:`Interface Library <Interface Libraries>`.
-An ``INTERFACE`` library target does not compile sources and does
-not produce a library artifact on disk.  However, it may have
-properties set on it and it may be installed and exported.
-Typically, ``INTERFACE_*`` properties are populated on an interface
-target using the commands:
+:ref:`INTERFACE ライブラリ <Interface Libraries>` をターゲットとして追加します。
+このターゲットはソース・ファイルをコンパイルしないので、ライブラリに相当するファイルは生成されません。
+ただしターゲット・プロパティを設定することは可能であり、プロパティをインストールしたりエキスポートすることが可能です。
+通常、``INTERFACE_*`` 系のプロパティは、次のコマンドを使ってターゲットである ``INTERFACE`` 型のライブラリに付与されます：
 
-* :command:`set_property`,
-* :command:`target_link_libraries(INTERFACE)`,
-* :command:`target_link_options(INTERFACE)`,
-* :command:`target_include_directories(INTERFACE)`,
-* :command:`target_compile_options(INTERFACE)`,
-* :command:`target_compile_definitions(INTERFACE)`, and
-* :command:`target_sources(INTERFACE)`,
+* :command:`set_property`
+* :command:`target_link_libraries(INTERFACE)`
+* :command:`target_link_options(INTERFACE)`
+* :command:`target_include_directories(INTERFACE)`
+* :command:`target_compile_options(INTERFACE)`
+* :command:`target_compile_definitions(INTERFACE)`
+* :command:`target_sources(INTERFACE)`
 
-and then it is used as an argument to :command:`target_link_libraries`
-like any other target.
+さらに、他のターゲットと同様に、:command:`target_link_libraries` コマンドの引数として指定できます。
 
-An interface library created with the above signature has no source files
-itself and is not included as a target in the generated buildsystem.
+この ``add_library(INTERFACE)`` コマンドで生成された ``INTERFACE`` 型のライブラリには、それ自体にソース・ファイルは無く、ビルドシステム内ではターゲットとして扱われません。
 
 .. versionadded:: 3.15
-  An interface library can have :prop_tgt:`PUBLIC_HEADER` and
-  :prop_tgt:`PRIVATE_HEADER` properties.  The headers specified by those
-  properties can be installed using the :command:`install(TARGETS)` command.
+  ``INTERFACE`` 型のライブラリに :prop_tgt:`PUBLIC_HEADER` と :prop_tgt:`PRIVATE_HEADER` というターゲット・プロパティを付与できるようになった。
+  これらのプロパティで指定されたヘッダ・ファイルを :command:`install(TARGETS)` コマンドでインストールできる。
 
 .. versionadded:: 3.19
-  An interface library target may be created with source files:
+  ``INTERFACE`` 型のライブラリにソース・ファイルを指定できるようになった：
 
   .. code-block:: cmake
 
     add_library(<name> INTERFACE [<source>...] [EXCLUDE_FROM_ALL])
 
-  Source files may be listed directly in the ``add_library`` call or added
-  later by calls to :command:`target_sources` with the ``PRIVATE`` or
-  ``PUBLIC`` keywords.
+  ソース・ファイル ``<source>...`` の :ref:`リスト <CMake Language Lists>` を引数としてそのまま ``add_library`` コマンドに渡すか、または ``PRIVATE`` や ``PUBLIC`` オプション付きで :command:`target_sources` コマンドを呼び出して、``add_library`` コマンドのあとからソース・ファイルを追加できる。
 
-  If an interface library has source files (i.e. the :prop_tgt:`SOURCES`
-  target property is set), or header sets (i.e. the :prop_tgt:`HEADER_SETS`
-  target property is set), it will appear in the generated buildsystem
-  as a build target much like a target defined by the
-  :command:`add_custom_target` command.  It does not compile any sources,
-  but does contain build rules for custom commands created by the
-  :command:`add_custom_command` command.
+  ターゲットがソース・ファイル（:prop_tgt:`SOURCES` というターゲット・プロパティが付与されたファイル）やヘッダ・ファイル（:prop_tgt:`HEADER_SETS` というターゲット・プロパティが付与されたファイル）を持つ ``INTERFACE`` 型のライブラリの場合、ビルドシステムの中でビルド・ターゲットとして扱われるようになる（すなわち :command:`add_custom_target` コマンドで定義したターゲットと同じ扱い）。
+  この場合でもソース・ファイルのコンパイルは行わないが、:command:`add_custom_command` コマンドで定義した独自コマンドのビルド・ルールは含まれる。
+                  
 
 .. note::
-  In most command signatures where the ``INTERFACE`` keyword appears,
-  the items listed after it only become part of that target's usage
-  requirements and are not part of the target's own settings.  However,
-  in this signature of ``add_library``, the ``INTERFACE`` keyword refers
-  to the library type only.  Sources listed after it in the ``add_library``
-  call are ``PRIVATE`` to the interface library and do not appear in its
-  :prop_tgt:`INTERFACE_SOURCES` target property.
+  ``INTERFACE`` オプションを指定できる大部分のコマンドでは、このオプションのあとに :ref:`リスト <CMake Language Lists>` する引数はターゲットの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）に追加されるだけであり、ターゲットをビルドするソースではない。
+  ただし、この ``add_library(INTERFACE)`` コマンドの ``INTERFACE`` オプションはあくまでもライブラリの種類だけ参照する。
+  このオプションに渡す :ref:`リスト <CMake Language Lists>` された ``<source>...`` は ``INTERFACE`` 型のライブラリに対して ``PRIVATE`` な扱いであり、ターゲット・プロパティの :prop_tgt:`INTERFACE_SOURCES` には含まれない。
 
 .. _`add_library imported libraries`:
 
