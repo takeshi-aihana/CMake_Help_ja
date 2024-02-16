@@ -116,82 +116,60 @@ INTERFACE ライブラリ
   ソース・ファイル ``<source>...`` の :ref:`リスト <CMake Language Lists>` を引数としてそのまま ``add_library`` コマンドに渡すか、または ``PRIVATE`` や ``PUBLIC`` オプション付きで :command:`target_sources` コマンドを呼び出して、``add_library`` コマンドのあとからソース・ファイルを追加できる。
 
   ターゲットがソース・ファイル（:prop_tgt:`SOURCES` というターゲット・プロパティが付与されたファイル）やヘッダ・ファイル（:prop_tgt:`HEADER_SETS` というターゲット・プロパティが付与されたファイル）を持つ ``INTERFACE`` 型のライブラリの場合、ビルドシステムの中でビルド・ターゲットとして扱われるようになる（すなわち :command:`add_custom_target` コマンドで定義したターゲットと同じ扱い）。
-  この場合でもソース・ファイルのコンパイルは行わないが、:command:`add_custom_command` コマンドで定義した独自コマンドのビルド・ルールは含まれる。
+  ただし、この場合でもソース・ファイルのコンパイルは行わないが、:command:`add_custom_command` コマンドで定義した独自コマンドのビルド・ルールは含まれる。
                   
 
 .. note::
-  ``INTERFACE`` オプションを指定できる大部分のコマンドでは、このオプションのあとに :ref:`リスト <CMake Language Lists>` する引数はターゲットの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）に追加されるだけであり、ターゲットをビルドするソースではない。
-  ただし、この ``add_library(INTERFACE)`` コマンドの ``INTERFACE`` オプションはあくまでもライブラリの種類だけ参照する。
-  このオプションに渡す :ref:`リスト <CMake Language Lists>` された ``<source>...`` は ``INTERFACE`` 型のライブラリに対して ``PRIVATE`` な扱いであり、ターゲット・プロパティの :prop_tgt:`INTERFACE_SOURCES` には含まれない。
+  ``INTERFACE`` オプションを指定できる大部分のコマンドで、このオプションのあとに :ref:`リスト <CMake Language Lists>` する引数はターゲットの「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）に追加されるだけであり、ターゲットのソースではない。
+  そして、この ``add_library(INTERFACE)`` コマンドの ``INTERFACE`` オプションはあくまでもライブラリの種類だけを参照するものである。
+  そのため、このオプションに渡す :ref:`リスト <CMake Language Lists>` された ``<source>...`` は ``INTERFACE`` 型のライブラリに対して ``PRIVATE`` な扱いであり、ターゲット・プロパティの :prop_tgt:`INTERFACE_SOURCES` には含まれない。
 
 .. _`add_library imported libraries`:
 
-Imported Libraries
-^^^^^^^^^^^^^^^^^^
+IMPORTED なライブラリ
+^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
   add_library(<name> <type> IMPORTED [GLOBAL])
 
-Creates an :ref:`IMPORTED library target <Imported Targets>` called ``<name>``.
-No rules are generated to build it, and the :prop_tgt:`IMPORTED` target
-property is ``True``.  The target name has scope in the directory in which
-it is created and below, but the ``GLOBAL`` option extends visibility.
-It may be referenced like any target built within the project.
-``IMPORTED`` libraries are useful for convenient reference from commands
-like :command:`target_link_libraries`.  Details about the imported library
-are specified by setting properties whose names begin in ``IMPORTED_`` and
-``INTERFACE_``.
+``<name>`` という名前を持つ :ref:`IMPORTED なライブラリ <Imported Targets>` をターゲットとして追加します。
+このライブラリをビルドするためのルールは生成されず、:prop_tgt:`IMPORTED` というターゲット・プロパティを ``True`` にセットするだけです。
+``<name>`` のスコープは、このライブラリをビルドしたディレクトリとそのサブディレクトリですが、``GLOBAL`` オプションを指定するとプロジェクト全体に拡張されます
+（つまり、プロジェクト内の全てのビルド・ターゲットから参照できます）。
+この ``IMPORTED`` なライブラリは  :command:`target_link_libraries` などのコマンドからの参照に便利です。
+このライブラリの詳細は ``IMPORTED_`` や ``INTERFACE_`` で始まる名前のプロパティを設定することで指定できます。
 
-The ``<type>`` must be one of:
+``<type>`` には次のいずれかを指定して下さい：
 
 ``STATIC``, ``SHARED``, ``MODULE``, ``UNKNOWN``
-  References a library file located outside the project.  The
-  :prop_tgt:`IMPORTED_LOCATION` target property (or its per-configuration
-  variant :prop_tgt:`IMPORTED_LOCATION_<CONFIG>`) specifies the
-  location of the main library file on disk:
+  プロジェクトの外部にあるライブラリ・ファイルを参照する。
+  :prop_tgt:`IMPORTED_LOCATION` （またはビルド構成ごとの :prop_tgt:`IMPORTED_LOCATION_<CONFIG>`）というターゲット・プロパティは実際にライブラリ・ファイルがある場所を表す。
 
-  * For a ``SHARED`` library on most non-Windows platforms, the main library
-    file is the ``.so`` or ``.dylib`` file used by both linkers and dynamic
-    loaders.  If the referenced library file has a ``SONAME`` (or on macOS,
-    has a ``LC_ID_DYLIB`` starting in ``@rpath/``), the value of that field
-    should be set in the :prop_tgt:`IMPORTED_SONAME` target property.
-    If the referenced library file does not have a ``SONAME``, but the
-    platform supports it, then  the :prop_tgt:`IMPORTED_NO_SONAME` target
-    property should be set.
+  * Windows 系以外のプラットフォームで ``SHARED`` ライブラリはリンカやローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
+    もし参照するライブラリ・ファイルに ``SONAME`` （または MacOS 系のプラットフォームでは ``@rpath/`` で始まる ``LC_ID_DYLIB`` ）がある場合は、その内容を :prop_tgt:`IMPORTED_SONAME` というターゲット・プロパティにもセットすること。
+    参照するライブラリ・ファイルに ``SONAME`` は無いが、ホストのプラットフォームが ``SONAME`` をサポートしている場合は :prop_tgt:`IMPORTED_NO_SONAME` というターゲット・プロパティをセットすること。
 
-  * For a ``SHARED`` library on Windows, the :prop_tgt:`IMPORTED_IMPLIB`
-    target property (or its per-configuration variant
-    :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`) specifies the location of the
-    DLL import library file (``.lib`` or ``.dll.a``) on disk, and the
-    ``IMPORTED_LOCATION`` is the location of the ``.dll`` runtime
-    library (and is optional, but needed by the :genex:`TARGET_RUNTIME_DLLS`
-    generator expression).
+  * For a ``SHARED`` library on Windows, the :prop_tgt:`IMPORTED_IMPLIB` target property (or its per-configuration variant :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`) specifies the location of the DLL import library file (``.lib`` or ``.dll.a``) on disk, and the ``IMPORTED_LOCATION`` is the location of the ``.dll`` runtime library (and is optional, but needed by the :genex:`TARGET_RUNTIME_DLLS` generator expression).
 
   Additional usage requirements may be specified in ``INTERFACE_*`` properties.
 
-  An ``UNKNOWN`` library type is typically only used in the implementation of
-  :ref:`Find Modules`.  It allows the path to an imported library (often found
-  using the :command:`find_library` command) to be used without having to know
-  what type of library it is.  This is especially useful on Windows where a
-  static library and a DLL's import library both have the same file extension.
+  An ``UNKNOWN`` library type is typically only used in the implementation of :ref:`Find Modules`.
+  It allows the path to an imported library (often found using the :command:`find_library` command) to be used without having to know what type of library it is.
+  This is especially useful on Windows where a static library and a DLL's import library both have the same file extension.
 
 ``OBJECT``
   References a set of object files located outside the project.
-  The :prop_tgt:`IMPORTED_OBJECTS` target property (or its per-configuration
-  variant :prop_tgt:`IMPORTED_OBJECTS_<CONFIG>`) specifies the locations of
-  object files on disk.
+  The :prop_tgt:`IMPORTED_OBJECTS` target property (or its per-configuration variant :prop_tgt:`IMPORTED_OBJECTS_<CONFIG>`) specifies the locations of object files on disk.
   Additional usage requirements may be specified in ``INTERFACE_*`` properties.
 
 ``INTERFACE``
-  Does not reference any library or object files on disk, but may
-  specify usage requirements in ``INTERFACE_*`` properties.
+  Does not reference any library or object files on disk, but may specify usage requirements in ``INTERFACE_*`` properties.
 
-See documentation of the ``IMPORTED_*`` and ``INTERFACE_*`` properties
-for more information.
+さらに詳細は ``IMPORTED_*`` や ``INTERFACE_*`` 系のプロパティのドキュメントをそれぞれ参照して下さい。
 
-Alias Libraries
-^^^^^^^^^^^^^^^
+ALIAS なライブラリ
+^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cmake
 
