@@ -136,7 +136,7 @@ IMPORTED なライブラリ
 ``<name>`` という名前を持つ :ref:`IMPORTED なライブラリ <Imported Targets>` をターゲットとして追加します。
 このライブラリをビルドするためのルールは生成されず、:prop_tgt:`IMPORTED` というターゲット・プロパティを ``True`` にセットするだけです。
 ``<name>`` のスコープは、このライブラリをビルドしたディレクトリとそのサブディレクトリですが、``GLOBAL`` オプションを指定するとプロジェクト全体に拡張されます
-（つまり、プロジェクト内の全てのビルド・ターゲットから参照できます）。
+（つまり、プロジェクト内の全てのビルド・ターゲットから ``<namae>`` を参照できます）。
 この ``IMPORTED`` なライブラリは  :command:`target_link_libraries` などのコマンドからの参照に便利です。
 このライブラリの詳細は ``IMPORTED_`` や ``INTERFACE_`` で始まる名前のプロパティを設定することで指定できます。
 
@@ -146,25 +146,25 @@ IMPORTED なライブラリ
   プロジェクトの外部にあるライブラリ・ファイルを参照する。
   :prop_tgt:`IMPORTED_LOCATION` （またはビルド構成ごとの :prop_tgt:`IMPORTED_LOCATION_<CONFIG>`）というターゲット・プロパティは実際にライブラリ・ファイルがある場所を表す。
 
-  * Windows 系以外のプラットフォームの ``SHARED`` ライブラリはリンカやローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
+  * Windows 系以外のプラットフォームの ``SHARED`` なライブラリはリンカとローダの両方で使用される ``.so`` や ``.dylib`` ファイルである。
     もし参照するライブラリ・ファイルに ``SONAME`` （または MacOS 系のプラットフォームの場合は ``@rpath/`` で始まる ``LC_ID_DYLIB`` ）がある場合は、その内容を :prop_tgt:`IMPORTED_SONAME` というターゲット・プロパティにもセットすること。
     参照するライブラリ・ファイルに ``SONAME`` は無いが、ホストのプラットフォームが ``SONAME`` をサポートしている場合は :prop_tgt:`IMPORTED_NO_SONAME` というターゲット・プロパティをセットすること。
 
-  * Windows 系プラットフォームの ``SHARED`` ライブラリの場合、 :prop_tgt:`IMPORTED_IMPLIB` （またはビルド構成ごとの :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`）というターゲット・プロパティには実際に DLL インポート・ライブラリのファイル（``.lib`` や ``.dll.a``）がある場所を指定し、 ``IMPORTED_LOCATION`` には実際にランタイム・ライブラリのファイル（``.dll``） がある場所を指定する（後者はオプションであるが、:genex:`TARGET_RUNTIME_DLLS` というジェネレータ式で必要になるので指定することを推奨する）。
+  * Windows 系プラットフォームの ``SHARED`` なライブラリの場合、 :prop_tgt:`IMPORTED_IMPLIB` （またはビルド構成ごとの :prop_tgt:`IMPORTED_IMPLIB_<CONFIG>`）というターゲット・プロパティには実際に DLL インポート・ライブラリのファイル（``.lib`` や ``.dll.a``）がある場所を指定し、 ``IMPORTED_LOCATION`` には実際にランタイム・ライブラリのファイル（``.dll``） がある場所を指定する（後者はオプションであるが、:genex:`TARGET_RUNTIME_DLLS` というジェネレータ式で必要になるので指定することを推奨する）。
 
   追加する「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）は ``INTERFACE_*`` 系のプロパティで指定することも可能である。
 
-  An ``UNKNOWN`` library type is typically only used in the implementation of :ref:`Find Modules`.
-  It allows the path to an imported library (often found using the :command:`find_library` command) to be used without having to know what type of library it is.
-  This is especially useful on Windows where a static library and a DLL's import library both have the same file extension.
+  ``UNKNOWN`` なライブラリは、通常 :ref:`Find Modules` の実装でのみ使用する。
+  これにより、``IMPORTED`` するライブラリの種類が不明でも、そのパス（:command:`find_library` コマンドが返すパス）を参照できるようになる。
+  これは、静的ライブラリと DLL インポート・ライブラリの両方が同じ拡張子を持つ Windows 系プラットフォームでは便利である。
 
 ``OBJECT``
-  References a set of object files located outside the project.
-  The :prop_tgt:`IMPORTED_OBJECTS` target property (or its per-configuration variant :prop_tgt:`IMPORTED_OBJECTS_<CONFIG>`) specifies the locations of object files on disk.
-  Additional usage requirements may be specified in ``INTERFACE_*`` properties.
+  プロジェクトの外部にあるオブジェクト・ファイルを参照する。
+  :prop_tgt:`IMPORTED_OBJECTS` （またはビルド構成ごとの :prop_tgt:`IMPORTED_OBJECTS_<CONFIG>`）というターゲット・プロパティには参照するオブジェクト・ファイルがある場所を指定すること。
+  追加する「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）は ``INTERFACE_*`` 系のプロパティで指定することも可能である。  
 
 ``INTERFACE``
-  Does not reference any library or object files on disk, but may specify usage requirements in ``INTERFACE_*`` properties.
+  実際にライブラリやオブジェクト・ファイルを参照しないが、``INTERFACE_*`` 系のプロパティで「:ref:`利用要件 <Target Usage Requirements>`」（*Usage Requirements*）を指定することは可能である。
 
 さらに詳細は ``IMPORTED_*`` や ``INTERFACE_*`` 系のプロパティのドキュメントをそれぞれ参照して下さい。
 
@@ -175,27 +175,23 @@ ALIAS なライブラリ
 
   add_library(<name> ALIAS <target>)
 
-Creates an :ref:`Alias Target <Alias Targets>`, such that ``<name>`` can be
-used to refer to ``<target>`` in subsequent commands.  The ``<name>`` does
-not appear in the generated buildsystem as a make target.  The ``<target>``
-may not be an ``ALIAS``.
+後続のコマンドで、 ``<name>`` から ``<target>`` を参照できるようにする :ref:`ALIAS な実行形式 <Alias Targets>` のターゲットを作成します。
+``<name>`` は、ビルドシステムの中でビルド対象のターゲットとして表示されることはありません。
+``<target>`` は ``ALIAS`` なターゲットではない場合があります。
 
 .. versionadded:: 3.11
-  An ``ALIAS`` can target a ``GLOBAL`` :ref:`Imported Target <Imported Targets>`
+  ``ALIAS`` なターゲットを ``GLOBAL`` で :ref:`IMPORTED なターゲット <Imported Targets>` にすることができるようになった。
 
 .. versionadded:: 3.18
-  An ``ALIAS`` can target a non-``GLOBAL`` Imported Target. Such alias is
-  scoped to the directory in which it is created and below.
-  The :prop_tgt:`ALIAS_GLOBAL` target property can be used to check if the
-  alias is global or not.
+  ``ALIAS`` なターゲットを ``GLOBAL`` ではない :ref:`IMPORTED なターゲット <Imported Targets>` にすることができるようになった。
+  このようなターゲットのスコープは、ターゲットを生成したディレクトリとそのサブディレクトリに限定される。
+  :prop_tgt:`ALIAS_GLOBAL` というターゲットのプロパティで、``ALIAS`` なターゲットであるかどうかを確認できる。
 
-``ALIAS`` targets can be used as linkable targets and as targets to
-read properties from.  They can also be tested for existence with the
-regular :command:`if(TARGET)` subcommand.  The ``<name>`` may not be used
-to modify properties of ``<target>``, that is, it may not be used as the
-operand of :command:`set_property`, :command:`set_target_properties`,
-:command:`target_link_libraries` etc.  An ``ALIAS`` target may not be
-installed or exported.
+``ALIAS`` なターゲットは、リンク可能なターゲットまたはプロパティを参照するためのターゲットとして利用できます。
+さらに :command:`if(TARGET)` コマンドで、これらのターゲット（ライブラリ）の存在をテストできます。
+ただし ``<name>`` を使って ``<target>`` のプロパティを変更することはできません。つまり、:command:`set_property` や :command:`set_target_properties` や :command:`target_link_libraries` コマンドなどでオペランドには指定できません。
+また ``ALIAS`` なターゲットはインスールもエキスポートもできません。
+
 
 参考情報
 ^^^^^^^^
