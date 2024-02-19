@@ -67,7 +67,7 @@ ALIAS な実行形式
 
   add_executable(<name> ALIAS <target>)
 
-後続のコマンドで、 ``<name>`` から ``<target>`` を参照できるようにする :ref:`ALIAS な実行形式 <Alias Targets>` のターゲットを作成します。
+後続のコマンドで、 ``<name>`` から ``<target>`` を参照できるようにする :ref:`ALIAS な実行形式 <Alias Targets>` をターゲットとして追加します。
 ``<name>`` は、ビルドシステムの中でビルド対象のターゲットとして表示されることはありません。
 ``<target>`` は ``ALIAS`` なターゲットではない場合があります。
 
