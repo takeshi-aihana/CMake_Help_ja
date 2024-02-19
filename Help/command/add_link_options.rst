@@ -3,25 +3,19 @@ add_link_options
 
 .. versionadded:: 3.13
 
-Add options to the link step for executable, shared library or module
-library targets in the current directory and below that are added after
-this command is invoked.
+実行可能なファイル、共有ライブラリ、モジュール・ライブラリのリンク・オプションを追加する。
 
 .. code-block:: cmake
 
   add_link_options(<option> ...)
 
-This command can be used to add any link options, but alternative commands
-exist to add libraries (:command:`target_link_libraries` or
-:command:`link_libraries`).  See documentation of the
-:prop_dir:`directory <LINK_OPTIONS>` and
-:prop_tgt:`target <LINK_OPTIONS>` ``LINK_OPTIONS`` properties.
+このコマンドを使ってリンク時のオプションを追加できますが、同等の機能がライブラリを追加するコマンド（:command:`target_link_libraries` や :command:`link_libraries` コマンド）にもあります。
+:prop_dir:`ディレクトリ <LINK_OPTIONS>` や  :prop_tgt:`ターゲット <LINK_OPTIONS>` 向けの ``LINK_OPTIONS`` というプロパティをそれぞれ参照して下さい。
 
 .. note::
 
-  This command cannot be used to add options for static library targets,
-  since they do not use a linker.  To add archiver or MSVC librarian flags,
-  see the :prop_tgt:`STATIC_LIBRARY_OPTIONS` target property.
+  このコマンドは静的ライブラリのオプションを追加することはできない（このターゲットはリンカを使用しないため）。
+  静的ライブラリを作成するためのアーカイバや MSVC 系ライブラリのフラグを追加する方法は、:prop_tgt:`STATIC_LIBRARY_OPTIONS` というターゲット・プロパティを参照のこと。
 
 .. |command_name| replace:: ``add_link_options``
 .. include:: GENEX_NOTE.txt
@@ -32,13 +26,13 @@ exist to add libraries (:command:`target_link_libraries` or
 
 .. include:: LINK_OPTIONS_LINKER.txt
 
-See Also
+参考情報
 ^^^^^^^^
 
 * :command:`link_libraries`
 * :command:`target_link_libraries`
 * :command:`target_link_options`
 
-* :variable:`CMAKE_<LANG>_FLAGS` and :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>`
-  add language-wide flags passed to all invocations of the compiler.
-  This includes invocations that drive compiling and those that drive linking.
+* CMake 変数の :variable:`CMAKE_<LANG>_FLAGS` と :variable:`CMAKE_<LANG>_FLAGS_<CONFIG>` はコンパイラの全ての呼び出しに渡されるプログラミング言語別のフラグを追加できる
+  （これらのフラグには、コンパイラやリンカ向けのフラグも含まれる）。
+

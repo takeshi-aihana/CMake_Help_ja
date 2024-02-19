@@ -1,25 +1,19 @@
-Handling Compiler Driver Differences
+いろいろなコンパイラ・ドライバの対応
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To pass options to the linker tool, each compiler driver has its own syntax.
-The ``LINKER:`` prefix and ``,`` separator can be used to specify, in a portable
-way, options to pass to the linker tool. ``LINKER:`` is replaced by the
-appropriate driver option and ``,`` by the appropriate driver separator.
-The driver prefix and driver separator are given by the values of the
-:variable:`CMAKE_<LANG>_LINKER_WRAPPER_FLAG` and
-:variable:`CMAKE_<LANG>_LINKER_WRAPPER_FLAG_SEP` variables.
+各種コンパイラのドライバには、それぞれリンカにオプションを渡すための構文があります。
+CMake には ``LINKER:`` という指定子と区切り文字の ``,`` を使って、リンカに渡すオプションを他のコンパイラでも適用できる汎用的な構文があります。
+すなわち ``LINKER:`` 指定子の内容は、コンパイラのドライバ・オプションに適切に変換され、同様に区切り文字の ``,`` もドライバの区切り文字に変換されます。
 
-For example, ``"LINKER:-z,defs"`` becomes ``-Xlinker -z -Xlinker defs`` for
-``Clang`` and ``-Wl,-z,defs`` for ``GNU GCC``.
+ドライバの指定子とドライバの区切り文字は、CMake 変数の :variable:`CMAKE_<LANG>_LINKER_WRAPPER_FLAG` や :variable:`CMAKE_<LANG>_LINKER_WRAPPER_FLAG_SEP` で指定します。
 
-The ``LINKER:`` prefix can be specified as part of a ``SHELL:`` prefix
-expression.
+たとえば ``"LINKER:-z,defs"`` は、``Clang`` コンパイラの場合は ``-Xlinker -z -Xlinker defs`` に変換され、``GNU GCC`` の ``-Wl,-z,defs`` に変換されます。
 
-The ``LINKER:`` prefix supports, as an alternative syntax, specification of
-arguments using the ``SHELL:`` prefix and space as separator. The previous
-example then becomes ``"LINKER:SHELL:-z defs"``.
+``LINKER:`` 指定子は ``SHELL:`` 指定子の一部としても指定できます。
+
+この構文は、代わりに ``SHELL:`` 指定子と空白を使って指定することも可能です。
+たとえば、前述の例だと ``"LINKER:SHELL:-z defs"`` になります。
 
 .. note::
 
-  Specifying the ``SHELL:`` prefix anywhere other than at the beginning of the
-  ``LINKER:`` prefix is not supported.
+  ``SHELL:`` 指定子を ``LINKER`` 指定子の先頭以外に置くとエラーになる。
