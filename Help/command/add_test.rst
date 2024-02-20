@@ -1,7 +1,7 @@
 add_test
 --------
 
-Add a test to the project to be run by :manual:`ctest(1)`.
+:manual:`ctest(1)` で実行するテストを追加する
 
 .. code-block:: cmake
 
@@ -10,58 +10,48 @@ Add a test to the project to be run by :manual:`ctest(1)`.
            [WORKING_DIRECTORY <dir>]
            [COMMAND_EXPAND_LISTS])
 
-Adds a test called ``<name>``.  The test name may contain arbitrary
-characters, expressed as a :ref:`Quoted Argument` or :ref:`Bracket Argument`
-if necessary.  See policy :policy:`CMP0110`.
+``<name>`` というテストを一つ追加します。
+``<name>`` には、必要に応じて :ref:`Quoted Argument` または :ref:`Bracket Argument` で表現した任意の文字列を含めることができます。
+:policy:`CMP0110` のポリシーも参照して下さい。
 
-CMake only generates tests if the :command:`enable_testing` command has been
-invoked.  The :module:`CTest` module invokes ``enable_testing`` automatically
-unless ``BUILD_TESTING`` is set to ``OFF``.
+CMake は、:command:`enable_testing` コマンドが呼び出された場合にだけテストを生成します。
+ただし :module:`CTest` モジュールは自動的に ``enable_testing`` を呼び出します（``BUILD_TESTING`` が ``OFF`` の場合は除く）。
 
-Tests added with the ``add_test(NAME)`` signature support using
-:manual:`generator expressions <cmake-generator-expressions(7)>`
-in test properties set by :command:`set_property(TEST)` or
-:command:`set_tests_properties`. Test properties may only be set in the
-directory the test is created in.
+``add_test(NAME)`` で追加したテストは、 :command:`set_property(TEST)` または :command:`set_tests_properties` コマンドで設定されたテスト・プロパティの「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」をサポートしています。
+テスト・プロパティは、テストを追加したディレクトリにのみ設定できます。
 
-``add_test`` options are:
+このコマンドのオプションは次のとおりです：
 
 ``COMMAND``
-  Specify the test command-line.  If ``<command>`` specifies an executable
-  target created by :command:`add_executable`, it will automatically be
-  replaced by the location of the executable created at build time.
+  テストを起動するコマンドラインを指定する。
+  引数の ``<command>`` の中に、:command:`add_executable` コマンドで追加したビルド・ターゲットを指定すると、ビルドした実行形式のパスに自動的に置き換えられる。
 
-  The command may be specified using
-  :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  ``<command>`` には「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使うことができる。
 
 ``CONFIGURATIONS``
-  Restrict execution of the test only to the named configurations.
+  テストの実行を ``<config>`` で指定したビルド構成に制限する。
 
 ``WORKING_DIRECTORY``
-  Set the test property :prop_test:`WORKING_DIRECTORY` in which to execute the
-  test. If not specified, the test will be run in
-  :variable:`CMAKE_CURRENT_BINARY_DIR`. The working directory may be specified
-  using :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  テスト・プロパティ :prop_test:`WORKING_DIRECTORY` に、テストを実行するディレクトリを表す ``<dir>`` をセットする。
+  このオプションを指定しない場合、追加したテストは :variable:`CMAKE_CURRENT_BINARY_DIR` で実行する。
+  ``<dir>`` には「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を使うことができる。
 
 ``COMMAND_EXPAND_LISTS``
   .. versionadded:: 3.16
 
-  Lists in ``COMMAND`` arguments will be expanded, including those created with
-  :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  ``COMMAND`` オプションに渡した ``<command>`` の中にある :ref:`リスト <CMake Language Lists>` は、「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」を含め、すべて展開する。
 
-If the test command exits with code ``0`` the test passes. Non-zero exit code
-is a "failed" test. The test property :prop_test:`WILL_FAIL` inverts this
-logic. Note that system-level test failures such as segmentation faults or
-heap errors will still fail the test even if ``WILL_FALL`` is true. Output
-written to stdout or stderr is captured by :manual:`ctest(1)` and only
-affects the pass/fail status via the :prop_test:`PASS_REGULAR_EXPRESSION`,
-:prop_test:`FAIL_REGULAR_EXPRESSION`, or :prop_test:`SKIP_REGULAR_EXPRESSION`
-test properties.
+ここで追加したテストがコード ``0`` で終了した場合、テストは成功です。
+それ以外のコードは、テストが「失敗」したことを表します。
+テスト・プロパティの :prop_test:`WILL_FAIL` は、この判定方法を反転します。
+ただし、セグメンテーション違反やヒープ・エラーといったシステム規模のエラーが原因でテストが失敗した場合、このテスト・プロパティ ``WILL_FALL`` の値にかかわらず、エラー扱いになる点に注意して下さい。
+stdout や stderr に書き込まれた出力は :manual:`ctest(1)` が捕捉します。
+:prop_test:`PASS_REGULAR_EXPRESSION` や :prop_test:`FAIL_REGULAR_EXPRESSION` やr :prop_test:`SKIP_REGULAR_EXPRESSION` といったテスト・プロパティはテスト結果（成功または失敗）にのみ作用します。
 
 .. versionadded:: 3.16
-  Added :prop_test:`SKIP_REGULAR_EXPRESSION` property.
+  :prop_test:`SKIP_REGULAR_EXPRESSION` というテスト・プロパティを追加した。
 
-Example usage:
+このコマンドの使用例：
 
 .. code-block:: cmake
 
@@ -69,21 +59,18 @@ Example usage:
            COMMAND testDriver --config $<CONFIG>
                               --exe $<TARGET_FILE:myexe>)
 
-This creates a test ``mytest`` whose command runs a ``testDriver`` tool
-passing the configuration name and the full path to the executable
-file produced by target ``myexe``.
+これは ``mytest`` というテストを作成します。
+このテストは、 ``testDriver`` というツールに、ビルド構成と ``myexe`` というビルド・ターゲットで提供される実行形式の絶対パス名を引数として渡して起動されます。
 
 ---------------------------------------------------------------------
 
-The command syntax above is recommended over the older, less flexible form:
+次のコマンドは、上の使用例よりも柔軟性にかける古い呼び出し方です（非推奨）：
 
 .. code-block:: cmake
 
   add_test(<name> <command> [<arg>...])
 
-Add a test called ``<name>`` with the given command-line.
+``<command>`` をテストを起動するコマンドラインとする ``<name>`` というテストを追加します。
 
-Unlike the above ``NAME`` signature, target names are not supported
-in the command-line.  Furthermore, tests added with this signature do not
-support :manual:`generator expressions <cmake-generator-expressions(7)>`
-in the command-line or test properties.
+このコマンドに渡す引数の ``<command>`` は、ビルド・ターゲットの参照はサポートしていません。
+さらに、この ``<command>`` は「:manual:`ジェネレータ式 <cmake-generator-expressions(7)>`」をサポートしていません。
