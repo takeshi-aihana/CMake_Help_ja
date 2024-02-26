@@ -3,13 +3,12 @@ cmake_file_api
 
 .. versionadded:: 3.27
 
-Enables interacting with the :manual:`CMake file API <cmake-file-api(7)>`.
+:manual:`CMake のファイル API <cmake-file-api(7)>` を使う。
 
 .. signature::
   cmake_file_api(QUERY ...)
 
-  The ``QUERY`` subcommand adds a file API query for the current CMake
-  invocation.
+  ``QUERY`` サブコマンドで、現在の CMake 呼び出しに対するファイル API を使ったクエリを追加します。
 
   .. code-block:: cmake
 
@@ -22,44 +21,31 @@ Enables interacting with the :manual:`CMake file API <cmake-file-api(7)>`.
       [TOOLCHAINS <versions>...]
     )
 
-  The ``API_VERSION`` must always be given.  Currently, the only supported
-  value for ``<version>`` is 1.  See :ref:`file-api v1` for details of the
-  reply content and location.
+  ``API_VERSION`` オプションは必須です。
+  このバージョンの CMake でサポートしている ``<version>`` の値は 1 のみ。
+  クエリの返り値とファイルのパスについて詳細は :ref:`file-api v1` を参照して下さい。
 
-  Each of the optional keywords ``CODEMODEL``, ``CACHE``, ``CMAKEFILES`` and
-  ``TOOLCHAINS`` correspond to one of the object kinds that can be requested
-  by the project.  The ``configureLog`` object kind cannot be set with this
-  command, since it must be set before CMake starts reading the top level
-  ``CMakeLists.txt`` file.
+  ``CODEMODEL`` や ``CACHE`` や  ``CMAKEFILES`` や  ``TOOLCHAINS`` といったオプションはそれぞれプロジェクトが要求できる「CMake オブジェクト」に対応します。
+  ただし、このコマンドはプロジェクト最上位にある ``CMakeLists.txt`` ファイルの読み込みを開始する前に、呼び出しておく必要があるため、たとえば ``configureLog`` というオブジェクトの類は設定できません。
 
-  For each of the optional keywords, the ``<versions>`` list must contain one
-  or more version values of the form ``major`` or ``major.minor``, where
-  ``major`` and ``minor`` are integers.  Projects should list the versions they
-  accept in their preferred order, as only the first supported value from the
-  list will be selected.  The command will ignore versions with a ``major``
-  version higher than any major version it supports for that object kind.
-  It will raise an error if it encounters an invalid version number, or if none
-  of the requested versions is supported.
+  For each of the optional keywords, the ``<versions>`` list must contain one or more version values of the form ``major`` or ``major.minor``, where ``major`` and ``minor`` are integers.
+  Projects should list the versions they accept in their preferred order, as only the first supported value from the list will be selected.
+  The command will ignore versions with a ``major``  version higher than any major version it supports for that object kind.
+  It will raise an error if it encounters an invalid version number, or if none of the requested versions is supported.
 
-  For each type of object kind requested, a query equivalent to a shared,
-  stateless query will be added internally.  No query file will be created in
-  the file system.  The reply *will* be written to the file system at
-  generation time.
+  For each type of object kind requested, a query equivalent to a shared, stateless query will be added internally.
+  No query file will be created in the file system.
+  The reply *will* be written to the file system at generation time.
 
-  It is not an error to add a query for the same thing more than once, whether
-  from query files or from multiple calls to ``cmake_file_api(QUERY)``.
-  The final set of queries will be a merged combination of all queries
-  specified on disk and queries submitted by the project.
+  It is not an error to add a query for the same thing more than once, whether from query files or from multiple calls to ``cmake_file_api(QUERY)``.
+  The final set of queries will be a merged combination of all queries specified on disk and queries submitted by the project.
 
-Example
-^^^^^^^
+サンプル
+^^^^^^^^
 
-A project may want to use replies from the file API at build time to implement
-some form of verification task.  Instead of relying on something outside of
-CMake to create a query file, the project can use ``cmake_file_api(QUERY)``
-to request the required information for the current run.  It can then create
-a custom command to run at build time, knowing that the requested information
-should always be available.
+A project may want to use replies from the file API at build time to implement some form of verification task.
+Instead of relying on something outside of CMake to create a query file, the project can use ``cmake_file_api(QUERY)`` to request the required information for the current run.
+It can then create a custom command to run at build time, knowing that the requested information should always be available.
 
 .. code-block:: cmake
 
