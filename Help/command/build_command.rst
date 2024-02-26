@@ -1,8 +1,7 @@
 build_command
 -------------
 
-Get a command line to build the current project.
-This is mainly intended for internal use by the :module:`CTest` module.
+プロジェクトをビルドするためのコマンドラインを取得する（主に :module:`CTest` モジュール内で使用するコマンド）。
 
 .. code-block:: cmake
 
