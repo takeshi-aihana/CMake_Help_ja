@@ -26,26 +26,26 @@ cmake_file_api
   クエリの返り値とファイルのパスについて詳細は :ref:`file-api v1` を参照して下さい。
 
   ``CODEMODEL`` や ``CACHE`` や  ``CMAKEFILES`` や  ``TOOLCHAINS`` といったオプションはそれぞれプロジェクトが要求できる「CMake オブジェクト」に対応します。
-  ただし、このコマンドはプロジェクト最上位にある ``CMakeLists.txt`` ファイルの読み込みを開始する前に、呼び出しておく必要があるため、たとえば ``configureLog`` というオブジェクトの類は設定できません。
+  ただし、このコマンドはプロジェクト最上位にある ``CMakeLists.txt`` ファイルを読み込んで処理していく最中に呼び出されるので、（処理される前に既に設定されている） ``configureLog`` といったオブジェクトには追加できません。
 
-  For each of the optional keywords, the ``<versions>`` list must contain one or more version values of the form ``major`` or ``major.minor``, where ``major`` and ``minor`` are integers.
-  Projects should list the versions they accept in their preferred order, as only the first supported value from the list will be selected.
-  The command will ignore versions with a ``major``  version higher than any major version it supports for that object kind.
-  It will raise an error if it encounters an invalid version number, or if none of the requested versions is supported.
+  オプションごとに指定する ``<versions> ...`` の :ref:`リスト <CMake Language Lists>` には ``major`` または ``major.minor`` の形式で表したバージョン（``major`` と ``minor`` は共に整数値）を一つ以上含めるようにして下さい。
+  また、このリストからはサポートされているバージョンだけを先頭から順番に選択していくので、このリストには優先的に受け入れるバージョンから並べる必要があります。
+  このコマンドは CMake オブジェクトでサポートしている ``major`` バージョンよりも新しいバージョンは無視します。
+  リストの中に無効なバージョンが見つかった場合、または CMake オブジェクトが指定したバージョンをサポートしていない場合はエラーで停止します。
 
-  For each type of object kind requested, a query equivalent to a shared, stateless query will be added internally.
-  No query file will be created in the file system.
-  The reply *will* be written to the file system at generation time.
+  オプションに対応した CMake オブジェクトごとに、共有のステートレス・クエリと同等のクエリが内部的に追加されます。
+  クエリのファイルは出力されません。
+  このコマンドの結果は、ビルドシステムの構築時に *出力されます* 。
 
-  It is not an error to add a query for the same thing more than once, whether from query files or from multiple calls to ``cmake_file_api(QUERY)``.
-  The final set of queries will be a merged combination of all queries specified on disk and queries submitted by the project.
+  クエリのファイルから、またはこの ``cmake_file_api(QUERY)`` コマンドを複数回呼び出して、同じオブジェクトに対して複数のクエリを追加しても問題はありません。
+  つまり、最終的なクエリはファイル上で指定された全てのクエリ（前者）と、プロジェクトで指定されたクエリ（後者）を合わせたものになります。
 
 サンプル
 ^^^^^^^^
 
-A project may want to use replies from the file API at build time to implement some form of verification task.
-Instead of relying on something outside of CMake to create a query file, the project can use ``cmake_file_api(QUERY)`` to request the required information for the current run.
-It can then create a custom command to run at build time, knowing that the requested information should always be available.
+CMake プロジェクトの中には、ビルド時にファイル API からの応答を利用して、なんらかの形式の検証タスクを実装しなければならない場合があります。
+そのプロジェクトの外部にあるものに依存したクエリのファイルを作成する代わりに、この ``cmake_file_api(QUERY)`` コマンドでビルドに必要な情報を要求することができます。
+そのあとに、要求した情報が常に利用できることを確認し、ビルド時に実行する独自コマンドを作成できます。
 
 .. code-block:: cmake
 
